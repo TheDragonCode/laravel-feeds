@@ -1,0 +1,20 @@
+name: Feature Proposal
+description: Propose a new feature
+labels: [ "feature" ]
+
+body:
+    -   type: textarea
+        id: description
+        attributes:
+            label: Feature description
+            description: |
+                Think through your proposal and describe it clearly.
+
+                Note that features are only added to the most recent version of Laravel Lang.
+        validations:
+            required: true
+
+    -   type: markdown
+        attributes:
+            value: |
+                ❤️ The Dragon Code? Please consider supporting [`our collective`](https://boosty.to/dragon-code).

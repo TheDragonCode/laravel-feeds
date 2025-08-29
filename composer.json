@@ -1,0 +1,60 @@
+{
+    "name": "dragon-code/laravel-feed",
+    "description": "Simple generation XML fids",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Andrey Helldar",
+            "email": "helldar@dragon-code.pro",
+            "homepage": "https://dragon-code.pro"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/database": "^10.0 || ^11.0 || ^12.0",
+        "illuminate/filesystem": "^10.0 || ^11.0 || ^12.0",
+        "illuminate/support": "^10.0 || ^11.0 || ^12.0",
+        "laravel/prompts": ">=0.3.6",
+        "spatie/array-to-xml": "^3.4"
+    },
+    "require-dev": {
+        "dragon-code/codestyler": "^6.2",
+        "orchestra/testbench": "^8.0 || ^9.0 || ^10.0",
+        "pestphp/pest": "^3.0 || ^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0 || ^4.0",
+        "symfony/var-dumper": "^6.0 || ^7.3"
+    },
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "DragonCode\\LaravelFeed\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "pestphp/pest-plugin": true
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DragonCode\\LaravelFeed\\LaravelFeedServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "post-update-cmd": [
+            "vendor/bin/codestyle pint 8.2",
+            "vendor/bin/codestyle editorconfig",
+            "composer normalize"
+        ],
+        "style": "vendor/bin/pint --parallel"
+    }
+}
