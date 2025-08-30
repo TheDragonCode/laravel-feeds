@@ -268,13 +268,7 @@ class UserFeedItem extends FeedItem
 
 #### Adding an array of elements
 
-In some cases, you need to place an array of elements with the same names. For example:
-
-```xml
-<picture>https://via.placeholder.com/640x480.png/009966?text=beatae</picture>
-<picture>https://via.placeholder.com/640x480.png/000011?text=deleniti</picture>
-<picture>https://via.placeholder.com/640x480.png/009999?text=voluptates</picture>
-```
+In some cases, you need to place an array of elements with the same names.
 
 To do this, add a symbol of `@` to the beginning of the key name:
 
@@ -290,6 +284,51 @@ class UserFeedItem extends FeedItem
         ];
     }
 }
+```
+
+Result:
+
+```xml
+
+<picture>https://via.placeholder.com/640x480.png/009966?text=beatae</picture>
+<picture>https://via.placeholder.com/640x480.png/000011?text=deleniti</picture>
+<picture>https://via.placeholder.com/640x480.png/009999?text=voluptates</picture>
+```
+
+You can also use values for such elements.
+To insert them, use the reserved word `@value`.
+
+For example:
+
+```php
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            '@param' => [
+                [
+                    '@attributes' => ['name' => 'Article'],
+                    '@value'      => $this->model->article,
+                ],
+                [
+                    '@attributes' => ['name' => 'Brand'],
+                    '@value'      => $this->model->brand,
+                ],
+            ],
+        ];
+    }
+}
+```
+
+Result:
+
+```xml
+
+<param name="Article">GD-PRDCT-1</param>
+<param name="Brand">The Best</param>
 ```
 
 #### Header information

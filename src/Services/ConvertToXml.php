@@ -57,7 +57,8 @@ class ConvertToXml
                 $this->isAttributes($key) => $this->setAttributes($parent, $value),
                 $this->isCData($key)      => $this->setCData($parent, $value),
                 $this->isMixed($key)      => $this->setMixed($parent, $value),
-                $this->isArray($key)      => $this->setItemsArray($parent, $value, $key),
+                $this->isValue($key)      => $this->setRaw($parent, $value),
+                $this->isPrefixed($key)   => $this->setItemsArray($parent, $value, $key),
                 default                   => $this->setItems($parent, $key, $value),
             };
         }
@@ -78,7 +79,12 @@ class ConvertToXml
         return $key === '@mixed';
     }
 
-    protected function isArray(string $key): bool
+    protected function isValue(string $key): bool
+    {
+        return $key === '@value';
+    }
+
+    protected function isPrefixed(string $key): bool
     {
         return str_starts_with($key, '@');
     }
@@ -110,7 +116,7 @@ class ConvertToXml
         $element->appendChild($fragment);
     }
 
-    protected function setItemsArray(DOMElement $parent, mixed $value, string $key): void
+    protected function setItemsArray(DOMElement $parent, $value, string $key): void
     {
         $key = Str::substr($key, 1);
 
@@ -128,6 +134,11 @@ class ConvertToXml
         }
 
         $parent->appendChild($element);
+    }
+
+    protected function setRaw(DOMElement $parent, mixed $value): void
+    {
+        $parent->nodeValue = $this->convertValue($value);
     }
 
     protected function toXml(DOMElement $item): string

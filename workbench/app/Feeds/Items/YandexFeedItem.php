@@ -41,6 +41,17 @@ class YandexFeedItem extends FeedItem
             'vendor'     => $this->model->brand,
 
             '@picture' => $this->model->images,
+
+            '@param' => [
+                [
+                    '@attributes' => ['name' => 'Article'],
+                    '@value'      => $this->model->article,
+                ],
+                [
+                    '@attributes' => ['name' => 'Brand'],
+                    '@value'      => $this->model->brand,
+                ],
+            ],
         ];
     }
 }
