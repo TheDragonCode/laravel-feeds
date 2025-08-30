@@ -266,6 +266,32 @@ class UserFeedItem extends FeedItem
 }
 ```
 
+#### Adding an array of elements
+
+In some cases, you need to place an array of elements with the same names. For example:
+
+```xml
+<picture>https://via.placeholder.com/640x480.png/009966?text=beatae</picture>
+<picture>https://via.placeholder.com/640x480.png/000011?text=deleniti</picture>
+<picture>https://via.placeholder.com/640x480.png/009999?text=voluptates</picture>
+```
+
+To do this, add a symbol of `@` to the beginning of the key name:
+
+```php
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            '@picture' => $this->model->images,
+        ];
+    }
+}
+```
+
 #### Header information
 
 If it is necessary to change the file cap, override the `header` method in the feed class:

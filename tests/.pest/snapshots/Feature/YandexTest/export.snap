@@ -24,6 +24,7 @@
   <price>100</price>
   <currencyId>RUR</currencyId>
   <vendor>The Best</vendor>
+  <picture>https://via.placeholder.com/640x480.png/008877?text=repudiandae</picture>
 </offer>
 <offer id="2" available="true" type="vendor.model">
   <url>http://localhost/products/GD-PRDCT-2</url>
@@ -34,6 +35,9 @@
   <price>250</price>
   <currencyId>RUR</currencyId>
   <vendor>The Best</vendor>
+  <picture>https://via.placeholder.com/640x480.png/009966?text=beatae</picture>
+  <picture>https://via.placeholder.com/640x480.png/000011?text=deleniti</picture>
+  <picture>https://via.placeholder.com/640x480.png/009999?text=voluptates</picture>
 </offer>
 <offer id="3" available="false" type="vendor.model">
   <url>http://localhost/products/GD-PRDCT-3</url>
@@ -44,6 +48,8 @@
   <price>400</price>
   <currencyId>RUR</currencyId>
   <vendor>The Best</vendor>
+  <picture>https://via.placeholder.com/640x480.png/000044?text=asperiores</picture>
+  <picture>https://via.placeholder.com/640x480.png/0055ff?text=expedita</picture>
 </offer>
 </offers>
 

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Workbench\App\Data;
 
-use function json_encode;
-
 class ProductFakeData
 {
     public static function toArray(): array
@@ -22,9 +20,9 @@ class ProductFakeData
 
                 'brand' => 'The Best',
 
-                'images' => json_encode([
-                    'https://via.placeholder.com/640x480.png/00ff55?text=s1',
-                ]),
+                'images' => [
+                    'https://via.placeholder.com/640x480.png/008877?text=repudiandae',
+                ],
 
                 'created_at' => '2025-08-31 00:00:00',
                 'updated_at' => '2025-08-31 20:00:00',
@@ -40,11 +38,11 @@ class ProductFakeData
 
                 'brand' => 'The Best',
 
-                'images' => json_encode([
-                    'https://via.placeholder.com/640x480.png/00ff55?text=s20',
-                    'https://via.placeholder.com/640x480.png/00ff55?text=s21',
-                    'https://via.placeholder.com/640x480.png/00ff55?text=s22',
-                ]),
+                'images' => [
+                    'https://via.placeholder.com/640x480.png/009966?text=beatae',
+                    'https://via.placeholder.com/640x480.png/000011?text=deleniti',
+                    'https://via.placeholder.com/640x480.png/009999?text=voluptates',
+                ],
 
                 'created_at' => '2025-08-30 00:00:00',
                 'updated_at' => '2025-08-30 19:00:00',
@@ -60,10 +58,10 @@ class ProductFakeData
 
                 'brand' => 'The Best',
 
-                'images' => json_encode([
-                    'https://via.placeholder.com/640x480.png/00ff55?text=s30',
-                    'https://via.placeholder.com/640x480.png/00ff55?text=s31',
-                ]),
+                'images' => [
+                    'https://via.placeholder.com/640x480.png/000044?text=asperiores',
+                    'https://via.placeholder.com/640x480.png/0055ff?text=expedita',
+                ],
 
                 'created_at' => '2025-08-29 00:00:00',
                 'updated_at' => '2025-08-29 18:00:00',
