@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DummyNamespace;
+
+use DragonCode\LaravelFeed\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class DummyClass extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            '_attributes' => [
+                'id' => $this->model->id,
+
+                'updated_at' => $this->model->updated_at->toDateTimeString(),
+
+                'verified' => ! empty($this->model->email_verified_at),
+            ],
+
+            'name' => [
+                '_cdata' => '<h1>' . $this->model->name . '</h1>',
+            ],
+
+            'email' => $this->model->email,
+        ];
+    }
+}

@@ -2,22 +2,24 @@
 
 declare(strict_types=1);
 
-namespace DragonCode\LaravelFeed;
+namespace DragonCode\LaravelFeed\Items;
 
-use DragonCode\LaravelFeed\Data\FeedItem;
-use DragonCode\LaravelFeed\Data\ModelFeedItem;
+use DragonCode\LaravelFeed\FeedItem;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
+use function class_basename;
 
 abstract class Feed
 {
     protected string $storage = 'public';
 
-    abstract public function builder(): Builder;
+    protected ?string $filename = null;
 
-    abstract public function filename(): string;
+    abstract public function builder(): Builder;
 
     public function item(Model $model): FeedItem
     {
@@ -37,6 +39,16 @@ abstract class Feed
     public function footer(): string
     {
         return '';
+    }
+
+    public function rootItem(): ?string
+    {
+        return null;
+    }
+
+    public function filename(): string
+    {
+        return $this->filename ??= Str::kebab(class_basename($this));
     }
 
     public function path(): string

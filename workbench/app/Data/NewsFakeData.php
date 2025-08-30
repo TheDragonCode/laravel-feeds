@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Fixtures\Data;
+namespace Workbench\App\Data;
 
-class NewsData
+class NewsFakeData
 {
     public static function toArray(): array
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Services;
 
-use DragonCode\LaravelFeed\Feed;
+use DragonCode\LaravelFeed\Items\Feed;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Filesystem\Filesystem;
 
@@ -27,29 +27,49 @@ class Generator
             $filename = $this->draft($feed)
         );
 
-        $this->append($file, $feed->header());
-
-        $this->perform($file, $feed);
-
-        $this->append($file, $feed->footer());
+        $this->performHeader($file, $feed);
+        $this->performItem($file, $feed);
+        $this->performFooter($file, $feed);
 
         $this->closeFile($file);
         $this->release($feed, $filename);
     }
 
-    protected function perform($file, Feed $feed): void
+    protected function performItem($file, Feed $feed): void
     {
         $feed->builder()->chunk($feed->chunkSize(), function (Collection $models) use ($file, $feed) {
             $content = [];
 
             foreach ($models as $model) {
                 $content[] = $this->converter->convert(
-                    $feed->item($model)->toArray()
+                    $feed->item($model)
                 );
             }
 
             $this->append($file, implode(PHP_EOL, $content));
         });
+    }
+
+    protected function performHeader($file, Feed $feed): void
+    {
+        $value = $feed->header();
+
+        if ($item = $feed->rootItem()) {
+            $value .= "\n<$item>\n";
+        }
+
+        $this->append($file, $value);
+    }
+
+    protected function performFooter($file, Feed $feed): void
+    {
+        $value = $feed->footer();
+
+        if ($item = $feed->rootItem()) {
+            $value .= "\n</$item>\n";
+        }
+
+        $this->append($file, $value);
     }
 
     protected function append($file, string $content): void

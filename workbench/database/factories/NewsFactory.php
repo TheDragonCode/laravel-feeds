@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\database\factories;
+namespace Workbench\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

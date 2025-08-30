@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DummyNamespace;
+
+use DragonCode\LaravelFeed\FeedItem;
+use DragonCode\LaravelFeed\Items\Feed;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class DummyClass extends Feed
+{
+    public function builder(): Builder
+    {
+        return \App\Models\User::query();
+    }
+
+    public function rootItem(): ?string
+    {
+        return 'users';
+    }
+
+    public function filename(): string
+    {
+        return 'my-feed.xml';
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new \App\Feeds\Items\UserFeedItem($model);
+    }
+}

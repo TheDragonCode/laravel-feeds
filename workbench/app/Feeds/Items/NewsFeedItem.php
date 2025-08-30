@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Fixtures\Feeds\Items;
+namespace Workbench\App\Feeds\Items;
 
-use DragonCode\LaravelFeed\Data\FeedItem;
+use DragonCode\LaravelFeed\FeedItem;
 
-/** @property-read \Tests\Fixtures\Models\News $model */
+/** @property-read \Workbench\App\Models\News $model */
 class NewsFeedItem extends FeedItem
 {
     public function toArray(): array
@@ -19,9 +19,9 @@ class NewsFeedItem extends FeedItem
 
             'with attributes' => [
                 'Good guy' => [
-                    '_attributes' => [
-                        'my key 1' => 'my value 1',
-                        'my key 2' => 'my value 2',
+                    '@attributes' => [
+                        'my-key-1' => 'my value 1',
+                        'my-key-2' => 'my value 2',
                     ],
 
                     'name'   => 'Luke Skywalker',
@@ -30,7 +30,7 @@ class NewsFeedItem extends FeedItem
 
                 'Bad guy' => [
                     'name' => [
-                        '_cdata' => '<h1>Sauron</h1>',
+                        '@cdata' => '<h1>Sauron</h1>',
                     ],
 
                     'weapon' => 'Evil Eye',

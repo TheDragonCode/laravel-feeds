@@ -6,18 +6,28 @@
         cacheResult="false"
         colors="true"
 >
-    <php>
-        <env name="APP_KEY" value="AckfSECXIvnK5r28GVIWUAxmbBSjTsmF" />
-        <env name="APP_ENV" value="testing" />
-    </php>
     <testsuites>
-        <testsuite name="Test Suite">
-            <directory>./tests</directory>
+        <testsuite name="Feature">
+            <directory>./tests/Feature</directory>
         </testsuite>
     </testsuites>
+
     <source>
         <include>
             <directory>./src</directory>
         </include>
     </source>
+
+    <php>
+        <env name="APP_KEY" value="AckfSECXIvnK5r28GVIWUAxmbBSjTsmF" />
+        <env name="APP_ENV" value="testing" />
+
+        <env name="BCRYPT_ROUNDS" value="4" />
+
+        <env name="DB_CONNECTION" value="sqlite" />
+        <env name="DB_DATABASE" value=":memory:" />
+        <env name="SESSION_DRIVER" value="array" />
+
+        <env name="FEED_PRETTY" value="true" />
+    </php>
 </phpunit>

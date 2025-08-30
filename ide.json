@@ -1,0 +1,45 @@
+{
+    "$schema": "https://laravel-ide.com/schema/laravel-ide-v2.json",
+    "codeGenerations": [
+        {
+            "id": "dragon-code.xml-feeds.main",
+            "name": "Create XML Feed",
+            "classSuffix": "Feed",
+            "regex": ".+",
+            "files": [
+                {
+                    "appNamespace": "Feeds",
+                    "name": "${CURRENT_TIME|format:yyyy_MM_dd_HHmmss}_${INPUT_CLASS|className|replace: ,_|upperCamelCase|snakeCase}.php",
+                    "template": {
+                        "type": "stub",
+                        "path": "/stubs/feed.stub",
+                        "parameters": {
+                            "DummyNamespace": "${INPUT_FQN|namespace}",
+                            "DummyClass": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dragon-code.xml-feeds.item",
+            "name": "Create XML Feed Item",
+            "classSuffix": "FeedItem",
+            "regex": ".+",
+            "files": [
+                {
+                    "appNamespace": "Feeds\\Items",
+                    "name": "${CURRENT_TIME|format:yyyy_MM_dd_HHmmss}_${INPUT_CLASS|className|replace: ,_|upperCamelCase|snakeCase}.php",
+                    "template": {
+                        "type": "stub",
+                        "path": "/stubs/feed_item.stub",
+                        "parameters": {
+                            "DummyNamespace": "${INPUT_FQN|namespace}",
+                            "DummyClass": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

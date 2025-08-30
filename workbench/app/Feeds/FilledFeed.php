@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Tests\Fixtures\Feeds;
+namespace Workbench\App\Feeds;
 
-use DragonCode\LaravelFeed\Data\FeedItem;
-use DragonCode\LaravelFeed\Feed;
+use DragonCode\LaravelFeed\FeedItem;
+use DragonCode\LaravelFeed\Items\Feed;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Tests\Fixtures\Feeds\Items\NewsFeedItem;
-use Tests\Fixtures\Models\News;
+use Workbench\App\Feeds\Items\NewsFeedItem;
+use Workbench\App\Models\News;
 
+use function class_basename;
 use function now;
 
 class FilledFeed extends Feed
@@ -20,19 +21,14 @@ class FilledFeed extends Feed
         return News::query()->where('updated_at', '>', now()->subDay());
     }
 
-    public function header(): string
+    public function rootItem(): ?string
     {
-        return parent::header() . "\n<news>\n";
-    }
-
-    public function footer(): string
-    {
-        return '</news>';
+        return class_basename($this);
     }
 
     public function filename(): string
     {
-        return 'partial/feed';
+        return 'partial/feed.xml';
     }
 
     public function item(Model $model): FeedItem

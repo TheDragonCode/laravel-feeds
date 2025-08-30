@@ -1,0 +1,25 @@
+laravel: '@testbench'
+
+providers:
+    - DragonCode\LaravelFeed\LaravelFeedServiceProvider
+
+migrations:
+    - workbench/database/migrations
+
+workbench:
+    install: false
+    discovers:
+        web: false
+        api: false
+        config: true
+        commands: false
+        factories: true
+        views: false
+    build:
+        - create-sqlite-db
+        - db-wipe
+        - migrate-fresh
+    sync:
+        -   from: storage
+            to: workbench/storage
+            reverse: true

@@ -1,6 +1,6 @@
 {
-    "name": "dragon-code/laravel-feed",
-    "description": "Simple generation XML fids",
+    "name": "dragon-code/laravel-feeds",
+    "description": "Simple generation XML feeds",
     "license": "MIT",
     "type": "library",
     "authors": [
@@ -15,8 +15,7 @@
         "illuminate/database": "^10.0 || ^11.0 || ^12.0",
         "illuminate/filesystem": "^10.0 || ^11.0 || ^12.0",
         "illuminate/support": "^10.0 || ^11.0 || ^12.0",
-        "laravel/prompts": ">=0.3.6",
-        "spatie/array-to-xml": "^3.4"
+        "laravel/prompts": ">=0.3.6", "ext-dom": "*"
     },
     "require-dev": {
         "dragon-code/codestyler": "^6.2",
@@ -33,7 +32,9 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/"
         }
     },
     "config": {
@@ -55,6 +56,16 @@
             "vendor/bin/codestyle editorconfig",
             "composer normalize"
         ],
-        "style": "vendor/bin/pint --parallel"
+        "style": "vendor/bin/pint --parallel",
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "test": [
+            "@clear",
+            "@php vendor/bin/pest"
+        ]
     }
 }

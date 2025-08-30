@@ -1,19 +1,21 @@
 <?php
 
 use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
-use Tests\Fixtures\Data\NewsData;
-use Tests\Fixtures\Feeds\FilledFeed;
-use Tests\Fixtures\Models\News;
+use Workbench\App\Data\NewsFakeData;
+use Workbench\App\Feeds\FilledFeed;
+use Workbench\App\Models\News;
 
 use function Pest\Laravel\artisan;
 
-test('export', function () {
+test('export', function (bool $pretty) {
+    setPrettyXml($pretty);
+
     News::factory()->count(5)->state(fn () => [
         'updated_at' => fake()->dateTimeBetween(endDate: '-1 month'),
     ])->createMany();
 
     News::factory()->count(3)->state(
-        NewsData::toArray()
+        ...NewsFakeData::toArray()
     )->createMany();
 
     $feed = app()->make(FilledFeed::class);
@@ -22,4 +24,4 @@ test('export', function () {
 
     expect($feed->path())->toBeReadableFile();
     expect(file_get_contents($feed->path()))->toMatchSnapshot();
-});
+})->with('boolean');

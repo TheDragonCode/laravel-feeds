@@ -1,12 +1,13 @@
 <?php
 
-use Illuminate\Foundation\Testing\DatabaseTruncation;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 pest()
     ->printer()
     ->compact();
 
 pest()
-    ->extend(Tests\TestCase::class)
-    ->use(DatabaseTruncation::class)
+    ->extend(TestCase::class)
+    ->use(DatabaseTransactions::class)
     ->in('Feature');

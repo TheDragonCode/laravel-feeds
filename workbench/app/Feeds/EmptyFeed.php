@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tests\Fixtures\Feeds;
+namespace Workbench\App\Feeds;
 
-use DragonCode\LaravelFeed\Feed;
+use DragonCode\LaravelFeed\Items\Feed;
 use Illuminate\Database\Eloquent\Builder;
-use Tests\Fixtures\Models\News;
+use Workbench\App\Models\News;
+
+use function class_basename;
 
 class EmptyFeed extends Feed
 {
@@ -15,8 +17,13 @@ class EmptyFeed extends Feed
         return News::query()->where('id', '<', 0);
     }
 
+    public function rootItem(): ?string
+    {
+        return class_basename($this);
+    }
+
     public function filename(): string
     {
-        return 'empty/feed';
+        return 'empty/feed.xml';
     }
 }
