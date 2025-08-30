@@ -169,7 +169,7 @@ According to this example, the XML file with the following contents will be gene
 
 ### Objects, attributes and more
 
-#### Setting the name of the root element
+#### Setting the root element
 
 ```php
 class UserFeed extends Feed
@@ -177,6 +177,13 @@ class UserFeed extends Feed
     public function rootItem(): ?string
     {
         return 'users';
+    }
+    
+    public function rootAttributes(): array
+    {
+        return [
+            'foo' => 'some value',
+        ];
     }
 }
 ```

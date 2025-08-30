@@ -46,6 +46,11 @@ abstract class Feed
         return null;
     }
 
+    public function rootAttributes(): array
+    {
+        return [];
+    }
+
     public function filename(): string
     {
         return $this->filename ??= Str::kebab(class_basename($this)) . '.xml';
