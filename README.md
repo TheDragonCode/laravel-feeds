@@ -1,92 +1,181 @@
-# 🚀 Laravel Deploy Operations
+# 📃 Laravel Feeds
 
-![the dragon code laravel deploy operations](https://preview.dragon-code.pro/the-dragon-code/deploy-operations.svg?brand=laravel&mode=dark)
+![the dragon code laravel feeds](https://preview.dragon-code.pro/the-dragon-code/deploy-operations.svg?brand=laravel&mode=dark)
 
 [![Stable Version][badge_stable]][link_packagist]
 [![Total Downloads][badge_downloads]][link_packagist]
 [![Github Workflow Status][badge_build]][link_build]
 [![License][badge_license]][link_license]
 
-⚡ **Performing any actions during the deployment process**
-
-Create specific classes for a one-time or more-time usage, that can be executed automatically after each deployment.
-Perfect for seeding or updating some data instantly after some database changes, feature updates, or perform any
-actions.
-
-This package is for you if...
-
-- you regularly need to update specific data after you deploy new code
-- you often perform jobs after deployment
-- you sometimes forget to execute that one specific job and stuff gets crazy
-- your code gets cluttered with jobs that are not being used anymore
-- your co-workers always need to be reminded to execute that one job after some database changes
-- you often seed or process data in a migration file (which is a big no-no!)
+> [!TIP]
+>
+> **Laravel Feeds** is an easy and fast way of exporting a large amount of data to feeds for marketplaces and other
+> consumers.
 
 ## Installation
 
-To get the latest version of **Deploy Operations**, simply require the project using [Composer](https://getcomposer.org):
+To get the latest version of **Laravel Feeds**, simply require the project
+using [Composer](https://getcomposer.org):
 
 ```Bash
-composer require dragon-code/laravel-deploy-operations
+composer require dragon-code/laravel-feeds
 ```
 
-## Documentation
+After that, publish the configuration file by call the console command:
 
-📚 [Check out the full documentation to learn everything that Laravel Deploy Operations has to offer.][link_website]
+```bash
+php artisan vendor:publish --tag=feeds
+```
 
 ## Basic Usage
 
-Create your first operation using `php artisan make:operation` console command and define the actions it should
-perform.
+### Generate Feeds
+
+To generate feeds, create the classes of feeds and its element, add links to the file `config/feeds.php`, next call the
+console command:
+
+```bash
+php artisan feed:generate
+```
+
+### Feed
+
+Create a feed class. For example:
 
 ```php
-use App\Models\Article;
-use DragonCode\LaravelDeployOperations\Operation;
+namespace App\Feeds;
 
-return new class extends Operation {
-    public function __invoke(): void
+use App\Feeds\Items\UserFeedItem;use App\Models\User;use DragonCode\LaravelFeed\Feed;use DragonCode\LaravelFeed\FeedItem;use Illuminate\Database\Eloquent\Builder;use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
     {
-        Article::query()
-            ->lazyById(chunkSize: 100, column: 'id')
-            ->each->update(['is_active' => true]);
-
-        // and/or any actions...
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
     }
-};
+
+    // You can remove to overwrite of the method,
+    // if you do not need to wrap the elements into the general tag.
+    public function rootItem(): ?string
+    {
+        return 'users';
+    }
+
+    public function filename(): string
+    {
+        return 'users-feed.xml';
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
 ```
 
-Next, you can run the console command to start operations:
+### Feed Item
 
-```Bash
-php artisan operations
+Create a feed item class. For example:
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function attributes(): array
+    {
+        return [
+            'id' => $this->model->id,
+            'created_at' => $this->model->created_at->format('Y-m-d'),
+        ];
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'name'   => $this->model->name,
+            'email' => $this->model->email,
+
+            'header' => [
+                '@cdata' => '<h1>' . $this->model->name . '</h1>',
+            ],
+
+            'names' => [
+                'Good guy' => [
+                    '@attributes' => [
+                        'my-key-1' => 'my value 1',
+                        'my-key-2' => 'my value 2',
+                    ],
+
+                    'name'   => 'Luke Skywalker',
+                    'weapon' => 'Lightsaber',
+                ],
+
+                'Bad guy' => [
+                    'name' => [
+                        '@cdata' => '<h1>Sauron</h1>',
+                    ],
+
+                    'weapon' => 'Evil Eye',
+                ],
+            ],
+        ];
+    }
+}
 ```
 
-## Downloads Stats
+According to this example, the XML file with the following contents will be generated as a result:
 
-This project has gone the way of several names, and here are the number of downloads of each of them:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<users>
+    <user id="1" created_at="2025-08-30">
+        <name>John Doe</name>
+        <email>john.doe@example.com</email>
+        <header><![CDATA[<h1>John Doe</h1>]]></header>
+        <names>
+            <Good_guy my-key-1="my value 1" my-key-2="my value 2">
+                <name>Luke Skywalker</name>
+                <weapon>Lightsaber</weapon>
+            </Good_guy>
+            <Bad_guy>
+                <name><![CDATA[<h1>Sauron</h1>]]></name>
+                <weapon>Evil Eye</weapon>
+            </Bad_guy>
+        </names>
+    </user>
+</users>
+```
 
-- ![](https://img.shields.io/packagist/dt/dragon-code/laravel-deploy-operations?style=flat-square&label=dragon-code%2Flaravel-deploy-operations)
-- ![](https://img.shields.io/packagist/dt/dragon-code/laravel-actions?style=flat-square&label=dragon-code%2Flaravel-actions)
-- ![](https://img.shields.io/packagist/dt/dragon-code/laravel-migration-actions?style=flat-square&label=dragon-code%2Flaravel-migration-actions)
-- ![](https://img.shields.io/packagist/dt/andrey-helldar/laravel-actions?style=flat-square&label=andrey-helldar%2Flaravel-actions)
+### Laravel Idea Support
+
+You can also easily create the desired classes using the [Laravel Idea](http://laravel-idea.com) plugin
+for [PhpStorm](https://www.jetbrains.com/phpstorm/):
+
+![](.github/images/idea.png)
 
 ## License
 
 This package is licensed under the [MIT License](LICENSE).
 
 
-[badge_build]:          https://img.shields.io/github/actions/workflow/status/TheDragonCode/laravel-deploy-operations/tests.yml?style=flat-square
+[badge_build]:          https://img.shields.io/github/actions/workflow/status/TheDragonCode/laravel-feeds/tests.yml?style=flat-square
 
-[badge_downloads]:      https://img.shields.io/packagist/dt/dragon-code/laravel-deploy-operations.svg?style=flat-square
+[badge_downloads]:      https://img.shields.io/packagist/dt/dragon-code/laravel-feeds.svg?style=flat-square
 
-[badge_license]:        https://img.shields.io/packagist/l/dragon-code/laravel-deploy-operations.svg?style=flat-square
+[badge_license]:        https://img.shields.io/packagist/l/dragon-code/laravel-feeds.svg?style=flat-square
 
-[badge_stable]:         https://img.shields.io/github/v/release/TheDragonCode/laravel-deploy-operations?label=packagist&style=flat-square
+[badge_stable]:         https://img.shields.io/github/v/release/TheDragonCode/laravel-feeds?label=packagist&style=flat-square
 
-[link_build]:           https://github.com/TheDragonCode/laravel-deploy-operations/actions
+[link_build]:           https://github.com/TheDragonCode/laravel-feeds/actions
 
 [link_license]:         LICENSE
 
-[link_packagist]:       https://packagist.org/packages/dragon-code/laravel-deploy-operations
+[link_packagist]:       https://packagist.org/packages/dragon-code/laravel-feeds
 
 [link_website]:         https://deploy-operations.dragon-code.pro
