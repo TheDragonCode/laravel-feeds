@@ -7,10 +7,8 @@
 [![Github Workflow Status][badge_build]][link_build]
 [![License][badge_license]][link_license]
 
-> [!TIP]
->
-> **Laravel Feeds** is an easy and fast way of exporting a large amount of data to feeds for marketplaces and other
-> consumers.
+**Laravel Feeds** is an easy and fast way of exporting a large amount of data to feeds for marketplaces and other
+consumers.
 
 ## Installation
 
