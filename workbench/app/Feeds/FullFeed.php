@@ -15,7 +15,7 @@ use Workbench\App\Models\News;
 use function class_basename;
 use function now;
 
-class FilledFeed extends Feed
+class FullFeed extends Feed
 {
     public function builder(): Builder
     {
@@ -31,7 +31,7 @@ class FilledFeed extends Feed
 
     public function filename(): string
     {
-        return 'nested/filled.xml';
+        return 'nested/full.xml';
     }
 
     public function item(Model $model): FeedItem
