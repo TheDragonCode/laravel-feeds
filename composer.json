@@ -41,6 +41,7 @@
     "config": {
         "allow-plugins": {
             "ergebnis/composer-normalize": true,
+            "laravel/pint": true,
             "pestphp/pest-plugin": true
         }
     },
