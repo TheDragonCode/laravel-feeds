@@ -21,8 +21,8 @@
     "require-dev": {
         "dragon-code/codestyler": "^6.2",
         "orchestra/testbench": "^9.0 || ^10.0",
-        "pestphp/pest": "^4.0",
-        "pestphp/pest-plugin-laravel": "^4.0",
+        "pestphp/pest": "^3.0 || ^4.0",
+        "pestphp/pest-plugin-laravel": "^3.0 || ^4.0",
         "symfony/var-dumper": "^7.3"
     },
     "minimum-stability": "stable",
