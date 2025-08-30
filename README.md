@@ -42,6 +42,9 @@ for [PhpStorm](https://www.jetbrains.com/phpstorm/):
 # This will create a `app/Feeds/UserFeed.php` file
 php artisan make:feed User
 
+# This will create a `app/Feeds/UserFeed.php` and `app/Feeds/Items/UserFeedItem.php` files
+php artisan make:feed User --with-item
+
 # This will create a `app/Feeds/Items/UserFeedItem.php` file
 php artisan make:feed-item User
 ```
