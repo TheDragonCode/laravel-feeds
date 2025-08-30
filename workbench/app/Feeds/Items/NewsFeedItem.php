@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Workbench\App\Feeds\Items;
 
-use DragonCode\LaravelFeed\FeedItem;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 
 /** @property-read \Workbench\App\Models\News $model */
 class NewsFeedItem extends FeedItem

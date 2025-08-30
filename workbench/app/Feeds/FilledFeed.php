@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Workbench\App\Feeds;
 
-use DragonCode\LaravelFeed\Feed;
-use DragonCode\LaravelFeed\FeedItem;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Workbench\App\Feeds\Items\NewsFeedItem;

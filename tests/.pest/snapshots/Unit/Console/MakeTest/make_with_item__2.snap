@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Feeds\Items;
 
-use DragonCode\LaravelFeed\FeedItem;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 
 /** @property-read Illuminate\Foundation\Auth\User $model */
 class QweRtyFeedItem extends FeedItem

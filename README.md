@@ -96,8 +96,8 @@ namespace App\Feeds;
 
 use App\Feeds\Items\UserFeedItem;
 use App\Models\User;
-use DragonCode\LaravelFeed\Feed;
-use DragonCode\LaravelFeed\FeedItem;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -124,7 +124,7 @@ For example, we use this content for the Feed Item class:
 ```php
 namespace App\Feeds\Items;
 
-use DragonCode\LaravelFeed\FeedItem;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 
 /** @property-read \App\Models\User $model */
 class UserFeedItem extends FeedItem

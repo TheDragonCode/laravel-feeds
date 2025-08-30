@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DragonCode\LaravelFeed;
+namespace DragonCode\LaravelFeed\Feeds\Items;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 use function class_basename;
 
-abstract class FeedItem implements Arrayable
+class FeedItem implements Arrayable
 {
     protected ?string $name = null;
 

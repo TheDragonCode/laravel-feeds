@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Services;
 
-use DragonCode\LaravelFeed\Feed;
+use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Filesystem\Filesystem;
 

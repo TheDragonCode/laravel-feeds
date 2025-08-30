@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DummyNamespace;
 
-use DragonCode\LaravelFeed\FeedItem;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 
 /** @property-read NamespacedDummyUserModel $model */
 class DummyClass extends FeedItem
