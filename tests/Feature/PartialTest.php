@@ -2,11 +2,8 @@
 
 declare(strict_types=1);
 
-use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
 use Workbench\App\Data\NewsFakeData;
 use Workbench\App\Feeds\PartialFeed;
-
-use function Pest\Laravel\artisan;
 
 test('export', function (bool $pretty) {
     setPrettyXml($pretty);
@@ -17,10 +14,5 @@ test('export', function (bool $pretty) {
 
     createNews(...NewsFakeData::toArray());
 
-    $feed = app()->make(PartialFeed::class);
-
-    artisan(FeedGenerateCommand::class)->run();
-
-    expect($feed->path())->toBeReadableFile();
-    expect(file_get_contents($feed->path()))->toMatchSnapshot();
+    expectFeed(PartialFeed::class);
 })->with('boolean');
