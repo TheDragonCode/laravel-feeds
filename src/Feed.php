@@ -48,7 +48,7 @@ abstract class Feed
 
     public function filename(): string
     {
-        return $this->filename ??= Str::kebab(class_basename($this));
+        return $this->filename ??= Str::kebab(class_basename($this)) . '.xml';
     }
 
     public function path(): string
