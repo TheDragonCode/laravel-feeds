@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace DummyNamespace;
+namespace App\Feeds;
 
 use DragonCode\LaravelFeed\Feed;
 use DragonCode\LaravelFeed\FeedItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use NamespacedDummyUserModel;
+use Illuminate\Foundation\Auth\User;
 
-class DummyClass extends Feed
+class FooBarFeed extends Feed
 {
     public function builder(): Builder
     {
-        return DummyUser::query();
+        return User::query();
     }
 
     public function rootItem(): ?string
@@ -29,6 +29,6 @@ class DummyClass extends Feed
 
     public function item(Model $model): FeedItem
     {
-        return new Items\DummyUserFeedItem($model);
+        return new Items\UserFeedItem($model);
     }
 }

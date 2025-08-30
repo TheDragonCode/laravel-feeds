@@ -28,7 +28,7 @@ class FilledFeed extends Feed
 
     public function filename(): string
     {
-        return 'partial/feed.xml';
+        return 'nested/filled.xml';
     }
 
     public function item(Model $model): FeedItem

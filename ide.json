@@ -15,7 +15,9 @@
                         "path": "/stubs/feed.stub",
                         "parameters": {
                             "DummyNamespace": "${INPUT_FQN|namespace}",
-                            "DummyClass": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}"
+                            "DummyClass": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}",
+                            "NamespacedDummyUserModel": "App\\Models\\User",
+                            "DummyUser": "User"
                         }
                     }
                 }
@@ -35,7 +37,8 @@
                         "path": "/stubs/feed_item.stub",
                         "parameters": {
                             "DummyNamespace": "${INPUT_FQN|namespace}",
-                            "DummyClass": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}"
+                            "DummyClass": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}",
+                            "NamespacedDummyUserModel": "App\\Models\\User"
                         }
                     }
                 }
