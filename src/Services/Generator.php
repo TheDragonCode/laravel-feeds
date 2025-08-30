@@ -68,13 +68,13 @@ class Generator
 
     protected function performFooter($file, Feed $feed): void
     {
-        $value = $feed->footer();
+        $value = '';
 
         if ($name = $feed->root()->name) {
             $value .= "\n</$name>\n";
         }
 
-        $this->append($file, $value);
+        $this->append($file, $value . $feed->footer());
     }
 
     protected function makeRootAttributes(ElementData $item): string
