@@ -10,6 +10,13 @@
 **Laravel Feeds** is an easy and fast way of exporting a large amount of data to feeds for marketplaces and other
 consumers.
 
+> **🌟 Features**
+>
+> - Chunked queries to database
+> - Draft mode for a process
+> - Easy property mapping
+> - Generation of any XML (feeds, sitemaps, etc.)
+
 ## Installation
 
 To get the latest version of **Laravel Feeds**, simply require the project
@@ -160,9 +167,9 @@ According to this example, the XML file with the following contents will be gene
 </users>
 ```
 
-## Objects, attributes and more
+### Objects, attributes and more
 
-### Setting the name of the root element
+#### Setting the name of the root element
 
 ```php
 class UserFeed extends Feed
@@ -174,7 +181,7 @@ class UserFeed extends Feed
 }
 ```
 
-### Adding attributes for the main section
+#### Adding attributes for the main section
 
 ```php
 class UserFeedItem extends FeedItem
@@ -194,7 +201,7 @@ class UserFeedItem extends FeedItem
 }
 ```
 
-### Adding attributes for nested elements
+#### Adding attributes for nested elements
 
 > [!NOTE]
 >
@@ -241,7 +248,7 @@ class UserFeedItem extends FeedItem
 }
 ```
 
-### Header information
+#### Header information
 
 If it is necessary to change the file cap, override the `header` method in the feed class:
 
