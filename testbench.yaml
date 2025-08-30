@@ -9,7 +9,7 @@ migrations:
 workbench:
     install: false
     discovers:
-        web: false
+        web: true
         api: false
         config: true
         commands: false

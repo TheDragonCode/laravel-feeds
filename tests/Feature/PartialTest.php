@@ -5,20 +5,17 @@ declare(strict_types=1);
 use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
 use Workbench\App\Data\NewsFakeData;
 use Workbench\App\Feeds\FilledFeed;
-use Workbench\App\Models\News;
 
 use function Pest\Laravel\artisan;
 
 test('export', function (bool $pretty) {
     setPrettyXml($pretty);
 
-    News::factory()->count(5)->sequence(fn () => [
+    createNews(static fn () => [
         'updated_at' => fake()->dateTimeBetween(endDate: '-1 month'),
-    ])->createMany();
+    ]);
 
-    News::factory()->count(3)->sequence(
-        ...NewsFakeData::toArray()
-    )->createMany();
+    createNews(...NewsFakeData::toArray());
 
     $feed = app()->make(FilledFeed::class);
 
