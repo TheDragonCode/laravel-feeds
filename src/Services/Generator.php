@@ -8,11 +8,13 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Filesystem\Filesystem;
 
+use function collect;
 use function dirname;
 use function fclose;
 use function fopen;
 use function fwrite;
 use function implode;
+use function sprintf;
 
 class Generator
 {
@@ -55,7 +57,9 @@ class Generator
         $value = $feed->header();
 
         if ($item = $feed->rootItem()) {
-            $value .= "\n<$item>\n";
+            $value .= $feed->rootAttributes()
+                ? sprintf("\n<%s %s>\n", $item, $this->makeRootAttributes($feed))
+                : sprintf("\n<%s>\n", $item);
         }
 
         $this->append($file, $value);
@@ -70,6 +74,13 @@ class Generator
         }
 
         $this->append($file, $value);
+    }
+
+    protected function makeRootAttributes(Feed $feed): string
+    {
+        return collect($feed->rootAttributes())
+            ->map(fn (mixed $value, int|string $key) => sprintf('%s="%s"', $key, $value))
+            ->implode(' ');
     }
 
     protected function append($file, string $content): void
