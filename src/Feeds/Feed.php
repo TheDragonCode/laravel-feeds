@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DragonCode\LaravelFeed;
+namespace DragonCode\LaravelFeed\Feeds;
 
-use DragonCode\LaravelFeed\Items\ModelFeedItem;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -23,7 +23,7 @@ abstract class Feed
 
     public function item(Model $model): FeedItem
     {
-        return new ModelFeedItem($model);
+        return new FeedItem($model);
     }
 
     public function chunkSize(): int

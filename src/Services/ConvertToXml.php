@@ -6,7 +6,7 @@ namespace DragonCode\LaravelFeed\Services;
 
 use DOMDocument;
 use DOMElement;
-use DragonCode\LaravelFeed\FeedItem;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Container\Attributes\Config;
 
 use function htmlspecialchars;
