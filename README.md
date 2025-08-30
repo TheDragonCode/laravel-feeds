@@ -45,7 +45,12 @@ Create a feed class. For example:
 ```php
 namespace App\Feeds;
 
-use App\Feeds\Items\UserFeedItem;use App\Models\User;use DragonCode\LaravelFeed\Feed;use DragonCode\LaravelFeed\FeedItem;use Illuminate\Database\Eloquent\Builder;use Illuminate\Database\Eloquent\Model;
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feed;
+use DragonCode\LaravelFeed\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class UserFeed extends Feed
 {
