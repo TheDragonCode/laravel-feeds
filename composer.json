@@ -19,7 +19,7 @@
         "laravel/prompts": ">=0.3.6"
     },
     "require-dev": {
-        "dragon-code/codestyler": "^6.2",
+        "dragon-code/codestyler": "^6.3",
         "orchestra/testbench": "^9.0 || ^10.0",
         "pestphp/pest": "^3.0 || ^4.0",
         "pestphp/pest-plugin-laravel": "^3.0 || ^4.0",
