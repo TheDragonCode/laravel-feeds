@@ -13,17 +13,17 @@
     "require": {
         "php": "^8.2",
         "ext-dom": "*",
-        "illuminate/database": "^10.0 || ^11.0 || ^12.0",
-        "illuminate/filesystem": "^10.0 || ^11.0 || ^12.0",
-        "illuminate/support": "^10.0 || ^11.0 || ^12.0",
+        "illuminate/database": "^11.0 || ^12.0",
+        "illuminate/filesystem": "^11.0 || ^12.0",
+        "illuminate/support": "^11.0 || ^12.0",
         "laravel/prompts": ">=0.3.6"
     },
     "require-dev": {
         "dragon-code/codestyler": "^6.2",
-        "orchestra/testbench": "^8.0 || ^9.0 || ^10.0",
-        "pestphp/pest": "^3.0 || ^4.0",
-        "pestphp/pest-plugin-laravel": "^3.0 || ^4.0",
-        "symfony/var-dumper": "^6.0 || ^7.3"
+        "orchestra/testbench": "^9.0 || ^10.0",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "symfony/var-dumper": "^7.3"
     },
     "minimum-stability": "stable",
     "autoload": {
