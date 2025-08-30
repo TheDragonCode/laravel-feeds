@@ -226,6 +226,7 @@ class UserFeedItem extends FeedItem
 > - `@attributes`
 > - `@cdata`
 > - `@mixed`
+> - `@value`
 
 ```php
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
