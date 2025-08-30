@@ -12,7 +12,7 @@ use function Pest\Laravel\artisan;
 test('export', function (bool $pretty) {
     setPrettyXml($pretty);
 
-    News::factory()->count(3)->state(
+    News::factory()->count(3)->sequence(
         ...NewsFakeData::toArray()
     )->createMany();
 

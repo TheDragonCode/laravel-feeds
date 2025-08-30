@@ -12,11 +12,11 @@ use function Pest\Laravel\artisan;
 test('export', function (bool $pretty) {
     setPrettyXml($pretty);
 
-    News::factory()->count(5)->state(fn () => [
+    News::factory()->count(5)->sequence(fn () => [
         'updated_at' => fake()->dateTimeBetween(endDate: '-1 month'),
     ])->createMany();
 
-    News::factory()->count(3)->state(
+    News::factory()->count(3)->sequence(
         ...NewsFakeData::toArray()
     )->createMany();
 
