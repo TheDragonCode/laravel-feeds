@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Feeds;
 
+use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,9 +18,9 @@ class QweRtyFeed extends Feed
         return User::query();
     }
 
-    public function rootItem(): ?string
+    public function root(): ElementData
     {
-        return 'users';
+        return new ElementData('users');
     }
 
     public function filename(): string
@@ -29,6 +30,6 @@ class QweRtyFeed extends Feed
 
     public function item(Model $model): FeedItem
     {
-        return new Items\UserFeedItem($model);
+        return new Items\QweRtyFeedItem($model);
     }
 }

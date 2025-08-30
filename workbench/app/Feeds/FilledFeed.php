@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Workbench\App\Feeds;
 
+use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,9 +22,11 @@ class FilledFeed extends Feed
         return News::query()->where('updated_at', '>', now()->subDay());
     }
 
-    public function rootItem(): ?string
+    public function root(): ElementData
     {
-        return class_basename($this);
+        return new ElementData(
+            class_basename($this)
+        );
     }
 
     public function filename(): string
