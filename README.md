@@ -25,7 +25,26 @@ After that, publish the configuration file by call the console command:
 php artisan vendor:publish --tag=feeds
 ```
 
-## Basic Usage
+## Usage
+
+### Create Feeds and Feed Items
+
+#### Use a Laravel Idea plugin for PHP Storm
+
+You can also easily create the desired classes using the [Laravel Idea](http://laravel-idea.com) plugin
+for [PhpStorm](https://www.jetbrains.com/phpstorm/):
+
+![](.github/images/idea.png)
+
+#### Use Artisan
+
+```bash
+# This will create a `app/Feeds/UserFeed.php` file
+php artisan make:feed User
+
+# This will create a `app/Feeds/Items/UserFeedItem.php` file
+php artisan make:feed-item User
+```
 
 ### Generate Feeds
 
@@ -36,9 +55,38 @@ console command:
 php artisan feed:generate
 ```
 
-### Feed
+Each feed can be created in a certain folder of a certain storage.
 
-Create a feed class. For example:
+To indicate the storage, reduce the property of `$storage` in the feed class:
+
+```php
+class UserFeed extends Feed
+{
+    protected string $storage = 'public';
+}
+```
+
+By default, `public`.
+
+The path to the file inside the storage is indicated in the `filiname` method:
+
+```php
+class UserFeed extends Feed
+{
+    public function filename(): string
+    {
+        return 'your/path/may/be/here.xml';
+    }
+}
+```
+
+By default, the class name in `kebab-case` is used. For example, `user-feed.xml` for `UserFeed` class.
+
+### Filling
+
+#### Feed
+
+For example, we use this content for the Feed class:
 
 ```php
 namespace App\Feeds;
@@ -78,9 +126,9 @@ class UserFeed extends Feed
 }
 ```
 
-### Feed Item
+#### Feed Item
 
-Create a feed item class. For example:
+For example, we use this content for the Feed Item class:
 
 ```php
 namespace App\Feeds\Items;
@@ -155,12 +203,100 @@ According to this example, the XML file with the following contents will be gene
 </users>
 ```
 
-### Laravel Idea Support
+## Objects, attributes and more
 
-You can also easily create the desired classes using the [Laravel Idea](http://laravel-idea.com) plugin
-for [PhpStorm](https://www.jetbrains.com/phpstorm/):
+### Setting the name of the root element
 
-![](.github/images/idea.png)
+```php
+class UserFeed extends Feed
+{
+    public function rootItem(): ?string
+    {
+        return 'users';
+    }
+}
+```
+
+### Adding attributes for the main section
+
+```php
+class UserFeedItem extends FeedItem
+{
+    public function attributes(): array
+    {
+        return [
+            'id' => $this->model->id,
+            'created_at' => $this->model->created_at->format('Y-m-d'),
+        ];
+    }
+
+    public function toArray(): array
+    {
+        // ...
+    }
+}
+```
+
+### Adding attributes for nested elements
+
+> [!NOTE]
+>
+> Reserved names are:
+>
+> - `@attributes`
+> - `@cdata`
+> - `@mixed`
+
+```php
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'   => $this->model->name,
+            'email' => $this->model->email,
+
+            'header' => [
+                '@cdata' => '<h1>' . $this->model->name . '</h1>',
+            ],
+
+            'names' => [
+                'Good guy' => [
+                    '@attributes' => [
+                        'my-key-1' => 'my value 1',
+                        'my-key-2' => 'my value 2',
+                    ],
+
+                    'name'   => 'Luke Skywalker',
+                    'weapon' => 'Lightsaber',
+                ],
+
+                'Bad guy' => [
+                    'name' => [
+                        '@cdata' => '<h1>Sauron</h1>',
+                    ],
+
+                    'weapon' => 'Evil Eye',
+                ],
+            ],
+        ];
+    }
+}
+```
+
+### Header information
+
+If it is necessary to change the file cap, override the `header` method in the feed class:
+
+```php
+class UserFeed extends Feed
+{
+    public function header(): string
+    {
+        return '<?xml version="1.0" encoding="UTF-8"?>';
+    }
+}
+```
 
 ## License
 

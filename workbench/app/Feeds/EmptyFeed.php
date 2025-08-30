@@ -21,9 +21,4 @@ class EmptyFeed extends Feed
     {
         return class_basename($this);
     }
-
-    public function filename(): string
-    {
-        return 'empty/feed.xml';
-    }
 }

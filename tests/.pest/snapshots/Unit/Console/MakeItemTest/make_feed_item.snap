@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace DummyNamespace;
+namespace App\Feeds\Items;
 
 use DragonCode\LaravelFeed\FeedItem;
 
-/** @property-read NamespacedDummyUserModel $model */
-class DummyClass extends FeedItem
+/** @property-read Illuminate\Foundation\Auth\User $model */
+class FooBarFeedItem extends FeedItem
 {
     public function toArray(): array
     {
