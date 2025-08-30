@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
 use Workbench\App\Feeds\EmptyFeed;
 
