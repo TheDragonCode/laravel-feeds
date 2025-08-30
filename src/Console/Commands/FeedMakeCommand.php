@@ -16,6 +16,26 @@ class FeedMakeCommand extends GeneratorCommand
 
     protected $type = 'Feed';
 
+    public function handle(): void
+    {
+        parent::handle();
+
+        if ($this->option('with-item')) {
+            $this->makeFeedItem(
+                $this->argument('name'),
+                (bool) $this->option('force')
+            );
+        }
+    }
+
+    protected function makeFeedItem(string $name, bool $force): void
+    {
+        $this->call(FeedItemMakeCommand::class, [
+            'name'    => $name,
+            '--force' => $force,
+        ]);
+    }
+
     protected function getStub(): string
     {
         return __DIR__ . '/../../../stubs/feed.stub';
@@ -29,6 +49,7 @@ class FeedMakeCommand extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
+            ['with-item', 'wi', InputOption::VALUE_NONE, 'Create the class with feed item'],
             ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the feed already exists'],
         ];
     }

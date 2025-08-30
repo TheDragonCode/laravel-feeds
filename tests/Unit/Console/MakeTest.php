@@ -16,3 +16,18 @@ test('make feed', function () {
 
     expect('FooBar')->toMatchFeedSnapshot();
 });
+
+test('make with item', function () {
+    deleteFeed('QweRty');
+    deleteFeed('Items/QweRty');
+
+    artisan(FeedMakeCommand::class, [
+        'name'        => 'QweRty',
+        '--with-item' => true,
+        '--force'     => true,
+    ])->assertSuccessful()->run();
+
+    expect('QweRty')
+        ->toMatchFeedSnapshot()
+        ->toMatchFeedItemSnapshot();
+});

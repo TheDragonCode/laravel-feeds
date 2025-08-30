@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use DragonCode\LaravelFeed\Feed;
+use DragonCode\LaravelFeed\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
+
+class QweRtyFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function rootItem(): ?string
+    {
+        return 'users';
+    }
+
+    public function filename(): string
+    {
+        return 'my-feed.xml';
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new Items\UserFeedItem($model);
+    }
+}

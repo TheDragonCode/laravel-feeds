@@ -9,23 +9,12 @@ use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-use function str_replace;
-
 #[AsCommand('make:feed-item', 'Create a new feed item')]
 class FeedItemMakeCommand extends GeneratorCommand
 {
     use InteractsWithName;
 
     protected $type = 'FeedItem';
-
-    protected function buildClass($name): string
-    {
-        return str_replace(
-            ['DummyUser'],
-            $this->userProviderModel(),
-            parent::buildClass($name)
-        );
-    }
 
     protected function getStub(): string
     {
