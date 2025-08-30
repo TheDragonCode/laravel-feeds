@@ -54,9 +54,9 @@
     },
     "scripts": {
         "post-update-cmd": [
-            "vendor/bin/codestyle pint 8.2",
-            "vendor/bin/codestyle editorconfig",
-            "composer normalize"
+            "vendor/bin/codestyle pint 8.2 --ansi",
+            "vendor/bin/codestyle editorconfig --ansi",
+            "composer normalize --ansi"
         ],
         "post-autoload-dump": [
             "@clear",
@@ -64,10 +64,14 @@
         ],
         "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
-        "style": "vendor/bin/pint --parallel",
+        "style": "vendor/bin/pint --parallel --ansi",
         "test": [
             "@clear",
-            "@php vendor/bin/pest"
+            "@php vendor/bin/pest --colors=always"
+        ],
+        "test:update": [
+            "@clear",
+            "@php vendor/bin/pest --colors=always --update-snapshots"
         ]
     }
 }
