@@ -7,8 +7,6 @@ namespace Workbench\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
-use function json_encode;
-
 class ProductFactory extends Factory
 {
     public function definition(): array
@@ -24,11 +22,11 @@ class ProductFactory extends Factory
             'quantity' => fake()->numberBetween(0, 10),
             'currency' => fake()->currencyCode(),
 
-            'images' => json_encode([
+            'images' => [
                 fake()->imageUrl(),
                 fake()->imageUrl(),
                 fake()->imageUrl(),
-            ]),
+            ],
         ];
     }
 }

@@ -8,11 +8,14 @@ use DOMDocument;
 use DOMElement;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Container\Attributes\Config;
+use Illuminate\Support\Str;
 
 use function htmlspecialchars;
 use function is_array;
+use function is_bool;
 use function preg_replace;
 use function str_replace;
+use function str_starts_with;
 
 class ConvertToXml
 {
@@ -54,6 +57,7 @@ class ConvertToXml
                 $this->isAttributes($key) => $this->setAttributes($parent, $value),
                 $this->isCData($key)      => $this->setCData($parent, $value),
                 $this->isMixed($key)      => $this->setMixed($parent, $value),
+                $this->isArray($key)      => $this->setItemsArray($parent, $value, $key),
                 default                   => $this->setItems($parent, $key, $value),
             };
         }
@@ -72,6 +76,11 @@ class ConvertToXml
     protected function isMixed(string $key): bool
     {
         return $key === '@mixed';
+    }
+
+    protected function isArray(string $key): bool
+    {
+        return str_starts_with($key, '@');
     }
 
     protected function createElement(string $name, bool|float|int|string|null $value = ''): DOMElement
@@ -101,6 +110,15 @@ class ConvertToXml
         $element->appendChild($fragment);
     }
 
+    protected function setItemsArray(DOMElement $parent, mixed $value, string $key): void
+    {
+        $key = Str::substr($key, 1);
+
+        foreach ($value as $item) {
+            $this->setItems($parent, $key, $item);
+        }
+    }
+
     protected function setItems(DOMElement $parent, string $key, mixed $value): void
     {
         $element = $this->createElement($key, is_array($value) ? '' : $this->convertValue($value));
@@ -117,13 +135,17 @@ class ConvertToXml
         return $this->document->saveXML($item);
     }
 
-    protected function convertKey(string $key): string
+    protected function convertKey(int|string $key): string
     {
-        return str_replace(' ', '_', $key);
+        return str_replace(' ', '_', (string) $key);
     }
 
     protected function convertValue(bool|float|int|string|null $value): string
     {
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+
         return $this->removeControlCharacters(
             htmlspecialchars((string) $value)
         );

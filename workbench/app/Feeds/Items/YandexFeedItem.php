@@ -19,7 +19,7 @@ class YandexFeedItem extends FeedItem
         return [
             'id' => $this->model->id,
 
-            'available' => ! empty($this->model->quantity) ? 'true' : 'false',
+            'available' => ! empty($this->model->quantity),
 
             'type' => 'vendor.model',
         ];
@@ -40,7 +40,7 @@ class YandexFeedItem extends FeedItem
             'currencyId' => 'RUR',
             'vendor'     => $this->model->brand,
 
-            // 'picture' => $this->model->images,
+            '@picture' => $this->model->images,
         ];
     }
 }
