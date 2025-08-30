@@ -34,6 +34,10 @@ php artisan vendor:publish --tag=feeds
 
 ## Usage
 
+> [!TIP]
+>
+> You can find examples of implementations in the [Wiki](https://github.com/TheDragonCode/laravel-feeds/wiki).
+
 ### Create Feeds and Feed Items
 
 #### Use a Laravel Idea plugin for PHP Storm
