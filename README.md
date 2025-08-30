@@ -107,18 +107,6 @@ class UserFeed extends Feed
             ->where('created_at', '>', now()->subYear());
     }
 
-    // You can remove to overwrite of the method,
-    // if you do not need to wrap the elements into the general tag.
-    public function rootItem(): ?string
-    {
-        return 'users';
-    }
-
-    public function filename(): string
-    {
-        return 'users-feed.xml';
-    }
-
     public function item(Model $model): FeedItem
     {
         return new UserFeedItem($model);
@@ -138,14 +126,6 @@ use DragonCode\LaravelFeed\FeedItem;
 /** @property-read \App\Models\User $model */
 class UserFeedItem extends FeedItem
 {
-    public function attributes(): array
-    {
-        return [
-            'id' => $this->model->id,
-            'created_at' => $this->model->created_at->format('Y-m-d'),
-        ];
-    }
-
     public function toArray(): array
     {
         return [
@@ -153,27 +133,11 @@ class UserFeedItem extends FeedItem
             'email' => $this->model->email,
 
             'header' => [
+                '@attributes' => [
+                    'my-key-1' => 'my value 1',
+                    'my-key-2' => 'my value 2',
+                ],
                 '@cdata' => '<h1>' . $this->model->name . '</h1>',
-            ],
-
-            'names' => [
-                'Good guy' => [
-                    '@attributes' => [
-                        'my-key-1' => 'my value 1',
-                        'my-key-2' => 'my value 2',
-                    ],
-
-                    'name'   => 'Luke Skywalker',
-                    'weapon' => 'Lightsaber',
-                ],
-
-                'Bad guy' => [
-                    'name' => [
-                        '@cdata' => '<h1>Sauron</h1>',
-                    ],
-
-                    'weapon' => 'Evil Eye',
-                ],
             ],
         ];
     }
@@ -185,20 +149,10 @@ According to this example, the XML file with the following contents will be gene
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <users>
-    <user id="1" created_at="2025-08-30">
+    <user>
         <name>John Doe</name>
         <email>john.doe@example.com</email>
-        <header><![CDATA[<h1>John Doe</h1>]]></header>
-        <names>
-            <Good_guy my-key-1="my value 1" my-key-2="my value 2">
-                <name>Luke Skywalker</name>
-                <weapon>Lightsaber</weapon>
-            </Good_guy>
-            <Bad_guy>
-                <name><![CDATA[<h1>Sauron</h1>]]></name>
-                <weapon>Evil Eye</weapon>
-            </Bad_guy>
-        </names>
+        <header my-key-1="my value 1" my-key-2="my value 2"><![CDATA[<h1>John Doe</h1>]]></header>
     </user>
 </users>
 ```
