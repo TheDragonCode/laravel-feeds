@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Services;
 
-use DragonCode\LaravelFeed\Items\Feed;
+use DragonCode\LaravelFeed\Feed;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Filesystem\Filesystem;
 
@@ -37,7 +37,7 @@ class Generator
 
     protected function performItem($file, Feed $feed): void
     {
-        $feed->builder()->chunk($feed->chunkSize(), function (Collection $models) use ($file, $feed) {
+        $feed->builder()->chunkById($feed->chunkSize(), function (Collection $models) use ($file, $feed) {
             $content = [];
 
             foreach ($models as $model) {

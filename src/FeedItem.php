@@ -23,6 +23,11 @@ abstract class FeedItem implements Arrayable
         return $this->name ??= Str::kebab(class_basename($this->model));
     }
 
+    public function attributes(): array
+    {
+        return [];
+    }
+
     public function toArray(): array
     {
         return $this->model->toArray();

@@ -19,7 +19,3 @@ workbench:
         - create-sqlite-db
         - db-wipe
         - migrate-fresh
-    sync:
-        -   from: storage
-            to: workbench/storage
-            reverse: true

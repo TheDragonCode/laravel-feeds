@@ -27,11 +27,22 @@ class ConvertToXml
 
     public function convert(FeedItem $item): string
     {
-        $box = $this->createElement($item->name());
+        $box = $this->performBox($item);
 
         $this->performItem($box, $item->toArray());
 
         return $this->toXml($box);
+    }
+
+    protected function performBox(FeedItem $item): DOMElement
+    {
+        $element = $this->createElement($item->name());
+
+        if ($values = $item->attributes()) {
+            $this->setAttributes($element, $values);
+        }
+
+        return $element;
     }
 
     protected function performItem(DOMElement $parent, array $items): void
@@ -63,15 +74,15 @@ class ConvertToXml
         return $key === '@mixed';
     }
 
-    protected function createElement(string $name, string $value = ''): DOMElement
+    protected function createElement(string $name, bool|float|int|string|null $value = ''): DOMElement
     {
-        return $this->document->createElement($name, $value);
+        return $this->document->createElement($name, $this->convertValue($value));
     }
 
     protected function setAttributes(DOMElement $element, array $attributes): void
     {
         foreach ($attributes as $key => $value) {
-            $element->setAttribute($key, $value);
+            $element->setAttribute($key, $this->convertValue($value));
         }
     }
 

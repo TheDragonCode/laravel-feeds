@@ -12,10 +12,11 @@
     ],
     "require": {
         "php": "^8.2",
+        "ext-dom": "*",
         "illuminate/database": "^10.0 || ^11.0 || ^12.0",
         "illuminate/filesystem": "^10.0 || ^11.0 || ^12.0",
         "illuminate/support": "^10.0 || ^11.0 || ^12.0",
-        "laravel/prompts": ">=0.3.6", "ext-dom": "*"
+        "laravel/prompts": ">=0.3.6"
     },
     "require-dev": {
         "dragon-code/codestyler": "^6.2",
@@ -56,13 +57,13 @@
             "vendor/bin/codestyle editorconfig",
             "composer normalize"
         ],
-        "style": "vendor/bin/pint --parallel",
         "post-autoload-dump": [
             "@clear",
             "@prepare"
         ],
         "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "style": "vendor/bin/pint --parallel",
         "test": [
             "@clear",
             "@php vendor/bin/pest"

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace DragonCode\LaravelFeed\Items;
+namespace DragonCode\LaravelFeed;
 
-use DragonCode\LaravelFeed\FeedItem;
+use DragonCode\LaravelFeed\Items\ModelFeedItem;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
