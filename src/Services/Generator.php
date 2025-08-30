@@ -7,13 +7,8 @@ namespace DragonCode\LaravelFeed\Services;
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Filesystem\Filesystem;
 
 use function collect;
-use function dirname;
-use function fclose;
-use function fopen;
-use function fwrite;
 use function implode;
 use function sprintf;
 
@@ -27,15 +22,14 @@ class Generator
     public function feed(Feed $feed): void
     {
         $file = $this->openFile(
-            $filename = $this->draft($feed)
+            $path = $feed->path()
         );
 
         $this->performHeader($file, $feed);
         $this->performItem($file, $feed);
         $this->performFooter($file, $feed);
 
-        $this->closeFile($file);
-        $this->release($feed, $filename);
+        $this->release($file, $path);
     }
 
     protected function performItem($file, Feed $feed): void
@@ -86,39 +80,16 @@ class Generator
 
     protected function append($file, string $content): void
     {
-        if (! empty($content)) {
-            fwrite($file, $content);
-        }
+        $this->filesystem->append($file, $content);
     }
 
-    protected function release(Feed $feed, string $draft): void
+    protected function release($file, string $path): void
     {
-        if ($this->filesystem->exists($feed->path())) {
-            $this->filesystem->delete($feed->path());
-        }
-
-        $this->filesystem->move($draft, $feed->path());
+        $this->filesystem->release($file, $path);
     }
 
-    protected function openFile(string $filename)
+    protected function openFile(string $path)
     {
-        $this->ensureDirectory($filename);
-
-        return fopen($filename, 'ab');
-    }
-
-    protected function closeFile($file): void
-    {
-        fclose($file);
-    }
-
-    protected function ensureDirectory(string $filename): void
-    {
-        $this->filesystem->ensureDirectoryExists(dirname($filename));
-    }
-
-    protected function draft(Feed $feed): string
-    {
-        return $feed->path() . '.draft';
+        return $this->filesystem->open($path);
     }
 }

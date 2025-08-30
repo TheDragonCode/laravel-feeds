@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
 use Workbench\App\Data\NewsFakeData;
-use Workbench\App\Feeds\FilledFeed;
+use Workbench\App\Feeds\PartialFeed;
 
 use function Pest\Laravel\artisan;
 
@@ -17,7 +17,7 @@ test('export', function (bool $pretty) {
 
     createNews(...NewsFakeData::toArray());
 
-    $feed = app()->make(FilledFeed::class);
+    $feed = app()->make(PartialFeed::class);
 
     artisan(FeedGenerateCommand::class)->run();
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<FilledFeed>
+<PartialFeed>
 <news>
   <record_title>[NEWS]:Some 1</record_title>
   <record_content>Some content 1</record_content>
@@ -45,4 +45,4 @@
     </Bad_guy>
   </with_attributes>
 </news>
-</FilledFeed>
+</PartialFeed>
