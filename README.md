@@ -74,6 +74,8 @@ Each feed can be created in a certain folder of a certain storage.
 To indicate the storage, reduce the property of `$storage` in the feed class:
 
 ```php
+use DragonCode\LaravelFeed\Feeds\Feed;
+
 class UserFeed extends Feed
 {
     protected string $storage = 'public';
@@ -85,6 +87,8 @@ By default, `public`.
 The path to the file inside the storage is indicated in the `filiname` method:
 
 ```php
+use DragonCode\LaravelFeed\Feeds\Feed;
+
 class UserFeed extends Feed
 {
     public function filename(): string
@@ -176,18 +180,17 @@ According to this example, the XML file with the following contents will be gene
 #### Setting the root element
 
 ```php
+use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Feeds\Feed;
+
 class UserFeed extends Feed
 {
-    public function rootItem(): ?string
+    public function root(): ElementData
     {
-        return 'users';
-    }
-    
-    public function rootAttributes(): array
-    {
-        return [
-            'foo' => 'some value',
-        ];
+        return new ElementData(
+            name: 'users',
+            attributes: ['foo' => 'some value']
+        );
     }
 }
 ```
@@ -195,6 +198,8 @@ class UserFeed extends Feed
 #### Adding attributes for the main section
 
 ```php
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
 class UserFeedItem extends FeedItem
 {
     public function attributes(): array
@@ -223,6 +228,8 @@ class UserFeedItem extends FeedItem
 > - `@mixed`
 
 ```php
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
 class UserFeedItem extends FeedItem
 {
     public function toArray(): array
@@ -264,6 +271,8 @@ class UserFeedItem extends FeedItem
 If it is necessary to change the file cap, override the `header` method in the feed class:
 
 ```php
+use DragonCode\LaravelFeed\Feeds\Feed;
+
 class UserFeed extends Feed
 {
     public function header(): string

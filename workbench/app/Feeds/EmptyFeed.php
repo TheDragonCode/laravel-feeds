@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Workbench\App\Feeds;
 
+use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Database\Eloquent\Builder;
 use Workbench\App\Models\News;
@@ -17,8 +18,10 @@ class EmptyFeed extends Feed
         return News::query()->where('id', '<', 0);
     }
 
-    public function rootItem(): ?string
+    public function root(): ElementData
     {
-        return class_basename($this);
+        return new ElementData(
+            class_basename($this)
+        );
     }
 }

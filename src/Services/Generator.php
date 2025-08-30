@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Services;
 
+use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Filesystem\Filesystem;
@@ -56,10 +57,10 @@ class Generator
     {
         $value = $feed->header();
 
-        if ($item = $feed->rootItem()) {
-            $value .= $feed->rootAttributes()
-                ? sprintf("\n<%s %s>\n", $item, $this->makeRootAttributes($feed))
-                : sprintf("\n<%s>\n", $item);
+        if ($name = $feed->root()->name) {
+            $value .= ! empty($feed->root()->attributes)
+                ? sprintf("\n<%s %s>\n", $name, $this->makeRootAttributes($feed->root()))
+                : sprintf("\n<%s>\n", $name);
         }
 
         $this->append($file, $value);
@@ -69,16 +70,16 @@ class Generator
     {
         $value = $feed->footer();
 
-        if ($item = $feed->rootItem()) {
-            $value .= "\n</$item>\n";
+        if ($name = $feed->root()->name) {
+            $value .= "\n</$name>\n";
         }
 
         $this->append($file, $value);
     }
 
-    protected function makeRootAttributes(Feed $feed): string
+    protected function makeRootAttributes(ElementData $item): string
     {
-        return collect($feed->rootAttributes())
+        return collect($item->attributes)
             ->map(fn (mixed $value, int|string $key) => sprintf('%s="%s"', $key, $value))
             ->implode(' ');
     }
