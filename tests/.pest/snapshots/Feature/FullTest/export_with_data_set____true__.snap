@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<users>
-<user id="1">
-  <name>John Doe</name>
-  <email>john.doe@example.com</email>
-  <header><![CDATA[<h1>John Doe</h1>]]></header>
-  <names>
+<FilledFeed>
+<news>
+  <record_title>[NEWS]:Some 1</record_title>
+  <record_content>Some content 1</record_content>
+  <extra>Some extra data</extra>
+  <with_attributes>
     <Good_guy my-key-1="my value 1" my-key-2="my value 2">
       <name>Luke Skywalker</name>
       <weapon>Lightsaber</weapon>
@@ -13,13 +13,13 @@
       <name><![CDATA[<h1>Sauron</h1>]]></name>
       <weapon>Evil Eye</weapon>
     </Bad_guy>
-  </names>
-</user>
-<user id="2">
-  <name>John Doe</name>
-  <email>john.doe@example.com</email>
-  <header><![CDATA[<h1>John Doe</h1>]]></header>
-  <names>
+  </with_attributes>
+</news>
+<news>
+  <record_title>[NEWS]:Some 1</record_title>
+  <record_content>Some content 1</record_content>
+  <extra>Some extra data</extra>
+  <with_attributes>
     <Good_guy my-key-1="my value 1" my-key-2="my value 2">
       <name>Luke Skywalker</name>
       <weapon>Lightsaber</weapon>
@@ -28,13 +28,13 @@
       <name><![CDATA[<h1>Sauron</h1>]]></name>
       <weapon>Evil Eye</weapon>
     </Bad_guy>
-  </names>
-</user>
-<user id="3">
-  <name>John Doe</name>
-  <email>john.doe@example.com</email>
-  <header><![CDATA[<h1>John Doe</h1>]]></header>
-  <names>
+  </with_attributes>
+</news>
+<news>
+  <record_title>[NEWS]:Some 1</record_title>
+  <record_content>Some content 1</record_content>
+  <extra>Some extra data</extra>
+  <with_attributes>
     <Good_guy my-key-1="my value 1" my-key-2="my value 2">
       <name>Luke Skywalker</name>
       <weapon>Lightsaber</weapon>
@@ -43,6 +43,6 @@
       <name><![CDATA[<h1>Sauron</h1>]]></name>
       <weapon>Evil Eye</weapon>
     </Bad_guy>
-  </names>
-</user>
-</users>
+  </with_attributes>
+</news>
+</FilledFeed>
