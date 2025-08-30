@@ -49,7 +49,7 @@ class FeedMakeCommand extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
-            ['with-item', 'wi', InputOption::VALUE_NONE, 'Create the class with feed item'],
+            ['with-item', 'i', InputOption::VALUE_NONE, 'Create the class with feed item'],
             ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the feed already exists'],
         ];
     }
