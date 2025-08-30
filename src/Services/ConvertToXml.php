@@ -19,11 +19,14 @@ use function str_starts_with;
 
 class ConvertToXml
 {
+    protected DOMDocument $document;
+
     public function __construct(
         #[Config('feeds.pretty')]
         bool $pretty,
-        protected DOMDocument $document
     ) {
+        $this->document = new DOMDocument('1.0', 'UTF-8');
+
         $this->document->formatOutput       = $pretty;
         $this->document->preserveWhiteSpace = ! $pretty;
     }
