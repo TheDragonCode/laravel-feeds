@@ -16,8 +16,8 @@
   </with_attributes>
 </news>
 <news>
-  <record_title>[NEWS]:Some 1</record_title>
-  <record_content>Some content 1</record_content>
+  <record_title>[NEWS]:Some 2</record_title>
+  <record_content>Some content 2</record_content>
   <extra>Some extra data</extra>
   <with_attributes>
     <Good_guy my-key-1="my value 1" my-key-2="my value 2">
@@ -31,8 +31,8 @@
   </with_attributes>
 </news>
 <news>
-  <record_title>[NEWS]:Some 1</record_title>
-  <record_content>Some content 1</record_content>
+  <record_title>[NEWS]:Some 3</record_title>
+  <record_content>Some content 3</record_content>
   <extra>Some extra data</extra>
   <with_attributes>
     <Good_guy my-key-1="my value 1" my-key-2="my value 2">
