@@ -9,7 +9,7 @@
             "files": [
                 {
                     "appNamespace": "Feeds",
-                    "name": "${CURRENT_TIME|format:yyyy_MM_dd_HHmmss}_${INPUT_CLASS|className|replace: ,_|upperCamelCase|snakeCase}.php",
+                    "name": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}.php",
                     "template": {
                         "type": "stub",
                         "path": "/stubs/feed.stub",
@@ -31,7 +31,7 @@
             "files": [
                 {
                     "appNamespace": "Feeds\\Items",
-                    "name": "${CURRENT_TIME|format:yyyy_MM_dd_HHmmss}_${INPUT_CLASS|className|replace: ,_|upperCamelCase|snakeCase}.php",
+                    "name": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}.php",
                     "template": {
                         "type": "stub",
                         "path": "/stubs/feed_item.stub",
