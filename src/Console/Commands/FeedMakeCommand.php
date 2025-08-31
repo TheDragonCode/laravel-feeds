@@ -20,8 +20,15 @@ class FeedMakeCommand extends GeneratorCommand
     {
         parent::handle();
 
-        if ($this->option('with-item')) {
+        if ($this->option('item')) {
             $this->makeFeedItem(
+                $this->argument('name'),
+                (bool) $this->option('force')
+            );
+        }
+
+        if ($this->option('info')) {
+            $this->makeFeedInfo(
                 $this->argument('name'),
                 (bool) $this->option('force')
             );
@@ -31,6 +38,14 @@ class FeedMakeCommand extends GeneratorCommand
     protected function makeFeedItem(string $name, bool $force): void
     {
         $this->call(FeedItemMakeCommand::class, [
+            'name'    => $name,
+            '--force' => $force,
+        ]);
+    }
+
+    protected function makeFeedInfo(string $name, bool $force): void
+    {
+        $this->call(FeedInfoMakeCommand::class, [
             'name'    => $name,
             '--force' => $force,
         ]);
@@ -49,7 +64,8 @@ class FeedMakeCommand extends GeneratorCommand
     protected function getOptions(): array
     {
         return [
-            ['with-item', 'i', InputOption::VALUE_NONE, 'Create the class with feed item'],
+            ['item', 't', InputOption::VALUE_NONE, 'Create the class with feed item'],
+            ['info', 'i', InputOption::VALUE_NONE, 'Create the class with feed info'],
             ['force', 'f', InputOption::VALUE_NONE, 'Create the class even if the feed already exists'],
         ];
     }

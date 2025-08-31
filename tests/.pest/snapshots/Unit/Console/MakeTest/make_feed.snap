@@ -6,6 +6,7 @@ namespace App\Feeds;
 
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,11 @@ class FooBarFeed extends Feed
     public function root(): ElementData
     {
         return new ElementData('users');
+    }
+
+    public function info(): FeedInfo
+    {
+        return new FeedInfo;
     }
 
     public function filename(): string
