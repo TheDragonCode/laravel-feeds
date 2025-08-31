@@ -10,10 +10,6 @@ expect()->extend('toMatchFeedSnapshot', function () {
     return $this;
 });
 
-
-
-
-
 expect()->extend('toMatchFeedItemSnapshot', function () {
     $content = file_get_contents(feedPath('Items/' . $this->value . 'FeedItem'));
 
