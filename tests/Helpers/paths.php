@@ -14,3 +14,10 @@ function feedPath(string $name): string
 
     return app_path('Feeds/' . $name . '.php');
 }
+
+function resolvePath(string $path): string
+{
+    return windows_os()
+        ? str_replace('/', '\\', $path)
+        : str_replace('\\', '/', $path);
+}

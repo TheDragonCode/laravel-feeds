@@ -13,9 +13,9 @@ test('make feed', function () {
         'name'    => 'FooBar',
         '--force' => true,
     ])
-        ->expectsOutputToContain('app\Feeds\FooBarFeed.php] created successfully')
-        ->doesntExpectOutputToContain('app\Feeds\Items')
-        ->doesntExpectOutputToContain('app\Feeds\Info')
+        ->expectsOutputToContain(resolvePath('app/Feeds/FooBarFeed.php] created successfully'))
+        ->doesntExpectOutputToContain(resolvePath('app/Feeds/Items'))
+        ->doesntExpectOutputToContain(resolvePath('app/Feeds/Info'))
         ->assertSuccessful()
         ->run();
 
@@ -31,9 +31,9 @@ test('make with item', function () {
         '--item'  => true,
         '--force' => true,
     ])
-        ->expectsOutputToContain('app\Feeds\QweRtyFeed.php] created successfully')
-        ->expectsOutputToContain('app\Feeds\Items\QweRtyFeedItem.php] created successfully')
-        ->doesntExpectOutputToContain('app\Feeds\Info')
+        ->expectsOutputToContain(resolvePath('app/Feeds/QweRtyFeed.php] created successfully'))
+        ->expectsOutputToContain(resolvePath('app/Feeds/Items/QweRtyFeedItem.php] created successfully'))
+        ->doesntExpectOutputToContain(resolvePath('app/Feeds/Info'))
         ->assertSuccessful()
         ->run();
 
@@ -51,9 +51,9 @@ test('make with info', function () {
         '--info'  => true,
         '--force' => true,
     ])
-        ->expectsOutputToContain('app\Feeds\QweRtyFeed.php] created successfully')
-        ->doesntExpectOutputToContain('app\Feeds\Items\QweRtyFeedItem.php] created successfully')
-        ->expectsOutputToContain('app\Feeds\Info\QweRtyFeedInfo')
+        ->expectsOutputToContain(resolvePath('app/Feeds/QweRtyFeed.php] created successfully'))
+        ->doesntExpectOutputToContain(resolvePath('app/Feeds/Items/QweRtyFeedItem.php] created successfully'))
+        ->expectsOutputToContain(resolvePath('app/Feeds/Info/QweRtyFeedInfo'))
         ->assertSuccessful()
         ->run();
 
