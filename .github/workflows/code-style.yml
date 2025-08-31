@@ -8,6 +8,6 @@ permissions: write-all
 
 jobs:
     Styler:
-        uses: TheDragonCode/.github/.github/workflows/code-style.yml@copilot/fix-f72fad4a-fa22-4792-9243-4789ccffdd01
+        uses: TheDragonCode/.github/.github/workflows/code-style.yml@main
         with:
             node: false
