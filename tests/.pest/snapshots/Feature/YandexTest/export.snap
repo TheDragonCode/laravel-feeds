@@ -1,19 +1,20 @@
 <!DOCTYPE yml_catalog SYSTEM "shops.dtd">
 <yml_catalog date="2025-08-30T21:14:49+00:00">
     <shop>
-        <name>Laravel</name>
-        <company>Laravel</company>
-        <url>http://localhost</url>
-        <platform>Laravel</platform>
-        <email>test@example.com</email>
-        <currencies>
-            <currency id="RUR" rate="1"/>
-        </currencies>
-        <categories>
-            <category id="41">Домашние майки</category>
-            <category id="539">Велосипедки</category>
-            <category id="44">Ремни</category>
-        </categories>
+<name>Laravel</name>
+<company>Laravel</company>
+<platform>Laravel</platform>
+<url>http://localhost</url>
+<email>test@example.com</email>
+<currencies>
+  <currency id="RUR" rate="1"/>
+</currencies>
+<categories>
+  <category id="41">Домашние майки</category>
+  <category id="539">Велосипедки</category>
+  <category id="44">Ремни</category>
+</categories>
+
 <offers>
 <offer id="1" available="true" type="vendor.model">
   <url>http://localhost/products/GD-PRDCT-1</url>
