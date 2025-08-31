@@ -20,5 +20,4 @@ vendor/
 composer.lock
 package-lock.json
 
-playground.php
-playground.ps1
+playground/
