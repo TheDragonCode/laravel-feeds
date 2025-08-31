@@ -45,6 +45,27 @@
                     }
                 }
             ]
+        },
+        {
+            "id": "dragon-code.xml-feeds.info",
+            "name": "Create XML Feed Info",
+            "classSuffix": "FeedInfo",
+            "regex": ".+",
+            "files": [
+                {
+                    "appNamespace": "Feeds\\Info",
+                    "name": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}.php",
+                    "template": {
+                        "type": "stub",
+                        "path": "/stubs/feed_info.stub",
+                        "fallbackPath": "stubs/feed_info.stub",
+                        "parameters": {
+                            "DummyNamespace": "${INPUT_FQN|namespace}",
+                            "DummyClass": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}"
+                        }
+                    }
+                }
+            ]
         }
     ]
 }

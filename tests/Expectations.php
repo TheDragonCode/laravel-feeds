@@ -17,3 +17,11 @@ expect()->extend('toMatchFeedItemSnapshot', function () {
 
     return $this;
 });
+
+expect()->extend('toMatchFeedInfoSnapshot', function () {
+    $content = file_get_contents(feedPath('Info/' . $this->value . 'FeedInfo'));
+
+    expect($content)->toMatchSnapshot();
+
+    return $this;
+});

@@ -8,6 +8,7 @@ use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Database\Eloquent\Collection;
 
+use function blank;
 use function collect;
 use function implode;
 use function sprintf;
@@ -26,6 +27,8 @@ class Generator
         );
 
         $this->performHeader($file, $feed);
+        $this->performInfo($file, $feed);
+        $this->performRoot($file, $feed);
         $this->performItem($file, $feed);
         $this->performFooter($file, $feed);
 
@@ -38,7 +41,7 @@ class Generator
             $content = [];
 
             foreach ($models as $model) {
-                $content[] = $this->converter->convert(
+                $content[] = $this->converter->convertItem(
                     $feed->item($model)
                 );
             }
@@ -49,13 +52,29 @@ class Generator
 
     protected function performHeader($file, Feed $feed): void
     {
-        $value = $feed->header();
+        $this->append($file, $feed->header());
+    }
 
-        if ($name = $feed->root()->name) {
-            $value .= ! empty($feed->root()->attributes)
-                ? sprintf("\n<%s %s>\n", $name, $this->makeRootAttributes($feed->root()))
-                : sprintf("\n<%s>\n", $name);
+    protected function performInfo($file, Feed $feed): void
+    {
+        if (blank($info = $feed->info()->toArray())) {
+            return;
         }
+
+        $value = $this->converter->convertInfo($info);
+
+        $this->append($file, PHP_EOL . $value);
+    }
+
+    protected function performRoot($file, Feed $feed): void
+    {
+        if (! $name = $feed->root()->name) {
+            return;
+        }
+
+        $value = ! empty($feed->root()->attributes)
+            ? sprintf("\n<%s %s>\n", $name, $this->makeRootAttributes($feed->root()))
+            : sprintf("\n<%s>\n", $name);
 
         $this->append($file, $value);
     }

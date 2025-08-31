@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Services;
 
 use DOMDocument;
-use DOMElement;
+use DOMNode;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Str;
@@ -31,7 +31,7 @@ class ConvertToXml
         $this->document->preserveWhiteSpace = ! $pretty;
     }
 
-    public function convert(FeedItem $item): string
+    public function convertItem(FeedItem $item): string
     {
         $box = $this->performBox($item);
 
@@ -40,7 +40,16 @@ class ConvertToXml
         return $this->toXml($box);
     }
 
-    protected function performBox(FeedItem $item): DOMElement
+    public function convertInfo(array $info): string
+    {
+        $box = $this->document->createDocumentFragment();
+
+        $this->performItem($box, $info);
+
+        return $this->toXml($box);
+    }
+
+    protected function performBox(FeedItem $item): DOMNode
     {
         $element = $this->createElement($item->name());
 
@@ -51,7 +60,7 @@ class ConvertToXml
         return $element;
     }
 
-    protected function performItem(DOMElement $parent, array $items): void
+    protected function performItem(DOMNode $parent, array $items): void
     {
         foreach ($items as $key => $value) {
             $key = $this->convertKey($key);
@@ -92,26 +101,26 @@ class ConvertToXml
         return str_starts_with($key, '@');
     }
 
-    protected function createElement(string $name, bool|float|int|string|null $value = ''): DOMElement
+    protected function createElement(string $name, bool|float|int|string|null $value = ''): DOMNode
     {
         return $this->document->createElement($name, $this->convertValue($value));
     }
 
-    protected function setAttributes(DOMElement $element, array $attributes): void
+    protected function setAttributes(DOMNode $element, array $attributes): void
     {
         foreach ($attributes as $key => $value) {
             $element->setAttribute($key, $this->convertValue($value));
         }
     }
 
-    protected function setCData(DOMElement $element, string $value): void
+    protected function setCData(DOMNode $element, string $value): void
     {
         $element->appendChild(
             $this->document->createCDATASection($value)
         );
     }
 
-    protected function setMixed(DOMElement $element, string $value): void
+    protected function setMixed(DOMNode $element, string $value): void
     {
         $fragment = $this->document->createDocumentFragment();
         $fragment->appendXML($value);
@@ -119,7 +128,7 @@ class ConvertToXml
         $element->appendChild($fragment);
     }
 
-    protected function setItemsArray(DOMElement $parent, $value, string $key): void
+    protected function setItemsArray(DOMNode $parent, $value, string $key): void
     {
         $key = Str::substr($key, 1);
 
@@ -128,7 +137,7 @@ class ConvertToXml
         }
     }
 
-    protected function setItems(DOMElement $parent, string $key, mixed $value): void
+    protected function setItems(DOMNode $parent, string $key, mixed $value): void
     {
         $element = $this->createElement($key, is_array($value) ? '' : $this->convertValue($value));
 
@@ -139,14 +148,14 @@ class ConvertToXml
         $parent->appendChild($element);
     }
 
-    protected function setRaw(DOMElement $parent, mixed $value): void
+    protected function setRaw(DOMNode $parent, mixed $value): void
     {
         $parent->nodeValue = $this->convertValue($value);
     }
 
-    protected function toXml(DOMElement $item): string
+    protected function toXml(DOMNode $item): string
     {
-        return $this->document->saveXML($item);
+        return $this->document->saveXML($item, LIBXML_COMPACT);
     }
 
     protected function convertKey(int|string $key): string

@@ -195,6 +195,39 @@ class UserFeed extends Feed
 }
 ```
 
+#### Setting the head info
+
+In some cases, you need to add various information to the beginning of the file.
+To do this, use the `info` method:
+
+```php
+use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+
+class UserFeed extends Feed
+{
+    public function info(): FeedInfo
+    {
+        return new FeedInfo();
+    }
+}
+```
+
+```php
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+
+class UserFeedInfo extends FeedInfo
+{
+    public function toArray(): array
+    {
+        return [
+            // ...
+        ];
+    }
+}
+```
+
 #### Adding attributes for the main section
 
 ```php

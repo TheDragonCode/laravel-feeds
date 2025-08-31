@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Feeds;
 
 use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Builder;
@@ -45,6 +46,11 @@ abstract class Feed
     public function root(): ElementData
     {
         return new ElementData;
+    }
+
+    public function info(): FeedInfo
+    {
+        return new FeedInfo;
     }
 
     public function filename(): string
