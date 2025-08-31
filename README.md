@@ -84,7 +84,7 @@ class UserFeed extends Feed
 
 By default, `public`.
 
-The path to the file inside the storage is indicated in the `filiname` method:
+The path to the file inside the storage is indicated in the `filename` method:
 
 ```php
 use DragonCode\LaravelFeed\Feeds\Feed;
