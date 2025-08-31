@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DummyNamespace;
+namespace App\Feeds;
 
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
@@ -10,13 +10,13 @@ use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use NamespacedDummyUserModel;
+use Illuminate\Foundation\Auth\User;
 
-class DummyClass extends Feed
+class QweRtyFeed extends Feed
 {
     public function builder(): Builder
     {
-        return DummyUser::query();
+        return User::query();
     }
 
     public function root(): ElementData
@@ -36,6 +36,6 @@ class DummyClass extends Feed
 
     public function item(Model $model): FeedItem
     {
-        return new Items\DummyClassItem($model);
+        return new Items\QweRtyFeedItem($model);
     }
 }

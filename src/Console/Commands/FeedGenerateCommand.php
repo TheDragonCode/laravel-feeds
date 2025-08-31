@@ -8,6 +8,7 @@ use DragonCode\LaravelFeed\Services\Generator;
 use Illuminate\Console\Command;
 use Laravel\Prompts\Concerns\Colors;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Input\InputArgument;
 
 use function app;
 use function config;
@@ -28,6 +29,10 @@ class FeedGenerateCommand extends Command
 
     protected function feedable(): array
     {
+        if ($feed = $this->argument('class')) {
+            return [$feed => true];
+        }
+
         return config('feeds.channels');
     }
 
@@ -38,5 +43,12 @@ class FeedGenerateCommand extends Command
         }
 
         return $this->yellow($message);
+    }
+
+    protected function getArguments(): array
+    {
+        return [
+            ['class', InputArgument::OPTIONAL, 'The feed class for generation'],
+        ];
     }
 }
