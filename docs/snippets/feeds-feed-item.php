@@ -20,7 +20,7 @@ class UserFeedItem extends FeedItem
                     'my-key-1' => 'my value 1',
                     'my-key-2' => 'my value 2',
                 ],
-                '@cdata'      => '<h1>' . $this->model->name . '</h1>',
+                '@cdata' => '<h1>' . $this->model->name . '</h1>',
             ],
         ];
     }

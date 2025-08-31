@@ -25,12 +25,12 @@ class InstagramFeed extends Feed
         $url  = config('app.url');
 
         return <<<XML
-<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
-<channel>
-    <title>$name</title>
-    <link>$url</link>
+            <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+            <channel>
+                <title>$name</title>
+                <link>$url</link>
 
-XML;
+            XML;
     }
 
     public function footer(): string
