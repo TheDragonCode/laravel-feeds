@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Generation" id="generation">
+
+    <link-summary>Information on creating feed classes and their dependencies</link-summary>
+    <card-summary>Information on creating feed classes and their dependencies</card-summary>
+    <web-summary>Information on creating feed classes and their dependencies</web-summary>
+
+    <show-structure depth="2" />
+
+    <snippet id="generate">
+        <p>
+            To generate feeds, create the classes of feeds and its element, add links to the file
+            <code>%config-filename%</code>, next call the console command:
+        </p>
+
+        <code-block lang="bash">
+            %command-generate%
+        </code-block>
+    </snippet>
+
+    <p>
+        Each feed can be created in a certain folder of a certain storage.
+    </p>
+
+    <p>
+        To indicate the storage, override the property of <code>$storage</code> in the feed class:
+    </p>
+
+    <code-block lang="php" src="generation-feed-storage.php" include-lines="5-" />
+
+    <p>
+        By default, storage is <code>public</code>.
+    </p>
+
+    <p>
+        The path to the file inside the storage is indicated in the <code>filename</code> method:
+    </p>
+
+    <code-block lang="php" src="generation-feed-filename.php" include-lines="5-" />
+
+    <p>
+        By default, the class name in <code>kebab-case</code> is used.
+        For example, <code>user-feed.xml</code> for <code>UserFeed</code> class.
+    </p>
+</topic>

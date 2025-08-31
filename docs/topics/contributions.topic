@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Contribution Guide" id="contributions">
+
+    <link-summary>Guide to helping developers develop %instance% projects</link-summary>
+    <card-summary>Guide to helping developers develop %instance% projects</card-summary>
+    <web-summary>Guide to helping developers develop %instance% projects</web-summary>
+
+    <show-structure depth="2" />
+
+    <p>
+        Contributions are
+        <format style="bold">welcome</format>
+        and will be fully
+        <format style="bold">credited</format>
+        .
+    </p>
+    <p>
+        We accept contributions through Pull Requests on
+        <a href="https://github.com/TheDragonCode">all projects</a>
+        of our organization.
+    </p>
+
+    <chapter title="Code Style" id="code_style">
+        <p>
+            <format style="bold">%instance%</format>
+            follows the
+            <a href="https://www.php-fig.org/per/coding-style/">PER-3</a> coding standard and the
+            <a href="https://www.php-fig.org/psr/psr-4/">PSR-4</a> autoloading standard.
+        </p>
+        <p>
+            To apply the formatting of the code style, follow the console command:
+        </p>
+        <code-block lang="bash">
+            composer style
+        </code-block>
+    </chapter>
+
+    <chapter title="Code of Conduct" id="code_of_conduct">
+        <p>
+            The Laravel code of conduct is derived from the
+            <a href="https://www.contributor-covenant.org/version/2/1/code_of_conduct/">Contributor Covenant</a>
+            code of conduct.
+            Any violations of the code of conduct may be reported to
+            <a href="mailto:%abuse-helldar-email%">
+                %abuse-helldar-name%
+            </a>:
+        </p>
+
+        <list>
+            <li>Participants will be tolerant of opposing views.</li>
+            <li>Participants must ensure that their language and actions are free of personal attacks and disparaging
+                personal remarks.
+            </li>
+            <li>When interpreting the words and actions of others, participants should always assume good intentions.
+            </li>
+            <li>Behavior that can be reasonably considered harassment will not be tolerated.</li>
+        </list>
+    </chapter>
+</topic>

@@ -1,0 +1,38 @@
+name: Tests
+
+on:
+    push:
+        branches-ignore:
+            - main
+    pull_request:
+
+permissions: read-all
+
+env:
+    COMPOSER_TOKEN: ${{ secrets.COMPOSER_TOKEN }}
+    INSTANCE: docs/laravel-feeds
+    ARTIFACT_DOCS: webHelpLARAVEL-FEEDS2-all.zip
+    BUILDER_VERSION: 2025.04.8412
+
+jobs:
+    test:
+        name: Build application
+        runs-on: ubuntu-latest
+
+        steps:
+            -   uses: actions/checkout@v4
+                with:
+                    fetch-depth: 0
+
+            -   name: Build documentation
+                uses: JetBrains/writerside-github-action@v4
+                with:
+                    instance: ${{ env.INSTANCE }}
+                    artifact: ${{ env.ARTIFACT_DOCS }}
+                    docker-version: ${{ env.BUILDER_VERSION }}
+
+
+            -   name: Test documentation
+                uses: JetBrains/writerside-checker-action@v1
+                with:
+                    instance: ${{ env.INSTANCE }}

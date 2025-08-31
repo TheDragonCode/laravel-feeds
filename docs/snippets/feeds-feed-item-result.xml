@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<users>
+    <user>
+        <name>John Doe</name>
+        <email>john.doe@example.com</email>
+        <header my-key-1="my value 1" my-key-2="my value 2"><![CDATA[<h1>John Doe</h1>]]></header>
+    </user>
+</users>

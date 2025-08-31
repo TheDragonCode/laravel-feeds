@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Advanced Usage" id="advanced-usage">
+
+    <link-summary>Information on creating feed classes and their dependencies</link-summary>
+    <card-summary>Information on creating feed classes and their dependencies</card-summary>
+    <web-summary>Information on creating feed classes and their dependencies</web-summary>
+
+    <show-structure depth="3" />
+
+    <note>
+        <p>
+            <format style="bold">Reserved words:</format>
+        </p>
+        <list>
+            <li><code>@attributes</code></li>
+            <li><code>@cdata</code></li>
+            <li><code>@mixed</code></li>
+            <li><code>@value</code></li>
+        </list>
+    </note>
+
+    <chapter title="Setup of the root element" id="setup_of_the_root_element">
+        <code-block lang="php" src="advanced-setup-root.php" include-lines="5-" />
+    </chapter>
+
+    <chapter title="Head information" id="head_information">
+        <p>
+            In some cases, you need to add various information to the beginning of the file.
+            To do this, use the <code>info</code> method:
+        </p>
+
+        <code-block lang="php" src="advanced-head-feed.php" include-lines="5-" />
+        <code-block lang="php" src="advanced-head-info.php" include-lines="5-" />
+    </chapter>
+
+    <chapter title="Header information" id="header_information">
+        <p>
+            If it is necessary to change the file cap, override the <code>header</code> method in the feed class:
+        </p>
+
+        <code-block lang="php" src="advanced-header.php" include-lines="5-" />
+    </chapter>
+
+    <chapter title="Adding attributes to an item" id="adding_attributes_to_an_item">
+        <code-block lang="php" src="advanced-main-attributes.php" include-lines="5-" />
+    </chapter>
+
+    <chapter title="Adding attributes for nested elements" id="adding_attributes_for_nested_elements">
+        <code-block lang="php" src="advanced-nested.php" include-lines="5-" />
+    </chapter>
+
+    <chapter title="Array of elements" id="array_of_elements">
+        <p>
+            In some cases, you need to place an array of elements with the same names.
+        </p>
+
+        <p>
+            To do this, add a <code>@</code> symbol to the beginning of the key name:
+        </p>
+
+        <code-block lang="php" src="advanced-dog-char.php" include-lines="5-" />
+
+        <p>
+            Result:
+        </p>
+
+        <code-block lang="xml" src="advanced-doc-char-result.xml" />
+
+        <p>
+            You can also use values for such elements. To insert them, use the reserved word <code>@value</code>.
+        </p>
+
+        <p>
+            For example:
+        </p>
+
+        <code-block lang="php" src="advanced-value-word.php" include-lines="5-" />
+
+        <p>
+            Result:
+        </p>
+
+        <code-block lang="xml" src="advanced-value-word-result.xml" />
+
+    </chapter>
+</topic>

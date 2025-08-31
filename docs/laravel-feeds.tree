@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE instance-profile
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
+
+<instance-profile
+        id="laravel-feeds"
+        name="Laravel Feeds"
+        start-page="introduction.topic"
+>
+    <toc-element toc-title="Prologue">
+        <toc-element topic="contributions.topic" />
+        <toc-element toc-title="License" topic="license.topic" />
+    </toc-element>
+    <toc-element topic="introduction.topic">
+        <toc-element topic="installation.topic" />
+        <toc-element topic="feeds.topic" />
+        <toc-element topic="generation.topic">
+        </toc-element>
+        <toc-element topic="configuration.topic" />
+        <toc-element topic="advanced-usage.topic" />
+    </toc-element>
+    <toc-element toc-title="Receipts">
+        <toc-element topic="sitemap.topic" />
+        <toc-element topic="instagram.topic" />
+        <toc-element topic="yandex.topic" />
+    </toc-element>
+</instance-profile>

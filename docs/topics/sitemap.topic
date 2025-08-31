@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Sitemap" id="sitemap">
+
+    <link-summary>Sitemap generation recipe</link-summary>
+    <card-summary>Sitemap generation recipe</card-summary>
+    <web-summary>Sitemap generation recipe</web-summary>
+
+    <show-structure depth="2" />
+
+    <chapter title="Create files" id="create_files">
+        <code-block lang="bash">
+            %command-make-simple% Sitemaps/Product -%command-shortcut-item%
+        </code-block>
+    </chapter>
+
+    <chapter title="Filling the feed" id="filling_the_feed">
+        <code-block lang="php" src="receipt-sitemap-feed.php" />
+    </chapter>
+
+    <chapter title="Filling the feed item" id="filling_the_feed_item">
+        <code-block lang="php" src="receipt-sitemap-feed-item.php" />
+    </chapter>
+
+    <chapter title="Feed generation activation" id="feed_generation_activation">
+        <p>
+            Add a link to the feed class in the <code>%config-filename%</code> file:
+        </p>
+
+        <code-block lang="php" src="receipt-sitemap-config.php" include-lines="5-" />
+    </chapter>
+
+    <chapter title="Links" id="links">
+        <p>
+            Don't forget to add a link to the folder with site maps in the
+            <a href="https://github.com/laravel/laravel/blob/12.x/config/filesystems.php#L76-L78">config/filesystems.php</a> configuration file:
+        </p>
+
+        <code-block lang="php" src="receipt-sitemap-links.php" include-lines="5-" />
+
+        <p>
+            After that, run the console command:
+        </p>
+
+        <code-block lang="bash">
+            php artisan storage:link
+        </code-block>
+    </chapter>
+
+    <chapter title="Generate feed" id="generate_feed">
+        <include from="snippet-generate.topic" element-id="feed_generate" />
+    </chapter>
+
+    <chapter title="Adding a link to the general sitemap.xml file" id="adding_a_link_to_the_general_sitemap_xml_file">
+        <code-block lang="xml" src="receipt-sitemap-root.xml" />
+    </chapter>
+
+    <chapter title="Result" id="result">
+        <code-block lang="xml" src="receipt-sitemap-result.xml" />
+    </chapter>
+
+</topic>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Installation" id="installation">
+
+    <link-summary>Information on installing the %instance% application</link-summary>
+    <card-summary>Information on installing the %instance% application</card-summary>
+    <web-summary>Information on installing the %instance% application</web-summary>
+
+    <show-structure depth="2" />
+
+    <p>
+        To get the latest version of
+        <format style="bold">%instance%</format>
+        , simply require the project using
+        <a href="https://getcomposer.org">Composer</a>:
+    </p>
+
+    <code-block lang="bash">
+        composer require %package-name%
+    </code-block>
+
+    <include from="configuration.topic" element-id="publish_config" />
+    <include from="feeds.topic" element-id="create_feeds" />
+
+    <chapter title="Generation" id="generation">
+        <include from="generation.topic" element-id="generate" />
+    </chapter>
+</topic>

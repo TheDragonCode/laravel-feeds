@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic SYSTEM "https://resources.jetbrains.com/writerside/1.0/html-entities.dtd">
+<topic
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        is-library="true"
+        id="snippet-generate"
+        title="Generate Command">
+
+    <snippet id="feed_generate">
+        <p>
+            Now you can generate a feed using a console command:
+        </p>
+
+        <code-block lang="bash">
+            %command-generate%
+        </code-block>
+    </snippet>
+</topic>

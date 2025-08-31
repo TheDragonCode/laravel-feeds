@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds\Items\Sitemaps;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+use function route;
+
+/** @property-read \App\Models\Product $model */
+class ProductFeedItem extends FeedItem
+{
+    public function name(): string
+    {
+        return 'url';
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'loc' => route('products.show', $this->model->slug),
+
+            'lastmod' => $this->model->updated_at->toIso8601String(),
+
+            'priority' => 0.9,
+        ];
+    }
+}
