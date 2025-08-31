@@ -54,6 +54,7 @@ class FeedMakeCommand extends GeneratorCommand
     protected function getStub(): string
     {
         return __DIR__ . '/../../../stubs/feed.stub';
+        
     }
 
     protected function getDefaultNamespace($rootNamespace): string
