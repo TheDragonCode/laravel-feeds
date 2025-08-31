@@ -18,7 +18,7 @@ class FeedInfoMakeCommand extends GeneratorCommand
 
     protected function getStub(): string
     {
-        return __DIR__ . '/../../../stubs/feed_info.php';
+        return __DIR__ . '/../../../stubs/feed_info.stub';
     }
 
     protected function getDefaultNamespace($rootNamespace): string
