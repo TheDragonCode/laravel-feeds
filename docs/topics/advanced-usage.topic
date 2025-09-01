@@ -6,9 +6,9 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Advanced Usage" id="advanced-usage">
 
-    <link-summary>Information on creating feed classes and their dependencies</link-summary>
-    <card-summary>Information on creating feed classes and their dependencies</card-summary>
-    <web-summary>Information on creating feed classes and their dependencies</web-summary>
+    <link-summary>Extended use of %instance%</link-summary>
+    <card-summary>Extended use of %instance%</card-summary>
+    <web-summary>Extended use of %instance%</web-summary>
 
     <show-structure depth="3" />
 

@@ -6,9 +6,9 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Sitemap" id="sitemap">
 
-    <link-summary>Sitemap generation recipe</link-summary>
-    <card-summary>Sitemap generation recipe</card-summary>
-    <web-summary>Sitemap generation recipe</web-summary>
+    <link-summary>Recipe for creating a sitemap</link-summary>
+    <card-summary>Recipe for creating a sitemap</card-summary>
+    <web-summary>Recipe for creating a sitemap</web-summary>
 
     <show-structure depth="2" />
 

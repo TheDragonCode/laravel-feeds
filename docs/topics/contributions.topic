@@ -6,9 +6,9 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Contribution Guide" id="contributions">
 
-    <link-summary>Guide to helping developers develop %instance% projects</link-summary>
-    <card-summary>Guide to helping developers develop %instance% projects</card-summary>
-    <web-summary>Guide to helping developers develop %instance% projects</web-summary>
+    <link-summary>Instructions for %instance% project developers</link-summary>
+    <card-summary>Instructions for %instance% project developers</card-summary>
+    <web-summary>Instructions for %instance% project developers</web-summary>
 
     <show-structure depth="2" />
 
