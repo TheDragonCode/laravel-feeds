@@ -7,11 +7,22 @@ use Illuminate\Filesystem\Filesystem;
 function deleteFile(string $filename): void
 {
     app(Filesystem::class)->delete(
-        app_path($filename)
+        $filename
     );
 }
 
-function deleteFeed(string $name): void
+function deleteFeed(string $feedName): void
 {
-    deleteFile(feedPath($name));
+    $path = app_path(
+        feedPath($feedName)
+    );
+
+    deleteFile($path);
+}
+
+function deleteFeedResult(string $feedClass): void
+{
+    deleteFile(
+        app($feedClass)->path()
+    );
 }

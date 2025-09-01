@@ -13,7 +13,9 @@ function expectFeed(string $feed): void
 {
     $instance = app($feed);
 
-    artisan(FeedGenerateCommand::class)->assertSuccessful()->run();
+    artisan(FeedGenerateCommand::class, [
+        'class' => $feed,
+    ])->assertSuccessful()->run();
 
     expect($instance->path())->toBeReadableFile();
     expect(file_get_contents($instance->path()))->toMatchSnapshot();
