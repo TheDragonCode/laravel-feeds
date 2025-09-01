@@ -6,9 +6,9 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Create Feeds" id="create-feeds" help-id="make-feeds;create-feeds;feeds">
 
-    <link-summary>Information on creating feed classes and their dependencies</link-summary>
-    <card-summary>Information on creating feed classes and their dependencies</card-summary>
-    <web-summary>Information on creating feed classes and their dependencies</web-summary>
+    <link-summary>Instructions for creating and filling feed, feed items, and feed info classes</link-summary>
+    <card-summary>Instructions for creating and filling feed, feed items, and feed info classes</card-summary>
+    <web-summary>Instructions for creating and filling feed, feed items, and feed info classes</web-summary>
 
     <show-structure depth="3" />
 
@@ -33,7 +33,8 @@
             </code-block>
 
             <p>
-                As a result of executing the console command, the file <code>app/Feeds/UserFeed.php</code> will be created.
+                As a result of executing the console command, the file
+                <code>app/Feeds/UserFeed.php</code> will be created.
             </p>
 
             <p>

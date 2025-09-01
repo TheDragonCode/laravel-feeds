@@ -17,7 +17,7 @@
 
         <spotlight>
             <a href="installation.topic" type="development" />
-            <a href="configuration.topic" type="settings" />
+            <a href="installation.topic#configuration" type="settings" />
         </spotlight>
 
 

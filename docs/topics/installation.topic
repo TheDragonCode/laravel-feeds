@@ -6,9 +6,9 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Installation" id="installation">
 
-    <link-summary>Information on installing the %instance% application</link-summary>
-    <card-summary>Information on installing the %instance% application</card-summary>
-    <web-summary>Information on installing the %instance% application</web-summary>
+    <link-summary>Information on installing and configuring %instance%</link-summary>
+    <card-summary>Information on installing and configuring %instance%</card-summary>
+    <web-summary>Information on installing and configuring %instance%</web-summary>
 
     <show-structure depth="2" />
 
@@ -24,8 +24,12 @@
     </code-block>
 
     <chapter title="Configuration" id="configuration">
+        <link-summary>Information on configuring %instance%</link-summary>
+        <card-summary>Information on configuring %instance%</card-summary>
+
         <chapter title="Publish" id="publish">
             <snippet id="publish_config">
+
                 <p>
                     You can publish a <code>%config-filename%</code> configuration file using the console command:
                 </p>
