@@ -1,6 +1,7 @@
 # 📃 Laravel Feeds
 
-![the dragon code laravel feeds](https://preview.dragon-code.pro/the-dragon-code/xml-feeds.svg?brand=laravel&mode=dark)
+![the dragon code laravel feeds](docs/images/social-logo.png#gh-light-mode-only)
+![the dragon code laravel feeds](docs/images/social-logo_dark.png#gh-dark-mode-only)
 
 [![Stable Version][badge_stable]][link_packagist]
 [![Total Downloads][badge_downloads]][link_packagist]
