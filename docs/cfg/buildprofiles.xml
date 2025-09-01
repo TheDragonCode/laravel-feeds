@@ -1,0 +1,43 @@
+<buildprofiles xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/build-profiles.xsd"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <variables>
+        <algolia-api-key>be22e8bf7afc7bcd53f07ce638374654</algolia-api-key>
+        <algolia-id>HIITWOZYBN</algolia-id>
+        <algolia-index>laravel-feeds</algolia-index>
+        <generate-canonicals>true</generate-canonicals>
+        <header-logo>logo.svg</header-logo>
+        <locale-code>en_US</locale-code>
+        <color-preset>contrast</color-preset>
+        <primary-color>frozen</primary-color>
+        <web-root>https://feeds.dragon-code.pro</web-root>
+        <enable-contribution>true</enable-contribution>
+        <code-soft-wrap>true</code-soft-wrap>
+        <contribute-url>
+            https://github.com/TheDragonCode/laravel-feeds/edit/main/docs/
+        </contribute-url>
+        <custom-favicons>
+            favicon.svg,favicon.svg,favicon.svg,favicon.svg
+        </custom-favicons>
+        <analytics-head-script-file>
+            analytics.html
+        </analytics-head-script-file>
+    </variables>
+    <build-profile instance="laravel-feeds">
+        <variables>
+            <noindex-content>false</noindex-content>
+            <product-web-url>https://feeds.dragon-code.pro/</product-web-url>
+        </variables>
+    </build-profile>
+    <sitemap priority="0.5" change-frequency="weekly" />
+    <footer>
+        <social type="github" href="https://github.com/TheDragonCode/laravel-feeds">
+            GitHub
+        </social>
+        <link href="https://boosty.to/dragon-code">
+            Boosty
+        </link>
+        <link href="https://github.com/TheDragonCode/laravel-feeds/issues">
+            Issues
+        </link>
+    </footer>
+</buildprofiles>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Configuration" id="configuration">
+
+    <link-summary>Detailed information on setting up packages</link-summary>
+    <card-summary>Detailed information on setting up packages</card-summary>
+    <web-summary>Detailed information on setting up packages</web-summary>
+
+    <show-structure depth="2" />
+
+    <chapter title="Publish" id="publish">
+        <snippet id="publish_config">
+            <p>
+                You can publish a <code>%config-filename%</code> configuration file using the console command:
+            </p>
+
+            <code-block lang="bash">
+            php artisan vendor:publish --tag="%package-tags%"
+        </code-block>
+        </snippet>
+
+        <p>
+            This is the contents of the published <code>%config-filename%</code> file:
+        </p>
+
+        <code-block
+                lang="php"
+                src="%config-url%"
+                include-lines="5-"
+                collapsed-title="Show configuration"
+                collapsible="true"
+        />
+    </chapter>
+
+    <chapter title="Channels" id="channels">
+        <p>
+            This setting contains information about the generated feeds.
+            They can be both turned on and turned off depending on the environment or other conditions.
+        </p>
+
+        <code-block lang="ini" src="config-channels.ini" />
+    </chapter>
+
+    <chapter title="Pretty" id="pretty">
+        <p>
+            This setting indicates in what form the XML records should be exported - using or without formatting.
+        </p>
+
+        <chapter title="When `pretty` is true" id="when_pretty_is_true">
+            <code-block lang="xml" src="config-pretty-true.xml" />
+        </chapter>
+
+        <chapter title="When `pretty` is false" id="when_pretty_is_false">
+            <code-block lang="xml" src="config-pretty-false.xml" />
+        </chapter>
+    </chapter>
+</topic>

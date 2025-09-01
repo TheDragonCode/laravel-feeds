@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rules SYSTEM "https://resources.jetbrains.com/writerside/1.0/redirection-rules.dtd">
+<rules>
+    <!-- format is as follows
+    <rule id="<unique id>">
+        <accepts>page.html</accepts>
+    </rule>
+    -->
+    <rule id="1a097dbe">
+        <description>Created after removal of "Release Notes" from Laravel Feeds</description>
+        <accepts>release-notes.html</accepts>
+    </rule>
+    <rule id="5dbb1203">
+        <description>Created after removal of "Common" from Laravel Feeds</description>
+        <accepts>upgrade-common.html</accepts>
+    </rule>
+    <rule id="3dc3c145">
+        <description>Created after removal of "To 6 from 5" from Laravel Feeds</description>
+        <accepts>upgrade-common-to-6-from-5.html</accepts>
+    </rule>
+    <rule id="3c3d1511">
+        <description>Created after removal of "To 5 from 4" from Laravel Feeds</description>
+        <accepts>upgrade-common-to-5-from-4.html</accepts>
+    </rule>
+    <rule id="55eb70f">
+        <description>Created after removal of "From third-party packages" from Laravel Feeds</description>
+        <accepts>upgrade-third-party.html</accepts>
+    </rule>
+    <rule id="7ac22da4">
+        <description>Created after removal of "Publisher" from Laravel Feeds</description>
+        <accepts>upgrade-publisher.html</accepts>
+    </rule>
+    <rule id="52a440b4">
+        <description>Created after removal of "To 16 from 15" from Laravel Feeds</description>
+        <accepts>upgrade-publisher-to-16-from-15.html</accepts>
+    </rule>
+    <rule id="1ba65a38">
+        <description>Created after removal of "To 15 from 14" from Laravel Feeds</description>
+        <accepts>upgrade-publisher-to-15-from-14.html</accepts>
+    </rule>
+    <rule id="1e13e39a">
+        <description>Created after removal of "JSON Fallback" from Laravel Feeds</description>
+        <accepts>upgrade-json-fallback.html</accepts>
+    </rule>
+    <rule id="2bb3bc97">
+        <description>Created after removal of "To 2 from 1" from Laravel Feeds</description>
+        <accepts>upgrade-json-fallback-to-2-from-1.html</accepts>
+    </rule>
+    <rule id="64ba8c5f">
+        <description>Created after removal of "Upgrade Guide" from Laravel Feeds</description>
+        <accepts>upgrade-guide.html</accepts>
+    </rule>
+    <rule id="731731a5">
+        <description>Created after removal of "Security Policy" from Laravel Feeds</description>
+        <accepts>security-policy.html</accepts>
+    </rule>
+    <rule id="117cf8a1">
+        <description>Created after removal of "Our Team" from Laravel Feeds</description>
+        <accepts>our-team.html</accepts>
+    </rule>
+    <rule id="25b5b98b">
+        <description>Created after removal of "Install Plugins" from Laravel Feeds</description>
+        <accepts>plugins-installation.html</accepts>
+    </rule>
+    <rule id="1239452c">
+        <description>Created after removal of "Official Plugins" from Laravel Feeds</description>
+        <accepts>plugins-official.html</accepts>
+    </rule>
+    <rule id="1612b23">
+        <description>Created after removal of "Community Plugins" from Laravel Feeds</description>
+        <accepts>plugins-community.html</accepts>
+    </rule>
+    <rule id="56d3116b">
+        <description>Created after removal of "Starter Kits" from Laravel Feeds</description>
+        <accepts>packages-starter-kits.html</accepts>
+    </rule>
+    <rule id="620d64d">
+        <description>Created after removal of "Common" from Laravel Feeds</description>
+        <accepts>packages-common.html</accepts>
+    </rule>
+    <rule id="6a7dabf1">
+        <description>Created after removal of "Routes" from Laravel Feeds</description>
+        <accepts>packages-routes.html</accepts>
+    </rule>
+    <rule id="13933c88">
+        <description>Created after removal of "Models" from Laravel Feeds</description>
+        <accepts>packages-models.html</accepts>
+    </rule>
+    <rule id="5b8af2d6">
+        <description>Created after removal of "Locales" from Laravel Feeds</description>
+        <accepts>packages-locales.html</accepts>
+    </rule>
+    <rule id="1d192a1">
+        <description>Created after removal of "Lang" from Laravel Feeds</description>
+        <accepts>packages-lang.html</accepts>
+    </rule>
+    <rule id="2fe4caa3">
+        <description>Created after removal of "Actions" from Laravel Feeds</description>
+        <accepts>packages-actions.html</accepts>
+    </rule>
+    <rule id="41990a73">
+        <description>Created after removal of "Attributes" from Laravel Feeds</description>
+        <accepts>packages-attributes.html</accepts>
+    </rule>
+    <rule id="256ae4bf">
+        <description>Created after removal of "HTTP Statuses" from Laravel Feeds</description>
+        <accepts>packages-http-statuses.html</accepts>
+    </rule>
+    <rule id="1fa59c52">
+        <description>Created after removal of "Locale Names" from Laravel Feeds</description>
+        <accepts>packages-native-locale-names.html</accepts>
+    </rule>
+    <rule id="547715ed">
+        <description>Created after removal of "Country Names" from Laravel Feeds</description>
+        <accepts>packages-native-country-names.html</accepts>
+    </rule>
+    <rule id="504ca9f0">
+        <description>Created after removal of "Currency Names" from Laravel Feeds</description>
+        <accepts>packages-native-currency-names.html</accepts>
+    </rule>
+    <rule id="562af19d">
+        <description>Created after removal of "MoonShine" from Laravel Feeds</description>
+        <accepts>packages-moonshine.html</accepts>
+    </rule>
+    <rule id="23ccfe04">
+        <description>Created after removal of "Publisher" from Laravel Feeds</description>
+        <accepts>packages-publisher.html</accepts>
+    </rule>
+    <rule id="5ce2861b">
+        <description>Created after removal of "Translator" from Laravel Feeds</description>
+        <accepts>packages-translator.html</accepts>
+    </rule>
+    <rule id="6407a4cc">
+        <description>Created after removal of "Locale List" from Laravel Feeds</description>
+        <accepts>packages-locale-list.html</accepts>
+    </rule>
+    <rule id="1b2fc77">
+        <description>Created after removal of "JSON Fallback" from Laravel Feeds</description>
+        <accepts>packages-json-fallback.html</accepts>
+    </rule>
+    <rule id="4c69c5f7">
+        <description>Created after removal of "Add Locales" from Laravel Feeds</description>
+        <accepts>usage-add-locales.html</accepts>
+    </rule>
+    <rule id="1729f16e">
+        <description>Created after removal of "Update Locales" from Laravel Feeds</description>
+        <accepts>usage-update-locales.html</accepts>
+    </rule>
+    <rule id="55cc18e">
+        <description>Created after removal of "Reset Locales" from Laravel Feeds</description>
+        <accepts>usage-reset-locales.html</accepts>
+    </rule>
+    <rule id="61879d86">
+        <description>Created after removal of "Remove Locales" from Laravel Feeds</description>
+        <accepts>usage-remove-locales.html</accepts>
+    </rule>
+    <rule id="7743a8ef">
+        <description>Created after removal of "Managing Locales" from Laravel Feeds</description>
+        <accepts>manage-locales.html</accepts>
+    </rule>
+    <rule id="2499eb2c">
+        <description>Created after removal of "Available Locales" from Laravel Feeds</description>
+        <accepts>available-locales-list.html</accepts>
+    </rule>
+    <rule id="66770522">
+        <description>Created after removal of "Questions and Issues" from Laravel Feeds</description>
+        <accepts>questions-and-issues.html</accepts>
+    </rule>
+    <rule id="207c80ba">
+        <description>Created after removal of "Basic Usage" from Laravel Feeds</description>
+        <accepts>basic-usage.html</accepts>
+    </rule>
+    <rule id="3fbf1f58">
+        <description>Created after removal of "Instagram" from Laravel Feeds</description>
+        <accepts>u.html</accepts>
+    </rule>
+    <rule id="242272b3">
+        <description>Created after removal of "Library Starting Page" from Laravel Feeds</description>
+        <accepts>library-starting-page.html</accepts>
+    </rule>
+</rules>

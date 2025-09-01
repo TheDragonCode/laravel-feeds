@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Yandex" id="yandex">
+
+    <link-summary>Feed generation recipe for Yandex</link-summary>
+    <card-summary>Feed generation recipe for Yandex</card-summary>
+    <web-summary>Feed generation recipe for Yandex</web-summary>
+
+    <show-structure depth="2" />
+
+    <chapter title="Create files" id="create_files">
+        <code-block lang="bash">
+            %command-make-simple% Yandex -%command-shortcut-info%%command-shortcut-item%
+        </code-block>
+    </chapter>
+
+    <chapter title="Filling the feed" id="filling_the_feed">
+        <code-block lang="php" src="receipt-yandex-feed.php" />
+    </chapter>
+
+    <chapter title="Filling the feed info" id="filling_the_feed_info">
+        <code-block lang="php" src="receipt-yandex-feed-info.php" />
+    </chapter>
+
+    <chapter title="Filling the feed item" id="filling_the_feed_item">
+        <code-block lang="php" src="receipt-yandex-feed-item.php" />
+    </chapter>
+
+    <chapter title="Feed generation activation" id="feed_generation_activation">
+        <p>
+            Add a link to the feed class in the <code>%config-filename%</code> file:
+        </p>
+
+        <code-block lang="php" src="receipt-yandex-config.php" include-lines="5-" />
+    </chapter>
+
+    <chapter title="Generate feed" id="generate_feed">
+        <include from="snippet-generate.topic" element-id="feed_generate" />
+    </chapter>
+
+    <chapter title="Result" id="result">
+        <code-block lang="xml" src="receipt-yandex-result.xml" />
+    </chapter>
+</topic>
