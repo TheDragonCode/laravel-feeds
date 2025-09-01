@@ -2,6 +2,7 @@ laravel: '@testbench'
 
 providers:
     - DragonCode\LaravelFeed\LaravelFeedServiceProvider
+    - Workbench\App\Providers\WorkbenchServiceProvider
 
 migrations:
     - workbench/database/migrations
