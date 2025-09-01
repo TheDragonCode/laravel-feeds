@@ -1,4 +1,4 @@
-name: Tests
+name: Documentation
 
 on:
     push:
@@ -16,7 +16,7 @@ env:
 
 jobs:
     test:
-        name: Build application
+        name: Test
         runs-on: ubuntu-latest
 
         steps:
