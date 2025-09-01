@@ -6,7 +6,7 @@
         <algolia-index>laravel-feeds</algolia-index>
         <algolia-show-logo>true</algolia-show-logo>
         <generate-canonicals>true</generate-canonicals>
-        <header-logo>logo.svg</header-logo>
+        <header-logo>favicon.svg</header-logo>
         <locale-code>en_US</locale-code>
         <og-image>
             https://raw.githubusercontent.com/TheDragonCode/laravel-feeds/main/docs/images/social-logo.png
