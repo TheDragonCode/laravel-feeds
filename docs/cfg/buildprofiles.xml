@@ -4,6 +4,7 @@
         <algolia-api-key>be22e8bf7afc7bcd53f07ce638374654</algolia-api-key>
         <algolia-id>HIITWOZYBN</algolia-id>
         <algolia-index>laravel-feeds</algolia-index>
+        <algolia-show-logo>true</algolia-show-logo>
         <generate-canonicals>true</generate-canonicals>
         <header-logo>logo.svg</header-logo>
         <locale-code>en_US</locale-code>
