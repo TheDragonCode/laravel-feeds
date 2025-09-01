@@ -65,11 +65,11 @@
                 This setting indicates in what form the XML records should be exported - using or without formatting.
             </p>
 
-            <chapter title="When `pretty` is true" id="when_pretty_is_true">
+            <chapter title="When enabled" id="when_pretty_is_enabled">
                 <code-block lang="xml" src="config-pretty-true.xml" />
             </chapter>
 
-            <chapter title="When `pretty` is false" id="when_pretty_is_false">
+            <chapter title="When disabled" id="when_pretty_is_disabled">
                 <code-block lang="xml" src="config-pretty-false.xml" />
             </chapter>
         </chapter>
