@@ -4,7 +4,7 @@
 <topic
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
-        title="Feeds" id="feeds" help-id="make-feeds;create-feeds">
+        title="Create Feeds" id="create-feeds" help-id="make-feeds;create-feeds;feeds">
 
     <link-summary>Information on creating feed classes and their dependencies</link-summary>
     <card-summary>Information on creating feed classes and their dependencies</card-summary>
