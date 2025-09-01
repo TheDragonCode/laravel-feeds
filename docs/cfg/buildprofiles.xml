@@ -35,9 +35,15 @@
     </build-profile>
     <sitemap priority="0.5" change-frequency="weekly" />
     <footer>
+        <social type="telegram" href="https://t.me/dragon_code_news">
+            Telegram
+        </social>
         <social type="github" href="https://github.com/TheDragonCode/laravel-feeds">
             GitHub
         </social>
+        <link href="https://github.com/TheDragonCode">
+            %team-name%
+        </link>
         <link href="https://boosty.to/dragon-code">
             Boosty
         </link>
