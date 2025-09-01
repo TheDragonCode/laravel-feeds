@@ -12,39 +12,64 @@
 
     <show-structure depth="2" />
 
-    <snippet id="generate">
+    <chapter title="Generate all feeds" id="generate_all_feeds">
+        <snippet id="generate">
+            <p>
+                To generate feeds, create the classes of feeds and its element, add links to the file
+                <code>%config-filename%</code>, next call the console command:
+            </p>
+
+            <code-block lang="bash">
+                %command-generate%
+            </code-block>
+        </snippet>
+    </chapter>
+
+    <chapter title="Generate a single feed" id="generate_a_single_feed">
+        <note>
+            Please note that the specified feed will be executed even if it is disabled in the settings file.
+        </note>
+
         <p>
-            To generate feeds, create the classes of feeds and its element, add links to the file
-            <code>%config-filename%</code>, next call the console command:
+            To generate a specific feed class, specify the class reference or name relative to the
+            <code>App\Feeds</code> namespace.
+        </p>
+
+        <p>
+            For example:
         </p>
 
         <code-block lang="bash">
-            %command-generate%
+            %command-generate% App\Feeds\UserFeed
+            %command-generate% UserFeed
+            %command-generate% User
         </code-block>
-    </snippet>
+    </chapter>
 
-    <p>
-        Each feed can be created in a certain folder of a certain storage.
-    </p>
+    <chapter title="Change location" id="change_location">
+        <p>
+            Each feed can be created in a certain folder of a certain storage.
+        </p>
 
-    <p>
-        To indicate the storage, override the property of <code>$storage</code> in the feed class:
-    </p>
+        <p>
+            To indicate the storage, override the property of <code>$storage</code> in the feed class:
+        </p>
 
-    <code-block lang="php" src="generation-feed-storage.php" include-lines="5-" />
+        <code-block lang="php" src="generation-feed-storage.php" include-lines="5-" />
 
-    <p>
-        By default, storage is <code>public</code>.
-    </p>
+        <p>
+            By default, storage is <code>public</code>.
+        </p>
 
-    <p>
-        The path to the file inside the storage is indicated in the <code>filename</code> method:
-    </p>
+        <p>
+            The path to the file inside the storage is indicated in the <code>filename</code> method:
+        </p>
 
-    <code-block lang="php" src="generation-feed-filename.php" include-lines="5-" />
+        <code-block lang="php" src="generation-feed-filename.php" include-lines="5-" />
 
-    <p>
-        By default, the class name in <code>kebab-case</code> is used.
-        For example, <code>user-feed.xml</code> for <code>UserFeed</code> class.
-    </p>
+        <p>
+            By default, the class name in <code>kebab-case</code> is used.
+            For example, <code>user-feed.xml</code> for <code>UserFeed</code> class.
+        </p>
+    </chapter>
 </topic>
