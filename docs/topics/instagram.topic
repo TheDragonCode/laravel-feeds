@@ -10,7 +10,7 @@
     <card-summary>Feed generation recipe for Instagram</card-summary>
     <web-summary>Feed generation recipe for Instagram</web-summary>
 
-    <show-structure depth="2" />
+    <show-structure depth="3" />
 
     <chapter title="Create files" id="create_files">
         <code-block lang="bash">

@@ -10,7 +10,7 @@
     <card-summary>Instructions for %instance% project developers</card-summary>
     <web-summary>Instructions for %instance% project developers</web-summary>
 
-    <show-structure depth="2" />
+    <show-structure depth="3" />
 
     <p>
         Contributions are

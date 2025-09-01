@@ -10,7 +10,7 @@
     <card-summary>Information on installing and configuring %instance%</card-summary>
     <web-summary>Information on installing and configuring %instance%</web-summary>
 
-    <show-structure depth="2" />
+    <show-structure depth="3" />
 
     <p>
         To get the latest version of

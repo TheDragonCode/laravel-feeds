@@ -10,7 +10,7 @@
     <card-summary>Information on feed generation</card-summary>
     <web-summary>Information on feed generation</web-summary>
 
-    <show-structure depth="2" />
+    <show-structure depth="3" />
 
     <chapter title="Generate all feeds" id="generate_all_feeds">
         <snippet id="generate">
