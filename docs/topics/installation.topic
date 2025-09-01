@@ -29,7 +29,6 @@
 
         <chapter title="Publish" id="publish">
             <snippet id="publish_config">
-
                 <p>
                     You can publish a <code>%config-filename%</code> configuration file using the console command:
                 </p>
