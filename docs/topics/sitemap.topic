@@ -10,7 +10,7 @@
     <card-summary>Recipe for creating a sitemap</card-summary>
     <web-summary>Recipe for creating a sitemap</web-summary>
 
-    <show-structure depth="2" />
+    <show-structure depth="3" />
 
     <chapter title="Create files" id="create_files">
         <code-block lang="bash">
