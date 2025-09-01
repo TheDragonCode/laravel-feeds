@@ -17,10 +17,10 @@
             <format style="bold">Reserved words:</format>
         </p>
         <list>
-            <li><code>@attributes</code></li>
-            <li><code>@cdata</code></li>
-            <li><code>@mixed</code></li>
-            <li><code>@value</code></li>
+            <li>@attributes</li>
+            <li>@cdata</li>
+            <li>@mixed</li>
+            <li>@value</li>
         </list>
     </note>
 
