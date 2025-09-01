@@ -24,7 +24,7 @@
         <primary>
             <title>Getting started</title>
 
-            <a href="feeds.topic" type="documents" />
+            <a href="create-feeds.topic" type="documents" />
             <a href="generation.topic" type="turn-on" />
             <a href="advanced-usage.topic" type="library" />
         </primary>

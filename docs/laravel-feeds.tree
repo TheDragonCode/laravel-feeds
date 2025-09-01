@@ -13,7 +13,7 @@
     </toc-element>
     <toc-element topic="introduction.topic">
         <toc-element topic="installation.topic" />
-        <toc-element topic="feeds.topic" />
+        <toc-element topic="create-feeds.topic" />
         <toc-element topic="generation.topic">
         </toc-element>
         <toc-element topic="configuration.topic" />

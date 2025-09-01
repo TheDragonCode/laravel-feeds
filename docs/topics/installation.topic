@@ -24,7 +24,7 @@
     </code-block>
 
     <include from="configuration.topic" element-id="publish_config" />
-    <include from="feeds.topic" element-id="create_feeds" />
+    <include from="create-feeds.topic" element-id="create_feeds" />
 
     <chapter title="Generation" id="generation">
         <include from="generation.topic" element-id="generate" />
