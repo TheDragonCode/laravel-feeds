@@ -28,6 +28,8 @@ class Feed extends Model
     ];
 
     protected $attributes = [
+        'expression' => '* * * * *',
+
         'format' => FeedFormatEnum::Xml,
 
         'is_active' => true,
