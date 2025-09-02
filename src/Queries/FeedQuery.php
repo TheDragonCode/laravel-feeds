@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Queries;
 
-use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use DragonCode\LaravelFeed\Models\Feed;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -16,14 +15,12 @@ class FeedQuery
         string $class,
         string $title,
         string $expression = '* * * * *',
-        FeedFormatEnum $format = FeedFormatEnum::Xml,
         bool $isActive = true,
     ): Feed {
         return Feed::create([
             'class'      => $class,
             'title'      => $title,
             'expression' => $expression,
-            'format'     => $format,
             'is_active'  => $isActive,
         ]);
     }

@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->string('title');
 
             $table->string('expression');
-            $table->string('format');
 
             $table->boolean('is_active');
 

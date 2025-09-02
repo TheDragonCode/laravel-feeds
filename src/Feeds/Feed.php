@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Feeds;
 
 use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -17,6 +18,8 @@ use function class_basename;
 
 abstract class Feed
 {
+    protected FeedFormatEnum $format = FeedFormatEnum::Xml;
+
     protected string $storage = 'public';
 
     protected ?string $filename = null;
@@ -55,7 +58,9 @@ abstract class Feed
 
     public function filename(): string
     {
-        return $this->filename ??= Str::kebab(class_basename($this)) . '.xml';
+        return $this->filename ??= Str::of(class_basename($this))
+            ->append('.', $this->format->value)
+            ->toString();
     }
 
     public function path(): string

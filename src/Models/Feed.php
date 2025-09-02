@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Models;
 
 use DragonCode\LaravelFeed\Casts\ExpressionCast;
-use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -20,7 +19,6 @@ class Feed extends Model
         'title',
 
         'expression',
-        'format',
 
         'is_active',
 
@@ -29,8 +27,6 @@ class Feed extends Model
 
     protected $attributes = [
         'expression' => '* * * * *',
-
-        'format' => FeedFormatEnum::Xml,
 
         'is_active' => true,
     ];
@@ -49,7 +45,6 @@ class Feed extends Model
     {
         return [
             'expression' => ExpressionCast::class,
-            'format'     => FeedFormatEnum::class,
 
             'is_active' => 'boolean',
 
