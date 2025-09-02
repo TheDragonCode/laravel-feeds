@@ -69,13 +69,7 @@
         "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
         "style": "vendor/bin/pint --parallel --ansi",
-        "test": [
-            "@build",
-            "@php vendor/bin/pest --colors=always"
-        ],
-        "test:update": [
-            "@build",
-            "@php vendor/bin/pest --colors=always --update-snapshots"
-        ]
+        "test": "@php vendor/bin/pest --colors=always",
+        "test:update": "@php vendor/bin/pest --colors=always --update-snapshots"
     }
 }
