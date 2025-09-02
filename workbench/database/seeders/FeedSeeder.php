@@ -34,8 +34,6 @@ class FeedSeeder extends Seeder
         Feed::create([
             'class' => $name,
             'title' => $name,
-
-            'expression' => '* * * * *',
         ]);
     }
 }
