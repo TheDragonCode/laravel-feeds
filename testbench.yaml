@@ -1,6 +1,7 @@
 laravel: '@testbench'
 
 providers:
+    - Workbench\App\Providers\WorkbenchServiceProvider
     - DragonCode\LaravelFeed\LaravelFeedServiceProvider
     - Spatie\LaravelData\LaravelDataServiceProvider
     - DragonCode\LaravelDeployOperations\ServiceProvider

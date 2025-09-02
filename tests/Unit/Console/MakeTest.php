@@ -7,8 +7,6 @@ use DragonCode\LaravelFeed\Console\Commands\FeedMakeCommand;
 use function Pest\Laravel\artisan;
 
 test('make feed', function () {
-    deleteFeed('FooBar');
-
     artisan(FeedMakeCommand::class, [
         'name'    => 'FooBar',
         '--force' => true,
@@ -23,9 +21,6 @@ test('make feed', function () {
 });
 
 test('make with item', function () {
-    deleteFeed('QweRty');
-    deleteFeed('Items/QweRty');
-
     artisan(FeedMakeCommand::class, [
         'name'    => 'QweRty',
         '--item'  => true,
@@ -43,9 +38,6 @@ test('make with item', function () {
 });
 
 test('make with info', function () {
-    deleteFeed('QweRty');
-    deleteFeed('Items/QweRty');
-
     artisan(FeedMakeCommand::class, [
         'name'    => 'QweRty',
         '--info'  => true,

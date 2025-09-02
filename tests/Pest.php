@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use DragonCode\LaravelFeed\Models\Feed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,11 +17,3 @@ pest()
 pest()
     ->extend(TestCase::class)
     ->in('Unit');
-
-pest()
-    ->in('Feature/Console/Generation')
-    ->beforeEach(function () {
-        getAllFeeds()->each(
-            fn (Feed $feed) => deleteFeedResult($feed->class)
-        );
-    });

@@ -71,7 +71,7 @@
         "migrate": "@php vendor/bin/testbench migrate:fresh --seed --ansi",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
         "style": "vendor/bin/pint --parallel --ansi",
-        "test": "@php vendor/bin/pest --colors=always",
+        "test": "@php vendor/bin/pest --parallel --colors=always",
         "test:update": "@php vendor/bin/pest --colors=always --update-snapshots"
     }
 }
