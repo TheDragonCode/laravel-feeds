@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Services;
 
+use DragonCode\LaravelFeed\Exceptions\OpenFeedException;
+use DragonCode\LaravelFeed\Exceptions\WriteFeedException;
 use Illuminate\Filesystem\Filesystem as File;
 
+use function blank;
 use function dirname;
 use function fclose;
 use function fopen;
 use function fwrite;
+use function is_resource;
 
 class Filesystem
 {
@@ -27,16 +31,26 @@ class Filesystem
         $this->ensureFileDelete($path);
         $this->ensureDirectory($path);
 
-        return fopen($path, 'ab');
+        $resource = fopen($path, 'ab');
+
+        if ($resource === false) {
+            throw new OpenFeedException($path);
+        }
+
+        return $resource;
     }
 
     /**
      * @param  resource  $resource
      */
-    public function append($resource, string $content): void
+    public function append($resource, string $content, string $path): void
     {
-        if (! empty($content)) {
-            fwrite($resource, $content);
+        if (blank($content)) {
+            return;
+        }
+
+        if (fwrite($resource, $content) === false) {
+            throw new WriteFeedException($path);
         }
     }
 
@@ -62,6 +76,10 @@ class Filesystem
      */
     public function close($resource): void
     {
+        if (! is_resource($resource)) {
+            return;
+        }
+
         fclose($resource);
     }
 
