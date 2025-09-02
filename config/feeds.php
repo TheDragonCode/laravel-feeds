@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+// TODO: Add comments explaining the meanings of the parameters
 return [
     'pretty' => (bool) env('FEED_PRETTY', false),
 
