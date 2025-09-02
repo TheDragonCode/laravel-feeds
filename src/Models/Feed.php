@@ -27,6 +27,12 @@ class Feed extends Model
         'last_activity',
     ];
 
+    protected $attributes = [
+        'format' => FeedFormatEnum::Xml,
+
+        'is_active' => true,
+    ];
+
     public function getConnectionName(): ?string
     {
         return config('feeds.table.connection');

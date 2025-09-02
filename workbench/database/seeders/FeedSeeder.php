@@ -6,7 +6,6 @@ namespace Workbench\Database\Seeders;
 
 use DragonCode\LaravelFeed\Models\Feed;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 use Workbench\App\Feeds\EmptyFeed;
 use Workbench\App\Feeds\FullFeed;
 use Workbench\App\Feeds\PartialFeed;
@@ -34,7 +33,7 @@ class FeedSeeder extends Seeder
     {
         Feed::create([
             'class' => $name,
-            'title' => Str::title($name),
+            'title' => $name,
 
             'expression' => '* * * * *',
         ]);

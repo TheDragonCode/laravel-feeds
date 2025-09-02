@@ -65,10 +65,17 @@
             "@clear",
             "@prepare"
         ],
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
         "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
         "style": "vendor/bin/pint --parallel --ansi",
-        "test": "@php vendor/bin/pest --colors=always",
-        "test:update": "@php vendor/bin/pest --colors=always --update-snapshots"
+        "test": [
+            "@build",
+            "@php vendor/bin/pest --colors=always"
+        ],
+        "test:update": [
+            "@build",
+            "@php vendor/bin/pest --colors=always --update-snapshots"
+        ]
     }
 }
