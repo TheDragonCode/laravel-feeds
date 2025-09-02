@@ -66,6 +66,7 @@
             "@clear",
             "@prepare"
         ],
+        "migrate": "@php vendor/bin/testbench migrate:fresh --seed --ansi",
         "build": "@php vendor/bin/testbench workbench:build --ansi",
         "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",

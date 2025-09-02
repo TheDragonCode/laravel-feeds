@@ -13,7 +13,7 @@ function expectFeed(string $class): void
     $instance = app($feed->class);
 
     artisan(FeedGenerateCommand::class, [
-        'class' => $feed->id,
+        'feed' => $feed->id,
     ])->assertSuccessful()->run();
 
     expect($instance->path())->toBeReadableFile();

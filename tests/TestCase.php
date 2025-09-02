@@ -6,10 +6,11 @@ namespace Tests;
 
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Workbench\Database\Seeders\DatabaseSeeder;
 
 class TestCase extends BaseTestCase
 {
     use WithWorkbench;
 
-    public bool $seed = true;
+    public string $seeder = DatabaseSeeder::class;
 }

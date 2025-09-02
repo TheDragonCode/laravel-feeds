@@ -9,9 +9,6 @@ migrations:
     - database/migrations
     - workbench/database/migrations
 
-seeders:
-    - Workbench\Database\Seeders\DatabaseSeeder
-
 workbench:
     install: false
     discovers:
