@@ -30,6 +30,9 @@ class Filesystem
         return fopen($path, 'ab');
     }
 
+    /**
+     * @param  resource  $resource
+     */
     public function append($resource, string $content): void
     {
         if (! empty($content)) {
