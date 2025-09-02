@@ -52,13 +52,13 @@ class Generator
                 );
             }
 
-            $this->append($file, implode(PHP_EOL, $content));
+            $this->append($file, implode(PHP_EOL, $content), $feed->path());
         });
     }
 
     protected function performHeader($file, Feed $feed): void
     {
-        $this->append($file, $feed->header());
+        $this->append($file, $feed->header(), $feed->path());
     }
 
     protected function performInfo($file, Feed $feed): void
@@ -69,7 +69,7 @@ class Generator
 
         $value = $this->converter->convertInfo($info);
 
-        $this->append($file, PHP_EOL . $value);
+        $this->append($file, PHP_EOL . $value, $feed->path());
     }
 
     protected function performRoot($file, Feed $feed): void
@@ -82,7 +82,7 @@ class Generator
             ? sprintf("\n<%s %s>\n", $name, $this->makeRootAttributes($feed->root()))
             : sprintf("\n<%s>\n", $name);
 
-        $this->append($file, $value);
+        $this->append($file, $value, $feed->path());
     }
 
     protected function performFooter($file, Feed $feed): void
@@ -93,7 +93,9 @@ class Generator
             $value .= "\n</$name>\n";
         }
 
-        $this->append($file, $value . $feed->footer());
+        $value .= $feed->footer();
+
+        $this->append($file, $value, $feed->path());
     }
 
     protected function makeRootAttributes(ElementData $item): string
@@ -103,9 +105,9 @@ class Generator
             ->implode(' ');
     }
 
-    protected function append($file, string $content): void
+    protected function append($file, string $content, string $path): void
     {
-        $this->filesystem->append($file, $content);
+        $this->filesystem->append($file, $content, $path);
     }
 
     protected function release($file, string $path): void
