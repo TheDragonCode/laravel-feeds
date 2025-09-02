@@ -11,11 +11,11 @@ class UserFeedItem extends FeedItem
     public function toArray(): array
     {
         return [
-            'name'  => $this->model->name,
+            'name'  => $this->model->class,
             'email' => $this->model->email,
 
             'header' => [
-                '@cdata' => '<h1>' . $this->model->name . '</h1>',
+                '@cdata' => '<h1>' . $this->model->class . '</h1>',
             ],
 
             'names' => [

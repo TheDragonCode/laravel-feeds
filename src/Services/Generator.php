@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Services;
 
+use DragonCode\LaravelFeed\Converters\ConvertToXml;
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
 use Illuminate\Database\Eloquent\Collection;
 
 use function blank;
 use function collect;
+use function get_class;
 use function implode;
 use function sprintf;
 
@@ -18,6 +21,7 @@ class Generator
     public function __construct(
         protected Filesystem $filesystem,
         protected ConvertToXml $converter,
+        protected FeedQuery $query,
     ) {}
 
     public function feed(Feed $feed): void
@@ -33,6 +37,8 @@ class Generator
         $this->performFooter($file, $feed);
 
         $this->release($file, $path);
+
+        $this->setLastActivity($feed);
     }
 
     protected function performItem($file, Feed $feed): void
@@ -110,5 +116,12 @@ class Generator
     protected function openFile(string $path)
     {
         return $this->filesystem->open($path);
+    }
+
+    protected function setLastActivity(Feed $feed): void
+    {
+        $this->query->setLastActivity(
+            get_class($feed)
+        );
     }
 }

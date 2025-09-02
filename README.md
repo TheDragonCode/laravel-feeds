@@ -16,7 +16,7 @@ consumers.
 > - Chunked queries to database
 > - Draft mode for a process
 > - Easy property mapping
-> - Generation of any XML (feeds, sitemaps, etc.)
+> - Generation of any feeds, sitemaps, etc.
 
 ## Installation
 

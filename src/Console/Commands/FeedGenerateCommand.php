@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Console\Commands;
 
-use DragonCode\LaravelFeed\Helpers\FeedHelper;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
 use DragonCode\LaravelFeed\Services\Generator;
 use Illuminate\Console\Command;
 use Laravel\Prompts\Concerns\Colors;
@@ -12,38 +12,32 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 
 use function app;
-use function config;
 
 #[AsCommand('feed:generate', 'Generate XML feeds')]
 class FeedGenerateCommand extends Command
 {
     use Colors;
 
-    public function handle(Generator $generator, FeedHelper $helper): void
+    public function handle(Generator $generator, FeedQuery $query): void
     {
-        foreach ($this->feedable($helper) as $feed => $enabled) {
+        foreach ($this->feedable($query) as $feed => $enabled) {
             $enabled
                 ? $this->components->task($feed, fn () => $generator->feed(app($feed)))
                 : $this->components->twoColumnDetail($feed, $this->messageYellow('SKIP'));
         }
     }
 
-    protected function feedable(FeedHelper $helper): array
+    protected function feedable(FeedQuery $feeds): array
     {
-        if ($feed = $this->resolveFeedClass($helper)) {
-            return [$feed => true];
+        if ($id = $this->argument('feed')) {
+            $feed = $feeds->find((int) $id);
+
+            return [$feed->class => true];
         }
 
-        return config('feeds.channels');
-    }
-
-    protected function resolveFeedClass(FeedHelper $helper): ?string
-    {
-        if (! $class = $this->argument('class')) {
-            return null;
-        }
-
-        return $helper->find((string) $class);
+        return $feeds->all()
+            ->pluck('is_active', 'class')
+            ->all();
     }
 
     protected function messageYellow(string $message): string
@@ -58,7 +52,7 @@ class FeedGenerateCommand extends Command
     protected function getArguments(): array
     {
         return [
-            ['class', InputArgument::OPTIONAL, 'The feed class for generation'],
+            ['feed', InputArgument::OPTIONAL, 'The Feed ID for generation (from the database)'],
         ];
     }
 }

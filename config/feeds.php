@@ -3,11 +3,17 @@
 declare(strict_types=1);
 
 return [
-    'channels' => [
-        // App\Feeds\FooFeed::class => (bool) env('FEED_FOO_ENABLED', true),
-        // App\Feeds\BarFeed::class => (bool) env('FEED_BAR_ENABLED', true),
-        // App\Feeds\BazFeed::class => (bool) env('FEED_BAZ_ENABLED', false),
+    'pretty' => (bool) env('FEED_PRETTY', false),
+
+    'table' => [
+        'connection' => env('DB_CONNECTION', 'sqlite'),
+
+        'table' => env('FEED_TABLE', 'feeds'),
     ],
 
-    'pretty' => (bool) env('FEED_PRETTY', false),
+    'schedule' => [
+        'ttl' => (int) env('FEED_SCHEDULE_TTL', 1440),
+
+        'background' => (bool) env('FEED_SCHEDULE_RUN_BACKGROUND', true),
+    ],
 ];

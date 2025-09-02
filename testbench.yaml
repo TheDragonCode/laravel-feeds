@@ -2,10 +2,13 @@ laravel: '@testbench'
 
 providers:
     - DragonCode\LaravelFeed\LaravelFeedServiceProvider
-    - Workbench\App\Providers\WorkbenchServiceProvider
 
 migrations:
+    - database/migrations
     - workbench/database/migrations
+
+seeders:
+    - Workbench\Database\Seeders\DatabaseSeeder
 
 workbench:
     install: false

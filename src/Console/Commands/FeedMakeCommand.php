@@ -33,6 +33,18 @@ class FeedMakeCommand extends GeneratorCommand
                 (bool) $this->option('force')
             );
         }
+
+        $this->makeOperation();
+    }
+
+    protected function makeOperation(): void
+    {
+        // TODO: Make operation or migration for putting record to database
+
+        $type = true ? 'Operation' : 'Migration';
+        $path = base_path('operation/now.php');
+
+        $this->components->info(sprintf('%s [%s] created successfully.', $type, $path));
     }
 
     protected function makeFeedItem(string $name, bool $force): void

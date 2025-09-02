@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DragonCode\LaravelFeed\Services;
+namespace DragonCode\LaravelFeed\Converters;
 
 use DOMDocument;
 use DOMNode;

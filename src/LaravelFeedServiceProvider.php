@@ -25,6 +25,7 @@ class LaravelFeedServiceProvider extends ServiceProvider
 
         $this->registerCommands();
         $this->publishConfig();
+        $this->migrations();
     }
 
     protected function publishConfig(): void
@@ -32,6 +33,13 @@ class LaravelFeedServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/feeds.php' => $this->app->configPath('feeds.php'),
         ], ['config', 'feeds']);
+    }
+
+    protected function migrations(): void
+    {
+        $this->publishesMigrations([
+            __DIR__ . '/../database/migrations' => $this->app->databasePath('migrations'),
+        ]);
     }
 
     protected function registerCommands(): void

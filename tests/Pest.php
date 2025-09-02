@@ -2,12 +2,9 @@
 
 declare(strict_types=1);
 
+use DragonCode\LaravelFeed\Models\Feed;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Workbench\App\Feeds\FullFeed;
-use Workbench\App\Feeds\PartialFeed;
-use Workbench\App\Feeds\SitemapFeed;
-use Workbench\App\Feeds\YandexFeed;
 
 pest()
     ->printer()
@@ -25,15 +22,9 @@ pest()
 pest()
     ->in('Feature/Console/Generation')
     ->beforeEach(function () {
-        config()?->set('feeds.channels', [
-            FullFeed::class    => true,
-            PartialFeed::class => true,
-            SitemapFeed::class => true,
-            YandexFeed::class  => true,
-        ]);
+        enableAllFeeds();
 
-        config()
-            ?->collection('feeds.channels')
-            ?->keys()
-            ?->each(fn (string $feed) => deleteFeedResult($feed));
+        getAllFeeds()->each(
+            fn (Feed $feed) => deleteFeedResult($feed->class)
+        );
     });

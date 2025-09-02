@@ -6,15 +6,14 @@ use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
 
 use function Pest\Laravel\artisan;
 
-/**
- * @param  class-string<DragonCode\LaravelFeed\Feeds\Feed>  $feed
- */
-function expectFeed(string $feed): void
+function expectFeed(string $class): void
 {
-    $instance = app($feed);
+    $feed = findFeed($class);
+
+    $instance = app($feed->class);
 
     artisan(FeedGenerateCommand::class, [
-        'class' => $feed,
+        'class' => $feed->id,
     ])->assertSuccessful()->run();
 
     expect($instance->path())->toBeReadableFile();

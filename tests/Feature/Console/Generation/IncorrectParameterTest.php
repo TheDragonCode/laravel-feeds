@@ -3,42 +3,39 @@
 declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
-use DragonCode\LaravelFeed\Exceptions\FeedNotFoundException;
+use DragonCode\LaravelFeed\Models\Feed;
 
 use function Pest\Laravel\artisan;
 
 test('incorrect', function (mixed $name) {
     artisan(FeedGenerateCommand::class, [
-        'class' => $name,
+        'feed' => $name,
     ])->run();
-})
-    ->throws(FeedNotFoundException::class)
-    ->with([
-        'foo=bar',
-        'foo+bar',
-        'foo bar',
-        '123',
-        123,
-    ]);
+})->with([
+    'foo bar',
+    '123',
+    123,
+]);
 
-test('may be correct', function (mixed $name) {
+test('will be correct', function (int $id) {
     $command = artisan(FeedGenerateCommand::class, [
-        'class' => $name,
+        'feed' => $id,
     ]);
 
-    config()
-        ?->collection('feeds.channels')
-        ?->keys()
-        ?->each(fn (string $feed) => $command->expectsOutputToContain($feed));
+    getAllFeeds()->each(
+        fn (Feed $feed) => $id === $feed->id
+            ? $command->expectsOutputToContain($feed->class)
+            : $command->doesntExpectOutputToContain($feed->class)
+    );
 
     $command->assertSuccessful()->run();
 
-    config()
-        ?->collection('feeds.channels')
-        ?->keys()
-        ?->each(fn (string $feed) => expect(app($feed)->path())->toBeReadableFile());
+    getAllFeeds()->each(
+        fn (Feed $feed) => $id === $feed->id
+            ? expect(app($feed->class)->path())->toBeReadableFile()
+            : expect(app($feed->class)->path())->not->toBeReadableFile()
+    );
 })->with([
-    '',
-    0,
-    null,
+    fn () => Feed::query()->latest()->first()->id,
+    fn () => Feed::query()->oldest()->first()->id,
 ]);
