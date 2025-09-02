@@ -2,6 +2,8 @@ laravel: '@testbench'
 
 providers:
     - DragonCode\LaravelFeed\LaravelFeedServiceProvider
+    - Spatie\LaravelData\LaravelDataServiceProvider
+    - DragonCode\LaravelDeployOperations\ServiceProvider
 
 migrations:
     - database/migrations
@@ -23,3 +25,7 @@ workbench:
         - create-sqlite-db
         - db-wipe
         - migrate-fresh
+
+env:
+    CACHE_DRIVER: array
+    CACHE_STORE: array
