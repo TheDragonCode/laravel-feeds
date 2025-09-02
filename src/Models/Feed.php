@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Models;
 
+use DragonCode\LaravelFeed\Casts\ClassCast;
 use DragonCode\LaravelFeed\Casts\ExpressionCast;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -44,6 +45,7 @@ class Feed extends Model
     protected function casts(): array
     {
         return [
+            'class'      => ClassCast::class,
             'expression' => ExpressionCast::class,
 
             'is_active' => 'boolean',

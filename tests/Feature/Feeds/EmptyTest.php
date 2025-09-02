@@ -7,5 +7,5 @@ use Workbench\App\Feeds\EmptyFeed;
 test('export', function (bool $pretty) {
     setPrettyXml($pretty);
 
-    expectFeed(EmptyFeed::class);
+    expectFeedSnapshot(EmptyFeed::class);
 })->with('boolean');

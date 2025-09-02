@@ -7,5 +7,5 @@ use Workbench\App\Feeds\SitemapFeed;
 test('export', function () {
     createProducts();
 
-    expectFeed(SitemapFeed::class);
+    expectFeedSnapshot(SitemapFeed::class);
 });

@@ -6,7 +6,7 @@ use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
 
 use function Pest\Laravel\artisan;
 
-function expectFeed(string $class): void
+function expectFeedSnapshot(string $class): void
 {
     $feed = findFeed($class);
 

@@ -26,8 +26,8 @@ test('generate', function () {
     getAllFeeds()->each(
         fn (Feed $feed) => match ($feed->class) {
             SitemapFeed::class,
-            YandexFeed::class => expect(app($feed->class)->path())->not->toBeReadableFile(),
-            default           => expect(app($feed->class)->path())->toBeReadableFile()
+            YandexFeed::class => expect($feed)->not->toMatchGeneratedFeed(),
+            default           => expect($feed)->toMatchGeneratedFeed()
         }
     );
 });

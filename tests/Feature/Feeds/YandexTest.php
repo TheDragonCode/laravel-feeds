@@ -7,5 +7,5 @@ use Workbench\App\Feeds\YandexFeed;
 test('export', function () {
     createProducts();
 
-    expectFeed(YandexFeed::class);
+    expectFeedSnapshot(YandexFeed::class);
 });

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Queries;
 
+use DragonCode\LaravelFeed\Exceptions\FeedNotFoundException;
 use DragonCode\LaravelFeed\Models\Feed;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -27,7 +28,7 @@ class FeedQuery
 
     public function find(int $id): Feed
     {
-        return Feed::findOrFail($id);
+        return Feed::findOr($id, callback: static fn () => throw new FeedNotFoundException($id));
     }
 
     public function all(): Collection

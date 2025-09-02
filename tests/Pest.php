@@ -22,8 +22,6 @@ pest()
 pest()
     ->in('Feature/Console/Generation')
     ->beforeEach(function () {
-        enableAllFeeds();
-
         getAllFeeds()->each(
             fn (Feed $feed) => deleteFeedResult($feed->class)
         );

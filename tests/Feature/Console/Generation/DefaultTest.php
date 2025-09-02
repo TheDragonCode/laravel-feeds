@@ -17,6 +17,6 @@ test('generate', function () {
     $command->assertSuccessful()->run();
 
     getAllFeeds()->each(
-        fn (Feed $feed) => expect(app($feed)->path())->toBeReadableFile()
+        fn (Feed $feed) => expect($feed)->toMatchGeneratedFeed()
     );
 });

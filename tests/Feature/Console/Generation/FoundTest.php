@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
 use DragonCode\LaravelFeed\Models\Feed;
-use Workbench\App\Feeds\SitemapFeed;
 
 use function Pest\Laravel\artisan;
 
-test('generate', function () {
-    $source = findFeed(SitemapFeed::class);
-
+test('success', function (int $id) {
     $command = artisan(FeedGenerateCommand::class, [
-        'feed' => $source->id,
+        'feed' => $id,
     ]);
 
     getAllFeeds()->each(
-        fn (Feed $feed) => $source->id === $feed->id
+        fn (Feed $feed) => $id === $feed->id
             ? $command->expectsOutputToContain($feed->class)
             : $command->doesntExpectOutputToContain($feed->class)
     );
@@ -24,8 +21,11 @@ test('generate', function () {
     $command->assertSuccessful()->run();
 
     getAllFeeds()->each(
-        fn (Feed $feed) => $source->id === $feed->id
+        fn (Feed $feed) => $id === $feed->id
             ? expect($feed)->toMatchGeneratedFeed()
             : expect($feed)->not->toMatchGeneratedFeed()
     );
-});
+})->with([
+    fn () => Feed::query()->latest()->first()->id,
+    fn () => Feed::query()->oldest()->first()->id,
+]);

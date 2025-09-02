@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Console\Commands;
 
+use DragonCode\LaravelFeed\Exceptions\InvalidFeedArgumentException;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use DragonCode\LaravelFeed\Services\Generator;
 use Illuminate\Console\Command;
@@ -12,6 +13,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 
 use function app;
+use function is_numeric;
 
 #[AsCommand('feed:generate', 'Generate XML feeds')]
 class FeedGenerateCommand extends Command
@@ -29,15 +31,19 @@ class FeedGenerateCommand extends Command
 
     protected function feedable(FeedQuery $feeds): array
     {
-        if ($id = $this->argument('feed')) {
-            $feed = $feeds->find((int) $id);
-
-            return [$feed->class => true];
+        if (! $id = $this->argument('feed')) {
+            return $feeds->all()
+                ->pluck('is_active', 'class')
+                ->all();
         }
 
-        return $feeds->all()
-            ->pluck('is_active', 'class')
-            ->all();
+        if (! is_numeric($id)) {
+            throw new InvalidFeedArgumentException($id);
+        }
+
+        $feed = $feeds->find((int) $id);
+
+        return [$feed->class => true];
     }
 
     protected function messageYellow(string $message): string

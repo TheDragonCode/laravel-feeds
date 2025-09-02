@@ -25,3 +25,11 @@ expect()->extend('toMatchFeedInfoSnapshot', function () {
 
     return $this;
 });
+
+expect()->extend('toMatchGeneratedFeed', function () {
+    $path = app($this->value->class)->path();
+
+    expect($path)->toBeReadableFile();
+
+    return $this;
+});
