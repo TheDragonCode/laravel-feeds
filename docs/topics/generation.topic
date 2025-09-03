@@ -57,25 +57,29 @@
     </chapter>
 
     <chapter title="Schedule" id="schedule">
-        <p>
-            To automate feed generation, use a
-            <a href="https://laravel.com/docs/scheduling#running-the-scheduler">schedule</a>.
-            To do this, specify the helper call in the
-            <code>routes/console.php</code> file (the default path, unless you have changed it):
-        </p>
+        <chapter title="Automatic" id="automatic">
+            <p>
+                To automate feed generation, use a
+                <a href="https://laravel.com/docs/scheduling#running-the-scheduler">schedule</a>.
+                To do this, specify the helper call in the
+                <code>routes/console.php</code> file (the default path, unless you have changed it):
+            </p>
 
-        <code-block lang="php" src="schedule-setup.php" include-lines="5-" />
+            <code-block lang="php" src="schedule-setup.php" include-lines="5-" />
 
-        <p>
-            This will enable you to register calls to all active feeds according to the launch schedule you specified in the
-            <code>expression</code> column of the database.
-        </p>
+            <p>
+                This will enable you to register calls to all active feeds according to the launch schedule you specified in the
+                <code>expression</code> column of the database.
+            </p>
+        </chapter>
 
-        <p>
-            You can also specify the schedule directly according to your own rules.
-            In this case, only the feeds you specify will be executed.
-        </p>
+        <chapter title="Manual" id="manual">
+            <p>
+                You can also specify the schedule directly according to your own rules.
+                In this case, only the feeds you specify will be executed.
+            </p>
 
-        <code-block lang="php" src="schedule-setup-manual.php" include-lines="5-" />
+            <code-block lang="php" src="schedule-setup-manual.php" include-lines="5-" />
+        </chapter>
     </chapter>
 </topic>
