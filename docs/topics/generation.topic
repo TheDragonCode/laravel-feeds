@@ -4,72 +4,78 @@
 <topic
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
-        title="Generation" id="generation">
+        title="Generation &amp; schedule" id="generation">
 
-    <link-summary>Information on feed generation</link-summary>
-    <card-summary>Information on feed generation</card-summary>
-    <web-summary>Information on feed generation</web-summary>
+    <link-summary>Information on generating feed files for later distribution</link-summary>
+    <card-summary>Information on generating feed files for later distribution</card-summary>
+    <web-summary>Information on generating feed files for later distribution</web-summary>
 
     <show-structure depth="3" />
 
-    <chapter title="Generate all feeds" id="generate_all_feeds">
-        <snippet id="generate">
-            <p>
-                To generate feeds, create the classes of feeds and its element, add links to the file
-                <code>%config-filename%</code>, next call the console command:
-            </p>
+    <p>
+        To generate all active feeds, use the console command:
+    </p>
 
-            <code-block lang="bash">
-                %command-generate%
-            </code-block>
-        </snippet>
-    </chapter>
+    <code-block lang="bash">
+        %command-generate%
+    </code-block>
 
-    <chapter title="Generate a single feed" id="generate_a_single_feed">
-        <note>
-            Please note that the specified feed will be executed even if it is disabled in the settings file.
-        </note>
+    <p>
+        As a result, all active feeds (<code>is_active = true</code>) will be launched from the
+        <code>feeds</code> table (or the one you specified in the <code>%config-filename%</code> file).
+    </p>
 
+    <tip>
         <p>
-            To generate a specific feed class, specify the class reference or name relative to the
-            <code>App\Feeds</code> namespace.
+            Please note that when you call the command without a parameter,
+            the console will display links to all feeds,
+            even those with the <code>is_active</code> property set to <code>false</code>.
         </p>
 
         <p>
-            For example:
+            However, instead of being launched for execution, such feeds will be marked with the
+            <code>SKIP</code> status.
+        </p>
+    </tip>
+
+    <chapter title="Single feed" id="single_feed">
+        <warning>
+            Please note that the specified feed
+            <format style="bold">will be executed</format>
+            even if it is disabled in the
+            <code>feeds</code> table in the database.
+        </warning>
+
+        <p>
+            To generate a specific feed, call the <code>%command-generate-short%</code> console command,
+            passing the feed ID from the <code>feeds</code> table as its parameter:
         </p>
 
         <code-block lang="bash">
-            %command-generate% App\Feeds\UserFeed
-            %command-generate% UserFeed
-            %command-generate% User
+            %command-generate% 123
         </code-block>
     </chapter>
 
-    <chapter title="Change location" id="change_location">
+    <chapter title="Schedule" id="schedule">
         <p>
-            Each feed can be created in a certain folder of a certain storage.
+            To automate feed generation, use a
+            <a href="https://laravel.com/docs/scheduling#running-the-scheduler">schedule</a>.
+            To do this, specify the helper call in the
+            <code>routes/console.php</code> file (the default path, unless you have changed it):
+        </p>
+
+        <code-block lang="php" src="schedule-setup.php" include-lines="5-" />
+
+        <p>
+            This will enable you to register calls to all active feeds according to the launch schedule you specified in the
+            <code>expression</code> column of the database.
         </p>
 
         <p>
-            To indicate the storage, override the property of <code>$storage</code> in the feed class:
+            You can also specify the schedule directly according to your own rules.
+            In this case, only the feeds you specify will be executed.
         </p>
 
-        <code-block lang="php" src="generation-feed-storage.php" include-lines="5-" />
-
-        <p>
-            By default, storage is <code>public</code>.
-        </p>
-
-        <p>
-            The path to the file inside the storage is indicated in the <code>filename</code> method:
-        </p>
-
-        <code-block lang="php" src="generation-feed-filename.php" include-lines="5-" />
-
-        <p>
-            By default, the class name in <code>kebab-case</code> is used.
-            For example, <code>user-feed.xml</code> for <code>UserFeed</code> class.
-        </p>
+        <code-block lang="php" src="schedule-setup-manual.php" include-lines="5-" />
     </chapter>
 </topic>

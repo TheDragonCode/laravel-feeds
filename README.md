@@ -16,26 +16,35 @@ consumers.
 > - Chunked queries to database
 > - Draft mode for a process
 > - Easy property mapping
-> - Generation of any XML (feeds, sitemaps, etc.)
+> - Generation of any feeds, sitemaps, etc.
 
 ## Installation
 
-To get the latest version of **Laravel Feeds**, simply require the project
-using [Composer](https://getcomposer.org):
+You can install the **Laravel Feeds** package via [Composer](https://getcomposer.org):
 
 ```Bash
 composer require dragon-code/laravel-feeds
 ```
 
-After that, publish the configuration file by call the console command:
+You should publish
+the [migration](database/migrations/2025_09_01_231655_create_feeds_table.php)
+and the [config/feeds.php](config/feeds.php) file with:
 
 ```bash
-php artisan vendor:publish --tag=feeds
+php artisan vendor:publish --tag="feeds"
 ```
+
+> [!WARNING]
+>
+> Before running migrations, check the database connection settings in the [config/feeds.php](config/feeds.php) file.
+
+Now you can run migrations and proceed to [create feeds](https://feeds.dragon-code.pro/create-feeds.html).
 
 ## Basic Usage
 
 ### Create Feeds
+
+To create a feed class, use the `make:feed` console command:
 
 ```bash
 php artisan make:feed User -t
@@ -44,10 +53,26 @@ php artisan make:feed User -t
 As a result of executing the console command, the files `app/Feeds/UserFeed.php` and `app/Feeds/Items/UserFeedItem.php`
 will be created.
 
-### Generate Feeds
+> [!TIP]
+> When creating a feed, an operation/migration will also be created to add it to the database.
+>
+> If the project uses the [Laravel Deploy Operations](https://deploy-operations.dragon-code.pro), then an operation
+> class will be created, otherwise a migration class will be created.
+>
+> This is necessary to add and manage information about feeds in the database.
 
-To generate feeds, create the classes of feeds and its element, add links to the file `config/feeds.php`, next call the
-console command:
+Check the [operation/migration](https://feeds.dragon-code.pro/create-feeds.html) file that was created for you and run
+the console command:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+To generate all active feeds, use the console command:
 
 ```bash
 php artisan feed:generate
@@ -55,7 +80,7 @@ php artisan feed:generate
 
 ## Documentation
 
-[📚 Check out the full documentation to learn everything that Laravel Feeds has to offer.](https://feeds.dragon-code.pro)
+📚 You will find full documentation on the dedicated [documentation](https://feeds.dragon-code.pro) site.
 
 ## License
 

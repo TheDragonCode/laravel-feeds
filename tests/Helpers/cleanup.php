@@ -3,26 +3,20 @@
 declare(strict_types=1);
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\ParallelTesting;
 
-function deleteFile(string $filename): void
+function deleteOperations(): void
 {
-    app(Filesystem::class)->delete(
-        $filename
+    (new Filesystem)->deleteDirectory(
+        config('deploy-operations.path')
     );
 }
 
-function deleteFeed(string $feedName): void
+function deleteMigrations(): void
 {
-    $path = app_path(
-        feedPath($feedName)
-    );
+    $token = ParallelTesting::token() ?: '0';
 
-    deleteFile($path);
-}
-
-function deleteFeedResult(string $feedClass): void
-{
-    deleteFile(
-        app($feedClass)->path()
+    (new Filesystem)->deleteDirectory(
+        database_path($token)
     );
 }

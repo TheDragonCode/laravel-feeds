@@ -3,30 +3,31 @@
 declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
+use DragonCode\LaravelFeed\Models\Feed;
 use Workbench\App\Feeds\SitemapFeed;
 use Workbench\App\Feeds\YandexFeed;
 
 use function Pest\Laravel\artisan;
 
 test('generate', function () {
-    config()?->set('feeds.channels.' . SitemapFeed::class, false);
-    config()?->set('feeds.channels.' . YandexFeed::class, false);
+    disableFeeds([
+        SitemapFeed::class,
+        YandexFeed::class,
+    ]);
 
     $command = artisan(FeedGenerateCommand::class);
 
-    config()
-        ?->collection('feeds.channels')
-        ?->keys()
-        ?->each(fn (string $feed) => $command->expectsOutputToContain($feed));
+    getAllFeeds()->each(
+        fn (Feed $feed) => $command->expectsOutputToContain($feed->class)
+    );
 
     $command->assertSuccessful()->run();
 
-    config()
-        ?->collection('feeds.channels')
-        ?->keys()
-        ?->each(fn (string $feed) => match ($feed) {
+    getAllFeeds()->each(
+        fn (Feed $feed) => match ($feed->class) {
             SitemapFeed::class,
-            YandexFeed::class => expect(app($feed)->path())->not->toBeReadableFile(),
-            default           => expect(app($feed)->path())->toBeReadableFile()
-        });
+            YandexFeed::class => expect($feed)->not->toMatchGeneratedFeed(),
+            default           => expect($feed)->toMatchGeneratedFeed()
+        }
+    );
 });

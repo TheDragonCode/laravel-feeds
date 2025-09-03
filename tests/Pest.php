@@ -3,11 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
-use Workbench\App\Feeds\FullFeed;
-use Workbench\App\Feeds\PartialFeed;
-use Workbench\App\Feeds\SitemapFeed;
-use Workbench\App\Feeds\YandexFeed;
 
 pest()
     ->printer()
@@ -16,24 +13,32 @@ pest()
 pest()
     ->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->in('Feature');
+    ->in('Feature')
+    ->beforeEach(function () {
+        mockOperations();
+        mockPaths();
+
+        deleteOperations();
+        deleteMigrations();
+    })
+    ->afterEach(function () {
+        deleteOperations();
+        deleteMigrations();
+    });
 
 pest()
     ->extend(TestCase::class)
-    ->in('Unit');
-
-pest()
-    ->in('Feature/Console/Generation')
+    ->in('Unit')
     ->beforeEach(function () {
-        config()?->set('feeds.channels', [
-            FullFeed::class    => true,
-            PartialFeed::class => true,
-            SitemapFeed::class => true,
-            YandexFeed::class  => true,
-        ]);
+        Carbon::setTestNow('2025-09-03 01:50:24');
 
-        config()
-            ?->collection('feeds.channels')
-            ?->keys()
-            ?->each(fn (string $feed) => deleteFeedResult($feed));
+        mockOperations();
+        mockPaths();
+
+        deleteOperations();
+        deleteMigrations();
+    })
+    ->afterEach(function () {
+        deleteOperations();
+        deleteMigrations();
     });

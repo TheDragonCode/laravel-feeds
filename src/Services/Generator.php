@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Services;
 
+use DragonCode\LaravelFeed\Converters\ConvertToXml;
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
 use Illuminate\Database\Eloquent\Collection;
 
 use function blank;
 use function collect;
+use function get_class;
 use function implode;
 use function sprintf;
 
@@ -18,6 +21,7 @@ class Generator
     public function __construct(
         protected Filesystem $filesystem,
         protected ConvertToXml $converter,
+        protected FeedQuery $query,
     ) {}
 
     public function feed(Feed $feed): void
@@ -33,6 +37,8 @@ class Generator
         $this->performFooter($file, $feed);
 
         $this->release($file, $path);
+
+        $this->setLastActivity($feed);
     }
 
     protected function performItem($file, Feed $feed): void
@@ -46,13 +52,13 @@ class Generator
                 );
             }
 
-            $this->append($file, implode(PHP_EOL, $content));
+            $this->append($file, implode(PHP_EOL, $content), $feed->path());
         });
     }
 
     protected function performHeader($file, Feed $feed): void
     {
-        $this->append($file, $feed->header());
+        $this->append($file, $feed->header(), $feed->path());
     }
 
     protected function performInfo($file, Feed $feed): void
@@ -63,7 +69,7 @@ class Generator
 
         $value = $this->converter->convertInfo($info);
 
-        $this->append($file, PHP_EOL . $value);
+        $this->append($file, PHP_EOL . $value, $feed->path());
     }
 
     protected function performRoot($file, Feed $feed): void
@@ -76,7 +82,7 @@ class Generator
             ? sprintf("\n<%s %s>\n", $name, $this->makeRootAttributes($feed->root()))
             : sprintf("\n<%s>\n", $name);
 
-        $this->append($file, $value);
+        $this->append($file, $value, $feed->path());
     }
 
     protected function performFooter($file, Feed $feed): void
@@ -87,7 +93,9 @@ class Generator
             $value .= "\n</$name>\n";
         }
 
-        $this->append($file, $value . $feed->footer());
+        $value .= $feed->footer();
+
+        $this->append($file, $value, $feed->path());
     }
 
     protected function makeRootAttributes(ElementData $item): string
@@ -97,9 +105,9 @@ class Generator
             ->implode(' ');
     }
 
-    protected function append($file, string $content): void
+    protected function append($file, string $content, string $path): void
     {
-        $this->filesystem->append($file, $content);
+        $this->filesystem->append($file, $content, $path);
     }
 
     protected function release($file, string $path): void
@@ -110,5 +118,12 @@ class Generator
     protected function openFile(string $path)
     {
         return $this->filesystem->open($path);
+    }
+
+    protected function setLastActivity(Feed $feed): void
+    {
+        $this->query->setLastActivity(
+            get_class($feed)
+        );
     }
 }

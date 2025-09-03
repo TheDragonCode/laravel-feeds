@@ -10,5 +10,5 @@ test('export', function (bool $pretty) {
 
     createNews(...NewsFakeData::toArray());
 
-    expectFeed(FullFeed::class);
+    expectFeedSnapshot(FullFeed::class);
 })->with('boolean');

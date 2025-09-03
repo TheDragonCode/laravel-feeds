@@ -24,68 +24,118 @@
         </list>
     </note>
 
-    <chapter title="Setup of the root element" id="setup_of_the_root_element">
-        <code-block lang="php" src="advanced-setup-root.php" include-lines="5-" />
+    <chapter title="Elements" id="elements">
+        <chapter title="Root element" id="root_element">
+            <p>
+                To add a root element and/or its attributes, override the <code>root</code> method:
+            </p>
+
+            <code-block lang="php" src="advanced-setup-root.php" include-lines="5-" />
+
+            <p>
+                To disable the addition of the main element, specify its name as empty - <code>null</code> or
+                <code>""</code>.
+            </p>
+        </chapter>
+
+        <chapter title="Information" id="information">
+            <p>
+                To add information to the beginning of the root element (if present) or without it,
+                override the
+                <code>info</code> method in the feed class and call the creation of an object that extend the
+                <code>DragonCode\LaravelFeed\Feeds\Info\FeedInfo</code> class:
+            </p>
+
+            <code-block lang="php" src="advanced-feed-info.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-feed-info-class.php" include-lines="5-" />
+        </chapter>
+
+        <chapter title="Header &amp; footer" id="header_and_footer">
+            <p>
+                To change the header and footer, override the <code>header</code> and <code>footer</code> methods:
+            </p>
+
+            <code-block lang="php" src="advanced-feed-header-and-footer.php" include-lines="5-" />
+        </chapter>
     </chapter>
 
-    <chapter title="Head information" id="head_information">
-        <p>
-            In some cases, you need to add various information to the beginning of the file.
-            To do this, use the <code>info</code> method:
-        </p>
+    <chapter title="Attributes" id="attributes">
+        <chapter title="To the element" id="to_the_element">
+            <code-block lang="php" src="advanced-main-attributes.php" include-lines="5-" />
+        </chapter>
 
-        <code-block lang="php" src="advanced-head-feed.php" include-lines="5-" />
-        <code-block lang="php" src="advanced-head-info.php" include-lines="5-" />
+        <chapter title="To nested elements" id="to_nested_elements">
+            <code-block lang="php" src="advanced-nested.php" include-lines="5-" />
+        </chapter>
     </chapter>
 
-    <chapter title="Header information" id="header_information">
-        <p>
-            If it is necessary to change the file cap, override the <code>header</code> method in the feed class:
-        </p>
+    <chapter title="Arrays" id="arrays">
+        <chapter title="Array of elements" id="array_of_elements">
+            <p>
+                In some cases, you need to place an array of elements with the same names.
+            </p>
 
-        <code-block lang="php" src="advanced-header.php" include-lines="5-" />
+            <p>
+                To do this, add a <code>@</code> symbol to the beginning of the key name:
+            </p>
+
+            <code-block lang="php" src="advanced-dog-char.php" include-lines="5-" />
+
+            <p>
+                Result:
+            </p>
+
+            <code-block lang="xml" src="advanced-doc-char-result.xml" />
+
+            <p>
+                You can also use values for such elements. To insert them, use the reserved word <code>@value</code>.
+            </p>
+
+            <p>
+                For example:
+            </p>
+
+            <code-block lang="php" src="advanced-value-word.php" include-lines="5-" />
+
+            <p>
+                Result:
+            </p>
+
+            <code-block lang="xml" src="advanced-value-word-result.xml" />
+
+        </chapter>
     </chapter>
 
-    <chapter title="Adding attributes to an item" id="adding_attributes_to_an_item">
-        <code-block lang="php" src="advanced-main-attributes.php" include-lines="5-" />
-    </chapter>
-
-    <chapter title="Adding attributes for nested elements" id="adding_attributes_for_nested_elements">
-        <code-block lang="php" src="advanced-nested.php" include-lines="5-" />
-    </chapter>
-
-    <chapter title="Array of elements" id="array_of_elements">
+    <chapter title="Location &amp; filename" id="location_and_filename">
         <p>
-            In some cases, you need to place an array of elements with the same names.
-        </p>
-
-        <p>
-            To do this, add a <code>@</code> symbol to the beginning of the key name:
-        </p>
-
-        <code-block lang="php" src="advanced-dog-char.php" include-lines="5-" />
-
-        <p>
-            Result:
-        </p>
-
-        <code-block lang="xml" src="advanced-doc-char-result.xml" />
-
-        <p>
-            You can also use values for such elements. To insert them, use the reserved word <code>@value</code>.
-        </p>
-
-        <p>
+            By default, feeds will be stored in the <code>public</code> storage,
+            and the file name will be automatically generated from the feed class name after
+            <code>App\Feeds\</code> in <code>kebab-case</code> format.
             For example:
         </p>
 
-        <code-block lang="php" src="advanced-value-word.php" include-lines="5-" />
+        <code-block lang="text">
+                # App\Feeds\UserFeed
+                user-feed.xml
+                
+                # App\Feeds\Sitemaps\ProductFeed
+                sitemaps-product-feed.xml
+                </code-block>
 
         <p>
-            Result:
+            You can change these values by overriding the <code>$storage</code> property and the
+            <code>filename</code> method:
         </p>
 
-        <code-block lang="xml" src="advanced-value-word-result.xml" />
+        <code-block lang="php" src="advanced-feed-storage.php" include-lines="5-" />
+    </chapter>
 
+    <chapter title="Chunk size" id="chunk_size">
+        <p>
+            Database queries use chunks, which are <code>1000</code> bytes by default.
+            You can change this by overriding the <code>chunkSize</code> method:
+        </p>
+
+        <code-block lang="php" src="advanced-feed-chunk.php" include-lines="5-" />
     </chapter>
 </topic>

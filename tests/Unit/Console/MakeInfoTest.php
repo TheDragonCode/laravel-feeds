@@ -7,8 +7,6 @@ use DragonCode\LaravelFeed\Console\Commands\FeedInfoMakeCommand;
 use function Pest\Laravel\artisan;
 
 test('make feed item', function () {
-    deleteFeed('Info/FooBar');
-
     artisan(FeedInfoMakeCommand::class, [
         'name'    => 'FooBar',
         '--force' => true,

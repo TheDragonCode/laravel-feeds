@@ -19,8 +19,8 @@
         <toc-element topic="advanced-usage.topic" />
     </toc-element>
     <toc-element toc-title="Receipts">
-        <toc-element topic="sitemap.topic" />
-        <toc-element topic="instagram.topic" />
-        <toc-element topic="yandex.topic" />
+        <toc-element topic="receipt-sitemap.topic" />
+        <toc-element topic="receipt-instagram.topic" />
+        <toc-element topic="receipt-yandex.topic" />
     </toc-element>
 </instance-profile>

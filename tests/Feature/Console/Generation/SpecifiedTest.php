@@ -3,32 +3,29 @@
 declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
+use DragonCode\LaravelFeed\Models\Feed;
 use Workbench\App\Feeds\SitemapFeed;
 
 use function Pest\Laravel\artisan;
 
 test('generate', function () {
+    $source = findFeed(SitemapFeed::class);
+
     $command = artisan(FeedGenerateCommand::class, [
-        'class' => SitemapFeed::class,
+        'feed' => $source->id,
     ]);
 
-    config()
-        ?->collection('feeds.channels')
-        ?->keys()
-        ?->each(
-            fn (string $feed) => $feed === SitemapFeed::class
-            ? $command->expectsOutputToContain($feed)
-            : $command->doesntExpectOutputToContain($feed)
-        );
+    getAllFeeds()->each(
+        fn (Feed $feed) => $source->id === $feed->id
+            ? $command->expectsOutputToContain($feed->class)
+            : $command->doesntExpectOutputToContain($feed->class)
+    );
 
     $command->assertSuccessful()->run();
 
-    config()
-        ?->collection('feeds.channels')
-        ?->keys()
-        ?->each(
-            fn (string $feed) => $feed === SitemapFeed::class
-            ? expect(app($feed)->path())->toBeReadableFile()
-            : expect(app($feed)->path())->not->toBeReadableFile()
-        );
+    getAllFeeds()->each(
+        fn (Feed $feed) => $source->id === $feed->id
+            ? expect($feed)->toMatchGeneratedFeed()
+            : expect($feed)->not->toMatchGeneratedFeed()
+    );
 });

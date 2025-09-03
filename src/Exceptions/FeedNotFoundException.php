@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Exceptions;
 
-use InvalidArgumentException;
+use UnexpectedValueException;
 
-class FeedNotFoundException extends InvalidArgumentException
+class FeedNotFoundException extends UnexpectedValueException
 {
-    public function __construct(string $class)
+    public function __construct(int $feedId)
     {
-        parent::__construct("Feed [$class] not found.");
+        parent::__construct("Feed [$feedId] not found.");
     }
 }
