@@ -6,9 +6,9 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Generation" id="generation">
 
-    <link-summary>Information on feed generation</link-summary>
-    <card-summary>Information on feed generation</card-summary>
-    <web-summary>Information on feed generation</web-summary>
+    <link-summary>Information on generating feed files for later distribution</link-summary>
+    <card-summary>Information on generating feed files for later distribution</card-summary>
+    <web-summary>Information on generating feed files for later distribution</web-summary>
 
     <show-structure depth="3" />
 
