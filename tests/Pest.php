@@ -20,6 +20,10 @@ pest()
 
         deleteOperations();
         deleteMigrations();
+    })
+    ->afterEach(function () {
+        deleteOperations();
+        deleteMigrations();
     });
 
 pest()
@@ -31,6 +35,10 @@ pest()
         mockOperations();
         mockPaths();
 
+        deleteOperations();
+        deleteMigrations();
+    })
+    ->afterEach(function () {
         deleteOperations();
         deleteMigrations();
     });

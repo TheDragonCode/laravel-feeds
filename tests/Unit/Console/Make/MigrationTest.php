@@ -17,8 +17,8 @@ test('migration', function () {
         '--force' => true,
     ])
         ->expectsOutputToContain(resolvePath('app/Feeds/FooBarFeed.php] created successfully'))
-        ->doesntExpectOutputToContain("Operation [$operation] created successfully.")
-        ->expectsOutputToContain("Migration [$migration] created successfully.")
+        ->doesntExpectOutputToContain(resolvePath("Operation [$operation] created successfully."))
+        ->expectsOutputToContain(resolvePath("Migration [$migration] created successfully."))
         ->assertSuccessful()
         ->run();
 

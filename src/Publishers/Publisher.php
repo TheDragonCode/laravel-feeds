@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use function class_basename;
 use function dirname;
 use function file_get_contents;
+use function realpath;
 use function str_replace;
 use function vsprintf;
 
