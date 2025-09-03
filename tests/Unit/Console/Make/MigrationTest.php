@@ -22,6 +22,6 @@ test('migration', function () {
         ->assertSuccessful()
         ->run();
 
-    expect($operation)->not->toBeReadableFile();
-    expect($migration)->toBeReadableFile();
+    expect($operation)->not->toBeFile();
+    expect($migration)->toBeFile()->toMatchFileSnapshot();
 });

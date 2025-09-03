@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Feeds\FooBarFeed;
+use DragonCode\LaravelDeployOperations\Operation;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
+
+return new class extends Operation {
+    public function __invoke(FeedQuery $query): void
+    {
+        $query->create(
+            class     : FooBarFeed::class,
+            title     : 'Foo Bar',
+            expression: '* * * * *'
+        );
+    }
+
+    public function withinTransactions(): bool
+    {
+        return false;
+    }
+};

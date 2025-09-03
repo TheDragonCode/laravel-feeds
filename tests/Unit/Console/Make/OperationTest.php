@@ -20,6 +20,6 @@ test('operation', function () {
         ->assertSuccessful()
         ->run();
 
-    expect($operation)->toBeReadableFile();
-    expect($migration)->not->toBeReadableFile();
+    expect($operation)->toBeFile()->toMatchFileSnapshot();
+    expect($migration)->not->toBeFile();
 });

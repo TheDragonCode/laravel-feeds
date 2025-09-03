@@ -16,6 +16,6 @@ function expectFeedSnapshot(string $class): void
         'feed' => $feed->id,
     ])->assertSuccessful()->run();
 
-    expect($instance->path())->toBeReadableFile();
+    expect($instance->path())->toBeFile();
     expect(file_get_contents($instance->path()))->toMatchSnapshot();
 }
