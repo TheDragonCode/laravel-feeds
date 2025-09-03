@@ -25,6 +25,19 @@
         <code>feeds</code> table (or the one you specified in the <code>%config-filename%</code> file).
     </p>
 
+    <tip>
+        <p>
+            Please note that when you call the command without a parameter,
+            the console will display links to all feeds,
+            even those with the <code>is_active</code> property set to <code>false</code>.
+        </p>
+
+        <p>
+            However, instead of being launched for execution, such feeds will be marked with the
+            <code>SKIP</code> status.
+        </p>
+    </tip>
+
     <chapter title="Single feed" id="single_feed">
         <warning>
             Please note that the specified feed

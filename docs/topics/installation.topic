@@ -42,7 +42,7 @@
     </warning>
 
     <p>
-        Now you can run migrations and proceed to <a href="create-feeds.topic">creating feeds</a>.
+        Now you can run migrations and proceed to <a href="create-feeds.topic">create feeds</a>.
     </p>
 
     <code-block lang="bash">
