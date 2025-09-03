@@ -89,7 +89,7 @@
                 Fill in the main feed class. For example:
             </p>
 
-            <code-block lang="php" src="feeds-feed.php" include-lines="5-" />
+            <code-block lang="php" src="create-feeds-feed.php" include-lines="5-" />
 
             <chapter title="Feed Item" id="feed_item">
                 <p>

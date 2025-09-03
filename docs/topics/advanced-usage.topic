@@ -46,8 +46,8 @@
                 <code>DragonCode\LaravelFeed\Feeds\Info\FeedInfo</code> class:
             </p>
 
-            <code-block lang="php" src="generation-feed-info.php" include-lines="5-" />
-            <code-block lang="php" src="generation-feed-info-class.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-feed-info.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-feed-info-class.php" include-lines="5-" />
         </chapter>
 
         <chapter title="Header &amp; footer" id="header_and_footer">
@@ -55,7 +55,7 @@
                 To change the header and footer, override the <code>header</code> and <code>footer</code> methods:
             </p>
 
-            <code-block lang="php" src="generation-feed-header-and-footer.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-feed-header-and-footer.php" include-lines="5-" />
         </chapter>
     </chapter>
 
@@ -127,7 +127,7 @@
             <code>filename</code> method:
         </p>
 
-        <code-block lang="php" src="generation-feed-storage.php" include-lines="5-" />
+        <code-block lang="php" src="advanced-feed-storage.php" include-lines="5-" />
     </chapter>
 
     <chapter title="Chunk size" id="chunk_size">
@@ -136,6 +136,6 @@
             You can change this by overriding the <code>chunkSize</code> method:
         </p>
 
-        <code-block lang="php" src="generation-feed-chunk.php" include-lines="5-" />
+        <code-block lang="php" src="advanced-feed-chunk.php" include-lines="5-" />
     </chapter>
 </topic>
