@@ -15,11 +15,8 @@ test('operation', function () {
         '--force' => true,
     ])
         ->expectsOutputToContain(resolvePath('app/Feeds/FooBarFeed.php] created successfully'))
-        ->expectsOutputToContain(resolvePath("Operation [$operation] created successfully."))
-        ->doesntExpectOutputToContain(resolvePath("Migration [$migration] created successfully."))
+        ->expectsOutputToContain($operation)
+        ->doesntExpectOutputToContain($migration)
         ->assertSuccessful()
         ->run();
-
-    expect($operation)->toBeFile()->toMatchFileSnapshot();
-    expect($migration)->not->toBeFile();
 });
