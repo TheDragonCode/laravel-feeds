@@ -55,7 +55,7 @@ php artisan feed:generate
 
 ## Documentation
 
-[📚 Check out the full documentation to learn everything that Laravel Feeds has to offer.](https://feeds.dragon-code.pro)
+📚 You will find full documentation on the dedicated [documentation](https://feeds.dragon-code.pro) site.
 
 ## License
 

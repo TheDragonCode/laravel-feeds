@@ -7,4 +7,9 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 class UserFeed extends Feed
 {
     protected string $storage = 'public';
+
+    public function filename(): string
+    {
+        return 'some/path/will/be/here.xml';
+    }
 }

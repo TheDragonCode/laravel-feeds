@@ -6,8 +6,6 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Introduction" id="introduction">
 
-    <title>Getting Started</title>
-
     <section-starting-page>
         <title>📃 %instance%</title>
 
@@ -17,14 +15,13 @@
 
         <spotlight>
             <a href="installation.topic" type="development" />
-            <a href="installation.topic#configuration" type="settings" />
+            <a href="create-feeds.topic" type="documents" />
         </spotlight>
 
 
         <primary>
-            <title>Getting started</title>
+            <title>Usage</title>
 
-            <a href="create-feeds.topic" type="documents" />
             <a href="generation.topic" type="library" />
             <a href="advanced-usage.topic" type="check-list" />
         </primary>

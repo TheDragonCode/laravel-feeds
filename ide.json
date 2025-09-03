@@ -2,8 +2,8 @@
     "$schema": "https://laravel-ide.com/schema/laravel-ide-v2.json",
     "codeGenerations": [
         {
-            "id": "dragon-code.xml-feeds.main",
-            "name": "Create XML Feed",
+            "id": "dragon-code.feeds.main",
+            "name": "Create Feed",
             "classSuffix": "Feed",
             "regex": ".+",
             "files": [
@@ -25,8 +25,8 @@
             ]
         },
         {
-            "id": "dragon-code.xml-feeds.item",
-            "name": "Create XML Feed Item",
+            "id": "dragon-code.feeds.item",
+            "name": "Create Feed Item",
             "classSuffix": "FeedItem",
             "regex": ".+",
             "files": [
@@ -47,8 +47,8 @@
             ]
         },
         {
-            "id": "dragon-code.xml-feeds.info",
-            "name": "Create XML Feed Info",
+            "id": "dragon-code.feeds.info",
+            "name": "Create Feed Info",
             "classSuffix": "FeedInfo",
             "regex": ".+",
             "files": [

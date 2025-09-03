@@ -6,7 +6,7 @@ namespace DragonCode\LaravelFeed\Queries;
 
 use DragonCode\LaravelFeed\Exceptions\FeedNotFoundException;
 use DragonCode\LaravelFeed\Models\Feed;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Builder;
 
 use function now;
 
@@ -31,19 +31,11 @@ class FeedQuery
         return Feed::findOr($id, callback: static fn () => throw new FeedNotFoundException($id));
     }
 
-    public function all(): Collection
-    {
-        return Feed::query()
-            ->orderBy('id')
-            ->get();
-    }
-
-    public function active(): Collection
+    public function active(): Builder
     {
         return Feed::query()
             ->where('is_active', true)
-            ->orderBy('id')
-            ->get();
+            ->orderBy('id');
     }
 
     public function setLastActivity(string $class): void

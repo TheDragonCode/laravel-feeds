@@ -32,7 +32,7 @@ class FeedGenerateCommand extends Command
     protected function feedable(FeedQuery $feeds): array
     {
         if (! $id = $this->argument('feed')) {
-            return $feeds->all()
+            return $feeds->active()
                 ->pluck('is_active', 'class')
                 ->all();
         }

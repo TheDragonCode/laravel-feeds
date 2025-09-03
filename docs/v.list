@@ -7,14 +7,16 @@
     <var name="badge-not-supported" value="badge-not-supported.svg" />
     <var name="badge-supported" value="badge-supported.svg" />
     <var name="command-generate" value="php artisan feed:generate" />
-    <var name="command-make-simple" value="php artisan make:feed" />
+    <var name="command-generate-short" value="feed:generate" />
     <var name="command-make" value="php artisan make:feed <name>" />
     <var name="command-make-info" value="php artisan make:feed-info <name>" />
     <var name="command-make-item" value="php artisan make:feed-item <name>" />
+    <var name="command-make-short" value="make:feed" />
+    <var name="command-make-simple" value="php artisan make:feed" />
+    <var name="command-shortcut-info" value="i" />
+    <var name="command-shortcut-item" value="t" />
     <var name="config-filename" value="config/feeds.php" />
     <var name="config-filename-basename" value="feeds" />
-    <var name="config-url"
-         value="https://raw.githubusercontent.com/TheDragonCode/laravel-feeds/refs/heads/main/config/feeds.php" />
     <var name="package-name" value="dragon-code/laravel-feeds" />
     <var name="package-tags" value="feeds" />
     <var name="security-helldar-email" value="helldar@dragon-code.pro" />
@@ -22,6 +24,4 @@
     <var name="security-subject" value="Security%20error%20detected" />
     <var name="team-name" value="The Dragon Code" />
     <var name="year" value="2025" />
-    <var name="command-shortcut-item" value="t" />
-    <var name="command-shortcut-info" value="i" />
 </vars>

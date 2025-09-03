@@ -4,7 +4,7 @@
 <topic
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
-        title="Create Feeds" id="create-feeds" help-id="make-feeds;create-feeds;feeds">
+        title="Create feeds" id="create-feeds" help-id="make-feeds;create-feeds;feeds">
 
     <link-summary>Instructions for creating and filling feed, feed items, and feed info classes</link-summary>
     <card-summary>Instructions for creating and filling feed, feed items, and feed info classes</card-summary>
@@ -12,85 +12,92 @@
 
     <show-structure depth="3" />
 
-    <chapter title="Create feeds" id="create_feeds">
-        <chapter title="Laravel Idea" id="laravel_idea">
-            <p>
-                You can also create the desired classes using the
-                <a href="http://laravel-idea.com">Laravel Idea</a> plugin for
-                <a href="https://www.jetbrains.com/phpstorm/">PhpStorm</a>:
-            </p>
+    <note>
+        <p>
+            The most convenient way to create the necessary classes is to use the
+            <a href="http://laravel-idea.com">Laravel Idea</a> plugin for
+            <a href="https://www.jetbrains.com/phpstorm/">PhpStorm</a>.
+        </p>
 
-            <img src="laravel-idea.png" dark-src="laravel-idea_dark.png" alt="laravel idea" />
-        </chapter>
+        <img src="laravel-idea.png" dark-src="laravel-idea_dark.png" alt="laravel idea" />
+    </note>
 
-        <chapter title="Artisan" id="artisan">
-            <p>
-                To create a feed class, use the console command:
-            </p>
+    <p>
+        To create a feed class, use the <code>%command-make-short%</code> console command:
+    </p>
 
-            <code-block lang="bash">
-                %command-make%
-            </code-block>
+    <code-block lang="bash">
+        %command-make%
+    </code-block>
 
-            <p>
-                As a result of executing the console command, the file
-                <code>app/Feeds/UserFeed.php</code> will be created.
-            </p>
+    <p>
+        This will create a feed file. For example, <code>app/Feeds/UserFeed.php</code>.
+    </p>
 
-            <p>
-                Also, this console command can create classes of the element and information along with the feed class.
-                To do this, use <code>--item</code> and <code>--info</code> parameters.
-            </p>
+    <p>
+        Also, this console command can create classes of the element and information along with the feed class.
+        To do this, use <code>--item</code> and <code>--info</code> parameters.
+    </p>
 
-            <code-block lang="bash">
-                # Create a feed class and information class
-                %command-make% --info
-                
-                # Create a feed class and item class
-                %command-make% --item
-                
-                # Create a feed class, item class and information class
-                %command-make% --item --info
-            </code-block>
+    <code-block lang="bash">
+        # Create a feed class and information class
+        %command-make% --info
+        
+        # Create a feed class and item class
+        %command-make% --item
+        
+        # Create a feed class, item class and information class
+        %command-make% --item --info
+    </code-block>
 
-            <p>
-                Shortcuts are also available:
-            </p>
+    <p>
+        Shortcuts are also available:
+    </p>
 
-            <code-block lang="bash">                
-                # Create a feed class and item class
-                %command-make% -%command-shortcut-item%
-                
-                # Create a feed class and info class
-                %command-make% -%command-shortcut-info%
-                
-                # Create a feed class, item class and information class
-                %command-make% -%command-shortcut-info%%command-shortcut-item%
-            </code-block>
-        </chapter>
-    </chapter>
+    <code-block lang="bash">                
+        # Create a feed class and item class
+        %command-make% -%command-shortcut-item%
+        
+        # Create a feed class and info class
+        %command-make% -%command-shortcut-info%
+        
+        # Create a feed class, item class and information class
+        %command-make% -%command-shortcut-info%%command-shortcut-item%
+    </code-block>
+
+    <note>
+        <p>
+            When creating a feed, an operation/migration will also be created to add it to the database.
+        </p>
+
+        <p>
+            If the project uses the
+            <a href="https://deploy-operations.dragon-code.pro">
+                <format style="bold">Laravel Deploy Operations</format>
+            </a>
+            , then an operation class will be created, otherwise a migration class will be created.
+        </p>
+
+        <p>
+            This is necessary to add and manage information about feeds in the database.
+        </p>
+    </note>
 
     <chapter title="Filling feeds" id="fill_feeds">
         <chapter title="Feed" id="feed">
             <p>
-                For example, we use this content for the Feed class:
+                Fill in the main feed class. For example:
             </p>
 
             <code-block lang="php" src="feeds-feed.php" include-lines="5-" />
-        </chapter>
 
-        <chapter title="Feed Item" id="feed_item">
-            <p>
-                For example, we use this content for the Feed Item class:
-            </p>
+            <chapter title="Feed Item" id="feed_item">
+                <p>
+                    Fill in the feed item class. For example:
+                </p>
 
-            <code-block lang="php" src="feeds-feed-item.php" include-lines="5-" />
-
-            <p>
-                According to this example, the XML file with the following contents will be generated as a result:
-            </p>
-
-            <code-block lang="xml" src="feeds-feed-item-result.xml" />
+                <code-block lang="php" src="generation-feed-item.php" include-lines="5-" />
+            </chapter>
         </chapter>
     </chapter>
 

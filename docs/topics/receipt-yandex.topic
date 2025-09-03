@@ -4,7 +4,7 @@
 <topic
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
-        title="Yandex" id="yandex">
+        title="Yandex" id="receipt-yandex" help-id="yandex">
 
     <link-summary>Feed generation recipe for Yandex</link-summary>
     <card-summary>Feed generation recipe for Yandex</card-summary>
@@ -30,12 +30,8 @@
         <code-block lang="php" src="receipt-yandex-feed-item.php" />
     </chapter>
 
-    <chapter title="Feed generation activation" id="feed_generation_activation">
-        <p>
-            Add a link to the feed class in the <code>%config-filename%</code> file:
-        </p>
-
-        <code-block lang="php" src="receipt-yandex-config.php" include-lines="5-" />
+    <chapter title="Activate" id="activate">
+        <include from="snippet-generate.topic" element-id="check_operation" />
     </chapter>
 
     <chapter title="Generate feed" id="generate_feed">

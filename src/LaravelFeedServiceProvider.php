@@ -39,7 +39,7 @@ class LaravelFeedServiceProvider extends ServiceProvider
     {
         $this->publishesMigrations([
             __DIR__ . '/../database/migrations' => $this->app->databasePath('migrations'),
-        ]);
+        ], 'feeds');
     }
 
     protected function registerCommands(): void

@@ -4,7 +4,7 @@
 <topic
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
-        title="Sitemap" id="sitemap">
+        title="Sitemap" id="receipt-sitemap" help-id="sitemap">
 
     <link-summary>Recipe for creating a sitemap</link-summary>
     <card-summary>Recipe for creating a sitemap</card-summary>
@@ -26,12 +26,8 @@
         <code-block lang="php" src="receipt-sitemap-feed-item.php" />
     </chapter>
 
-    <chapter title="Feed generation activation" id="feed_generation_activation">
-        <p>
-            Add a link to the feed class in the <code>%config-filename%</code> file:
-        </p>
-
-        <code-block lang="php" src="receipt-sitemap-config.php" include-lines="5-" />
+    <chapter title="Activate" id="activate">
+        <include from="snippet-generate.topic" element-id="check_operation" />
     </chapter>
 
     <chapter title="Links" id="links">

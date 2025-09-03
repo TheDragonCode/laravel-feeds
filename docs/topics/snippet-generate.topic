@@ -16,4 +16,19 @@
             %command-generate%
         </code-block>
     </snippet>
+
+    <snippet id="check_operation">
+        <p>
+            Check the <a href="create-feeds.topic">operation/migration</a>
+            file that was created for you and run the console command:
+        </p>
+
+        <code-block lang="bash">
+        # For Laravel Deploy Operations
+        php artisan operations
+
+        # For Laravel Migrations
+        php artisan migrate
+        </code-block>
+    </snippet>
 </topic>

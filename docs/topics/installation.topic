@@ -4,7 +4,7 @@
 <topic
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
-        title="Installation" id="installation">
+        title="Installation &amp; setup" id="installation">
 
     <link-summary>Information on installing and configuring %instance%</link-summary>
     <card-summary>Information on installing and configuring %instance%</card-summary>
@@ -13,71 +13,40 @@
     <show-structure depth="3" />
 
     <p>
-        To get the latest version of
-        <format style="bold">%instance%</format>
-        , simply require the project using
-        <a href="https://getcomposer.org">Composer</a>:
+        You can install the package via <a href="https://getcomposer.org">Composer</a>:
     </p>
 
     <code-block lang="bash">
         composer require %package-name%
     </code-block>
 
-    <chapter title="Configuration" id="configuration">
-        <link-summary>Information on configuring %instance%</link-summary>
-        <card-summary>Information on configuring %instance%</card-summary>
+    <p>
+        You should publish the
+        <a href="https://github.com/TheDragonCode/laravel-feeds/blob/main/database/migrations/2025_09_01_231655_create_feeds_table.php">migration</a>
+        and the
+        <a href="https://github.com/TheDragonCode/laravel-feeds/blob/main/%config-filename%">%config-filename%</a>
+        config file with:
+    </p>
 
-        <chapter title="Publish" id="publish">
-            <snippet id="publish_config">
-                <p>
-                    You can publish a <code>%config-filename%</code> configuration file using the console command:
-                </p>
+    <code-block lang="bash">
+        php artisan vendor:publish --tag="%package-tags%"
+    </code-block>
 
-                <code-block lang="bash">
-            php artisan vendor:publish --tag="%package-tags%"
-        </code-block>
-            </snippet>
 
-            <p>
-                This is the contents of the published <code>%config-filename%</code> file:
-            </p>
+    <warning>
+        <p>
+            <format style="bold">Before running migrations</format>
+            , check the database connection settings in the
+            <code>%config-filename%</code> file.
+        </p>
+    </warning>
 
-            <code-block
-                    lang="php"
-                    src="%config-url%"
-                    include-lines="5-"
-                    collapsed-title="Show configuration"
-                    collapsible="true"
-            />
-        </chapter>
+    <p>
+        Now you can run migrations and proceed to <a href="create-feeds.topic">creating feeds</a>.
+    </p>
 
-        <chapter title="Channels" id="channels">
-            <p>
-                This setting contains information about the generated feeds.
-                They can be both turned on and turned off depending on the environment or other conditions.
-            </p>
+    <code-block lang="bash">
+        php artisan migrate
+    </code-block>
 
-            <code-block lang="ini" src="config-channels.ini" />
-        </chapter>
-
-        <chapter title="Pretty" id="pretty">
-            <p>
-                This setting indicates in what form the XML records should be exported - using or without formatting.
-            </p>
-
-            <chapter title="When enabled" id="when_pretty_is_enabled">
-                <code-block lang="xml" src="config-pretty-true.xml" />
-            </chapter>
-
-            <chapter title="When disabled" id="when_pretty_is_disabled">
-                <code-block lang="xml" src="config-pretty-false.xml" />
-            </chapter>
-        </chapter>
-    </chapter>
-
-    <include from="create-feeds.topic" element-id="create_feeds" />
-
-    <chapter title="Generation" id="generation">
-        <include from="generation.topic" element-id="generate" />
-    </chapter>
 </topic>

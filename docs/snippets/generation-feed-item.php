@@ -14,14 +14,6 @@ class UserFeedItem extends FeedItem
         return [
             'name'  => $this->model->class,
             'email' => $this->model->email,
-
-            'header' => [
-                '@attributes' => [
-                    'my-key-1' => 'my value 1',
-                    'my-key-2' => 'my value 2',
-                ],
-                '@cdata' => '<h1>' . $this->model->class . '</h1>',
-            ],
         ];
     }
 }

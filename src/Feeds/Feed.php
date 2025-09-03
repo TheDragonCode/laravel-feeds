@@ -14,8 +14,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-use function class_basename;
-
 abstract class Feed
 {
     protected FeedFormatEnum $format = FeedFormatEnum::Xml;
@@ -56,9 +54,13 @@ abstract class Feed
         return new FeedInfo;
     }
 
+    // TODO: добавить тесты имён файлов
     public function filename(): string
     {
-        return $this->filename ??= Str::of(class_basename($this))
+        return $this->filename ??= Str::of(static::class)
+            ->after(self::class)
+            ->ltrim('\\')
+            ->kebab()
             ->append('.', $this->format->value)
             ->toString();
     }
