@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+use DummyClass;
+use DragonCode\LaravelDeployOperations\Operation;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
+
+return new class extends Operation {
+    public function __invoke(FeedQuery $query): void
+    {
+        $query->create(
+            class     : DummyBaseClass::class,
+            title     : 'DummyTitle',
+            expression: '* * * * *'
+        );
+    }
+
+    public function withinTransactions(): bool
+    {
+        return false;
+    }
+};

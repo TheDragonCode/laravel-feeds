@@ -5,9 +5,16 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Console\Commands;
 
 use DragonCode\LaravelFeed\Concerns\InteractsWithName;
+use DragonCode\LaravelFeed\Publishers\MigrationPublisher;
+use DragonCode\LaravelFeed\Publishers\OperationPublisher;
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Composer;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
+
+use function app;
+use function vsprintf;
 
 #[AsCommand('make:feed', 'Create a new feed')]
 class FeedMakeCommand extends GeneratorCommand
@@ -15,6 +22,13 @@ class FeedMakeCommand extends GeneratorCommand
     use InteractsWithName;
 
     protected $type = 'Feed';
+
+    public function __construct(
+        protected Composer $composer,
+        Filesystem $files
+    ) {
+        parent::__construct($files);
+    }
 
     public function handle(): void
     {
@@ -34,17 +48,22 @@ class FeedMakeCommand extends GeneratorCommand
             );
         }
 
-        $this->makeOperation();
+        $this->makeOperation(
+            $this->argument('name'),
+            $this->getQualifyClass()
+        );
     }
 
-    protected function makeOperation(): void
+    protected function makeOperation(string $name, string $class): void
     {
-        // TODO: Make operation or migration for putting record to database
+        $publisher = $this->hasOperations()
+            ? app(OperationPublisher::class, ['title' => $name, 'class' => $class])
+            : app(MigrationPublisher::class, ['title' => $name, 'class' => $class]);
 
-        $type = true ? 'Operation' : 'Migration';
-        $path = base_path('operation/now.php');
-
-        $this->components->info(sprintf('%s [%s] created successfully.', $type, $path));
+        $this->components->info(vsprintf('%s [%s] created successfully.', [
+            $publisher->name(),
+            $publisher->publish(),
+        ]));
     }
 
     protected function makeFeedItem(string $name, bool $force): void
@@ -71,6 +90,16 @@ class FeedMakeCommand extends GeneratorCommand
     protected function getDefaultNamespace($rootNamespace): string
     {
         return $rootNamespace . '\Feeds';
+    }
+
+    protected function getQualifyClass(): string
+    {
+        return $this->qualifyClass($this->getNameInput());
+    }
+
+    protected function hasOperations(): bool
+    {
+        return $this->composer->hasPackage('dragon-code/laravel-deploy-operations');
     }
 
     protected function getOptions(): array

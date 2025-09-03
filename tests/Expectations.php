@@ -2,26 +2,34 @@
 
 declare(strict_types=1);
 
-expect()->extend('toMatchFeedSnapshot', function () {
-    $content = file_get_contents(feedPath($this->value . 'Feed'));
+expect()->extend('toMatchFileSnapshot', function () {
+    $content = file_get_contents($this->value);
 
     expect($content)->toMatchSnapshot();
+
+    return $this;
+});
+
+expect()->extend('toMatchFeedSnapshot', function () {
+    $path = feedPath($this->value . 'Feed');
+
+    expect($path)->toMatchFileSnapshot();
 
     return $this;
 });
 
 expect()->extend('toMatchFeedItemSnapshot', function () {
-    $content = file_get_contents(feedPath('Items/' . $this->value . 'FeedItem'));
+    $path = feedPath('Items/' . $this->value . 'FeedItem');
 
-    expect($content)->toMatchSnapshot();
+    expect($path)->toMatchFileSnapshot();
 
     return $this;
 });
 
 expect()->extend('toMatchFeedInfoSnapshot', function () {
-    $content = file_get_contents(feedPath('Info/' . $this->value . 'FeedInfo'));
+    $path = feedPath('Info/' . $this->value . 'FeedInfo');
 
-    expect($content)->toMatchSnapshot();
+    expect($path)->toMatchFileSnapshot();
 
     return $this;
 });

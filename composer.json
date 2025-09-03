@@ -23,6 +23,7 @@
     "require-dev": {
         "dragon-code/codestyler": "^6.3",
         "dragon-code/laravel-deploy-operations": "^7.1",
+        "mockery/mockery": "^1.6",
         "orchestra/testbench": "^9.0 || ^10.0",
         "pestphp/pest": "^3.0 || ^4.0",
         "pestphp/pest-plugin-laravel": "^3.0 || ^4.0",

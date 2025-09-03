@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+use DummyClass;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
+use Illuminate\Database\Migrations\Migration;
+
+return new class extends Migration {
+    public $withinTransaction = false;
+
+    public function up(): void
+    {
+        app(FeedQuery::class)->create(
+            class     : DummyBaseClass::class,
+            title     : 'DummyTitle',
+            expression: '* * * * *'
+        );
+    }
+};
