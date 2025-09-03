@@ -42,8 +42,6 @@ Now you can run migrations and proceed to [create feeds](https://feeds.dragon-co
 
 ## Basic Usage
 
-### Create Feeds
-
 To create a feed class, use the `make:feed` console command:
 
 ```bash
