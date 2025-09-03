@@ -2,20 +2,18 @@
 
 declare(strict_types=1);
 
-use DragonCode\LaravelFeed\Console\Commands\FeedMakeCommand;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Composer;
+use DragonCode\LaravelFeed\Helpers\ClassExistsHelper;
 use Illuminate\Support\Facades\ParallelTesting;
 
 function mockOperations(bool $installed = true): void
 {
-    app()->forgetInstance(FeedMakeCommand::class);
+    app()->forgetInstance(ClassExistsHelper::class);
 
-    app()->singleton(FeedMakeCommand::class, function () use ($installed) {
-        $mock = mock(Composer::class);
-        $mock->shouldReceive('hasPackage')->andReturn($installed);
+    app()->singleton(ClassExistsHelper::class, function () use ($installed) {
+        $mock = mock(ClassExistsHelper::class);
+        $mock->shouldReceive('exists')->andReturn($installed);
 
-        return new FeedMakeCommand($mock, new Filesystem);
+        return $mock;
     });
 }
 

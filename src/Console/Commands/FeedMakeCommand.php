@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Console\Commands;
 
+use DragonCode\LaravelDeployOperations\Operation;
 use DragonCode\LaravelFeed\Concerns\InteractsWithName;
+use DragonCode\LaravelFeed\Helpers\ClassExistsHelper;
 use DragonCode\LaravelFeed\Publishers\MigrationPublisher;
 use DragonCode\LaravelFeed\Publishers\OperationPublisher;
 use Illuminate\Console\GeneratorCommand;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Composer;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -22,13 +22,6 @@ class FeedMakeCommand extends GeneratorCommand
     use InteractsWithName;
 
     protected $type = 'Feed';
-
-    public function __construct(
-        protected Composer $composer,
-        Filesystem $files
-    ) {
-        parent::__construct($files);
-    }
 
     public function handle(): void
     {
@@ -99,7 +92,7 @@ class FeedMakeCommand extends GeneratorCommand
 
     protected function hasOperations(): bool
     {
-        return $this->composer->hasPackage('dragon-code/laravel-deploy-operations');
+        return app(ClassExistsHelper::class)->exists(Operation::class);
     }
 
     protected function getOptions(): array
