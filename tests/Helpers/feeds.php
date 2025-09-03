@@ -6,13 +6,6 @@ use DragonCode\LaravelFeed\Models\Feed;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
-function enableAllFeeds(): void
-{
-    Feed::query()->update([
-        'is_active' => true,
-    ]);
-}
-
 function disableFeeds(array|string $classes): void
 {
     Feed::query()

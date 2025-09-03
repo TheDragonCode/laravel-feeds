@@ -31,6 +31,11 @@ class FeedQuery
         return Feed::findOr($id, callback: static fn () => throw new FeedNotFoundException($id));
     }
 
+    public function all(): Builder
+    {
+        return Feed::query()->orderBy('id');
+    }
+
     public function active(): Builder
     {
         return Feed::query()

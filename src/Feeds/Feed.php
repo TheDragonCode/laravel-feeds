@@ -11,6 +11,7 @@ use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -21,6 +22,10 @@ abstract class Feed
     protected string $storage = 'public';
 
     protected ?string $filename = null;
+
+    public function __construct(
+        protected Application $laravel
+    ) {}
 
     abstract public function builder(): Builder;
 
@@ -54,12 +59,12 @@ abstract class Feed
         return new FeedInfo;
     }
 
-    // TODO: добавить тесты имён файлов
     public function filename(): string
     {
         return $this->filename ??= Str::of(static::class)
-            ->after(self::class)
+            ->after($this->laravel->getNamespace() . 'Feeds\\')
             ->ltrim('\\')
+            ->replace('\\', ' ')
             ->kebab()
             ->append('.', $this->format->value)
             ->toString();
