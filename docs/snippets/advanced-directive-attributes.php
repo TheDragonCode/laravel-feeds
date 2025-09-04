@@ -13,13 +13,11 @@ class UserFeedItem extends FeedItem
     public function toArray(): array
     {
         return [
-            'foo' => 'bar',
-
             'some' => [
-                '@mixed' => <<<'XML'
-                    <first>value</first>
-                    <second>value</second>
-                    XML,
+                '@attributes' => [
+                    'foo' => 'bar',
+                    'qwe' => 'rty',
+                ],
             ],
         ];
     }
