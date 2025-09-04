@@ -16,7 +16,7 @@ class UserFeedItem extends FeedItem
             'foo' => 'bar',
 
             'some' => [
-                '@mixed' => <<<XML
+                '@mixed' => <<<'XML'
                     <first>value</first>
                     <second>value</second>
                     XML,
