@@ -9,6 +9,8 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Database\Eloquent\Builder;
 use Workbench\App\Models\User;
 
+use function now;
+
 class RootElementFeed extends Feed
 {
     public function builder(): Builder

@@ -6,6 +6,8 @@ namespace Workbench\App\Feeds\Docs\Info;
 
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 
+use function fake;
+
 class AttributesDirectiveFeedInfo extends FeedInfo
 {
     public function toArray(): array

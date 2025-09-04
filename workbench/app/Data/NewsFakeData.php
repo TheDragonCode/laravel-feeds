@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Workbench\App\Data;
 
+use function fake;
+use function getDefaultDateTime;
+
 class NewsFakeData
 {
     public static function toArray(): array
