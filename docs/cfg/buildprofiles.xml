@@ -16,6 +16,7 @@
         <web-root>https://feeds.dragon-code.pro</web-root>
         <enable-contribution>true</enable-contribution>
         <code-soft-wrap>true</code-soft-wrap>
+        <content-max-width>1280</content-max-width>
         <contribute-url>
             https://github.com/TheDragonCode/laravel-feeds/edit/main/docs/
         </contribute-url>
@@ -30,7 +31,9 @@
         <variables>
             <noindex-content>false</noindex-content>
             <product-web-url>https://feeds.dragon-code.pro/</product-web-url>
-            <og-image>https://raw.githubusercontent.com/TheDragonCode/laravel-feeds/main/docs/images/social-logo.png</og-image>
+            <og-image>
+                https://raw.githubusercontent.com/TheDragonCode/laravel-feeds/main/docs/images/social-logo.png
+            </og-image>
         </variables>
     </build-profile>
     <sitemap priority="0.5" change-frequency="weekly" />
