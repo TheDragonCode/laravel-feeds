@@ -1,0 +1,7 @@
+<user>
+    <foo>bar</foo>
+    <some>
+        <first>value</first>
+        <second>value</second>
+    </some>
+</user>
