@@ -106,6 +106,22 @@
         </chapter>
     </chapter>
 
+    <chapter title="Directives" id="directives">
+        <chapter title="Mixed" id="mixed">
+            <p>
+                To insert XML fragments “as is”, use the <code>@mixed</code> directive:
+            </p>
+
+            <code-block lang="php" src="advanced-directive-mixed.php" include-lines="5-" />
+
+            <p>
+                Result:
+            </p>
+
+            <code-block lang="xml" src="advanced-directive-mixed.xml" />
+        </chapter>
+    </chapter>
+
     <chapter title="Location &amp; filename" id="location_and_filename">
         <p>
             By default, feeds will be stored in the <code>public</code> storage,
