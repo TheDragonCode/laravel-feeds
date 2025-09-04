@@ -14,7 +14,7 @@
 
     <note>
         <p>
-            <format style="bold">Reserved words:</format>
+            <format style="bold">Reserved directives:</format>
         </p>
         <list>
             <li><a href="#_attributes" /></li>
@@ -27,6 +27,16 @@
 
     <chapter title="Elements" id="elements">
         <chapter title="Root element" id="root_element">
+            <tip>
+                <p>
+                    By defending, the name of the root element is formed from the basic name of the feed class.
+                </p>
+
+                <p>
+                    For example, for the <code>App\Feeds\FooBarFeed</code> class, the name is <code>foo_bar</code>.
+                </p>
+            </tip>
+
             <p>
                 To add a root element and/or its attributes, override the <code>root</code> method:
             </p>
@@ -91,6 +101,8 @@
 
     <chapter title="Directives" id="directives">
         <chapter title="@attributes" id="_attributes">
+            <link-summary>Indicates an array of attributes</link-summary>
+
             <p>
                 You can use a key named <code>@attributes</code> to add attributes to a node:
             </p>
@@ -107,6 +119,8 @@
         </chapter>
 
         <chapter title="@value" id="_value">
+            <link-summary>Indicates the applicable value "as it is"</link-summary>
+
             <tip>
                 Note, that the value of the <code>@value</code> field must be a string.
             </tip>
@@ -125,6 +139,8 @@
         </chapter>
 
         <chapter title="@cdata" id="_cdata">
+            <link-summary>Allows the use of XML marking without transformation</link-summary>
+
             <tip>
                 It is also possible to wrap the value of a node into a CDATA section.
                 This allows you to use reserved characters.
@@ -144,6 +160,8 @@
         </chapter>
 
         <chapter title="@mixed" id="_mixed">
+            <link-summary>Allows you to use XML marking directly into the structure of the document</link-summary>
+
             <p>
                 To insert XML fragments “as is”, use the <code>@mixed</code> directive:
             </p>
@@ -158,6 +176,8 @@
         </chapter>
 
         <chapter title="Array" id="array">
+            <link-summary>Describes the possibility of listing an array of elements with the same keys</link-summary>
+
             <p>
                 In some cases, you need to place an array of elements with the same names.
             </p>
