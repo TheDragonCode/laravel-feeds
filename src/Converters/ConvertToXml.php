@@ -128,7 +128,7 @@ class ConvertToXml
         $element->appendChild($fragment);
     }
 
-    protected function setItemsArray(DOMNode $parent, $value, string $key): void
+    protected function setItemsArray(DOMNode $parent, array $value, string $key): void
     {
         $key = Str::substr($key, 1);
 

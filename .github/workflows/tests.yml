@@ -3,7 +3,7 @@ name: Tests
 on: [ push, pull_request ]
 
 jobs:
-    build:
+    unit:
         runs-on: ubuntu-latest
 
         strategy:
@@ -30,3 +30,25 @@ jobs:
 
             -   name: Execute tests
                 run: composer test
+
+    type:
+        runs-on: ubuntu-latest
+
+        name: Type Coverage
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v5
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php }}
+                    extensions: curl, mbstring, zip, pcntl, pdo, pdo_sqlite, iconv
+                    coverage: xdebug
+
+            -   name: Install dependencies
+                run: composer update
+
+            -   name: Execute tests
+                run: composer lint:type

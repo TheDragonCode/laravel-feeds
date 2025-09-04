@@ -80,7 +80,7 @@ class FeedMakeCommand extends GeneratorCommand
         return __DIR__ . '/../../../stubs/feed.stub';
     }
 
-    protected function getDefaultNamespace($rootNamespace): string
+    protected function getDefaultNamespace($rootNamespace): string // @pest-ignore-type
     {
         return $rootNamespace . '\Feeds';
     }

@@ -21,7 +21,7 @@ class FeedInfoMakeCommand extends GeneratorCommand
         return __DIR__ . '/../../../stubs/feed_info.stub';
     }
 
-    protected function getDefaultNamespace($rootNamespace): string
+    protected function getDefaultNamespace($rootNamespace): string // @pest-ignore-type
     {
         return $rootNamespace . '\Feeds\Info';
     }
