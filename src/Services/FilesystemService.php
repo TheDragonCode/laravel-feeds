@@ -8,7 +8,6 @@ use DragonCode\LaravelFeed\Exceptions\OpenFeedException;
 use DragonCode\LaravelFeed\Exceptions\WriteFeedException;
 use Illuminate\Filesystem\Filesystem as File;
 
-use function blank;
 use function dirname;
 use function fclose;
 use function fopen;
@@ -47,10 +46,6 @@ class FilesystemService
      */
     public function append($resource, string $content, string $path): void // @pest-ignore-type
     {
-        if (blank($content)) {
-            return;
-        }
-
         if (fwrite($resource, $content) === false) {
             // @codeCoverageIgnoreStart
             throw new WriteFeedException($path);

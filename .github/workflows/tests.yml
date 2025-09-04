@@ -52,7 +52,7 @@ jobs:
                 run: composer update
 
             -   name: Execute tests
-                run: composer test:type-coverage
+                run: composer test:type
 
     coverage:
         runs-on: ubuntu-latest
