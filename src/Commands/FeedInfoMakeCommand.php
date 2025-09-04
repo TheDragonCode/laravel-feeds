@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-namespace DragonCode\LaravelFeed\Console\Commands;
+namespace DragonCode\LaravelFeed\Commands;
 
 use DragonCode\LaravelFeed\Concerns\InteractsWithName;
 use Illuminate\Console\GeneratorCommand;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 
-#[AsCommand('make:feed-item', 'Create a new feed item')]
-class FeedItemMakeCommand extends GeneratorCommand
+#[AsCommand('make:feed-info', 'Create a new feed info')]
+class FeedInfoMakeCommand extends GeneratorCommand
 {
     use InteractsWithName;
 
-    protected $type = 'FeedItem';
+    protected $type = 'FeedInfo';
 
     protected function getStub(): string
     {
-        return __DIR__ . '/../../../stubs/feed_item.stub';
+        return __DIR__ . '/../../stubs/feed_info.stub';
     }
 
     protected function getDefaultNamespace($rootNamespace): string // @pest-ignore-type
     {
-        return $rootNamespace . '\Feeds\Items';
+        return $rootNamespace . '\Feeds\Info';
     }
 
     protected function getOptions(): array

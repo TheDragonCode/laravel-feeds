@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DragonCode\LaravelFeed\Console\Commands;
+namespace DragonCode\LaravelFeed\Commands;
 
 use DragonCode\LaravelDeployOperations\Operation;
 use DragonCode\LaravelFeed\Concerns\InteractsWithName;
@@ -77,7 +77,7 @@ class FeedMakeCommand extends GeneratorCommand
 
     protected function getStub(): string
     {
-        return __DIR__ . '/../../../stubs/feed.stub';
+        return __DIR__ . '/../../stubs/feed.stub';
     }
 
     protected function getDefaultNamespace($rootNamespace): string // @pest-ignore-type

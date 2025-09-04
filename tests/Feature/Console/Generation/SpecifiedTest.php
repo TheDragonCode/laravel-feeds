@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use DragonCode\LaravelFeed\Models\Feed;
 use Workbench\App\Feeds\SitemapFeed;
 
