@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<mixed_directive>
+
 <user>
-  <name>Palma Stokes</name>
+  <name>Luis Beer DVM</name>
   <some>
     <first>Foo</first>
-    <second>roscoe51@example.org</second>
+    <second>kane.nader@example.com</second>
 </some>
 </user>
 <user>
-  <name>Geoffrey Treutel</name>
+  <name>Claud Quigley IV</name>
   <some>
     <first>Foo</first>
-    <second>heath.mosciski@example.org</second>
+    <second>talon09@example.net</second>
 </some>
 </user>
+
+</mixed_directive>
