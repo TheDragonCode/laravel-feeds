@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use Illuminate\Support\Facades\Schedule;
 
 Schedule::command(FeedGenerateCommand::class, [111])

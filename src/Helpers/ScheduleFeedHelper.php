@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Helpers;
 
-use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use DragonCode\LaravelFeed\Models\Feed;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use Illuminate\Console\Scheduling\Event;

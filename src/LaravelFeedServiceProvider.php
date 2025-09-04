@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed;
 
-use DragonCode\LaravelFeed\Console\Commands\FeedGenerateCommand;
-use DragonCode\LaravelFeed\Console\Commands\FeedInfoMakeCommand;
-use DragonCode\LaravelFeed\Console\Commands\FeedItemMakeCommand;
-use DragonCode\LaravelFeed\Console\Commands\FeedMakeCommand;
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use DragonCode\LaravelFeed\Commands\FeedInfoMakeCommand;
+use DragonCode\LaravelFeed\Commands\FeedItemMakeCommand;
+use DragonCode\LaravelFeed\Commands\FeedMakeCommand;
 use Illuminate\Support\ServiceProvider;
 
 class LaravelFeedServiceProvider extends ServiceProvider

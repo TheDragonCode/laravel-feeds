@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DragonCode\LaravelFeed\Console\Commands;
+namespace DragonCode\LaravelFeed\Commands;
 
 use DragonCode\LaravelFeed\Exceptions\InvalidFeedArgumentException;
 use DragonCode\LaravelFeed\Queries\FeedQuery;

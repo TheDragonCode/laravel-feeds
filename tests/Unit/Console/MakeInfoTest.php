@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use DragonCode\LaravelFeed\Console\Commands\FeedInfoMakeCommand;
+use DragonCode\LaravelFeed\Commands\FeedInfoMakeCommand;
 
 use function Pest\Laravel\artisan;
 
