@@ -6,6 +6,8 @@ namespace Workbench\App\Feeds\Info;
 
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 
+use function config;
+
 class YandexFeedInfo extends FeedInfo
 {
     public function toArray(): array
