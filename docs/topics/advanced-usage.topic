@@ -17,10 +17,10 @@
             <format style="bold">Reserved words:</format>
         </p>
         <list>
-            <li>@attributes</li>
-            <li>@cdata</li>
-            <li>@mixed</li>
-            <li>@value</li>
+            <li><a href="#_attributes" /></li>
+            <li><a href="#_value" /></li>
+            <li><a href="#_cdata" /></li>
+            <li><a href="#_mixed" /></li>
         </list>
     </note>
 
@@ -82,7 +82,7 @@
             <code-block lang="php" src="advanced-dog-char.php" include-lines="5-" />
 
             <p>
-                Result:
+                This code will result in:
             </p>
 
             <code-block lang="xml" src="advanced-doc-char-result.xml" />
@@ -98,7 +98,7 @@
             <code-block lang="php" src="advanced-value-word.php" include-lines="5-" />
 
             <p>
-                Result:
+                This code will result in:
             </p>
 
             <code-block lang="xml" src="advanced-value-word-result.xml" />
@@ -107,7 +107,58 @@
     </chapter>
 
     <chapter title="Directives" id="directives">
-        <chapter title="Mixed" id="mixed">
+        <chapter title="@attributes" id="_attributes">
+            <p>
+                You can use a key named <code>@attributes</code> to add attributes to a node:
+            </p>
+
+            <code-block lang="php" src="advanced-directive-attributes.php" include-lines="5-" />
+
+            <p>
+                This code will result in:
+            </p>
+
+            <code-block lang="xml" src="advanced-directive-attributes.xml" />
+        </chapter>
+
+        <chapter title="@value" id="_value">
+            <tip>
+                Note, that the value of the <code>@value</code> field must be a string.
+            </tip>
+
+            <p>
+                You can use a key named <code>@value</code> to add value to a node:
+            </p>
+
+            <code-block lang="php" src="advanced-directive-value.php" include-lines="5-" />
+
+            <p>
+                This code will result in:
+            </p>
+
+            <code-block lang="xml" src="advanced-directive-value.xml" />
+        </chapter>
+
+        <chapter title="@cdata" id="_cdata">
+            <tip>
+                It is also possible to wrap the value of a node into a CDATA section.
+                This allows you to use reserved characters.
+            </tip>
+
+            <p>
+                You can use a key named <code>@cdata</code> to add CDATA to a node:
+            </p>
+
+            <code-block lang="php" src="advanced-directive-cdata.php" include-lines="5-" />
+
+            <p>
+                This code will result in:
+            </p>
+
+            <code-block lang="xml" src="advanced-directive-cdata.xml" />
+        </chapter>
+
+        <chapter title="@mixed" id="_mixed">
             <p>
                 To insert XML fragments “as is”, use the <code>@mixed</code> directive:
             </p>
@@ -115,7 +166,7 @@
             <code-block lang="php" src="advanced-directive-mixed.php" include-lines="5-" />
 
             <p>
-                Result:
+                This code will result in:
             </p>
 
             <code-block lang="xml" src="advanced-directive-mixed.xml" />

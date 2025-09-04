@@ -1,0 +1,5 @@
+<users>
+    <foo>Chris Evans</foo>
+    <bar>Sebastian Stan</bar>
+    <baz foo="bar">Matthew David McConaughey</baz>
+</users>
