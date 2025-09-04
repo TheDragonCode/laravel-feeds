@@ -15,7 +15,7 @@ use function fopen;
 use function fwrite;
 use function is_resource;
 
-class Filesystem
+class FilesystemService
 {
     public function __construct(
         protected File $file,
