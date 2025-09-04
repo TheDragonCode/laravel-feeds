@@ -51,14 +51,6 @@ php artisan make:feed User -t
 As a result of executing the console command, the files `app/Feeds/UserFeed.php` and `app/Feeds/Items/UserFeedItem.php`
 will be created.
 
-> [!TIP]
-> When creating a feed, an operation/migration will also be created to add it to the database.
->
-> If the project uses the [Laravel Deploy Operations](https://deploy-operations.dragon-code.pro), then an operation
-> class will be created, otherwise a migration class will be created.
->
-> This is necessary to add and manage information about feeds in the database.
-
 Check the [operation/migration](https://feeds.dragon-code.pro/create-feeds.html) file that was created for you and run
 the console command:
 
