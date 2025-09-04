@@ -9,8 +9,6 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Database\Eloquent\Builder;
 use Workbench\App\Models\News;
 
-use function class_basename;
-
 class EmptyFeed extends Feed
 {
     public function builder(): Builder
@@ -20,8 +18,6 @@ class EmptyFeed extends Feed
 
     public function root(): ElementData
     {
-        return new ElementData(
-            class_basename($this)
-        );
+        return new ElementData;
     }
 }
