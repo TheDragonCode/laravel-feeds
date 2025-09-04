@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 test('cron', function () {
     expect(Schedule::events())->toHaveCount(0);
 
-    app(ScheduleFeedHelper::class)->commands();
+    ScheduleFeedHelper::register();
 
     $feeds = Feed::get();
 

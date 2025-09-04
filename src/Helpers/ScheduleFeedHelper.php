@@ -11,6 +11,8 @@ use Illuminate\Console\Scheduling\Event;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Facades\Schedule;
 
+use function app;
+
 class ScheduleFeedHelper
 {
     public function __construct(
@@ -21,14 +23,19 @@ class ScheduleFeedHelper
         protected int $ttl,
     ) {}
 
+    public static function register(): void
+    {
+        app(static::class)->commands();
+    }
+
     public function commands(): void
     {
         $this->query->active()->each(
-            fn (Feed $feed) => $this->register($feed)
+            fn (Feed $feed) => $this->schedule($feed)
         );
     }
 
-    protected function register(Feed $feed): void
+    protected function schedule(Feed $feed): void
     {
         $event = $this->event($feed);
 

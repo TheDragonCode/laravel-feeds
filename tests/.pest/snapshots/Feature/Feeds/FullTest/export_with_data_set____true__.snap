@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FullFeed>
+
 <news>
   <record_title>[NEWS]:Some 1</record_title>
   <record_content>Some content 1</record_content>
@@ -54,4 +55,5 @@
 <second>line with <a href="https://example.com">some</a> html/xml tag</second>
 <third>line with &amp; symbol</third></with_mixed>
 </news>
+
 </FullFeed>

@@ -1,5 +1,9 @@
-<users>
-    <foo>Chris Evans</foo>
-    <bar>Sebastian Stan</bar>
-    <baz foo="bar">Matthew David McConaughey</baz>
-</users>
+<?xml version="1.0" encoding="UTF-8"?>
+<user>
+  <name>Prof. Kip Pacocha</name>
+  <contact type="email">tmuller@example.org</contact>
+</user>
+<user>
+  <name>Candelario Cassin</name>
+  <contact type="email">joana.grady@example.org</contact>
+</user>

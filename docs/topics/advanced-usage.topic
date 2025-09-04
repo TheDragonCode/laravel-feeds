@@ -21,6 +21,7 @@
             <li><a href="#_value" /></li>
             <li><a href="#_cdata" /></li>
             <li><a href="#_mixed" /></li>
+            <li><a href="#array" /></li>
         </list>
     </note>
 
@@ -30,12 +31,18 @@
                 To add a root element and/or its attributes, override the <code>root</code> method:
             </p>
 
-            <code-block lang="php" src="advanced-setup-root.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-element-root.php" include-lines="5-" />
 
             <p>
                 To disable the addition of the main element, specify its name as empty - <code>null</code> or
                 <code>""</code>.
             </p>
+
+            <p>
+                This code will result in:
+            </p>
+
+            <code-block lang="xml" src="advanced-element-root.xml" />
         </chapter>
 
         <chapter title="Information" id="information">
@@ -46,8 +53,14 @@
                 <code>DragonCode\LaravelFeed\Feeds\Info\FeedInfo</code> class:
             </p>
 
-            <code-block lang="php" src="advanced-feed-info.php" include-lines="5-" />
-            <code-block lang="php" src="advanced-feed-info-class.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-element-info.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-element-info-info.php" include-lines="5-" />
+
+            <p>
+                This code will result in:
+            </p>
+
+            <code-block lang="xml" src="advanced-element-info.xml" />
         </chapter>
 
         <chapter title="Header &amp; footer" id="header_and_footer">
@@ -55,54 +68,24 @@
                 To change the header and footer, override the <code>header</code> and <code>footer</code> methods:
             </p>
 
-            <code-block lang="php" src="advanced-feed-header-and-footer.php" include-lines="5-" />
-        </chapter>
-    </chapter>
-
-    <chapter title="Attributes" id="attributes">
-        <chapter title="To the element" id="to_the_element">
-            <code-block lang="php" src="advanced-main-attributes.php" include-lines="5-" />
-        </chapter>
-
-        <chapter title="To nested elements" id="to_nested_elements">
-            <code-block lang="php" src="advanced-nested.php" include-lines="5-" />
-        </chapter>
-    </chapter>
-
-    <chapter title="Arrays" id="arrays">
-        <chapter title="Array of elements" id="array_of_elements">
-            <p>
-                In some cases, you need to place an array of elements with the same names.
-            </p>
-
-            <p>
-                To do this, add a <code>@</code> symbol to the beginning of the key name:
-            </p>
-
-            <code-block lang="php" src="advanced-dog-char.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-element-header-footer.php" include-lines="5-" />
 
             <p>
                 This code will result in:
             </p>
 
-            <code-block lang="xml" src="advanced-doc-char-result.xml" />
+            <code-block lang="xml" src="advanced-element-header-footer.xml" />
+        </chapter>
 
-            <p>
-                You can also use values for such elements. To insert them, use the reserved word <code>@value</code>.
-            </p>
-
-            <p>
-                For example:
-            </p>
-
-            <code-block lang="php" src="advanced-value-word.php" include-lines="5-" />
+        <chapter title="Attributes" id="attributes">
+            <code-block lang="php" src="advanced-element-attribute.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-element-attribute-item.php" include-lines="5-" />
 
             <p>
                 This code will result in:
             </p>
 
-            <code-block lang="xml" src="advanced-value-word-result.xml" />
-
+            <code-block lang="xml" src="advanced-element-attribute.xml" />
         </chapter>
     </chapter>
 
@@ -113,6 +96,8 @@
             </p>
 
             <code-block lang="php" src="advanced-directive-attributes.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-directive-attributes-info.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-directive-attributes-item.php" include-lines="5-" />
 
             <p>
                 This code will result in:
@@ -130,7 +115,7 @@
                 You can use a key named <code>@value</code> to add value to a node:
             </p>
 
-            <code-block lang="php" src="advanced-directive-value.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-directive-value-item.php" include-lines="5-" />
 
             <p>
                 This code will result in:
@@ -170,6 +155,24 @@
             </p>
 
             <code-block lang="xml" src="advanced-directive-mixed.xml" />
+        </chapter>
+
+        <chapter title="Array" id="array">
+            <p>
+                In some cases, you need to place an array of elements with the same names.
+            </p>
+
+            <p>
+                To do this, add a <code>@</code> symbol to the start of the key name:
+            </p>
+
+            <code-block lang="php" src="advanced-directive-array.php" include-lines="5-" />
+
+            <p>
+                This code will result in:
+            </p>
+
+            <code-block lang="xml" src="advanced-directive-array.xml" />
         </chapter>
     </chapter>
 

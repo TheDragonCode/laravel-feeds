@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Feeds\Items;
+namespace Workbench\App\Feeds\Docs\Items;
 
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 

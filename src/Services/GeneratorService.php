@@ -15,6 +15,7 @@ use function collect;
 use function get_class;
 use function implode;
 use function sprintf;
+use function trim;
 
 class GeneratorService
 {
@@ -31,8 +32,8 @@ class GeneratorService
         );
 
         $this->performHeader($file, $feed);
-        $this->performInfo($file, $feed);
         $this->performRoot($file, $feed);
+        $this->performInfo($file, $feed);
         $this->performItem($file, $feed);
         $this->performFooter($file, $feed);
 
@@ -58,7 +59,11 @@ class GeneratorService
 
     protected function performHeader($file, Feed $feed): void // @pest-ignore-type
     {
-        $this->append($file, $feed->header(), $feed->path());
+        if (empty($value = $feed->header())) {
+            return;
+        }
+
+        $this->append($file, trim($value) . PHP_EOL, $feed->path());
     }
 
     protected function performInfo($file, Feed $feed): void // @pest-ignore-type
@@ -67,9 +72,11 @@ class GeneratorService
             return;
         }
 
-        $value = $this->converter->convertInfo($info);
+        if (! $value = $this->converter->convertInfo($info)) {
+            return;
+        }
 
-        $this->append($file, PHP_EOL . $value, $feed->path());
+        $this->append($file, $value . PHP_EOL, $feed->path());
     }
 
     protected function performRoot($file, Feed $feed): void // @pest-ignore-type
@@ -79,8 +86,8 @@ class GeneratorService
         }
 
         $value = ! empty($feed->root()->attributes)
-            ? sprintf("\n<%s %s>\n", $name, $this->makeRootAttributes($feed->root()))
-            : sprintf("\n<%s>\n", $name);
+            ? sprintf("<%s %s>\n\n", $name, $this->makeRootAttributes($feed->root()))
+            : sprintf("<%s>\n\n", $name);
 
         $this->append($file, $value, $feed->path());
     }
@@ -90,7 +97,7 @@ class GeneratorService
         $value = '';
 
         if ($name = $feed->root()->name) {
-            $value .= "\n</$name>\n";
+            $value .= "\n\n</$name>\n";
         }
 
         $value .= $feed->footer();

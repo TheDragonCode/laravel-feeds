@@ -2,17 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Feeds\Info;
+namespace Workbench\App\Feeds\Docs\Info;
 
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 
-class UserFeedInfo extends FeedInfo
+use function config;
+
+class InfoMethodFeedInfo extends FeedInfo
 {
     public function toArray(): array
     {
         return [
-            'name'    => config('app.name'),
             'company' => config('app.name'),
+            'url'     => config('app.url'),
         ];
     }
 }
