@@ -6,6 +6,7 @@ namespace DragonCode\LaravelFeed\Exceptions;
 
 use RuntimeException;
 
+// @codeCoverageIgnoreStart
 class WriteFeedException extends RuntimeException
 {
     public function __construct(string $path)
@@ -13,3 +14,4 @@ class WriteFeedException extends RuntimeException
         parent::__construct("Failed to write to the feed: [$path].");
     }
 }
+// @codeCoverageIgnoreEnd

@@ -9,7 +9,7 @@ test('export', function (bool $pretty) {
     setPrettyXml($pretty);
 
     createNews(static fn () => [
-        'updated_at' => fake()->dateTimeBetween(endDate: '-1 month'),
+        'updated_at' => fake()->dateTimeBetween(endDate: getDefaultDateTime()->subMonth()->toIso8601String()),
     ]);
 
     createNews(...NewsFakeData::toArray());

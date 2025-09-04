@@ -34,7 +34,9 @@ class FilesystemService
         $resource = fopen($path, 'ab');
 
         if ($resource === false) {
+            // @codeCoverageIgnoreStart
             throw new OpenFeedException($path);
+            // @codeCoverageIgnoreEnd
         }
 
         return $resource;
@@ -50,7 +52,9 @@ class FilesystemService
         }
 
         if (fwrite($resource, $content) === false) {
+            // @codeCoverageIgnoreStart
             throw new WriteFeedException($path);
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -77,7 +81,9 @@ class FilesystemService
     public function close($resource): void // @pest-ignore-type
     {
         if (! is_resource($resource)) {
+            // @codeCoverageIgnoreStart
             return;
+            // @codeCoverageIgnoreEnd
         }
 
         fclose($resource);

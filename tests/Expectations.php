@@ -41,3 +41,17 @@ expect()->extend('toMatchGeneratedFeed', function () {
 
     return $this;
 });
+
+expect()->pipe('toMatchSnapshot', function (Closure $next) {
+    if (! is_string($this->value)) {
+        return $this->value;
+    }
+
+    $this->value = preg_replace(
+        pattern    : '/(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{6}Z)/',
+        replacement: '2025-09-04T04:08:12.000000Z',
+        subject    : $this->value
+    );
+
+    return $next();
+});

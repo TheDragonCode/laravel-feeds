@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 pest()
@@ -15,6 +14,8 @@ pest()
     ->use(RefreshDatabase::class)
     ->in('Feature')
     ->beforeEach(function () {
+        setDefaultDateTime();
+
         mockOperations();
         mockPaths();
 
@@ -30,7 +31,7 @@ pest()
     ->extend(TestCase::class)
     ->in('Unit')
     ->beforeEach(function () {
-        Carbon::setTestNow('2025-09-03 01:50:24');
+        setDefaultDateTime();
 
         mockOperations();
         mockPaths();

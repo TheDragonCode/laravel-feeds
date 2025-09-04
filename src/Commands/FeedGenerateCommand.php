@@ -49,7 +49,9 @@ class FeedGenerateCommand extends Command
     protected function messageYellow(string $message): string
     {
         if ($this->option('no-ansi')) {
+            // @codeCoverageIgnoreStart
             return $message;
+            // @codeCoverageIgnoreEnd
         }
 
         return $this->yellow($message);
