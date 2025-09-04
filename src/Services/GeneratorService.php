@@ -19,7 +19,7 @@ use function sprintf;
 class GeneratorService
 {
     public function __construct(
-        protected Filesystem $filesystem,
+        protected FilesystemService $filesystem,
         protected ConvertToXml $converter,
         protected FeedQuery $query,
     ) {}
