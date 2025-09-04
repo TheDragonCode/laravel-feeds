@@ -30,28 +30,28 @@ it('generate stub', function (string $feed, array $files) {
         'feed'  => AttributesDirectiveFeed::class,
         'files' => [
             'AttributesDirectiveFeed'           => 'advanced-directive-attributes.php',
-            'Info\AttributesDirectiveFeedInfo'  => 'advanced-directive-attributes-info.php',
-            'Items\AttributesDirectiveFeedItem' => 'advanced-directive-attributes-item.php',
+            'Info/AttributesDirectiveFeedInfo'  => 'advanced-directive-attributes-info.php',
+            'Items/AttributesDirectiveFeedItem' => 'advanced-directive-attributes-item.php',
         ],
     ],
 
     '@value' => [
         'feed'  => ValueDirectiveFeed::class,
-        'files' => ['Items\ValueDirectiveFeedItem' => 'advanced-directive-value-item.php'],
+        'files' => ['Items/ValueDirectiveFeedItem' => 'advanced-directive-value-item.php'],
     ],
 
     '@cdata' => [
         'feed'  => CdataDirectiveFeed::class,
-        'files' => ['Items\CdataDirectiveFeedItem' => 'advanced-directive-cdata.php'],
+        'files' => ['Items/CdataDirectiveFeedItem' => 'advanced-directive-cdata.php'],
     ],
 
     '@mixed' => [
         'feed'  => MixedDirectiveFeed::class,
-        'files' => ['Items\MixedDirectiveFeedItem' => 'advanced-directive-mixed.php'],
+        'files' => ['Items/MixedDirectiveFeedItem' => 'advanced-directive-mixed.php'],
     ],
 
     '@array' => [
         'feed'  => ArrayDirectiveFeed::class,
-        'files' => ['Items\ArrayDirectiveFeedItem' => 'advanced-directive-array.php'],
+        'files' => ['Items/ArrayDirectiveFeedItem' => 'advanced-directive-array.php'],
     ],
 ]);

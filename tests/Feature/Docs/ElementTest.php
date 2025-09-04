@@ -34,7 +34,7 @@ it('generate stub', function (string $feed, array $files) {
         'feed'  => InfoMethodFeed::class,
         'files' => [
             'InfoMethodFeed'          => 'advanced-element-info.php',
-            'Info\InfoMethodFeedInfo' => 'advanced-element-info-info.php',
+            'Info/InfoMethodFeedInfo' => 'advanced-element-info-info.php',
         ],
     ],
 
@@ -47,7 +47,7 @@ it('generate stub', function (string $feed, array $files) {
         'feed'  => AttributeFeed::class,
         'files' => [
             'AttributeFeed'           => 'advanced-element-attribute.php',
-            'Items\AttributeFeedItem' => 'advanced-element-attribute-item.php',
+            'Items/AttributeFeedItem' => 'advanced-element-attribute-item.php',
         ],
     ],
 ]);
