@@ -7,6 +7,8 @@ namespace Workbench\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
+use function fake;
+
 class ProductFactory extends Factory
 {
     public function definition(): array
@@ -14,6 +16,7 @@ class ProductFactory extends Factory
         return [
             'article' => Str::of(fake()->unique()->password(4, 8))->upper()->prepend('GD-')->toString(),
 
+            'slug'        => fake()->unique()->slug(),
             'title'       => fake()->unique()->words(4, true),
             'description' => fake()->text(),
             'brand'       => fake()->word(),

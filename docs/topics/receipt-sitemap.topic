@@ -56,7 +56,7 @@
     </chapter>
 
     <chapter title="Result" id="result">
-        <code-block lang="xml" src="receipt-sitemap-result.xml" />
+        <code-block lang="xml" src="receipt-sitemap-feed.xml" />
     </chapter>
 
 </topic>
