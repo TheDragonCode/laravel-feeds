@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<company>Laravel</company>
+<url>https://example.com</url>
+
+<user>
+  <id>1</id>
+  <name>Kirstin Rohan I</name>
+</user>
+<user>
+  <id>2</id>
+  <name>Presley Ledner</name>
+</user>

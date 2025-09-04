@@ -1,4 +1,9 @@
-<users>
-    <name><![CDATA[<h1>Sauron</h1>]]></name>
-    <weapon>Evil Eye</weapon>
-</users>
+<?xml version="1.0" encoding="UTF-8"?>
+<user>
+  <name><![CDATA[<h1>Marianne Howell</h1>]]></name>
+  <email>dino75@example.com</email>
+</user>
+<user>
+  <name><![CDATA[<h1>Imogene Pouros V</h1>]]></name>
+  <email>jaunita.bernier@example.net</email>
+</user>

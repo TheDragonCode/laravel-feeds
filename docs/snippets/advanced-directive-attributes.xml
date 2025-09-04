@@ -1,3 +1,12 @@
-<users>
-    <some foo="bar" qwe="rty" />
-</users>
+<?xml version="1.0" encoding="UTF-8"?>
+<company since="2020"/>
+<url>https://example.com</url>
+
+<user>
+  <name>Carmela Marks</name>
+  <contact email="dax.denesik@example.com" phone="555-000-1"/>
+</user>
+<user>
+  <name>George DuBuque III</name>
+  <contact email="jlubowitz@example.org" phone="555-000-2"/>
+</user>

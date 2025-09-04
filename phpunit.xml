@@ -24,6 +24,7 @@
     <php>
         <env name="APP_KEY" value="AckfSECXIvnK5r28GVIWUAxmbBSjTsmF" />
         <env name="APP_ENV" value="testing" />
+        <env name="APP_URL" value="https://example.com" />
 
         <env name="BCRYPT_ROUNDS" value="4" />
 

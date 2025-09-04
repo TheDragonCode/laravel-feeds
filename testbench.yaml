@@ -11,7 +11,7 @@ migrations:
     - workbench/database/migrations
 
 workbench:
-    install: false
+    install: true
     discovers:
         web: true
         api: false

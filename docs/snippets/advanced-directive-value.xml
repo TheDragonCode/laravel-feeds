@@ -1,5 +1,9 @@
-<users>
-    <foo>Chris Evans</foo>
-    <bar>Sebastian Stan</bar>
-    <baz foo="bar">Matthew David McConaughey</baz>
-</users>
+<?xml version="1.0" encoding="UTF-8"?>
+<user>
+  <name>Prof. Lexi Doyle III</name>
+  <contact type="email">graham92@example.com</contact>
+</user>
+<user>
+  <name>Mr. Tyrese Sanford</name>
+  <contact type="email">cbailey@example.org</contact>
+</user>

@@ -1,7 +1,15 @@
-<users>
-    <foo>bar</foo>
-    <some>
-        <first>value</first>
-        <second>value</second>
-    </some>
-</users>
+<?xml version="1.0" encoding="UTF-8"?>
+<user>
+  <name>Casey Batz</name>
+  <some>
+    <first>Foo</first>
+    <second>elisha.hartmann@example.net</second>
+</some>
+</user>
+<user>
+  <name>Mrs. Eloise Christiansen</name>
+  <some>
+    <first>Foo</first>
+    <second>tzemlak@example.com</second>
+</some>
+</user>

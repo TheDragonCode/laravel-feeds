@@ -6,12 +6,12 @@ namespace App\Feeds\Items;
 
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 
-class UserFeedItem extends FeedItem
+class AttributeFeedItem extends FeedItem
 {
-    public function toArray(): array
+    public function attributes(): array
     {
         return [
-            '@picture' => $this->model->images,
+            'created_at' => $this->model->created_at->toDateTimeString(),
         ];
     }
 }

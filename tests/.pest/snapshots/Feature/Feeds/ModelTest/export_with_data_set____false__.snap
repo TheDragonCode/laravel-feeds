@@ -1,3 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><news><id>1</id><title>Some 1</title><content>Some content 1</content><created_at>2025-09-04T04:08:12.000000Z</created_at><updated_at>2025-09-04T04:08:12.000000Z</updated_at></news>
+<?xml version="1.0" encoding="UTF-8"?>
+<news><id>1</id><title>Some 1</title><content>Some content 1</content><created_at>2025-09-04T04:08:12.000000Z</created_at><updated_at>2025-09-04T04:08:12.000000Z</updated_at></news>
 <news><id>2</id><title>Some 2</title><content>Some content 2</content><created_at>2025-09-04T04:08:12.000000Z</created_at><updated_at>2025-09-04T04:08:12.000000Z</updated_at></news>
 <news><id>3</id><title>Some 3</title><content>Some content 3</content><created_at>2025-09-04T04:08:12.000000Z</created_at><updated_at>2025-09-04T04:08:12.000000Z</updated_at></news>
