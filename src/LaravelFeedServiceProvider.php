@@ -19,9 +19,11 @@ class LaravelFeedServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // @codeCoverageIgnoreStart
         if (! $this->app->runningInConsole()) {
             return;
         }
+        // @codeCoverageIgnoreEnd
 
         $this->registerCommands();
         $this->publishConfig();

@@ -6,6 +6,7 @@ namespace DragonCode\LaravelFeed\Exceptions;
 
 use RuntimeException;
 
+// @codeCoverageIgnoreStart
 class OpenFeedException extends RuntimeException
 {
     public function __construct(string $path)
@@ -13,3 +14,4 @@ class OpenFeedException extends RuntimeException
         parent::__construct("Unable to open file for writing: [$path]");
     }
 }
+// @codeCoverageIgnoreEnd

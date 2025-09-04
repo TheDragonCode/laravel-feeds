@@ -31,7 +31,7 @@ jobs:
             -   name: Execute tests
                 run: composer test
 
-    type:
+    type_coverage:
         runs-on: ubuntu-latest
 
         name: Type Coverage
@@ -51,4 +51,26 @@ jobs:
                 run: composer update
 
             -   name: Execute tests
-                run: composer lint:type-coverage
+                run: composer test:type-coverage
+
+    coverage:
+        runs-on: ubuntu-latest
+
+        name: Coverage
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v5
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php }}
+                    extensions: curl, mbstring, zip, pcntl, pdo, pdo_sqlite, iconv
+                    coverage: xdebug
+
+            -   name: Install dependencies
+                run: composer update
+
+            -   name: Execute tests
+                run: composer test:coverage

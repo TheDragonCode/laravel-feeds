@@ -36,6 +36,14 @@ class NewsFeedItem extends FeedItem
                     'weapon' => 'Evil Eye',
                 ],
             ],
+
+            'with mixed' => [
+                '@mixed' => <<<'XML'
+                    <first>line</first>
+                    <second>line with <a href="https://example.com">some</a> html/xml tag</second>
+                    <third>line with &amp; symbol</third>
+                    XML,
+            ],
         ];
     }
 }

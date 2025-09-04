@@ -14,6 +14,9 @@
       <weapon>Evil Eye</weapon>
     </Bad_guy>
   </with_attributes>
+  <with_mixed><first>line</first>
+<second>line with <a href="https://example.com">some</a> html/xml tag</second>
+<third>line with &amp; symbol</third></with_mixed>
 </news>
 <news>
   <record_title>[NEWS]:Some 2</record_title>
@@ -29,6 +32,9 @@
       <weapon>Evil Eye</weapon>
     </Bad_guy>
   </with_attributes>
+  <with_mixed><first>line</first>
+<second>line with <a href="https://example.com">some</a> html/xml tag</second>
+<third>line with &amp; symbol</third></with_mixed>
 </news>
 <news>
   <record_title>[NEWS]:Some 3</record_title>
@@ -44,5 +50,8 @@
       <weapon>Evil Eye</weapon>
     </Bad_guy>
   </with_attributes>
+  <with_mixed><first>line</first>
+<second>line with <a href="https://example.com">some</a> html/xml tag</second>
+<third>line with &amp; symbol</third></with_mixed>
 </news>
 </PartialFeed>
