@@ -70,7 +70,7 @@
         ],
         "build": "@php vendor/bin/testbench workbench:build --ansi",
         "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
-        "lint:type": "@php vendor/bin/pest --type-coverage --compact --min=95",
+        "lint:type-coverage": "@php vendor/bin/pest --type-coverage --compact --min=95",
         "migrate": "@php vendor/bin/testbench migrate:fresh --seed --ansi",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
         "style": "vendor/bin/pint --parallel --ansi",
