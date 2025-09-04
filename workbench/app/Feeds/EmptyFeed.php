@@ -16,6 +16,11 @@ class EmptyFeed extends Feed
         return News::query()->where('id', '<', 0);
     }
 
+    public function header(): string
+    {
+        return '';
+    }
+
     public function root(): ElementData
     {
         return new ElementData;

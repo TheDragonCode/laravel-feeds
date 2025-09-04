@@ -75,7 +75,7 @@
         "style": "vendor/bin/pint --parallel --ansi",
         "test": "@php vendor/bin/pest --parallel --colors=always",
         "test:coverage": "@php vendor/bin/pest --colors=always --coverage --compact --parallel --min=95",
-        "test:type-coverage": "@php vendor/bin/pest --type-coverage --compact --min=95",
+        "test:type": "@php vendor/bin/pest --type-coverage --compact --min=95",
         "test:update": "@php vendor/bin/pest --colors=always --update-snapshots"
     }
 }

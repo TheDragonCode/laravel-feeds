@@ -72,9 +72,7 @@ class GeneratorService
             return;
         }
 
-        if (! $value = $this->converter->convertInfo($info)) {
-            return;
-        }
+        $value = $this->converter->convertInfo($info);
 
         $this->append($file, $value . PHP_EOL, $feed->path());
     }
