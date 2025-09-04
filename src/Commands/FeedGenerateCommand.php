@@ -6,7 +6,7 @@ namespace DragonCode\LaravelFeed\Commands;
 
 use DragonCode\LaravelFeed\Exceptions\InvalidFeedArgumentException;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
-use DragonCode\LaravelFeed\Services\Generator;
+use DragonCode\LaravelFeed\Services\GeneratorService;
 use Illuminate\Console\Command;
 use Laravel\Prompts\Concerns\Colors;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -20,7 +20,7 @@ class FeedGenerateCommand extends Command
 {
     use Colors;
 
-    public function handle(Generator $generator, FeedQuery $query): void
+    public function handle(GeneratorService $generator, FeedQuery $query): void
     {
         foreach ($this->feedable($query) as $feed => $enabled) {
             $enabled

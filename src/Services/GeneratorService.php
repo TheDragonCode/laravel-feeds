@@ -16,7 +16,7 @@ use function get_class;
 use function implode;
 use function sprintf;
 
-class Generator
+class GeneratorService
 {
     public function __construct(
         protected Filesystem $filesystem,
