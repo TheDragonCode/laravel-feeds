@@ -21,7 +21,7 @@ class FeedItemMakeCommand extends GeneratorCommand
         return __DIR__ . '/../../../stubs/feed_item.stub';
     }
 
-    protected function getDefaultNamespace($rootNamespace): string
+    protected function getDefaultNamespace($rootNamespace): string // @pest-ignore-type
     {
         return $rootNamespace . '\Feeds\Items';
     }

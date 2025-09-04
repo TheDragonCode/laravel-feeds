@@ -41,7 +41,7 @@ class Generator
         $this->setLastActivity($feed);
     }
 
-    protected function performItem($file, Feed $feed): void
+    protected function performItem($file, Feed $feed): void // @pest-ignore-type
     {
         $feed->builder()->chunkById($feed->chunkSize(), function (Collection $models) use ($file, $feed) {
             $content = [];
@@ -56,12 +56,12 @@ class Generator
         });
     }
 
-    protected function performHeader($file, Feed $feed): void
+    protected function performHeader($file, Feed $feed): void // @pest-ignore-type
     {
         $this->append($file, $feed->header(), $feed->path());
     }
 
-    protected function performInfo($file, Feed $feed): void
+    protected function performInfo($file, Feed $feed): void // @pest-ignore-type
     {
         if (blank($info = $feed->info()->toArray())) {
             return;
@@ -72,7 +72,7 @@ class Generator
         $this->append($file, PHP_EOL . $value, $feed->path());
     }
 
-    protected function performRoot($file, Feed $feed): void
+    protected function performRoot($file, Feed $feed): void // @pest-ignore-type
     {
         if (! $name = $feed->root()->name) {
             return;
@@ -85,7 +85,7 @@ class Generator
         $this->append($file, $value, $feed->path());
     }
 
-    protected function performFooter($file, Feed $feed): void
+    protected function performFooter($file, Feed $feed): void // @pest-ignore-type
     {
         $value = '';
 
@@ -105,17 +105,17 @@ class Generator
             ->implode(' ');
     }
 
-    protected function append($file, string $content, string $path): void
+    protected function append($file, string $content, string $path): void // @pest-ignore-type
     {
         $this->filesystem->append($file, $content, $path);
     }
 
-    protected function release($file, string $path): void
+    protected function release($file, string $path): void // @pest-ignore-type
     {
         $this->filesystem->release($file, $path);
     }
 
-    protected function openFile(string $path)
+    protected function openFile(string $path) // @pest-ignore-type
     {
         return $this->filesystem->open($path);
     }

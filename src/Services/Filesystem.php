@@ -24,7 +24,7 @@ class Filesystem
     /**
      * @return resource
      */
-    public function open(string $path)
+    public function open(string $path) // @pest-ignore-type
     {
         $path = $this->draft($path);
 
@@ -43,7 +43,7 @@ class Filesystem
     /**
      * @param  resource  $resource
      */
-    public function append($resource, string $content, string $path): void
+    public function append($resource, string $content, string $path): void // @pest-ignore-type
     {
         if (blank($content)) {
             return;
@@ -57,7 +57,7 @@ class Filesystem
     /**
      * @param  resource  $resource
      */
-    public function release($resource, string $path): void
+    public function release($resource, string $path): void // @pest-ignore-type
     {
         $this->close($resource);
 
@@ -74,7 +74,7 @@ class Filesystem
     /**
      * @param  resource  $resource
      */
-    public function close($resource): void
+    public function close($resource): void // @pest-ignore-type
     {
         if (! is_resource($resource)) {
             return;
