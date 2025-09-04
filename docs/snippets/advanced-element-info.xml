@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<info_method>
+
 <company>Laravel</company>
 <url>https://example.com</url>
 
 <user>
   <id>1</id>
-  <name>Francis Kassulke</name>
+  <name>Miss Lina Nicolas</name>
 </user>
 <user>
   <id>2</id>
-  <name>Katarina Morissette II</name>
+  <name>Dr. Jack Hagenes MD</name>
 </user>
+
+</info_method>

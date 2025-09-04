@@ -15,6 +15,8 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+use function class_basename;
+
 abstract class Feed
 {
     protected FeedFormatEnum $format = FeedFormatEnum::Xml;
@@ -51,7 +53,13 @@ abstract class Feed
 
     public function root(): ElementData
     {
-        return new ElementData;
+        return new ElementData(
+            name: Str::of(static::class)
+                ->classBasename()
+                ->beforeLast(class_basename(self::class))
+                ->snake()
+                ->toString()
+        );
     }
 
     public function info(): FeedInfo
