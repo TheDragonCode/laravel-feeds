@@ -6,9 +6,9 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Machine Learning" id="machine-learning">
 
-    <link-summary>Guidance for using the project with LLMs and a consolidated knowledge base (lllms.txt)</link-summary>
-    <card-summary>Guidance for using the project with LLMs and a consolidated knowledge base (lllms.txt)</card-summary>
-    <web-summary>Guidance for using the project with LLMs and a consolidated knowledge base (lllms.txt)</web-summary>
+    <link-summary>Guidance for using the project with LLMs and a consolidated knowledge base</link-summary>
+    <card-summary>Guidance for using the project with LLMs and a consolidated knowledge base</card-summary>
+    <web-summary>Guidance for using the project with LLMs and a consolidated knowledge base</web-summary>
 
     <show-structure depth="3" />
 
@@ -18,8 +18,8 @@
 
     <p>
         To do that, import the guidance from the following file:
-        <a href="https://feeds.dragon-code.pro/lllms.txt">
-            <format style="bold">lllms.txt</format>
+        <a href="https://feeds.dragon-code.pro/llms.txt">
+            <format style="bold">llms.txt</format>
         </a>.
     </p>
 
