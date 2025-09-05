@@ -23,9 +23,15 @@ class FeedGenerateCommand extends Command
     public function handle(GeneratorService $generator, FeedQuery $query): void
     {
         foreach ($this->feedable($query) as $feed => $enabled) {
-            $enabled
-                ? $this->components->task($feed, fn () => $generator->feed(app($feed)))
-                : $this->components->twoColumnDetail($feed, $this->messageYellow('SKIP'));
+            if (! $enabled) {
+                $this->components->twoColumnDetail($feed, $this->messageYellow('SKIP'));
+
+                continue;
+            }
+
+            $this->components->info($feed);
+
+            $generator->feed(app($feed), $this->output);
         }
     }
 
