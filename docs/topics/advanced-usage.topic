@@ -62,6 +62,7 @@
         <chapter title="Information" id="information">
             <secondary-label ref="format-xml" />
             <secondary-label ref="format-json" />
+            <secondary-label ref="format-jsonl" />
 
             <p>
                 To add information to the beginning of the root element (if present) or without it,

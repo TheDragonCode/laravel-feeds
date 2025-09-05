@@ -101,10 +101,6 @@
     </chapter>
 
     <chapter title="File format" id="file_format">
-        <note title="Supported formats">
-            <include from="supported-formats.topic" element-id="formats" />
-        </note>
-
         <p>
             You can generate feeds in different formats.
             A feed class can be correctly exported only to the format for which it is intended.
@@ -117,7 +113,6 @@
         </p>
 
         <code-block lang="php" src="create-feeds-feed-format.php" include-lines="5-" />
-
     </chapter>
 
 </topic>
