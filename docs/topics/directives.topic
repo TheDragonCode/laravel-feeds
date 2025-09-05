@@ -12,6 +12,8 @@
 
     <show-structure depth="3" />
 
+    <secondary-label ref="format-xml" />
+
     <note title="Reserved directives">
         <list>
             <li><a href="#_attributes" /></li>
@@ -27,8 +29,6 @@
     </note>
 
     <chapter title="@attributes" id="_attributes">
-        <secondary-label ref="format-xml" />
-
         <link-summary>Indicates an array of attributes</link-summary>
 
         <p>
@@ -47,8 +47,6 @@
     </chapter>
 
     <chapter title="@value" id="_value">
-        <secondary-label ref="format-xml" />
-
         <link-summary>Indicates the applicable value "as it is"</link-summary>
 
         <tip>
@@ -69,8 +67,6 @@
     </chapter>
 
     <chapter title="@cdata" id="_cdata">
-        <secondary-label ref="format-xml" />
-
         <link-summary>Allows the use of XML markup without transformation</link-summary>
 
         <tip>
@@ -92,8 +88,6 @@
     </chapter>
 
     <chapter title="@mixed" id="_mixed">
-        <secondary-label ref="format-xml" />
-
         <link-summary>Allows you to use XML markup directly within the structure of the document</link-summary>
 
         <p>
@@ -110,8 +104,6 @@
     </chapter>
 
     <chapter title="@custom" id="_custom">
-        <secondary-label ref="format-xml" />
-
         <link-summary>Describes the possibility of listing an array of elements with the same keys</link-summary>
 
         <p>
