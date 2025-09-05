@@ -17,10 +17,13 @@
         <toc-element topic="create-feeds.topic" />
         <toc-element topic="generation.topic">
         </toc-element>
-        <toc-element topic="advanced-usage.topic" />
-        <toc-element topic="supported-formats.topic" />
     </toc-element>
     <toc-element toc-title="Digging Deeper">
+        <toc-element topic="supported-formats.topic" />
+        <toc-element topic="elements.topic" />
+        <toc-element topic="directives.topic" />
+        <toc-element topic="eloquent.topic" />
+        <toc-element topic="location.topic" />
         <toc-element topic="events.topic" />
     </toc-element>
     <toc-element toc-title="Receipts">

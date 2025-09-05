@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Elements" id="elements" help-id="elements">
+
+    <link-summary>Extended use of %instance%</link-summary>
+    <card-summary>Extended use of %instance%</card-summary>
+    <web-summary>Extended use of %instance%</web-summary>
+
+    <show-structure depth="3" />
+
+    <chapter title="Root element" id="root_element">
+        <secondary-label ref="format-xml" />
+        <secondary-label ref="format-json" />
+
+        <tip>
+            <p>
+                By default, the name of the root element is derived from the base name of the feed class.
+            </p>
+
+            <p>
+                For example, for the <code>App\Feeds\FooBarFeed</code> class, the name is <code>foo_bar</code>.
+            </p>
+        </tip>
+
+        <p>
+            To add a root element and/or its attributes, override the <code>root</code> method:
+        </p>
+
+        <code-block lang="php" src="advanced-element-root.php" include-lines="5-" />
+
+        <p>
+            To disable the addition of the root element, specify its name as empty — <code>null</code> or
+            <code>""</code>.
+        </p>
+
+        <p>
+            This code will result in:
+        </p>
+
+        <code-block lang="xml" src="advanced-element-root.xml" />
+    </chapter>
+
+    <chapter title="Information" id="information">
+        <secondary-label ref="format-xml" />
+        <secondary-label ref="format-json" />
+        <secondary-label ref="format-jsonl" />
+
+        <p>
+            To add information to the beginning of the root element (if present) or without it,
+            override the
+            <code>info</code> method in the feed class and create an object that extends the
+            <code>DragonCode\LaravelFeed\Feeds\Info\FeedInfo</code> class:
+        </p>
+
+        <code-block lang="php" src="advanced-element-info.php" include-lines="5-" />
+        <code-block lang="php" src="advanced-element-info-info.php" include-lines="5-" />
+
+        <p>
+            This code will result in:
+        </p>
+
+        <code-block lang="xml" src="advanced-element-info.xml" />
+
+        <p>
+            If you need to change the order in which the root element is output relative to the
+            information block, set the <code>beforeInfo</code> parameter in the <code>root</code> method:
+        </p>
+
+        <code-block lang="php" src="advanced-element-info-before-false.php" include-lines="5-" />
+
+        <p>
+            This code will result in:
+        </p>
+
+        <code-block lang="xml" src="advanced-element-info-before-false.xml" />
+    </chapter>
+
+    <chapter title="Header &amp; footer" id="header_and_footer">
+        <secondary-label ref="format-xml" />
+        <secondary-label ref="format-json" />
+
+        <p>
+            To change the header and footer, override the <code>header</code> and <code>footer</code> methods:
+        </p>
+
+        <code-block lang="php" src="advanced-element-header-footer.php" include-lines="5-" />
+
+        <p>
+            This code will result in:
+        </p>
+
+        <code-block lang="xml" src="advanced-element-header-footer.xml" />
+    </chapter>
+
+    <chapter title="Attributes" id="attributes">
+        <secondary-label ref="format-xml" />
+
+        <code-block lang="php" src="advanced-element-attribute.php" include-lines="5-" />
+        <code-block lang="php" src="advanced-element-attribute-item.php" include-lines="5-" />
+
+        <p>
+            This code will result in:
+        </p>
+
+        <code-block lang="xml" src="advanced-element-attribute.xml" />
+    </chapter>
+</topic>
