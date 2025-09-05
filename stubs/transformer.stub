@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DummyNamespace;
+
+use DragonCode\LaravelFeed\Contracts\Transformer;
+
+class DummyClass implements Transformer
+{
+    public function allow(mixed $value): bool
+    {
+        return true;
+    }
+
+    public function transform(mixed $value): string
+    {
+        //
+    }
+}

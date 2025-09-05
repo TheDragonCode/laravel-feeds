@@ -7,13 +7,11 @@ namespace DragonCode\LaravelFeed\Converters;
 use DOMDocument;
 use DOMNode;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Services\TransformerService;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Str;
 
-use function htmlspecialchars;
 use function is_array;
-use function is_bool;
-use function preg_replace;
 use function str_replace;
 use function str_starts_with;
 
@@ -24,6 +22,7 @@ class ConvertToXml
     public function __construct(
         #[Config('feeds.pretty')]
         bool $pretty,
+        protected TransformerService $transformer,
     ) {
         $this->document = new DOMDocument('1.0', 'UTF-8');
 
@@ -101,15 +100,15 @@ class ConvertToXml
         return str_starts_with($key, '@');
     }
 
-    protected function createElement(string $name, bool|float|int|string|null $value = ''): DOMNode
+    protected function createElement(string $name, mixed $value = ''): DOMNode
     {
-        return $this->document->createElement($name, $this->convertValue($value));
+        return $this->document->createElement($name, $this->transformValue($value));
     }
 
     protected function setAttributes(DOMNode $element, array $attributes): void
     {
         foreach ($attributes as $key => $value) {
-            $element->setAttribute($key, $this->convertValue($value));
+            $element->setAttribute($key, $this->transformValue($value));
         }
     }
 
@@ -139,7 +138,7 @@ class ConvertToXml
 
     protected function setItems(DOMNode $parent, string $key, mixed $value): void
     {
-        $element = $this->createElement($key, is_array($value) ? '' : $this->convertValue($value));
+        $element = $this->createElement($key, is_array($value) ? '' : $this->transformValue($value));
 
         if (is_array($value)) {
             $this->performItem($element, $value);
@@ -150,7 +149,7 @@ class ConvertToXml
 
     protected function setRaw(DOMNode $parent, mixed $value): void
     {
-        $parent->nodeValue = $this->convertValue($value);
+        $parent->nodeValue = $this->transformValue($value);
     }
 
     protected function toXml(DOMNode $item): string
@@ -163,19 +162,8 @@ class ConvertToXml
         return str_replace(' ', '_', (string) $key);
     }
 
-    protected function convertValue(bool|float|int|string|null $value): string
+    protected function transformValue(mixed $value): string
     {
-        if (is_bool($value)) {
-            return $value ? 'true' : 'false';
-        }
-
-        return $this->removeControlCharacters(
-            htmlspecialchars((string) $value)
-        );
-    }
-
-    protected function removeControlCharacters(string $value): string
-    {
-        return preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $value);
+        return $this->transformer->transform($value);
     }
 }

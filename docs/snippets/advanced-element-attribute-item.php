@@ -11,7 +11,7 @@ class AttributeFeedItem extends FeedItem
     public function attributes(): array
     {
         return [
-            'created_at' => $this->model->created_at->toDateTimeString(),
+            'created_at' => $this->model->created_at,
         ];
     }
 }

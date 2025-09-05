@@ -2,7 +2,7 @@
     "$schema": "https://laravel-ide.com/schema/laravel-ide-v2.json",
     "codeGenerations": [
         {
-            "id": "dragon-code.feeds.main",
+            "id": "dragon-code.feeds.feed",
             "name": "Create Feed",
             "classSuffix": "Feed",
             "regex": ".+",
@@ -25,7 +25,7 @@
             ]
         },
         {
-            "id": "dragon-code.feeds.item",
+            "id": "dragon-code.feeds.feed-item",
             "name": "Create Feed Item",
             "classSuffix": "FeedItem",
             "regex": ".+",
@@ -47,7 +47,7 @@
             ]
         },
         {
-            "id": "dragon-code.feeds.info",
+            "id": "dragon-code.feeds.feed-info",
             "name": "Create Feed Info",
             "classSuffix": "FeedInfo",
             "regex": ".+",
@@ -59,6 +59,27 @@
                         "type": "stub",
                         "path": "/stubs/feed_info.stub",
                         "fallbackPath": "stubs/feed_info.stub",
+                        "parameters": {
+                            "DummyNamespace": "${INPUT_FQN|namespace}",
+                            "DummyClass": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "id": "dragon-code.feeds.transformer",
+            "name": "Create Feed Transformer",
+            "classSuffix": "Transformer",
+            "regex": ".+",
+            "files": [
+                {
+                    "appNamespace": "Transformers",
+                    "name": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}.php",
+                    "template": {
+                        "type": "stub",
+                        "path": "/stubs/transformer.stub",
+                        "fallbackPath": "stubs/transformer.stub",
                         "parameters": {
                             "DummyNamespace": "${INPUT_FQN|namespace}",
                             "DummyClass": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}"
