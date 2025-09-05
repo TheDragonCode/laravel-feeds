@@ -9,7 +9,7 @@
 
     <snippet id="feed_generate">
         <p>
-            Now you can generate a feed using a console command:
+            Generate the feed by running the following console command:
         </p>
 
         <code-block lang="bash">
@@ -19,8 +19,7 @@
 
     <snippet id="check_operation">
         <p>
-            Check the <a href="create-feeds.topic">operation/migration</a>
-            file that was created for you and run the console command:
+            Review the generated <a href="create-feeds.topic">operation or migration</a> file, then run the appropriate console command:
         </p>
 
         <code-block lang="bash">
