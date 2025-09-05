@@ -108,9 +108,6 @@ return [
      * here, or publish a stub via the package's make command if available.
      */
     'transformers' => [
-        DateTimeTransformer::class,
-        BoolTransformer::class,
-        EnumTransformer::class,
         Transformers\BoolTransformer::class,
         Transformers\DateTimeTransformer::class,
         Transformers\EnumTransformer::class,
