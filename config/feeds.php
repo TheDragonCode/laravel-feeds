@@ -9,51 +9,45 @@ use DragonCode\LaravelFeed\Transformers;
  *
  * This file defines how feeds are generated and presented, including
  * formatting, persistence, scheduling, console UX and value transformers.
- * Adjust the options below or override them via environment variables.
+ * Adjust the options below according to your application needs.
  */
 return [
     /**
      * Pretty-print the generated feed output.
      *
      * When enabled, the resulting XML/JSON will include indentation and
-     * human‑friendly formatting. Disable for slightly smaller payload size.
-     *
-     * Default: false
+     * human‑friendly formatting. Disable to reduce payload size.
      */
     'pretty' => (bool) env('FEED_PRETTY', false),
 
     /**
-     * Output format options.
+     * Output date/time options.
      */
-    'formats' => [
+    'date' => [
         /**
          * Date/time format used when serializing timestamps to feeds.
-         * You may use any PHP date format constant, e.g. DATE_ATOM, DATE_RFC3339
-         * or a custom PHP date() format string.
-         *
-         * Default: DATE_ATOM
+         * Accepts any valid PHP date/time format string or constant.
          */
-        'date' => DATE_ATOM,
+        'format' => DATE_ATOM,
+
+        /**
+         * The timezone applied when formatting dates.
+         */
+        'timezone' => env('FEED_TIMEZONE', 'UTC'),
     ],
 
     /**
-     * Database table settings used by the package (e.g., for generation logs or state).
+     * Database table settings used by the package (for logs or internal state).
      */
     'table' => [
         /**
          * The database connection name to use.
-         *
-         * Should match a connection defined in config/database.php under
-         * the "connections" array.
-         *
-         * Default: sqlite
+         * Should match a connection defined in config/database.php.
          */
         'connection' => env('DB_CONNECTION', 'sqlite'),
 
         /**
          * The database table name used by the package.
-         *
-         * Default: feeds
          */
         'table' => env('FEED_TABLE', 'feeds'),
     ],
@@ -63,22 +57,14 @@ return [
      */
     'schedule' => [
         /**
-         * Time To Live (in minutes) for the schedule lock or cache.
-         *
-         * Controls how frequently a scheduled job may be executed to avoid
-         * overlapping or excessively frequent runs.
-         *
-         * Default: 1440 (24 hours)
+         * Time-to-live (in minutes) for the schedule lock or cache.
+         * Helps prevent overlapping or excessively frequent runs.
          */
         'ttl' => (int) env('FEED_SCHEDULE_TTL', 1440),
 
         /**
          * Run scheduled jobs in the background.
-         *
-         * When true, tasks will be dispatched to run asynchronously so they do
-         * not block the current process. Set to false to run in the foreground.
-         *
-         * Default: true
+         * When true, tasks are dispatched asynchronously to avoid blocking.
          */
         'background' => (bool) env('FEED_SCHEDULE_RUN_BACKGROUND', true),
     ],
@@ -88,12 +74,7 @@ return [
      */
     'console' => [
         /**
-         * Enables a progress bar when generating feeds in the console.
-         *
-         * When set to true, the feed:generate command will display a
-         * progress bar showing the execution progress.
-         *
-         * Default: false
+         * Show a progress bar when generating feeds in the console.
          */
         'progress_bar' => (bool) env('FEED_CONSOLE_PROGRESS_BAR_ENABLED', false),
     ],
@@ -105,7 +86,7 @@ return [
      *
      * You may add your own transformers by implementing
      * `DragonCode\LaravelFeed\Contracts\Transformer` and registering the class
-     * here, or publish a stub via the package's make command if available.
+     * here.
      */
     'transformers' => [
         Transformers\BoolTransformer::class,
@@ -128,9 +109,8 @@ return [
 
         'jsonl' => [
             /**
-             * JSON encoding flags used when exporting feeds to JSON.
-             *
-             * The JSON_PRETTY_PRINT option is not available for JSON Lines files and will be ignored.
+             * JSON encoding flags used when exporting feeds to JSON Lines format.
+             * Pretty print is ignored for JSON Lines.
              */
             'options' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
         ],
