@@ -43,7 +43,10 @@ abstract class Feed
 
     public function header(): string
     {
-        return '<?xml version="1.0" encoding="UTF-8"?>';
+        return match ($this->format()) {
+            FeedFormatEnum::Xml  => '<?xml version="1.0" encoding="UTF-8"?>',
+            FeedFormatEnum::Json => '',
+        };
     }
 
     public function footer(): string
@@ -74,7 +77,7 @@ abstract class Feed
             ->ltrim('\\')
             ->replace('\\', ' ')
             ->kebab()
-            ->append('.', $this->format->value)
+            ->append('.', $this->format()->value)
             ->toString();
     }
 
@@ -88,5 +91,10 @@ abstract class Feed
     public function storage(): Filesystem
     {
         return Storage::disk($this->storage);
+    }
+
+    public function format(): FeedFormatEnum
+    {
+        return $this->format;
     }
 }

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Services;
 
+use DragonCode\LaravelFeed\Converters\Converter;
+use DragonCode\LaravelFeed\Converters\ConvertToJson;
 use DragonCode\LaravelFeed\Converters\ConvertToXml;
-use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use Illuminate\Console\OutputStyle;
@@ -13,17 +15,15 @@ use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 use function blank;
-use function collect;
 use function get_class;
 use function implode;
-use function sprintf;
-use function trim;
 
 class GeneratorService
 {
     public function __construct(
         protected FilesystemService $filesystem,
-        protected ConvertToXml $converter,
+        protected ConvertToXml $xmlConverter,
+        protected ConvertToJson $jsonConverter,
         protected FeedQuery $query,
     ) {}
 
@@ -47,23 +47,32 @@ class GeneratorService
 
     protected function performItem($file, Feed $feed, ?OutputStyle $output): void // @pest-ignore-type
     {
+        $count = $feed->builder()->count();
+
         // @codeCoverageIgnoreStart
-        $bar = $this->progressBar($feed, $output);
+        $bar = $this->progressBar($count, $output);
         // @codeCoverageIgnoreEnd
 
-        $feed->builder()->chunkById($feed->chunkSize(), function (Collection $models) use ($file, $feed, $bar) {
-            $content = [];
+        $progress = $count;
 
-            foreach ($models as $model) {
-                $content[] = $this->converter->convertItem(
-                    $feed->item($model)
-                );
+        $feed->builder()->chunkById(
+            $feed->chunkSize(),
+            function (Collection $models) use ($file, $feed, $bar, &$progress) {
+                $content = [];
 
-                $bar?->advance();
+                foreach ($models as $model) {
+                    $content[] = $this->converter($feed)->item(
+                        item  : $feed->item($model),
+                        isLast: $progress <= 1
+                    );
+
+                    $bar?->advance();
+                    $progress--;
+                }
+
+                $this->append($file, implode(PHP_EOL, $content), $feed->path());
             }
-
-            $this->append($file, implode(PHP_EOL, $content), $feed->path());
-        });
+        );
 
         $bar?->finish();
         $output?->newLine();
@@ -71,11 +80,9 @@ class GeneratorService
 
     protected function performHeader($file, Feed $feed): void // @pest-ignore-type
     {
-        if (empty($value = $feed->header())) {
-            return;
-        }
+        $value = $this->converter($feed)->header($feed);
 
-        $this->append($file, trim($value) . PHP_EOL, $feed->path());
+        $this->append($file, $value, $feed->path());
     }
 
     protected function performInfo($file, Feed $feed): void // @pest-ignore-type
@@ -84,7 +91,7 @@ class GeneratorService
             return;
         }
 
-        $value = $this->converter->convertInfo($info);
+        $value = $this->converter($feed)->info($info, $feed->root()->beforeInfo);
 
         $this->append($file, $value . PHP_EOL, $feed->path());
     }
@@ -95,39 +102,28 @@ class GeneratorService
             return;
         }
 
-        if (! $name = $feed->root()->name) {
+        if (! $feed->root()->name) {
             return;
         }
 
-        $value = ! empty($feed->root()->attributes)
-            ? sprintf("<%s %s>\n\n", $name, $this->makeRootAttributes($feed->root()))
-            : sprintf("<%s>\n\n", $name);
+        $value = $this->converter($feed)->root($feed);
 
         $this->append($file, $value, $feed->path());
     }
 
     protected function performFooter($file, Feed $feed): void // @pest-ignore-type
     {
-        $value = '';
-
-        if ($name = $feed->root()->name) {
-            $value .= "\n\n</$name>\n";
-        }
-
-        $value .= $feed->footer();
+        $value = $this->converter($feed)->footer($feed);
 
         $this->append($file, $value, $feed->path());
     }
 
-    protected function makeRootAttributes(ElementData $item): string
-    {
-        return collect($item->attributes)
-            ->map(fn (mixed $value, int|string $key) => sprintf('%s="%s"', $key, $value))
-            ->implode(' ');
-    }
-
     protected function append($file, string $content, string $path): void // @pest-ignore-type
     {
+        if (blank($content)) {
+            return;
+        }
+
         $this->filesystem->append($file, $content, $path);
     }
 
@@ -148,10 +144,16 @@ class GeneratorService
         );
     }
 
-    protected function progressBar(Feed $feed, ?OutputStyle $output): ?ProgressBar
+    protected function converter(Feed $feed): Converter
     {
-        return $output?->createProgressBar(
-            $feed->builder()->count()
-        );
+        return match ($feed->format()) {
+            FeedFormatEnum::Xml  => $this->xmlConverter,
+            FeedFormatEnum::Json => $this->jsonConverter,
+        };
+    }
+
+    protected function progressBar(int $count, ?OutputStyle $output): ?ProgressBar
+    {
+        return $output?->createProgressBar($count);
     }
 }

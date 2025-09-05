@@ -113,4 +113,10 @@ return [
         Transformers\EnumTransformer::class,
         // Transformers\NullTransformer::class,
     ],
+
+    'converters' => [
+        'json' => [
+            'options' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+        ],
+    ],
 ];
