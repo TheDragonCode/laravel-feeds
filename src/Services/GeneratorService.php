@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Services;
 
 use DragonCode\LaravelFeed\Converters\Converter;
+use DragonCode\LaravelFeed\Exceptions\FeedGenerationException;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Helpers\ConverterHelper;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Throwable;
 
 use function blank;
 use function get_class;
@@ -29,17 +31,25 @@ class GeneratorService
         $file = $this->openFile(
             $path = $feed->path()
         );
+        try {
+            $file = $this->openFile(
+                $path = $feed->path()
+            );
 
-        $this->performHeader($file, $feed);
-        $this->performRoot($file, $feed, true);
-        $this->performInfo($file, $feed);
-        $this->performRoot($file, $feed, false);
-        $this->performItem($file, $feed, $output);
-        $this->performFooter($file, $feed);
+            $this->performHeader($file, $feed);
+            $this->performRoot($file, $feed, true);
+            $this->performInfo($file, $feed);
+            $this->performRoot($file, $feed, false);
+            $this->performItem($file, $feed, $output);
+            $this->performFooter($file, $feed);
 
-        $this->release($file, $path);
+            $this->release($file, $path);
 
         $this->setLastActivity($feed);
+            $this->setLastActivity($feed);
+        } catch (Throwable $e) {
+            throw new FeedGenerationException(get_class($feed), $e);
+        }
     }
 
     protected function performItem($file, Feed $feed, ?OutputStyle $output): void // @pest-ignore-type
