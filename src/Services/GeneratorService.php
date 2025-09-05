@@ -10,6 +10,7 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Collection;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 use function blank;
 use function collect;
@@ -26,7 +27,7 @@ class GeneratorService
         protected FeedQuery $query,
     ) {}
 
-    public function feed(Feed $feed, OutputStyle $output): void
+    public function feed(Feed $feed, ?OutputStyle $output = null): void
     {
         $file = $this->openFile(
             $path = $feed->path()
@@ -44,11 +45,11 @@ class GeneratorService
         $this->setLastActivity($feed);
     }
 
-    protected function performItem($file, Feed $feed, OutputStyle $output): void // @pest-ignore-type
+    protected function performItem($file, Feed $feed, ?OutputStyle $output): void // @pest-ignore-type
     {
-        $bar = $output->createProgressBar(
-            $feed->builder()->count()
-        );
+        // @codeCoverageIgnoreStart
+        $bar = $this->progressBar($feed, $output);
+        // @codeCoverageIgnoreEnd
 
         $feed->builder()->chunkById($feed->chunkSize(), function (Collection $models) use ($file, $feed, $bar) {
             $content = [];
@@ -58,14 +59,14 @@ class GeneratorService
                     $feed->item($model)
                 );
 
-                $bar->advance();
+                $bar?->advance();
             }
 
             $this->append($file, implode(PHP_EOL, $content), $feed->path());
         });
 
-        $bar->finish();
-        $output->newLine();
+        $bar?->finish();
+        $output?->newLine();
     }
 
     protected function performHeader($file, Feed $feed): void // @pest-ignore-type
@@ -144,6 +145,13 @@ class GeneratorService
     {
         $this->query->setLastActivity(
             get_class($feed)
+        );
+    }
+
+    protected function progressBar(Feed $feed, ?OutputStyle $output): ?ProgressBar
+    {
+        return $output?->createProgressBar(
+            $feed->builder()->count()
         );
     }
 }
