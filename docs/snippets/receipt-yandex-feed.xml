@@ -16,36 +16,36 @@
 
 <offers>
 
-<offer id="1" available="true" type="vendor.model">
-  <url>https://example.com/products/voluptatum-eveniet-voluptatibus-veniam-est</url>
-  <barcode>GD-=YHK`%YP</barcode>
-  <name>maxime et rerum repellendus</name>
-  <description>Deleniti blanditiis dolorem voluptas mollitia quia. Beatae ea ut saepe aut ex illo rerum soluta. Aut omnis harum et cupiditate omnis minima.</description>
+<offer id="1" available="false" type="vendor.model">
+  <url>https://example.com/products/adipisci-similique-est-sed-fugiat-cum-rerum-ex</url>
+  <barcode>GD-,PK?H</barcode>
+  <name>asperiores dolorem voluptatem in</name>
+  <description>Et quia eum voluptatibus et. Non iusto id explicabo. Deserunt quaerat est fuga harum rerum deserunt.</description>
   <delivery>true</delivery>
-  <price>479</price>
+  <price>103</price>
   <currencyId>RUR</currencyId>
-  <vendor>necessitatibus</vendor>
-  <picture>https://via.placeholder.com/640x480.png/0000dd?text=alias</picture>
-  <picture>https://via.placeholder.com/640x480.png/0011bb?text=sint</picture>
-  <picture>https://via.placeholder.com/640x480.png/001199?text=distinctio</picture>
-  <param name="Артикул">GD-=YHK`%YP</param>
-  <param name="Код цвета">7</param>
-  <param name="Пол">female</param>
+  <vendor>modi</vendor>
+  <picture>https://via.placeholder.com/640x480.png/009922?text=quaerat</picture>
+  <picture>https://via.placeholder.com/640x480.png/00cc44?text=corporis</picture>
+  <picture>https://via.placeholder.com/640x480.png/0088ee?text=tempora</picture>
+  <param name="Артикул">GD-,PK?H</param>
+  <param name="Код цвета">2</param>
+  <param name="Пол">male</param>
 </offer>
 <offer id="2" available="true" type="vendor.model">
-  <url>https://example.com/products/ut-voluptatem-et-odit-dolor-dolores-et</url>
-  <barcode>GD-_^WMW9,</barcode>
-  <name>reiciendis molestias qui fuga</name>
-  <description>Debitis sapiente quae omnis molestiae aut eligendi autem impedit. Illo quaerat odit laborum qui omnis. Doloribus rerum recusandae quidem vero dicta sapiente.</description>
+  <url>https://example.com/products/aspernatur-asperiores-fuga-explicabo-quo-sit-quia-qui</url>
+  <barcode>GD-#&amp;gt;XKQYVO</barcode>
+  <name>cumque a aut qui</name>
+  <description>Sed officiis natus commodi quis aut. Dicta molestiae distinctio dolores. Nemo velit rerum voluptatem perferendis iusto quia omnis. Autem voluptatum minus voluptatem occaecati eius.</description>
   <delivery>true</delivery>
-  <price>803</price>
+  <price>802</price>
   <currencyId>RUR</currencyId>
-  <vendor>minus</vendor>
-  <picture>https://via.placeholder.com/640x480.png/0000ee?text=rem</picture>
-  <picture>https://via.placeholder.com/640x480.png/001144?text=earum</picture>
-  <picture>https://via.placeholder.com/640x480.png/008899?text=error</picture>
-  <param name="Артикул">GD-_^WMW9,</param>
-  <param name="Код цвета">9</param>
+  <vendor>maxime</vendor>
+  <picture>https://via.placeholder.com/640x480.png/0055dd?text=aperiam</picture>
+  <picture>https://via.placeholder.com/640x480.png/001144?text=velit</picture>
+  <picture>https://via.placeholder.com/640x480.png/008877?text=consequatur</picture>
+  <param name="Артикул">GD-#&gt;XKQYVO</param>
+  <param name="Код цвета">7</param>
   <param name="Пол">female</param>
 </offer>
 

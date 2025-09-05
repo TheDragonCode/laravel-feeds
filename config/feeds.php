@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Transformers\BooleanTransformer;
 use DragonCode\LaravelFeed\Transformers\DateTimeTransformer;
+use DragonCode\LaravelFeed\Transformers\EnumTransformer;
 
 /**
  * Laravel Feeds configuration
@@ -111,5 +112,6 @@ return [
     'transformers' => [
         DateTimeTransformer::class,
         BooleanTransformer::class,
+        EnumTransformer::class,
     ],
 ];

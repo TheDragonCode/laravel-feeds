@@ -6,46 +6,46 @@
 
 <item>
   <g:id>1</g:id>
-  <g:title><![CDATA[id porro illum id]]></g:title>
-  <g:description><![CDATA[Repudiandae quis inventore ea hic ipsa dolores cum. Excepturi commodi ab eaque est quis et. Itaque et autem omnis sed est quos error.]]></g:description>
-  <g:link>https://example.com/products/blanditiis-incidunt-autem-officia-rerum</g:link>
-  <g:image_link>https://via.placeholder.com/640x480.png/0077aa?text=eius</g:image_link>
-  <g:additional_image_link>https://via.placeholder.com/640x480.png/00aaaa?text=fuga</g:additional_image_link>
-  <g:additional_image_link>https://via.placeholder.com/640x480.png/001144?text=beatae</g:additional_image_link>
-  <g:brand>velit</g:brand>
+  <g:title><![CDATA[temporibus animi assumenda in]]></g:title>
+  <g:description><![CDATA[Sit sit commodi ut quibusdam. Nesciunt explicabo necessitatibus quasi ullam recusandae quidem harum. Dolor ex et cumque voluptate eveniet.]]></g:description>
+  <g:link>https://example.com/products/repudiandae-soluta-qui-et-vel-corporis</g:link>
+  <g:image_link>https://via.placeholder.com/640x480.png/007788?text=et</g:image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/00ff55?text=voluptatum</g:additional_image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/00ffee?text=natus</g:additional_image_link>
+  <g:brand>quidem</g:brand>
   <g:condition>new</g:condition>
   <g:availability>in stock</g:availability>
-  <g:price>466</g:price>
-  <g:sale_price>466</g:sale_price>
+  <g:price>129</g:price>
+  <g:sale_price>129</g:sale_price>
   <g:item_group_id>12345</g:item_group_id>
   <g:status>active</g:status>
-  <g:color><![CDATA[PeachPuff]]></g:color>
-  <g:size>17</g:size>
+  <g:color><![CDATA[MediumPurple]]></g:color>
+  <g:size>45</g:size>
   <g:age_group>adult</g:age_group>
-  <g:material><![CDATA[omnis]]></g:material>
+  <g:material><![CDATA[rerum]]></g:material>
   <g:pattern><![CDATA[regular]]></g:pattern>
   <g:google_product_category>1000</g:google_product_category>
   <g:fb_product_category>2000</g:fb_product_category>
 </item>
 <item>
   <g:id>2</g:id>
-  <g:title><![CDATA[rem commodi alias et]]></g:title>
-  <g:description><![CDATA[Qui quis quis quia et eveniet ut consequatur. Repudiandae iusto eum voluptates enim non et et. Ab officia non assumenda et sint consequatur modi.]]></g:description>
-  <g:link>https://example.com/products/facere-et-laboriosam-minus-impedit-sit</g:link>
-  <g:image_link>https://via.placeholder.com/640x480.png/00aa33?text=officiis</g:image_link>
-  <g:additional_image_link>https://via.placeholder.com/640x480.png/0011cc?text=quis</g:additional_image_link>
-  <g:additional_image_link>https://via.placeholder.com/640x480.png/0088ee?text=saepe</g:additional_image_link>
-  <g:brand>neque</g:brand>
+  <g:title><![CDATA[aut deleniti aliquam possimus]]></g:title>
+  <g:description><![CDATA[Dolore iure consequatur voluptatem doloremque ut. Quaerat quis odit iusto qui. Ut expedita culpa laudantium totam id ea. Repudiandae aut aut enim sit.]]></g:description>
+  <g:link>https://example.com/products/veniam-iste-in-explicabo-voluptas</g:link>
+  <g:image_link>https://via.placeholder.com/640x480.png/009999?text=eos</g:image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/002288?text=deleniti</g:additional_image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/0044aa?text=dolore</g:additional_image_link>
+  <g:brand>cupiditate</g:brand>
   <g:condition>new</g:condition>
   <g:availability>in stock</g:availability>
-  <g:price>553</g:price>
-  <g:sale_price>553</g:sale_price>
+  <g:price>438</g:price>
+  <g:sale_price>438</g:sale_price>
   <g:item_group_id>12345</g:item_group_id>
   <g:status>active</g:status>
-  <g:color><![CDATA[MediumTurquoise]]></g:color>
-  <g:size>12</g:size>
+  <g:color><![CDATA[PowderBlue]]></g:color>
+  <g:size>24</g:size>
   <g:age_group>adult</g:age_group>
-  <g:material><![CDATA[quos]]></g:material>
+  <g:material><![CDATA[eaque]]></g:material>
   <g:pattern><![CDATA[regular]]></g:pattern>
   <g:google_product_category>1000</g:google_product_category>
   <g:fb_product_category>2000</g:fb_product_category>
