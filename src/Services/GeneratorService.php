@@ -32,8 +32,9 @@ class GeneratorService
         );
 
         $this->performHeader($file, $feed);
-        $this->performRoot($file, $feed);
+        $this->performRoot($file, $feed, true);
         $this->performInfo($file, $feed);
+        $this->performRoot($file, $feed, false);
         $this->performItem($file, $feed);
         $this->performFooter($file, $feed);
 
@@ -77,8 +78,12 @@ class GeneratorService
         $this->append($file, $value . PHP_EOL, $feed->path());
     }
 
-    protected function performRoot($file, Feed $feed): void // @pest-ignore-type
+    protected function performRoot($file, Feed $feed, bool $when): void // @pest-ignore-type
     {
+        if ($feed->root()->beforeInfo !== $when) {
+            return;
+        }
+
         if (! $name = $feed->root()->name) {
             return;
         }

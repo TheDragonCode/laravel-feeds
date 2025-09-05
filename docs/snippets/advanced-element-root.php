@@ -26,7 +26,8 @@ class RootElementFeed extends Feed
                 'count' => $this->builder()->count(),
 
                 'generated_at' => now(),
-            ]
+            ],
+            beforeInfo: false
         );
     }
 }
