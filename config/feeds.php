@@ -114,8 +114,15 @@ return [
         // Transformers\NullTransformer::class,
     ],
 
+    /**
+     * Converters define low-level serialization settings for specific output
+     * formats. You can tweak encoder flags and other options here.
+     */
     'converters' => [
         'json' => [
+            /**
+             * JSON encoding flags used when exporting feeds to JSON.
+             */
             'options' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
         ],
     ],
