@@ -20,6 +20,9 @@
         <toc-element topic="advanced-usage.topic" />
         <toc-element topic="supported-formats.topic" />
     </toc-element>
+    <toc-element toc-title="Digging Deeper">
+        <toc-element topic="events.topic" />
+    </toc-element>
     <toc-element toc-title="Receipts">
         <toc-element topic="receipt-sitemap.topic" />
         <toc-element topic="receipt-instagram.topic" />

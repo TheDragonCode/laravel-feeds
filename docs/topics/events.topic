@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Events" id="events">
+
+    <link-summary>Events dispatched during feed generation</link-summary>
+    <card-summary>Events dispatched during feed generation</card-summary>
+    <web-summary>Events dispatched during feed generation</web-summary>
+
+    <show-structure depth="3" />
+
+    <p>
+        Feeds dispatch two events when running the command:
+    </p>
+
+    <deflist>
+        <def title="DragonCode\LaravelFeed\Events\FeedStartingEvent">
+            The <code>FeedStartingEvent</code> is dispatched immediately before the draft file is created.
+        </def>
+        <def title="DragonCode\LaravelFeed\Events\FeedFinishedEvent">
+            The <code>FeedFinishedEvent</code> is dispatched right after the feed file generation has completed.
+        </def>
+    </deflist>
+</topic>
