@@ -21,7 +21,7 @@
             <li><a href="#_value" /></li>
             <li><a href="#_cdata" /></li>
             <li><a href="#_mixed" /></li>
-            <li><a href="#array" /></li>
+            <li><a href="#_custom" /></li>
         </list>
     </note>
 
@@ -188,7 +188,7 @@
             <code-block lang="xml" src="advanced-directive-mixed.xml" />
         </chapter>
 
-        <chapter title="Array" id="array">
+        <chapter title="@custom" id="custom">
             <link-summary>Describes the possibility of listing an array of elements with the same keys</link-summary>
 
             <p>
