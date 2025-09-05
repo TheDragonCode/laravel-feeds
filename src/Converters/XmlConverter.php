@@ -21,7 +21,7 @@ use function str_replace;
 use function str_starts_with;
 use function trim;
 
-class ConvertToXml extends Converter
+class XmlConverter extends Converter
 {
     protected DOMDocument $document;
 
