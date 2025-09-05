@@ -6,9 +6,9 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Eloquent" id="eloquent">
 
-    <link-summary>Extended use of %instance%</link-summary>
-    <card-summary>Extended use of %instance%</card-summary>
-    <web-summary>Extended use of %instance%</web-summary>
+    <link-summary>Advanced Eloquent settings for feed generation (e.g., chunk size)</link-summary>
+    <card-summary>Advanced Eloquent settings for feed generation (e.g., chunk size)</card-summary>
+    <web-summary>Advanced Eloquent settings for feed generation (e.g., chunk size)</web-summary>
 
     <show-structure depth="3" />
 

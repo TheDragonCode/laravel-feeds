@@ -6,9 +6,9 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Elements" id="elements" help-id="elements">
 
-    <link-summary>Extended use of %instance%</link-summary>
-    <card-summary>Extended use of %instance%</card-summary>
-    <web-summary>Extended use of %instance%</web-summary>
+    <link-summary>Configure feed structure: root element, info block, headers/footers, and attributes</link-summary>
+    <card-summary>Configure feed structure: root element, info block, headers/footers, and attributes</card-summary>
+    <web-summary>Configure feed structure: root element, info block, headers/footers, and attributes</web-summary>
 
     <show-structure depth="3" />
 

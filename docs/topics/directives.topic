@@ -6,9 +6,9 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Directives" id="directives">
 
-    <link-summary>Instructions for creating and populating the feed, feed item, and feed info classes</link-summary>
-    <card-summary>Instructions for creating and populating the feed, feed item, and feed info classes</card-summary>
-    <web-summary>Instructions for creating and populating the feed, feed item, and feed info classes</web-summary>
+    <link-summary>Built-in XML directives for feed output</link-summary>
+    <card-summary>Built-in XML directives for feed output</card-summary>
+    <web-summary>Built-in XML directives for feed output</web-summary>
 
     <show-structure depth="3" />
 

@@ -6,9 +6,9 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Getting started" id="introduction">
 
-    <link-summary>Extended use of %instance%</link-summary>
-    <card-summary>Extended use of %instance%</card-summary>
-    <web-summary>Extended use of %instance%</web-summary>
+    <link-summary>Overview of %instance% with quick links to installation and usage</link-summary>
+    <card-summary>Overview of %instance% with quick links to installation and usage</card-summary>
+    <web-summary>Overview of %instance% with quick links to installation and usage</web-summary>
 
     <section-starting-page>
         <title>📃 %instance%</title>
