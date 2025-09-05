@@ -8,6 +8,7 @@ use DragonCode\LaravelFeed\Converters\ConvertToXml;
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
+use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Collection;
 
 use function blank;
@@ -25,7 +26,7 @@ class GeneratorService
         protected FeedQuery $query,
     ) {}
 
-    public function feed(Feed $feed): void
+    public function feed(Feed $feed, OutputStyle $output): void
     {
         $file = $this->openFile(
             $path = $feed->path()
@@ -35,7 +36,7 @@ class GeneratorService
         $this->performRoot($file, $feed, true);
         $this->performInfo($file, $feed);
         $this->performRoot($file, $feed, false);
-        $this->performItem($file, $feed);
+        $this->performItem($file, $feed, $output);
         $this->performFooter($file, $feed);
 
         $this->release($file, $path);
@@ -43,19 +44,28 @@ class GeneratorService
         $this->setLastActivity($feed);
     }
 
-    protected function performItem($file, Feed $feed): void // @pest-ignore-type
+    protected function performItem($file, Feed $feed, OutputStyle $output): void // @pest-ignore-type
     {
-        $feed->builder()->chunkById($feed->chunkSize(), function (Collection $models) use ($file, $feed) {
+        $bar = $output->createProgressBar(
+            $feed->builder()->count()
+        );
+
+        $feed->builder()->chunkById($feed->chunkSize(), function (Collection $models) use ($file, $feed, $bar) {
             $content = [];
 
             foreach ($models as $model) {
                 $content[] = $this->converter->convertItem(
                     $feed->item($model)
                 );
+
+                $bar->advance();
             }
 
             $this->append($file, implode(PHP_EOL, $content), $feed->path());
         });
+
+        $bar->finish();
+        $output->newLine();
     }
 
     protected function performHeader($file, Feed $feed): void // @pest-ignore-type
