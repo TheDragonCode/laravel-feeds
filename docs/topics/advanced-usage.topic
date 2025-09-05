@@ -29,7 +29,7 @@
         <chapter title="Root element" id="root_element">
             <tip>
                 <p>
-                    By defending, the name of the root element is formed from the basic name of the feed class.
+                    By default, the name of the root element is derived from the base name of the feed class.
                 </p>
 
                 <p>
@@ -44,7 +44,7 @@
             <code-block lang="php" src="advanced-element-root.php" include-lines="5-" />
 
             <p>
-                To disable the addition of the main element, specify its name as empty - <code>null</code> or
+                To disable the addition of the root element, specify its name as empty — <code>null</code> or
                 <code>""</code>.
             </p>
 
@@ -59,7 +59,7 @@
             <p>
                 To add information to the beginning of the root element (if present) or without it,
                 override the
-                <code>info</code> method in the feed class and call the creation of an object that extend the
+                <code>info</code> method in the feed class and create an object that extends the
                 <code>DragonCode\LaravelFeed\Feeds\Info\FeedInfo</code> class:
             </p>
 
@@ -73,7 +73,7 @@
             <code-block lang="xml" src="advanced-element-info.xml" />
 
             <p>
-                If it is necessary to change the procedure for the output of the root element relative to the
+                If you need to change the order in which the root element is output relative to the
                 information block, set the <code>beforeInfo</code> parameter in the <code>root</code> method:
             </p>
 
@@ -135,7 +135,7 @@
             <link-summary>Indicates the applicable value "as it is"</link-summary>
 
             <tip>
-                Note, that the value of the <code>@value</code> field must be a string.
+                Note that the value of the <code>@value</code> field must be a string.
             </tip>
 
             <p>
@@ -152,7 +152,7 @@
         </chapter>
 
         <chapter title="@cdata" id="_cdata">
-            <link-summary>Allows the use of XML marking without transformation</link-summary>
+            <link-summary>Allows the use of XML markup without transformation</link-summary>
 
             <tip>
                 It is also possible to wrap the value of a node into a CDATA section.
@@ -173,7 +173,7 @@
         </chapter>
 
         <chapter title="@mixed" id="_mixed">
-            <link-summary>Allows you to use XML marking directly into the structure of the document</link-summary>
+            <link-summary>Allows you to use XML markup directly within the structure of the document</link-summary>
 
             <p>
                 To insert XML fragments “as is”, use the <code>@mixed</code> directive:
@@ -211,7 +211,7 @@
 
     <chapter title="Location &amp; filename" id="location_and_filename">
         <p>
-            By default, feeds will be stored in the <code>public</code> storage,
+            By default, feeds are stored in <code>public</code> storage,
             and the file name will be automatically generated from the feed class name after
             <code>App\Feeds\</code> in <code>kebab-case</code> format.
             For example:
@@ -235,7 +235,7 @@
 
     <chapter title="Chunk size" id="chunk_size">
         <p>
-            Database queries use chunks, which are <code>1000</code> bytes by default.
+            Database queries use chunks, which are <code>1000</code> items by default.
             You can change this by overriding the <code>chunkSize</code> method:
         </p>
 

@@ -33,7 +33,7 @@
             <a href="https://www.php-fig.org/psr/psr-4/">PSR-4</a> autoloading standard.
         </p>
         <p>
-            To apply the formatting of the code style, follow the console command:
+            To apply code style formatting, run the following console command:
         </p>
         <code-block lang="bash">
             composer style
@@ -52,7 +52,7 @@
         </p>
 
         <list>
-            <li>Participants will be tolerant of opposing views.</li>
+            <li>Participants should be tolerant of opposing views.</li>
             <li>Participants must ensure that their language and actions are free of personal attacks and disparaging
                 personal remarks.
             </li>

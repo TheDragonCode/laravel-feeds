@@ -5,7 +5,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         is-library="true"
         id="snippet-generate"
-        title="Generate Command">
+        title="Generate command">
 
     <snippet id="feed_generate">
         <p>

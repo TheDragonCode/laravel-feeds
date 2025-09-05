@@ -35,8 +35,7 @@
 
     <warning>
         <p>
-            <format style="bold">Before running migrations</format>
-            , check the database connection settings in the
+            <format style="bold">Before running migrations</format>, check the database connection settings in the
             <code>%config-filename%</code> file.
         </p>
     </warning>
