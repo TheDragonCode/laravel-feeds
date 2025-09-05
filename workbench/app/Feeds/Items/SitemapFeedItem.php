@@ -19,7 +19,7 @@ class SitemapFeedItem extends FeedItem
         return [
             'loc' => route('products.show', $this->model->article),
 
-            'lastmod' => $this->model->updated_at->toIso8601String(),
+            'lastmod' => $this->model->updated_at,
 
             'priority' => 0.9,
         ];

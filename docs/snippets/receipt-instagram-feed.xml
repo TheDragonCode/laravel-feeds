@@ -6,46 +6,46 @@
 
 <item>
   <g:id>1</g:id>
-  <g:title><![CDATA[amet dolor iusto rerum]]></g:title>
-  <g:description><![CDATA[Qui aliquid ut vel est debitis. Eius debitis laborum temporibus corrupti commodi et. Praesentium vero eos qui voluptatibus. Suscipit ut id eius esse voluptatem rerum.]]></g:description>
-  <g:link>https://example.com/products/sint-dolor-omnis-doloribus-aut-numquam-aliquid-perspiciatis-doloribus</g:link>
-  <g:image_link>https://via.placeholder.com/640x480.png/00bbaa?text=quo</g:image_link>
-  <g:additional_image_link>https://via.placeholder.com/640x480.png/009988?text=nostrum</g:additional_image_link>
-  <g:additional_image_link>https://via.placeholder.com/640x480.png/0066dd?text=rerum</g:additional_image_link>
-  <g:brand>et</g:brand>
+  <g:title><![CDATA[id porro illum id]]></g:title>
+  <g:description><![CDATA[Repudiandae quis inventore ea hic ipsa dolores cum. Excepturi commodi ab eaque est quis et. Itaque et autem omnis sed est quos error.]]></g:description>
+  <g:link>https://example.com/products/blanditiis-incidunt-autem-officia-rerum</g:link>
+  <g:image_link>https://via.placeholder.com/640x480.png/0077aa?text=eius</g:image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/00aaaa?text=fuga</g:additional_image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/001144?text=beatae</g:additional_image_link>
+  <g:brand>velit</g:brand>
   <g:condition>new</g:condition>
   <g:availability>in stock</g:availability>
-  <g:price>719</g:price>
-  <g:sale_price>719</g:sale_price>
+  <g:price>466</g:price>
+  <g:sale_price>466</g:sale_price>
   <g:item_group_id>12345</g:item_group_id>
   <g:status>active</g:status>
-  <g:color><![CDATA[FloralWhite]]></g:color>
-  <g:size>24</g:size>
+  <g:color><![CDATA[PeachPuff]]></g:color>
+  <g:size>17</g:size>
   <g:age_group>adult</g:age_group>
-  <g:material><![CDATA[dolorum]]></g:material>
+  <g:material><![CDATA[omnis]]></g:material>
   <g:pattern><![CDATA[regular]]></g:pattern>
   <g:google_product_category>1000</g:google_product_category>
   <g:fb_product_category>2000</g:fb_product_category>
 </item>
 <item>
   <g:id>2</g:id>
-  <g:title><![CDATA[eaque laudantium eveniet dolores]]></g:title>
-  <g:description><![CDATA[In temporibus debitis consequatur unde laudantium consectetur id. Cupiditate provident debitis nulla accusantium minima et minus. Dicta unde quis odio odio perspiciatis exercitationem in.]]></g:description>
-  <g:link>https://example.com/products/qui-et-veritatis-molestias-non-voluptatem</g:link>
-  <g:image_link>https://via.placeholder.com/640x480.png/00cc33?text=distinctio</g:image_link>
-  <g:additional_image_link>https://via.placeholder.com/640x480.png/00aa33?text=omnis</g:additional_image_link>
-  <g:additional_image_link>https://via.placeholder.com/640x480.png/0033ee?text=voluptatem</g:additional_image_link>
-  <g:brand>corporis</g:brand>
+  <g:title><![CDATA[rem commodi alias et]]></g:title>
+  <g:description><![CDATA[Qui quis quis quia et eveniet ut consequatur. Repudiandae iusto eum voluptates enim non et et. Ab officia non assumenda et sint consequatur modi.]]></g:description>
+  <g:link>https://example.com/products/facere-et-laboriosam-minus-impedit-sit</g:link>
+  <g:image_link>https://via.placeholder.com/640x480.png/00aa33?text=officiis</g:image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/0011cc?text=quis</g:additional_image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/0088ee?text=saepe</g:additional_image_link>
+  <g:brand>neque</g:brand>
   <g:condition>new</g:condition>
   <g:availability>in stock</g:availability>
-  <g:price>183</g:price>
-  <g:sale_price>183</g:sale_price>
+  <g:price>553</g:price>
+  <g:sale_price>553</g:sale_price>
   <g:item_group_id>12345</g:item_group_id>
   <g:status>active</g:status>
-  <g:color><![CDATA[Purple]]></g:color>
-  <g:size>21</g:size>
+  <g:color><![CDATA[MediumTurquoise]]></g:color>
+  <g:size>12</g:size>
   <g:age_group>adult</g:age_group>
-  <g:material><![CDATA[unde]]></g:material>
+  <g:material><![CDATA[quos]]></g:material>
   <g:pattern><![CDATA[regular]]></g:pattern>
   <g:google_product_category>1000</g:google_product_category>
   <g:fb_product_category>2000</g:fb_product_category>
