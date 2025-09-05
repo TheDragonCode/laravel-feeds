@@ -17,35 +17,35 @@
 <offers>
 
 <offer id="1" available="true" type="vendor.model">
-  <url>https://example.com/products/ut-eius-dolores-minus-nisi-aliquid-ipsa-aut</url>
-  <barcode>GD-6O_B</barcode>
-  <name>expedita facere fugiat vel</name>
-  <description>Et est aliquid iste vel voluptatem. Ut harum quo officia quo. Officiis magni eos omnis sed aliquam. Consectetur itaque optio aut sed cum ipsum debitis.</description>
+  <url>https://example.com/products/velit-voluptas-recusandae-quisquam-enim-dolorum-quos</url>
+  <barcode>GD-5+P+&amp;quot;F`H</barcode>
+  <name>tempore asperiores dolores error</name>
+  <description>Blanditiis nulla repellat sequi. Aut magni magnam enim sed in et neque assumenda. Sed numquam adipisci harum ut eveniet. Aut qui sit dolorem blanditiis. Ut unde eius labore.</description>
   <delivery>true</delivery>
-  <price>360</price>
+  <price>284</price>
   <currencyId>RUR</currencyId>
-  <vendor>mollitia</vendor>
-  <picture>https://via.placeholder.com/640x480.png/00ee33?text=voluptatem</picture>
-  <picture>https://via.placeholder.com/640x480.png/006611?text=modi</picture>
-  <picture>https://via.placeholder.com/640x480.png/00ccdd?text=consequuntur</picture>
-  <param name="Артикул">GD-6O_B</param>
-  <param name="Код цвета">1</param>
+  <vendor>minus</vendor>
+  <picture>https://via.placeholder.com/640x480.png/0011aa?text=ullam</picture>
+  <picture>https://via.placeholder.com/640x480.png/0055ff?text=laboriosam</picture>
+  <picture>https://via.placeholder.com/640x480.png/006699?text=pariatur</picture>
+  <param name="Артикул">GD-5+P+"F`H</param>
+  <param name="Код цвета">8</param>
   <param name="Пол">female</param>
 </offer>
 <offer id="2" available="true" type="vendor.model">
-  <url>https://example.com/products/et-quis-sed-adipisci-aut-sint</url>
-  <barcode>GD-@LM0LG</barcode>
-  <name>explicabo corrupti id et</name>
-  <description>Nostrum minima sed voluptas. Sint voluptatibus est voluptates ea maxime. Adipisci et nam deleniti hic officiis nesciunt illum. Dolorem quasi atque dolorum quis tenetur molestiae in.</description>
+  <url>https://example.com/products/fugit-accusantium-asperiores-totam-incidunt</url>
+  <barcode>GD-B8V74Q</barcode>
+  <name>sit soluta beatae consequatur</name>
+  <description>Nemo consequuntur cumque iste aliquam praesentium dolores. Quaerat autem veritatis sit in rem maiores accusantium. Est facere aut et. Mollitia corporis nobis nihil corporis est culpa corrupti.</description>
   <delivery>true</delivery>
-  <price>843</price>
+  <price>784</price>
   <currencyId>RUR</currencyId>
-  <vendor>numquam</vendor>
-  <picture>https://via.placeholder.com/640x480.png/0055ff?text=laboriosam</picture>
-  <picture>https://via.placeholder.com/640x480.png/00dd00?text=dolorem</picture>
-  <picture>https://via.placeholder.com/640x480.png/0099ee?text=magni</picture>
-  <param name="Артикул">GD-@LM0LG</param>
-  <param name="Код цвета">8</param>
+  <vendor>aut</vendor>
+  <picture>https://via.placeholder.com/640x480.png/0022ee?text=quisquam</picture>
+  <picture>https://via.placeholder.com/640x480.png/00dd88?text=doloremque</picture>
+  <picture>https://via.placeholder.com/640x480.png/008833?text=necessitatibus</picture>
+  <param name="Артикул">GD-B8V74Q</param>
+  <param name="Код цвета">7</param>
   <param name="Пол">male</param>
 </offer>
 
