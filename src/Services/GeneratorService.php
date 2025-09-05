@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Services;
 
 use DragonCode\LaravelFeed\Converters\Converter;
+use DragonCode\LaravelFeed\Events\FeedFinishedEvent;
+use DragonCode\LaravelFeed\Events\FeedStartingEvent;
 use DragonCode\LaravelFeed\Exceptions\FeedGenerationException;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Helpers\ConverterHelper;
@@ -15,6 +17,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Throwable;
 
 use function blank;
+use function event;
 use function get_class;
 use function implode;
 
@@ -28,10 +31,9 @@ class GeneratorService
 
     public function feed(Feed $feed, ?OutputStyle $output = null): void
     {
-        $file = $this->openFile(
-            $path = $feed->path()
-        );
         try {
+            $this->started($feed);
+
             $file = $this->openFile(
                 $path = $feed->path()
             );
@@ -46,7 +48,8 @@ class GeneratorService
             $this->release($file, $path);
 
             $this->setLastActivity($feed);
-            $this->setLastActivity($feed);
+
+            $this->finished($feed, $path);
         } catch (Throwable $e) {
             throw new FeedGenerationException(get_class($feed), $e);
         }
@@ -161,5 +164,15 @@ class GeneratorService
     protected function progressBar(int $count, ?OutputStyle $output): ?ProgressBar
     {
         return $output?->createProgressBar($count);
+    }
+
+    protected function started(Feed $feed): void
+    {
+        event(new FeedStartingEvent(get_class($feed)));
+    }
+
+    protected function finished(Feed $feed, string $path): void
+    {
+        event(new FeedFinishedEvent(get_class($feed), $path));
     }
 }
