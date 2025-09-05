@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Feeds;
+namespace Workbench\App\Feeds\Docs;
 
-use App\Feeds\Items\InstagramFeedItem;
-use App\Models\Product;
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Workbench\App\Feeds\Docs\Items\ReceiptInstagramFeedItem;
+use Workbench\App\Models\Product;
 
-class InstagramFeed extends Feed
+class ReceiptInstagramFeed extends Feed
 {
     public function builder(): Builder
     {
@@ -45,11 +45,11 @@ class InstagramFeed extends Feed
 
     public function item(Model $model): FeedItem
     {
-        return new InstagramFeedItem($model);
+        return new ReceiptInstagramFeedItem($model);
     }
 
     public function filename(): string
     {
-        return 'instagram.xml';
+        return '../../../../../../../../../docs/snippets/receipt-instagram-feed.xml';
     }
 }

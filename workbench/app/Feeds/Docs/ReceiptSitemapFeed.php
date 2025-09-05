@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Feeds\Sitemaps;
+namespace Workbench\App\Feeds\Docs;
 
-use App\Feeds\Sitemaps\Items\ProductFeedItem;
-use App\Models\Product;
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Workbench\App\Feeds\Docs\Items\ReceiptSitemapFeedItem;
+use Workbench\App\Models\Product;
 
-class ProductFeed extends Feed
+class ReceiptSitemapFeed extends Feed
 {
     protected string $name = 'urlset';
 
@@ -39,11 +39,11 @@ class ProductFeed extends Feed
 
     public function item(Model $model): FeedItem
     {
-        return new ProductFeedItem($model);
+        return new ReceiptSitemapFeedItem($model);
     }
 
     public function filename(): string
     {
-        return 'sitemaps/products.xml';
+        return '../../../../../../../../../docs/snippets/receipt-sitemap-feed.xml';
     }
 }

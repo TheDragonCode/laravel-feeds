@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Feeds\Sitemaps\Items;
+namespace Workbench\App\Feeds\Docs\Items;
 
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 
 use function route;
 
-/** @property-read \App\Models\Product $model */
-class ProductFeedItem extends FeedItem
+/** @property-read \Workbench\App\Models\Product $model */
+class ReceiptSitemapFeedItem extends FeedItem
 {
     public function name(): string
     {

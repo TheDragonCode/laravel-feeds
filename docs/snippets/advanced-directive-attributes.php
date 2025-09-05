@@ -29,9 +29,4 @@ class AttributesDirectiveFeed extends Feed
     {
         return new AttributesDirectiveFeedItem($model);
     }
-
-    public function filename(): string
-    {
-        return '../../../../../../../../../docs/snippets/advanced-directive-attributes.xml';
-    }
 }

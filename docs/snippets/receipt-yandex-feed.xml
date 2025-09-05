@@ -1,0 +1,54 @@
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2025-09-04T04:08:12+00:00">
+    <shop>
+<offers>
+
+<name>Laravel</name>
+<company>Laravel</company>
+<platform>Laravel</platform>
+<url>https://example.com</url>
+<email>test@example.com</email>
+<currencies>
+  <currency id="RUR" rate="1"/>
+</currencies>
+<categories>
+  <category id="41">Домашние майки</category>
+  <category id="539">Велосипедки</category>
+</categories>
+
+<offer id="1" available="true" type="vendor.model">
+  <url>https://example.com/products/repellendus-cum-doloribus-quo-ad-odio-eum</url>
+  <barcode>GD-T[LF&amp;quot;JWL</barcode>
+  <name>quo eveniet accusantium omnis</name>
+  <description>Asperiores officiis ex doloremque deleniti. Inventore in odit assumenda laborum blanditiis reiciendis. Est quo id ad excepturi voluptatem nisi. Qui voluptatum omnis iure sint dolor aperiam omnis.</description>
+  <delivery>true</delivery>
+  <price>613</price>
+  <currencyId>RUR</currencyId>
+  <vendor>non</vendor>
+  <picture>https://via.placeholder.com/640x480.png/0088aa?text=perspiciatis</picture>
+  <picture>https://via.placeholder.com/640x480.png/0000ff?text=blanditiis</picture>
+  <picture>https://via.placeholder.com/640x480.png/00eedd?text=quisquam</picture>
+  <param name="Артикул">GD-T[LF"JWL</param>
+  <param name="Код цвета">0</param>
+  <param name="Пол">male</param>
+</offer>
+<offer id="2" available="true" type="vendor.model">
+  <url>https://example.com/products/temporibus-corrupti-illo-ad-vel-et</url>
+  <barcode>GD-*^FQIZ%K</barcode>
+  <name>velit ut blanditiis omnis</name>
+  <description>Doloribus dolorem omnis est commodi nam deleniti tempore. Non voluptates illum quis. Ab possimus quidem soluta ut officia. Voluptatem iste ipsa quia impedit ratione.</description>
+  <delivery>true</delivery>
+  <price>142</price>
+  <currencyId>RUR</currencyId>
+  <vendor>est</vendor>
+  <picture>https://via.placeholder.com/640x480.png/0088aa?text=alias</picture>
+  <picture>https://via.placeholder.com/640x480.png/00ee22?text=iusto</picture>
+  <picture>https://via.placeholder.com/640x480.png/00bb55?text=ducimus</picture>
+  <param name="Артикул">GD-*^FQIZ%K</param>
+  <param name="Код цвета">8</param>
+  <param name="Пол">male</param>
+</offer>
+
+</offers>
+</shop>
+</yml_catalog>

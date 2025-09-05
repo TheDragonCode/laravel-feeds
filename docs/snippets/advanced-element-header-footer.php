@@ -24,9 +24,4 @@ class HeaderFooterFeed extends Feed
     {
         return "\n<g:footer>This is a custom footer element</g:footer>";
     }
-
-    public function filename(): string
-    {
-        return '../../../../../../../../../docs/snippets/advanced-element-header-footer.xml';
-    }
 }

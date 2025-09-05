@@ -21,9 +21,4 @@ class InfoMethodFeed extends Feed
     {
         return new InfoMethodFeedInfo;
     }
-
-    public function filename(): string
-    {
-        return '../../../../../../../../../docs/snippets/advanced-element-info.xml';
-    }
 }

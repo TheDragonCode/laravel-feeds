@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Feeds\Items;
+namespace Workbench\App\Feeds\Docs\Items;
 
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 
-/** @property-read \App\Models\Product $model */
-class YandexFeedItem extends FeedItem
+/** @property-read \Workbench\App\Models\Product $model */
+class ReceiptYandexFeedItem extends FeedItem
 {
     public function name(): string
     {
