@@ -9,6 +9,7 @@
 >
     <toc-element toc-title="Prologue">
         <toc-element topic="contributions.topic" />
+        <toc-element topic="machine-learning.topic" />
         <toc-element toc-title="License" topic="license.topic" />
     </toc-element>
     <toc-element topic="introduction.topic">
