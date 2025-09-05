@@ -71,6 +71,19 @@
             </p>
 
             <code-block lang="xml" src="advanced-element-info.xml" />
+
+            <p>
+                If it is necessary to change the procedure for the output of the root element relative to the
+                information block, set the <code>beforeInfo</code> parameter in the <code>root</code> method:
+            </p>
+
+            <code-block lang="php" src="advanced-element-info-before-false.php" include-lines="5-" />
+
+            <p>
+                This code will result in:
+            </p>
+
+            <code-block lang="xml" src="advanced-element-info-before-false.xml" />
         </chapter>
 
         <chapter title="Header &amp; footer" id="header_and_footer">

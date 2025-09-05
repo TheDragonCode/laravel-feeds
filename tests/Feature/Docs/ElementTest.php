@@ -6,12 +6,13 @@ use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use DragonCode\LaravelFeed\Models\Feed;
 use Workbench\App\Feeds\Docs\AttributeFeed;
 use Workbench\App\Feeds\Docs\HeaderFooterFeed;
+use Workbench\App\Feeds\Docs\InfoMethodBeforeFalseTest;
 use Workbench\App\Feeds\Docs\InfoMethodFeed;
 use Workbench\App\Feeds\Docs\RootElementFeed;
 
 use function Pest\Laravel\artisan;
 
-it('generate stub', function (string $feed, array $files) {
+it('generate stub', function (string $feed, array $files = []) {
     $model = Feed::create([
         'class' => $feed,
         'title' => $feed,
@@ -36,6 +37,11 @@ it('generate stub', function (string $feed, array $files) {
             'InfoMethodFeed'          => 'advanced-element-info.php',
             'Info/InfoMethodFeedInfo' => 'advanced-element-info-info.php',
         ],
+    ],
+
+    'info before false' => [
+        'feed'  => InfoMethodBeforeFalseTest::class,
+        'files' => ['InfoMethodBeforeFalseTest' => 'advanced-element-info-before-false.php'],
     ],
 
     'header & footer' => [
