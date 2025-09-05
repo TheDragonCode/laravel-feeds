@@ -9,6 +9,10 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Workbench\App\Feeds\EmptyFeed;
 use Workbench\App\Feeds\FullFeed;
+use Workbench\App\Feeds\JsonFeed;
+use Workbench\App\Feeds\JsonInfoFeed;
+use Workbench\App\Feeds\JsonRootFeed;
+use Workbench\App\Feeds\JsonRootInfoFeed;
 use Workbench\App\Feeds\ModelFeed;
 use Workbench\App\Feeds\PartialFeed;
 use Workbench\App\Feeds\SitemapFeed;
@@ -22,6 +26,10 @@ class FeedSeeder extends Seeder
     protected array $feeds = [
         EmptyFeed::class,
         FullFeed::class,
+        JsonFeed::class,
+        JsonInfoFeed::class,
+        JsonRootFeed::class,
+        JsonRootInfoFeed::class,
         ModelFeed::class,
         PartialFeed::class,
         SitemapFeed::class,

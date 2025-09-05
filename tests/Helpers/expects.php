@@ -6,7 +6,7 @@ use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 
 use function Pest\Laravel\artisan;
 
-function expectFeedSnapshot(string $class): void
+function expectFeedSnapshot(string $class, bool $isJson = false): void
 {
     $feed = findFeed($class);
 
@@ -17,5 +17,12 @@ function expectFeedSnapshot(string $class): void
     ])->assertSuccessful()->run();
 
     expect($instance->path())->toBeFile();
-    expect(file_get_contents($instance->path()))->toMatchSnapshot();
+
+    $content = file_get_contents($instance->path());
+
+    if ($isJson) {
+        expect($content)->toBeJson();
+    }
+
+    expect($content)->toMatchSnapshot();
 }

@@ -12,10 +12,7 @@
 
     <show-structure depth="3" />
 
-    <note>
-        <p>
-            <format style="bold">Reserved directives:</format>
-        </p>
+    <note title="Reserved directives">
         <list>
             <li><a href="#_attributes" /></li>
             <li><a href="#_value" /></li>
@@ -23,10 +20,17 @@
             <li><a href="#_mixed" /></li>
             <li><a href="#_custom" /></li>
         </list>
+
+        <p>
+            The use of directives is available only when generating feeds in the XML format.
+        </p>
     </note>
 
     <chapter title="Elements" id="elements">
         <chapter title="Root element" id="root_element">
+            <secondary-label ref="format-xml" />
+            <secondary-label ref="format-json" />
+
             <tip>
                 <p>
                     By default, the name of the root element is derived from the base name of the feed class.
@@ -56,6 +60,9 @@
         </chapter>
 
         <chapter title="Information" id="information">
+            <secondary-label ref="format-xml" />
+            <secondary-label ref="format-json" />
+
             <p>
                 To add information to the beginning of the root element (if present) or without it,
                 override the
@@ -87,6 +94,9 @@
         </chapter>
 
         <chapter title="Header &amp; footer" id="header_and_footer">
+            <secondary-label ref="format-xml" />
+            <secondary-label ref="format-json" />
+
             <p>
                 To change the header and footer, override the <code>header</code> and <code>footer</code> methods:
             </p>
@@ -101,6 +111,8 @@
         </chapter>
 
         <chapter title="Attributes" id="attributes">
+            <secondary-label ref="format-xml" />
+
             <code-block lang="php" src="advanced-element-attribute.php" include-lines="5-" />
             <code-block lang="php" src="advanced-element-attribute-item.php" include-lines="5-" />
 
@@ -114,6 +126,8 @@
 
     <chapter title="Directives" id="directives">
         <chapter title="@attributes" id="_attributes">
+            <secondary-label ref="format-xml" />
+
             <link-summary>Indicates an array of attributes</link-summary>
 
             <p>
@@ -132,6 +146,8 @@
         </chapter>
 
         <chapter title="@value" id="_value">
+            <secondary-label ref="format-xml" />
+
             <link-summary>Indicates the applicable value "as it is"</link-summary>
 
             <tip>
@@ -152,6 +168,8 @@
         </chapter>
 
         <chapter title="@cdata" id="_cdata">
+            <secondary-label ref="format-xml" />
+
             <link-summary>Allows the use of XML markup without transformation</link-summary>
 
             <tip>
@@ -173,6 +191,8 @@
         </chapter>
 
         <chapter title="@mixed" id="_mixed">
+            <secondary-label ref="format-xml" />
+
             <link-summary>Allows you to use XML markup directly within the structure of the document</link-summary>
 
             <p>
@@ -189,6 +209,8 @@
         </chapter>
 
         <chapter title="@custom" id="_custom">
+            <secondary-label ref="format-xml" />
+
             <link-summary>Describes the possibility of listing an array of elements with the same keys</link-summary>
 
             <p>

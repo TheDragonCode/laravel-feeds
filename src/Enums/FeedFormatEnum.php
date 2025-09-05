@@ -6,5 +6,6 @@ namespace DragonCode\LaravelFeed\Enums;
 
 enum FeedFormatEnum: string
 {
-    case Xml = 'xml';
+    case Xml  = 'xml';
+    case Json = 'json';
 }
