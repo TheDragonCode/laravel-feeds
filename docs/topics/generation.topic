@@ -21,7 +21,7 @@
     </code-block>
 
     <p>
-        As a result, all active feeds (<code>is_active = true</code>) will be launched from the
+        As a result, all active feeds (<code>is_active = true</code>) will be executed from the
         <code>feeds</code> table (or the one you specified in the <code>%config-filename%</code> file).
     </p>
 
@@ -33,7 +33,7 @@
         </p>
 
         <p>
-            However, instead of being launched for execution, such feeds will be marked with the
+            However, instead of being executed, such feeds will be marked with the
             <code>SKIP</code> status.
         </p>
     </tip>
@@ -68,7 +68,7 @@
             <code-block lang="php" src="schedule-setup.php" include-lines="5-" />
 
             <p>
-                This will enable you to register calls to all active feeds according to the launch schedule you specified in the
+                This will enable you to register calls to all active feeds according to the schedule you specified in the
                 <code>expression</code> column of the database.
             </p>
         </chapter>

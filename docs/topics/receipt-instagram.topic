@@ -12,17 +12,17 @@
 
     <show-structure depth="3" />
 
-    <chapter title="Create files" id="create_files">
+    <chapter title="Create the files" id="create_files">
         <code-block lang="bash">
             %command-make-simple% Instagram -%command-shortcut-item%
         </code-block>
     </chapter>
 
-    <chapter title="Filling the feed" id="filling_the_feed">
+    <chapter title="Populate the feed" id="filling_the_feed">
         <code-block lang="php" src="receipt-instagram-feed.php" />
     </chapter>
 
-    <chapter title="Filling the feed item" id="filling_the_feed_item">
+    <chapter title="Populate the feed item" id="filling_the_feed_item">
         <code-block lang="php" src="receipt-instagram-feed-item.php" />
     </chapter>
 
