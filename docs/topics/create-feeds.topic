@@ -101,6 +101,11 @@
     </chapter>
 
     <chapter title="File format" id="file_format">
+        <tip>
+            You can find the list of available formats on the
+            <a href="supported-formats.topic">supported formats</a> page.
+        </tip>
+
         <p>
             You can generate feeds in different formats.
             A feed class can be correctly exported only to the format for which it is intended.
