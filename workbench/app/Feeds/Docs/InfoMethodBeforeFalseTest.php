@@ -6,12 +6,12 @@ namespace Workbench\App\Feeds\Docs;
 
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use Illuminate\Database\Eloquent\Builder;
+use Workbench\App\Feeds\Docs\Info\InfoMethodFeedInfo;
 use Workbench\App\Models\User;
 
-use function now;
-
-class RootElementFeed extends Feed
+class InfoMethodBeforeFalseTest extends Feed
 {
     public function builder(): Builder
     {
@@ -21,17 +21,18 @@ class RootElementFeed extends Feed
     public function root(): ElementData
     {
         return new ElementData(
-            name      : 'foo',
-            attributes: [
-                'count' => $this->builder()->count(),
-
-                'generated_at' => now(),
-            ],
+            name      : 'info_method',
+            beforeInfo: false
         );
+    }
+
+    public function info(): FeedInfo
+    {
+        return new InfoMethodFeedInfo;
     }
 
     public function filename(): string
     {
-        return '../../../../../../../../../docs/snippets/advanced-element-root.xml';
+        return '../../../../../../../../../docs/snippets/advanced-element-info-before-false.xml';
     }
 }
