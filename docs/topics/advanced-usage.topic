@@ -188,7 +188,7 @@
             <code-block lang="xml" src="advanced-directive-mixed.xml" />
         </chapter>
 
-        <chapter title="@custom" id="custom">
+        <chapter title="@custom" id="_custom">
             <link-summary>Describes the possibility of listing an array of elements with the same keys</link-summary>
 
             <p>
