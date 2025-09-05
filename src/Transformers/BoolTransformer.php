@@ -8,7 +8,7 @@ use DragonCode\LaravelFeed\Contracts\Transformer;
 
 use function is_bool;
 
-class BooleanTransformer implements Transformer
+class BoolTransformer implements Transformer
 {
     public function allow(mixed $value): bool
     {
