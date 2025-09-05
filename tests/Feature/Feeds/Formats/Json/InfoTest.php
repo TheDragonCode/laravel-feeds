@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use Workbench\App\Data\NewsFakeData;
-use Workbench\App\Feeds\JsonFeed;
+use Workbench\App\Feeds\JsonInfoFeed;
 
 test('export', function (bool $pretty) {
     setPrettyXml($pretty);
 
     createNews(...NewsFakeData::toArray());
 
-    expectFeedSnapshot(JsonFeed::class, true);
+    expectFeedSnapshot(JsonInfoFeed::class, FeedFormatEnum::Json);
 })->with('boolean');

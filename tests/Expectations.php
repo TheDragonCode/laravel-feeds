@@ -55,3 +55,11 @@ expect()->pipe('toMatchSnapshot', function (Closure $next) {
 
     return $next();
 });
+
+expect()->extend('toBeJsonLines', function () {
+    foreach (explode("\n", $this->value) as $line) {
+        expect($line)->toBeJson();
+    }
+
+    return $this;
+});

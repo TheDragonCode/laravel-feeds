@@ -3,10 +3,11 @@
 declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 
 use function Pest\Laravel\artisan;
 
-function expectFeedSnapshot(string $class, bool $isJson = false): void
+function expectFeedSnapshot(string $class, FeedFormatEnum $format = FeedFormatEnum::Xml): void
 {
     $feed = findFeed($class);
 
@@ -20,9 +21,11 @@ function expectFeedSnapshot(string $class, bool $isJson = false): void
 
     $content = file_get_contents($instance->path());
 
-    if ($isJson) {
-        expect($content)->toBeJson();
-    }
+    match ($format) {
+        FeedFormatEnum::Json      => expect($content)->toBeJson(),
+        FeedFormatEnum::JsonLines => expect($content)->toBeJsonLines(),
+        default                   => null
+    };
 
     expect($content)->toMatchSnapshot();
 }
