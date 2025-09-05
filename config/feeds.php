@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-use DragonCode\LaravelFeed\Transformers\BoolTransformer;
-use DragonCode\LaravelFeed\Transformers\DateTimeTransformer;
-use DragonCode\LaravelFeed\Transformers\EnumTransformer;
+use DragonCode\LaravelFeed\Transformers;
 
 /**
  * Laravel Feeds configuration
@@ -106,12 +104,12 @@ return [
      * supports the value will handle it.
      *
      * You may add your own transformers by implementing
-     * DragonCode\LaravelFeed\Contracts\Transformer and registering the class
+     * `DragonCode\LaravelFeed\Contracts\Transformer` and registering the class
      * here, or publish a stub via the package's make command if available.
      */
     'transformers' => [
-        DateTimeTransformer::class,
-        BoolTransformer::class,
-        EnumTransformer::class,
+        Transformers\BoolTransformer::class,
+        Transformers\DateTimeTransformer::class,
+        Transformers\EnumTransformer::class,
     ],
 ];
