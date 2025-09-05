@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Feeds\Sitemaps;
 
+use App\Feeds\Sitemaps\Items\ProductFeedItem;
+use App\Models\Product;
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use App\Feeds\Sitemaps\Items\ProductFeedItem;
-use App\Models\Product;
 
 class ProductFeed extends Feed
 {

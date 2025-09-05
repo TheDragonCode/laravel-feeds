@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Feeds\Items;
+namespace Workbench\App\Feeds\Docs\Items;
 
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Support\Arr;
@@ -10,8 +10,8 @@ use Illuminate\Support\Arr;
 use function collect;
 use function fake;
 
-/** @property-read \App\Models\Product $model */
-class InstagramFeedItem extends FeedItem
+/** @property-read \Workbench\App\Models\Product $model */
+class ReceiptInstagramFeedItem extends FeedItem
 {
     public function name(): string
     {

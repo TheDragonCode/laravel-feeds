@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Feeds;
 
+use App\Feeds\Info\YandexFeedInfo;
+use App\Feeds\Items\YandexFeedItem;
+use App\Models\Product;
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use App\Feeds\Info\YandexFeedInfo;
-use App\Feeds\Items\YandexFeedItem;
-use App\Models\Product;
 
 class YandexFeed extends Feed
 {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use DragonCode\LaravelFeed\Models\Feed;
+use Workbench\App\Feeds\Docs\ReceiptInstagramFeed;
 use Workbench\App\Feeds\Docs\ReceiptSitemapFeed;
 use Workbench\App\Feeds\Docs\ReceiptYandexFeed;
 use Workbench\App\Models\Product;
@@ -56,6 +57,22 @@ it('generate stub', function (string $feed, array $files, array $replaces = []):
             'Workbench\App\Feeds\Docs' => 'App\Feeds',
 
             '../../../../../../../../../docs/snippets/receipt-yandex-feed.xml' => 'yandex.xml',
+        ],
+    ],
+
+    'instagram' => [
+        'feed' => ReceiptInstagramFeed::class,
+
+        'files' => [
+            'ReceiptInstagramFeed'           => 'receipt-instagram-feed.php',
+            'Items/ReceiptInstagramFeedItem' => 'receipt-instagram-feed-item.php',
+        ],
+
+        'replaces' => [
+            'ReceiptInstagramFeed'     => 'InstagramFeed',
+            'Workbench\App\Feeds\Docs' => 'App\Feeds',
+
+            '../../../../../../../../../docs/snippets/receipt-instagram-feed.xml' => 'instagram.xml',
         ],
     ],
 ]);

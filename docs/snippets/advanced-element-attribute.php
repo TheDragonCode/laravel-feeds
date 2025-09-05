@@ -22,9 +22,4 @@ class AttributeFeed extends Feed
     {
         return new AttributeFeedItem($model);
     }
-
-    public function filename(): string
-    {
-        return '../../../../../../../../../docs/snippets/advanced-element-attribute.xml';
-    }
 }

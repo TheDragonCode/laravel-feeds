@@ -35,6 +35,6 @@
     </chapter>
 
     <chapter title="Result" id="result">
-        <code-block lang="xml" src="receipt-instagram-result.xml" />
+        <code-block lang="xml" src="receipt-instagram-feed.xml" />
     </chapter>
 </topic>
