@@ -125,5 +125,14 @@ return [
              */
             'options' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
         ],
+
+        'jsonl' => [
+            /**
+             * JSON encoding flags used when exporting feeds to JSON.
+             *
+             * The JSON_PRETTY_PRINT option is not available for JSON Lines files and will be ignored.
+             */
+            'options' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+        ],
     ],
 ];

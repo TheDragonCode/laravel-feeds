@@ -15,7 +15,7 @@ use function json_encode;
 class JsonLinesConverter extends Converter
 {
     public function __construct(
-        #[Config('feeds.converters.json.options')]
+        #[Config('feeds.converters.jsonl.options')]
         protected int $options,
         #[Config('feeds.pretty')]
         bool $pretty,
