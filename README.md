@@ -8,15 +8,14 @@
 [![Github Workflow Status][badge_build]][link_build]
 [![License][badge_license]][link_license]
 
-**Laravel Feeds** is an easy and fast way of exporting a large amount of data to feeds for marketplaces and other
-consumers.
+**Laravel Feeds** is an easy and fast way to export large amounts of data into feeds for marketplaces and other consumers.
 
 > **🌟 Features**
 >
-> - Chunked queries to database
-> - Draft mode for a process
+> - Chunked queries to the database
+> - Draft mode during processing
 > - Easy property mapping
-> - Generation of any feeds, sitemaps, etc.
+> - Generate feeds, sitemaps, and more
 
 ## Installation
 
@@ -26,9 +25,7 @@ You can install the **Laravel Feeds** package via [Composer](https://getcomposer
 composer require dragon-code/laravel-feeds
 ```
 
-You should publish
-the [migration](database/migrations/2025_09_01_231655_create_feeds_table.php)
-and the [config/feeds.php](config/feeds.php) file with:
+You should publish the [migration](database/migrations/2025_09_01_231655_create_feeds_table.php) and the [config/feeds.php](config/feeds.php) file with:
 
 ```bash
 php artisan vendor:publish --tag="feeds"
@@ -36,7 +33,7 @@ php artisan vendor:publish --tag="feeds"
 
 > [!WARNING]
 >
-> Before running migrations, check the database connection settings in the [config/feeds.php](config/feeds.php) file.
+> Before running migrations, verify the database connection settings in [config/feeds.php](config/feeds.php).
 
 Now you can run migrations and proceed to [create feeds](https://feeds.dragon-code.pro/create-feeds.html).
 
