@@ -6,6 +6,7 @@ namespace DragonCode\LaravelFeed\Services;
 
 use DragonCode\LaravelFeed\Converters\Converter;
 use DragonCode\LaravelFeed\Converters\ConvertToJson;
+use DragonCode\LaravelFeed\Converters\ConvertToJsonLines;
 use DragonCode\LaravelFeed\Converters\ConvertToXml;
 use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use DragonCode\LaravelFeed\Feeds\Feed;
@@ -24,6 +25,7 @@ class GeneratorService
         protected FilesystemService $filesystem,
         protected ConvertToXml $xmlConverter,
         protected ConvertToJson $jsonConverter,
+        protected ConvertToJsonLines $jsonLinesConverter,
         protected FeedQuery $query,
     ) {}
 
@@ -147,8 +149,9 @@ class GeneratorService
     protected function converter(Feed $feed): Converter
     {
         return match ($feed->format()) {
-            FeedFormatEnum::Xml  => $this->xmlConverter,
-            FeedFormatEnum::Json => $this->jsonConverter,
+            FeedFormatEnum::Xml       => $this->xmlConverter,
+            FeedFormatEnum::Json      => $this->jsonConverter,
+            FeedFormatEnum::JsonLines => $this->jsonLinesConverter,
         };
     }
 

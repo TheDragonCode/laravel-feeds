@@ -13,12 +13,12 @@
         <toc-element toc-title="License" topic="license.topic" />
     </toc-element>
     <toc-element topic="introduction.topic">
-        <toc-element topic="supported-formats.topic" />
         <toc-element topic="installation.topic" />
         <toc-element topic="create-feeds.topic" />
         <toc-element topic="generation.topic">
         </toc-element>
         <toc-element topic="advanced-usage.topic" />
+        <toc-element topic="supported-formats.topic" />
     </toc-element>
     <toc-element toc-title="Receipts">
         <toc-element topic="receipt-sitemap.topic" />

@@ -1,6 +1,6 @@
 {
     "name": "dragon-code/laravel-feeds",
-    "description": "Simple generation XML feeds",
+    "description": "Fast export of large datasets to feeds for marketplaces and services",
     "license": "MIT",
     "type": "library",
     "authors": [

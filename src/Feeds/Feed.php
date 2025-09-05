@@ -44,8 +44,8 @@ abstract class Feed
     public function header(): string
     {
         return match ($this->format()) {
-            FeedFormatEnum::Xml  => '<?xml version="1.0" encoding="UTF-8"?>',
-            FeedFormatEnum::Json => '',
+            FeedFormatEnum::Xml => '<?xml version="1.0" encoding="UTF-8"?>',
+            default             => ''
         };
     }
 

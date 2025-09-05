@@ -17,36 +17,36 @@
 <offers>
 
 <offer id="1" available="true" type="vendor.model">
-  <url>https://example.com/products/velit-rerum-et-omnis-provident-rerum-inventore-est</url>
-  <barcode>GD-N~_Z(N</barcode>
-  <name>et et eligendi aliquam</name>
-  <description>Itaque esse qui tempora non. Illum et quia cum ea quo est. Sit animi et voluptate voluptatem voluptates animi. At illum asperiores vero animi.</description>
+  <url>https://example.com/products/fugiat-aut-sequi-minima-quia-facere</url>
+  <barcode>GD-O)N-&gt;X</barcode>
+  <name>adipisci quis asperiores rem</name>
+  <description>Cumque necessitatibus quia minima aspernatur et dolor quae. Dignissimos maxime aut rerum velit perspiciatis. Beatae sit a quisquam atque.</description>
   <delivery>true</delivery>
-  <price>957</price>
+  <price>456</price>
   <currencyId>RUR</currencyId>
-  <vendor>porro</vendor>
-  <picture>https://via.placeholder.com/640x480.png/00bbcc?text=possimus</picture>
-  <picture>https://via.placeholder.com/640x480.png/00ffdd?text=qui</picture>
-  <picture>https://via.placeholder.com/640x480.png/005511?text=ullam</picture>
-  <param name="Артикул">GD-N~_Z(N</param>
-  <param name="Код цвета">6</param>
-  <param name="Пол">male</param>
+  <vendor>eos</vendor>
+  <picture>https://via.placeholder.com/640x480.png/00ff77?text=facere</picture>
+  <picture>https://via.placeholder.com/640x480.png/006622?text=illo</picture>
+  <picture>https://via.placeholder.com/640x480.png/00cc77?text=magni</picture>
+  <param name="Артикул">GD-O)N-&gt;X</param>
+  <param name="Код цвета">2</param>
+  <param name="Пол">female</param>
 </offer>
 <offer id="2" available="true" type="vendor.model">
-  <url>https://example.com/products/deserunt-odio-earum-neque-ipsum-alias-magni</url>
-  <barcode>GD-'B'"SS</barcode>
-  <name>est veritatis officiis quae</name>
-  <description>Et velit libero dolorem sed est. Repellendus commodi tempore reiciendis quo. Cupiditate reprehenderit dolor molestiae nulla voluptas. Dolorem alias a architecto est quas dolore quas iste.</description>
+  <url>https://example.com/products/earum-voluptatem-magnam-error-molestiae-odit-consectetur</url>
+  <barcode>GD-+5T19</barcode>
+  <name>alias veritatis dignissimos omnis</name>
+  <description>Sint qui voluptatem quos et. Sint natus beatae ipsum maiores ipsa quas.</description>
   <delivery>true</delivery>
-  <price>844</price>
+  <price>553</price>
   <currencyId>RUR</currencyId>
-  <vendor>doloribus</vendor>
-  <picture>https://via.placeholder.com/640x480.png/0099ee?text=quo</picture>
-  <picture>https://via.placeholder.com/640x480.png/0044ee?text=expedita</picture>
-  <picture>https://via.placeholder.com/640x480.png/007777?text=fugiat</picture>
-  <param name="Артикул">GD-'B'"SS</param>
-  <param name="Код цвета">5</param>
-  <param name="Пол">female</param>
+  <vendor>consequatur</vendor>
+  <picture>https://via.placeholder.com/640x480.png/00bb99?text=voluptas</picture>
+  <picture>https://via.placeholder.com/640x480.png/00bb22?text=recusandae</picture>
+  <picture>https://via.placeholder.com/640x480.png/0088ee?text=fugit</picture>
+  <param name="Артикул">GD-+5T19</param>
+  <param name="Код цвета">9</param>
+  <param name="Пол">male</param>
 </offer>
 
 </offers>

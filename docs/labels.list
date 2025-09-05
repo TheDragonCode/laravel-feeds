@@ -11,4 +11,8 @@
         Available for JSON feeds
     </secondary-label>
 
+    <secondary-label id="format-jsonl" name="jsonl" color="tangerine">
+        Available for JSON Lines feeds
+    </secondary-label>
+
 </labels>

@@ -11,6 +11,10 @@ use Workbench\App\Feeds\EmptyFeed;
 use Workbench\App\Feeds\FullFeed;
 use Workbench\App\Feeds\JsonFeed;
 use Workbench\App\Feeds\JsonInfoFeed;
+use Workbench\App\Feeds\JsonLinesFeed;
+use Workbench\App\Feeds\JsonLinesInfoFeed;
+use Workbench\App\Feeds\JsonLinesRootFeed;
+use Workbench\App\Feeds\JsonLinesRootInfoFeed;
 use Workbench\App\Feeds\JsonRootFeed;
 use Workbench\App\Feeds\JsonRootInfoFeed;
 use Workbench\App\Feeds\ModelFeed;
@@ -26,12 +30,22 @@ class FeedSeeder extends Seeder
     protected array $feeds = [
         EmptyFeed::class,
         FullFeed::class,
+        ModelFeed::class,
+        PartialFeed::class,
+
+        // Json
         JsonFeed::class,
         JsonInfoFeed::class,
         JsonRootFeed::class,
         JsonRootInfoFeed::class,
-        ModelFeed::class,
-        PartialFeed::class,
+
+        // Json Lines
+        JsonLinesFeed::class,
+        JsonLinesInfoFeed::class,
+        JsonLinesRootFeed::class,
+        JsonLinesRootInfoFeed::class,
+
+        // Receipts
         SitemapFeed::class,
         YandexFeed::class,
     ];

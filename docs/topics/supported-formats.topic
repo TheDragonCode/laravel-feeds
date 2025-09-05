@@ -12,14 +12,20 @@
 
     <show-structure depth="3" />
 
-    <snippet id="formats">
-        <list>
-            <li>xml</li>
-            <li>json</li>
-        </list>
+    <deflist type="compact">
+        <def title="xml">
+            Generates feeds in XML format.
+        </def>
+        <def title="json">
+            Generates feeds in JSON format.
+        </def>
+        <def title="jsonl">
+            Generates feeds in JSON Lines format.
+        </def>
+    </deflist>
 
-        <p>
-            By default, the <code>xml</code> format is used.
-        </p>
-    </snippet>
+    <p>
+        By default, the <code>xml</code> format is used.
+    </p>
+
 </topic>
