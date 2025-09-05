@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Feeds;
+namespace Workbench\App\Feeds\Docs;
 
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Feeds\Feed;
@@ -10,11 +10,11 @@ use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use App\Feeds\Info\YandexFeedInfo;
-use App\Feeds\Items\YandexFeedItem;
-use App\Models\Product;
+use Workbench\App\Feeds\Docs\Info\ReceiptYandexFeedInfo;
+use Workbench\App\Feeds\Docs\Items\ReceiptYandexFeedItem;
+use Workbench\App\Models\Product;
 
-class YandexFeed extends Feed
+class ReceiptYandexFeed extends Feed
 {
     public function builder(): Builder
     {
@@ -44,16 +44,16 @@ class YandexFeed extends Feed
 
     public function info(): FeedInfo
     {
-        return new YandexFeedInfo;
+        return new ReceiptYandexFeedInfo;
     }
 
     public function item(Model $model): FeedItem
     {
-        return new YandexFeedItem($model);
+        return new ReceiptYandexFeedItem($model);
     }
 
     public function filename(): string
     {
-        return 'yandex.xml';
+        return '../../../../../../../../../docs/snippets/receipt-yandex-feed.xml';
     }
 }

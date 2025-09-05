@@ -39,6 +39,6 @@
     </chapter>
 
     <chapter title="Result" id="result">
-        <code-block lang="xml" src="receipt-yandex-result.xml" />
+        <code-block lang="xml" src="receipt-yandex-feed.xml" />
     </chapter>
 </topic>

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Feeds\Info;
+namespace Workbench\App\Feeds\Docs\Info;
 
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 
-class YandexFeedInfo extends FeedInfo
+class ReceiptYandexFeedInfo extends FeedInfo
 {
     public function toArray(): array
     {

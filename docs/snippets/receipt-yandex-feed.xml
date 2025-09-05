@@ -1,0 +1,54 @@
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2025-09-04T04:08:12+00:00">
+    <shop>
+<offers>
+
+<name>Laravel</name>
+<company>Laravel</company>
+<platform>Laravel</platform>
+<url>https://example.com</url>
+<email>test@example.com</email>
+<currencies>
+  <currency id="RUR" rate="1"/>
+</currencies>
+<categories>
+  <category id="41">Домашние майки</category>
+  <category id="539">Велосипедки</category>
+</categories>
+
+<offer id="1" available="true" type="vendor.model">
+  <url>https://example.com/products/soluta-cumque-omnis-quam-et</url>
+  <barcode>GD-Y@GH</barcode>
+  <name>doloremque voluptas delectus est</name>
+  <description>Quaerat nobis vel ab odio facilis cumque. Et nemo aspernatur sint amet dolor facilis. Doloremque ut possimus unde id corrupti ut. Quam alias quo molestias rem incidunt.</description>
+  <delivery>true</delivery>
+  <price>746</price>
+  <currencyId>RUR</currencyId>
+  <vendor>vel</vendor>
+  <picture>https://via.placeholder.com/640x480.png/00cc77?text=non</picture>
+  <picture>https://via.placeholder.com/640x480.png/0066aa?text=autem</picture>
+  <picture>https://via.placeholder.com/640x480.png/001177?text=cum</picture>
+  <param name="Артикул">GD-Y@GH</param>
+  <param name="Код цвета">7</param>
+  <param name="Пол">male</param>
+</offer>
+<offer id="2" available="true" type="vendor.model">
+  <url>https://example.com/products/aut-eos-alias-voluptate-inventore-fugit-iste-ut</url>
+  <barcode>GD-UC:1J</barcode>
+  <name>ut repellendus eveniet et</name>
+  <description>Repellat voluptatum et optio consequatur. Repellendus qui consequatur voluptas praesentium. A velit explicabo praesentium atque. Explicabo rerum ut sequi consequatur perspiciatis cumque.</description>
+  <delivery>true</delivery>
+  <price>455</price>
+  <currencyId>RUR</currencyId>
+  <vendor>occaecati</vendor>
+  <picture>https://via.placeholder.com/640x480.png/0044cc?text=est</picture>
+  <picture>https://via.placeholder.com/640x480.png/002299?text=libero</picture>
+  <picture>https://via.placeholder.com/640x480.png/005533?text=cupiditate</picture>
+  <param name="Артикул">GD-UC:1J</param>
+  <param name="Код цвета">9</param>
+  <param name="Пол">female</param>
+</offer>
+
+</offers>
+</shop>
+</yml_catalog>
