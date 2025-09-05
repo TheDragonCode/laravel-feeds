@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Services;
 
 use DragonCode\LaravelFeed\Converters\Converter;
-use DragonCode\LaravelFeed\Converters\ConvertToJson;
-use DragonCode\LaravelFeed\Converters\ConvertToJsonLines;
-use DragonCode\LaravelFeed\Converters\ConvertToXml;
-use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Helpers\ConverterHelper;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Collection;
@@ -23,9 +20,7 @@ class GeneratorService
 {
     public function __construct(
         protected FilesystemService $filesystem,
-        protected ConvertToXml $xmlConverter,
-        protected ConvertToJson $jsonConverter,
-        protected ConvertToJsonLines $jsonLinesConverter,
+        protected ConverterHelper $converter,
         protected FeedQuery $query,
     ) {}
 
@@ -64,7 +59,7 @@ class GeneratorService
 
                 foreach ($models as $model) {
                     $content[] = $this->converter($feed)->item(
-                        item  : $feed->item($model),
+                        item: $feed->item($model),
                         isLast: $progress <= 1
                     );
 
@@ -148,11 +143,9 @@ class GeneratorService
 
     protected function converter(Feed $feed): Converter
     {
-        return match ($feed->format()) {
-            FeedFormatEnum::Xml       => $this->xmlConverter,
-            FeedFormatEnum::Json      => $this->jsonConverter,
-            FeedFormatEnum::JsonLines => $this->jsonLinesConverter,
-        };
+        return $this->converter->get(
+            $feed->format()
+        );
     }
 
     protected function progressBar(int $count, ?OutputStyle $output): ?ProgressBar

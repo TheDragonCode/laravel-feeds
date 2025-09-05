@@ -11,10 +11,8 @@ use Illuminate\Container\Attributes\Config;
 
 use function is_array;
 use function json_encode;
-use function mb_substr;
-use function sprintf;
 
-class ConvertToJson extends Converter
+class JsonLinesConverter extends Converter
 {
     public function __construct(
         #[Config('feeds.converters.json.options')]
@@ -24,43 +22,37 @@ class ConvertToJson extends Converter
         TransformerService $transformer
     ) {
         parent::__construct($pretty, $transformer);
+
+        $this->options &= ~JSON_PRETTY_PRINT;
     }
 
     public function header(Feed $feed): string
     {
-        return $feed->root()->name ? "{\n" : "[\n";
+        return '';
     }
 
     public function footer(Feed $feed): string
     {
-        return $feed->root()->name ? "\n]\n}\n" : "\n]\n";
+        return '';
     }
 
     public function root(Feed $feed): string
     {
-        return sprintf("\"%s\": [\n", $feed->root()->name);
+        return '';
     }
 
     public function item(FeedItem $item, bool $isLast): string
     {
         $data = $this->performItem($item->toArray());
 
-        $suffix = $isLast ? '' : ',';
-
-        return $this->toJson($data) . $suffix;
+        return $this->toJson($data);
     }
 
     public function info(array $info, bool $afterRoot): string
     {
         $data = $this->performItem($info);
 
-        $json = $this->toJson($data);
-
-        if (! $afterRoot) {
-            $json = mb_substr($json, 1, -1);
-        }
-
-        return $json . ',';
+        return $this->toJson($data);
     }
 
     protected function performItem(array $data): array
@@ -80,15 +72,6 @@ class ConvertToJson extends Converter
 
     protected function toJson(array $data): string
     {
-        return json_encode($data, $this->jsonOptions());
-    }
-
-    protected function jsonOptions(): int
-    {
-        if ($this->pretty) {
-            return JSON_PRETTY_PRINT | $this->options;
-        }
-
-        return $this->options;
+        return json_encode($data, $this->options);
     }
 }
