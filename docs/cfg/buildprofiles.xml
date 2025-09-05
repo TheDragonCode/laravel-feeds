@@ -36,7 +36,6 @@
             </og-image>
         </variables>
     </build-profile>
-    <sitemap priority="0.5" change-frequency="weekly" />
     <footer>
         <social type="telegram" href="https://t.me/dragon_code_news">
             Telegram
@@ -54,4 +53,6 @@
             Issues
         </link>
     </footer>
+    <sitemap priority="0.5" change-frequency="weekly" />
+    <llms-txt single-file="true" />
 </buildprofiles>

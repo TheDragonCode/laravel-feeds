@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Machine Learning" id="machine-learning">
+
+    <link-summary>Guidance for using the project with LLMs and a consolidated knowledge base (lllms.txt)</link-summary>
+    <card-summary>Guidance for using the project with LLMs and a consolidated knowledge base (lllms.txt)</card-summary>
+    <web-summary>Guidance for using the project with LLMs and a consolidated knowledge base (lllms.txt)</web-summary>
+
+    <show-structure depth="3" />
+
+    <p>
+        You can help your LLM understand the structure and conventions of this project much better.
+    </p>
+
+    <p>
+        To do that, import the guidance from the following file:
+        <a href="https://feeds.dragon-code.pro/lllms.txt">
+            <format style="bold">lllms.txt</format>
+        </a>.
+    </p>
+
+    <p>
+        This file is a single, consolidated Markdown document containing the compiled documentation for this project. It is designed to be used as a knowledge base for LLMs (for example, as a system prompt attachment, a retrieval corpus, or a custom knowledge file).
+    </p>
+
+    <note>
+        Save the URL and re-import it periodically to pick up updates as the project evolves.
+    </note>
+
+</topic>

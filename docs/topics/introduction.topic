@@ -24,6 +24,7 @@
 
             <a href="generation.topic" type="library" />
             <a href="advanced-usage.topic" type="check-list" />
+            <a href="machine-learning.topic" type="learn" />
         </primary>
     </section-starting-page>
 </topic>
