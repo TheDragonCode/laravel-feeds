@@ -4,7 +4,11 @@
 <topic
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
-        title="Introduction" id="introduction">
+        title="Getting started" id="introduction">
+
+    <link-summary>Overview of %instance% with quick links to installation and usage</link-summary>
+    <card-summary>Overview of %instance% with quick links to installation and usage</card-summary>
+    <web-summary>Overview of %instance% with quick links to installation and usage</web-summary>
 
     <section-starting-page>
         <title>📃 %instance%</title>
@@ -23,7 +27,7 @@
             <title>Usage</title>
 
             <a href="generation.topic" type="library" />
-            <a href="advanced-usage.topic" type="check-list" />
+            <a href="elements.topic" type="check-list" />
             <a href="machine-learning.topic" type="learn" />
         </primary>
     </section-starting-page>

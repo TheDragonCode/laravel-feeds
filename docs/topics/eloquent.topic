@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Eloquent" id="eloquent">
+
+    <link-summary>Advanced Eloquent settings for feed generation (e.g., chunk size)</link-summary>
+    <card-summary>Advanced Eloquent settings for feed generation (e.g., chunk size)</card-summary>
+    <web-summary>Advanced Eloquent settings for feed generation (e.g., chunk size)</web-summary>
+
+    <show-structure depth="3" />
+
+    <chapter title="Chunk size" id="chunk_size">
+        <p>
+            Database queries use chunks, which are <code>1000</code> items by default.
+            You can change this by overriding the <code>chunkSize</code> method:
+        </p>
+
+        <code-block lang="php" src="advanced-feed-chunk.php" include-lines="5-" />
+    </chapter>
+</topic>

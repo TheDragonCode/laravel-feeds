@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Directives" id="directives">
+
+    <link-summary>Built-in XML directives for feed output</link-summary>
+    <card-summary>Built-in XML directives for feed output</card-summary>
+    <web-summary>Built-in XML directives for feed output</web-summary>
+
+    <show-structure depth="3" />
+
+    <note title="Reserved directives">
+        <list>
+            <li><a href="#_attributes" /></li>
+            <li><a href="#_value" /></li>
+            <li><a href="#_cdata" /></li>
+            <li><a href="#_mixed" /></li>
+            <li><a href="#_custom" /></li>
+        </list>
+
+        <p>
+            The use of directives is available only when generating feeds in the XML format.
+        </p>
+    </note>
+
+    <chapter title="@attributes" id="_attributes">
+        <secondary-label ref="format-xml" />
+
+        <link-summary>Indicates an array of attributes</link-summary>
+
+        <p>
+            You can use a key named <code>@attributes</code> to add attributes to a node:
+        </p>
+
+        <code-block lang="php" src="advanced-directive-attributes.php" include-lines="5-" />
+        <code-block lang="php" src="advanced-directive-attributes-info.php" include-lines="5-" />
+        <code-block lang="php" src="advanced-directive-attributes-item.php" include-lines="5-" />
+
+        <p>
+            This code will result in:
+        </p>
+
+        <code-block lang="xml" src="advanced-directive-attributes.xml" />
+    </chapter>
+
+    <chapter title="@value" id="_value">
+        <secondary-label ref="format-xml" />
+
+        <link-summary>Indicates the applicable value "as it is"</link-summary>
+
+        <tip>
+            Note that the value of the <code>@value</code> field must be a string.
+        </tip>
+
+        <p>
+            You can use a key named <code>@value</code> to add value to a node:
+        </p>
+
+        <code-block lang="php" src="advanced-directive-value-item.php" include-lines="5-" />
+
+        <p>
+            This code will result in:
+        </p>
+
+        <code-block lang="xml" src="advanced-directive-value.xml" />
+    </chapter>
+
+    <chapter title="@cdata" id="_cdata">
+        <secondary-label ref="format-xml" />
+
+        <link-summary>Allows the use of XML markup without transformation</link-summary>
+
+        <tip>
+            It is also possible to wrap the value of a node into a CDATA section.
+            This allows you to use reserved characters.
+        </tip>
+
+        <p>
+            You can use a key named <code>@cdata</code> to add CDATA to a node:
+        </p>
+
+        <code-block lang="php" src="advanced-directive-cdata.php" include-lines="5-" />
+
+        <p>
+            This code will result in:
+        </p>
+
+        <code-block lang="xml" src="advanced-directive-cdata.xml" />
+    </chapter>
+
+    <chapter title="@mixed" id="_mixed">
+        <secondary-label ref="format-xml" />
+
+        <link-summary>Allows you to use XML markup directly within the structure of the document</link-summary>
+
+        <p>
+            To insert XML fragments “as is”, use the <code>@mixed</code> directive:
+        </p>
+
+        <code-block lang="php" src="advanced-directive-mixed.php" include-lines="5-" />
+
+        <p>
+            This code will result in:
+        </p>
+
+        <code-block lang="xml" src="advanced-directive-mixed.xml" />
+    </chapter>
+
+    <chapter title="@custom" id="_custom">
+        <secondary-label ref="format-xml" />
+
+        <link-summary>Describes the possibility of listing an array of elements with the same keys</link-summary>
+
+        <p>
+            In some cases, you need to place an array of elements with the same names.
+        </p>
+
+        <p>
+            To do this, add a <code>@</code> symbol to the start of the key name:
+        </p>
+
+        <code-block lang="php" src="advanced-directive-array.php" include-lines="5-" />
+
+        <p>
+            This code will result in:
+        </p>
+
+        <code-block lang="xml" src="advanced-directive-array.xml" />
+    </chapter>
+</topic>

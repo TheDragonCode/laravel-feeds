@@ -110,7 +110,7 @@
             You can generate feeds in different formats.
             A feed class can be correctly exported only to the format for which it is intended.
             This is due to the use of
-            <a href="advanced-usage.topic#directives">directives</a> and other format specifics.
+            <a href="directives.topic">directives</a> and other format specifics.
         </p>
 
         <p>
