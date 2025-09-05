@@ -51,4 +51,19 @@ return [
          */
         'background' => (bool) env('FEED_SCHEDULE_RUN_BACKGROUND', true),
     ],
+
+    /**
+     * Console display options.
+     */
+    'console' => [
+        /**
+         * Enables a progress bar when generating feeds in the console.
+         *
+         * When set to true, the feed:generate command will display a
+         * progress bar showing the execution progress.
+         *
+         * Default is false.
+         */
+        'progress_bar' => (bool) env('FEED_CONSOLE_PROGRESS_BAR_ENABLED', false),
+    ],
 ];

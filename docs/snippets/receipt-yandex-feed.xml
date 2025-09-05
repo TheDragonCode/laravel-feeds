@@ -17,35 +17,35 @@
 <offers>
 
 <offer id="1" available="true" type="vendor.model">
-  <url>https://example.com/products/molestiae-amet-amet-dolor-iste</url>
-  <barcode>GD-!F-9F</barcode>
-  <name>reprehenderit accusantium molestiae minus</name>
-  <description>Libero autem dolorem labore voluptatibus. Minima laborum eveniet autem aut expedita veniam voluptate. Autem fuga distinctio accusantium consectetur.</description>
+  <url>https://example.com/products/iure-ad-nisi-odit-fugiat-non-aut-exercitationem</url>
+  <barcode>GD-^V#W`</barcode>
+  <name>nemo quisquam voluptate praesentium</name>
+  <description>Ut rerum libero nobis. A quis corrupti assumenda laudantium aut similique. Iste magnam dolor non saepe dolores non aut. Accusamus et natus rerum provident.</description>
   <delivery>true</delivery>
-  <price>574</price>
+  <price>980</price>
   <currencyId>RUR</currencyId>
-  <vendor>voluptatem</vendor>
-  <picture>https://via.placeholder.com/640x480.png/00cc33?text=quis</picture>
-  <picture>https://via.placeholder.com/640x480.png/00cc99?text=illum</picture>
-  <picture>https://via.placeholder.com/640x480.png/00ee33?text=rem</picture>
-  <param name="Артикул">GD-!F-9F</param>
-  <param name="Код цвета">7</param>
-  <param name="Пол">female</param>
+  <vendor>aut</vendor>
+  <picture>https://via.placeholder.com/640x480.png/000055?text=laborum</picture>
+  <picture>https://via.placeholder.com/640x480.png/002200?text=eligendi</picture>
+  <picture>https://via.placeholder.com/640x480.png/00eecc?text=quaerat</picture>
+  <param name="Артикул">GD-^V#W`</param>
+  <param name="Код цвета">8</param>
+  <param name="Пол">male</param>
 </offer>
 <offer id="2" available="true" type="vendor.model">
-  <url>https://example.com/products/officia-dolores-porro-asperiores-inventore</url>
-  <barcode>GD-)M%K*</barcode>
-  <name>quae unde delectus incidunt</name>
-  <description>Modi ut quae quia aspernatur autem. Odio deserunt eos asperiores sed quaerat. Harum et laborum sit quia est et voluptatem ea.</description>
+  <url>https://example.com/products/sed-et-non-non</url>
+  <barcode>GD-P]H/Z</barcode>
+  <name>enim ut voluptatum natus</name>
+  <description>Omnis ut non iusto qui repudiandae sint fuga modi. Consequatur ipsum quibusdam labore. Culpa qui asperiores sint similique.</description>
   <delivery>true</delivery>
-  <price>695</price>
+  <price>595</price>
   <currencyId>RUR</currencyId>
-  <vendor>et</vendor>
-  <picture>https://via.placeholder.com/640x480.png/00ee44?text=nostrum</picture>
-  <picture>https://via.placeholder.com/640x480.png/0066ee?text=rerum</picture>
-  <picture>https://via.placeholder.com/640x480.png/003399?text=nulla</picture>
-  <param name="Артикул">GD-)M%K*</param>
-  <param name="Код цвета">1</param>
+  <vendor>sint</vendor>
+  <picture>https://via.placeholder.com/640x480.png/00ddcc?text=fuga</picture>
+  <picture>https://via.placeholder.com/640x480.png/00bb66?text=quia</picture>
+  <picture>https://via.placeholder.com/640x480.png/00bbaa?text=doloribus</picture>
+  <param name="Артикул">GD-P]H/Z</param>
+  <param name="Код цвета">6</param>
   <param name="Пол">male</param>
 </offer>
 

@@ -13,6 +13,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 
 use function app;
+use function config;
 use function is_numeric;
 
 #[AsCommand('feed:generate', 'Generate XML feeds')]
@@ -29,10 +30,22 @@ class FeedGenerateCommand extends Command
                 continue;
             }
 
-            $this->components->info($feed);
-
-            $generator->feed(app($feed), $this->output);
+            $this->hasProgressBar()
+                ? $this->performWithProgressBar($generator, $feed)
+                : $this->performWithoutProgressBar($generator, $feed);
         }
+    }
+
+    protected function performWithProgressBar(GeneratorService $generator, string $feed): void
+    {
+        $this->components->info($feed);
+
+        $generator->feed(app($feed), $this->output);
+    }
+
+    protected function performWithoutProgressBar(GeneratorService $generator, string $feed): void
+    {
+        $this->components->task($feed, fn () => $generator->feed(app($feed)));
     }
 
     protected function feedable(FeedQuery $feeds): array
@@ -61,6 +74,11 @@ class FeedGenerateCommand extends Command
         }
 
         return $this->yellow($message);
+    }
+
+    protected function hasProgressBar(): bool
+    {
+        return config()?->boolean('feeds.console.progress_bar');
     }
 
     protected function getArguments(): array
