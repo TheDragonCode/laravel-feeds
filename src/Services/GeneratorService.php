@@ -45,7 +45,7 @@ class GeneratorService
 
             $this->release($file, $path);
 
-        $this->setLastActivity($feed);
+            $this->setLastActivity($feed);
             $this->setLastActivity($feed);
         } catch (Throwable $e) {
             throw new FeedGenerationException(get_class($feed), $e);
