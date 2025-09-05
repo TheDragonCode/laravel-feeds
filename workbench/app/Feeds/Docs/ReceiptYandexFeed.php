@@ -23,7 +23,7 @@ class ReceiptYandexFeed extends Feed
 
     public function root(): ElementData
     {
-        return new ElementData('offers');
+        return new ElementData('offers', beforeInfo: false);
     }
 
     public function header(): string

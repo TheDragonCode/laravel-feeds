@@ -1,8 +1,6 @@
 <!DOCTYPE yml_catalog SYSTEM "shops.dtd">
 <yml_catalog date="2025-09-04T04:08:12+00:00">
     <shop>
-<offers>
-
 <name>Laravel</name>
 <company>Laravel</company>
 <platform>Laravel</platform>
@@ -16,35 +14,37 @@
   <category id="539">Велосипедки</category>
 </categories>
 
+<offers>
+
 <offer id="1" available="true" type="vendor.model">
-  <url>https://example.com/products/repellendus-cum-doloribus-quo-ad-odio-eum</url>
-  <barcode>GD-T[LF&amp;quot;JWL</barcode>
-  <name>quo eveniet accusantium omnis</name>
-  <description>Asperiores officiis ex doloremque deleniti. Inventore in odit assumenda laborum blanditiis reiciendis. Est quo id ad excepturi voluptatem nisi. Qui voluptatum omnis iure sint dolor aperiam omnis.</description>
+  <url>https://example.com/products/ut-eius-dolores-minus-nisi-aliquid-ipsa-aut</url>
+  <barcode>GD-6O_B</barcode>
+  <name>expedita facere fugiat vel</name>
+  <description>Et est aliquid iste vel voluptatem. Ut harum quo officia quo. Officiis magni eos omnis sed aliquam. Consectetur itaque optio aut sed cum ipsum debitis.</description>
   <delivery>true</delivery>
-  <price>613</price>
+  <price>360</price>
   <currencyId>RUR</currencyId>
-  <vendor>non</vendor>
-  <picture>https://via.placeholder.com/640x480.png/0088aa?text=perspiciatis</picture>
-  <picture>https://via.placeholder.com/640x480.png/0000ff?text=blanditiis</picture>
-  <picture>https://via.placeholder.com/640x480.png/00eedd?text=quisquam</picture>
-  <param name="Артикул">GD-T[LF"JWL</param>
-  <param name="Код цвета">0</param>
-  <param name="Пол">male</param>
+  <vendor>mollitia</vendor>
+  <picture>https://via.placeholder.com/640x480.png/00ee33?text=voluptatem</picture>
+  <picture>https://via.placeholder.com/640x480.png/006611?text=modi</picture>
+  <picture>https://via.placeholder.com/640x480.png/00ccdd?text=consequuntur</picture>
+  <param name="Артикул">GD-6O_B</param>
+  <param name="Код цвета">1</param>
+  <param name="Пол">female</param>
 </offer>
 <offer id="2" available="true" type="vendor.model">
-  <url>https://example.com/products/temporibus-corrupti-illo-ad-vel-et</url>
-  <barcode>GD-*^FQIZ%K</barcode>
-  <name>velit ut blanditiis omnis</name>
-  <description>Doloribus dolorem omnis est commodi nam deleniti tempore. Non voluptates illum quis. Ab possimus quidem soluta ut officia. Voluptatem iste ipsa quia impedit ratione.</description>
+  <url>https://example.com/products/et-quis-sed-adipisci-aut-sint</url>
+  <barcode>GD-@LM0LG</barcode>
+  <name>explicabo corrupti id et</name>
+  <description>Nostrum minima sed voluptas. Sint voluptatibus est voluptates ea maxime. Adipisci et nam deleniti hic officiis nesciunt illum. Dolorem quasi atque dolorum quis tenetur molestiae in.</description>
   <delivery>true</delivery>
-  <price>142</price>
+  <price>843</price>
   <currencyId>RUR</currencyId>
-  <vendor>est</vendor>
-  <picture>https://via.placeholder.com/640x480.png/0088aa?text=alias</picture>
-  <picture>https://via.placeholder.com/640x480.png/00ee22?text=iusto</picture>
-  <picture>https://via.placeholder.com/640x480.png/00bb55?text=ducimus</picture>
-  <param name="Артикул">GD-*^FQIZ%K</param>
+  <vendor>numquam</vendor>
+  <picture>https://via.placeholder.com/640x480.png/0055ff?text=laboriosam</picture>
+  <picture>https://via.placeholder.com/640x480.png/00dd00?text=dolorem</picture>
+  <picture>https://via.placeholder.com/640x480.png/0099ee?text=magni</picture>
+  <param name="Артикул">GD-@LM0LG</param>
   <param name="Код цвета">8</param>
   <param name="Пол">male</param>
 </offer>

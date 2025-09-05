@@ -8,6 +8,7 @@ readonly class ElementData
 {
     public function __construct(
         public ?string $name = null,
-        public array $attributes = []
+        public array $attributes = [],
+        public bool $beforeInfo = true
     ) {}
 }
