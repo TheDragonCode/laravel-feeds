@@ -12,6 +12,7 @@
         <toc-element toc-title="License" topic="license.topic" />
     </toc-element>
     <toc-element topic="introduction.topic">
+        <toc-element topic="supported-formats.topic" />
         <toc-element topic="installation.topic" />
         <toc-element topic="create-feeds.topic" />
         <toc-element topic="generation.topic">

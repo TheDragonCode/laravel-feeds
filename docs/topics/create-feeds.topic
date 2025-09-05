@@ -100,4 +100,24 @@
         </chapter>
     </chapter>
 
+    <chapter title="File format" id="file_format">
+        <note title="Supported formats">
+            <include from="supported-formats.topic" element-id="formats" />
+        </note>
+
+        <p>
+            You can generate feeds in different formats.
+            A feed class can be correctly exported only to the format for which it is intended.
+            This is due to the use of
+            <a href="advanced-usage.topic#directives">directives</a> and other format specifics.
+        </p>
+
+        <p>
+            To apply the required format, simply override the <code>$format</code> property in the feed class:
+        </p>
+
+        <code-block lang="php" src="create-feeds-feed-format.php" include-lines="5-" />
+
+    </chapter>
+
 </topic>
