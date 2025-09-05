@@ -72,11 +72,13 @@
         "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
         "migrate": "@php vendor/bin/testbench migrate:fresh --seed --ansi",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "reset:snippets": "git restore --source=HEAD -- ./docs/snippets/*.xml",
         "style": "@php vendor/bin/pint --parallel --ansi",
         "style:snippets": "@php vendor/bin/pint --dirty --ansi docs/snippets",
         "test": [
             "@php vendor/bin/pest --parallel --colors=always",
-            "@style:snippets"
+            "@style:snippets",
+            "@reset:snippets"
         ],
         "test:coverage": "@php vendor/bin/pest --colors=always --coverage --compact --parallel --min=95",
         "test:type": "@php vendor/bin/pest --type-coverage --compact --min=95",
