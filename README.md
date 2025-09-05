@@ -8,7 +8,8 @@
 [![Github Workflow Status][badge_build]][link_build]
 [![License][badge_license]][link_license]
 
-**Laravel Feeds** is an easy and fast way to export large amounts of data into feeds for marketplaces and other consumers.
+**Laravel Feeds** is an easy and fast way to export large amounts of data into feeds for marketplaces and other
+consumers.
 
 > **🌟 Features**
 >
@@ -25,7 +26,8 @@ You can install the **Laravel Feeds** package via [Composer](https://getcomposer
 composer require dragon-code/laravel-feeds
 ```
 
-You should publish the [migration](database/migrations/2025_09_01_231655_create_feeds_table.php) and the [config/feeds.php](config/feeds.php) file with:
+You should publish the [migration](database/migrations/2025_09_01_231655_create_feeds_table.php) and
+the [config/feeds.php](config/feeds.php) file with:
 
 ```bash
 php artisan vendor:publish --tag="feeds"
