@@ -111,5 +111,6 @@ return [
         Transformers\BoolTransformer::class,
         Transformers\DateTimeTransformer::class,
         Transformers\EnumTransformer::class,
+        // Transformers\NullTransformer::class,
     ],
 ];
