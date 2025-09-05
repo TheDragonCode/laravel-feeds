@@ -19,7 +19,7 @@
 
     <snippet id="check_operation">
         <p>
-            Review the generated <a href="create-feeds.topic">operation/migration</a> file and then run the appropriate console command:
+            Review the generated <a href="create-feeds.topic">operation or migration</a> file, then run the appropriate console command:
         </p>
 
         <code-block lang="bash">

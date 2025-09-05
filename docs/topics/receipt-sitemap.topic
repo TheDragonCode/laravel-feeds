@@ -6,21 +6,23 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Sitemap" id="receipt-sitemap" help-id="sitemap">
 
-    <link-summary>How to create a sitemap feed</link-summary>
-    <card-summary>Step-by-step recipe for creating a sitemap</card-summary>
-    <web-summary>Step-by-step guide to creating a sitemap feed</web-summary>
+    <link-summary>How to create a product sitemap feed</link-summary>
+    <card-summary>Step-by-step guide for creating a product sitemap</card-summary>
+    <web-summary>Step-by-step guide to creating a product sitemap feed</web-summary>
 
     <show-structure depth="3" />
 
     <p>
-        This recipe walks you through creating a product sitemap feed using Laravel Feeds. You will generate the
-        necessary classes, implement the feed logic, expose the files via the filesystem, and reference the sitemap
-        from a root sitemap.xml if needed.
+        This recipe walks you through creating a product sitemap feed using Laravel Feeds. You will:
+        - Generate the necessary classes
+        - Implement the feed logic
+        - Expose the files via the filesystem
+        - Optionally reference the generated sitemap from a root sitemap.xml
     </p>
 
     <chapter title="Create files" id="create_files">
         <p>
-            Generate the feed and its item class using the console command:
+            Generate the feed and its item class using the following console command:
         </p>
         <code-block lang="bash">
             %command-make-simple% Sitemaps/Product -%command-shortcut-item%
@@ -29,14 +31,14 @@
 
     <chapter title="Fill the feed" id="filling_the_feed">
         <p>
-            Implement the feed root element, attributes, query builder, filename, and item mapping as shown below:
+            Implement the feed root element, attributes, query builder, output filename, and item mapping as shown below:
         </p>
         <code-block lang="php" src="receipt-sitemap-feed.php" />
     </chapter>
 
     <chapter title="Fill the feed item" id="filling_the_feed_item">
         <p>
-            Define the XML element name and map model properties to sitemap tags:
+            Define the XML element name and map your model properties to the corresponding sitemap tags:
         </p>
         <code-block lang="php" src="receipt-sitemap-feed-item.php" />
     </chapter>
@@ -47,14 +49,14 @@
 
     <chapter title="Links" id="links">
         <p>
-            Add a filesystem link to the directory containing your sitemaps in the
-            <a href="https://github.com/laravel/laravel/blob/12.x/config/filesystems.php#L76-L78">config/filesystems.php</a> configuration file:
+            Add a filesystem disk that points to the directory containing your sitemaps in
+            the <a href="https://github.com/laravel/laravel/blob/12.x/config/filesystems.php#L76-L78">config/filesystems.php</a> configuration file:
         </p>
 
         <code-block lang="php" src="receipt-sitemap-links.php" include-lines="5-" />
 
         <p>
-            Then create the public symlink so the files are accessible via the browser:
+            Then create the public symlink so the files are accessible in the browser:
         </p>
 
         <code-block lang="bash">
