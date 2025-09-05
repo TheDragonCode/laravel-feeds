@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use DragonCode\LaravelFeed\Transformers\BooleanTransformer;
+use DragonCode\LaravelFeed\Transformers\BoolTransformer;
 use DragonCode\LaravelFeed\Transformers\DateTimeTransformer;
 use DragonCode\LaravelFeed\Transformers\EnumTransformer;
 
@@ -111,7 +111,7 @@ return [
      */
     'transformers' => [
         DateTimeTransformer::class,
-        BooleanTransformer::class,
+        BoolTransformer::class,
         EnumTransformer::class,
     ],
 ];
