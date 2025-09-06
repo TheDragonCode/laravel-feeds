@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Transformers\BoolTransformer;
 
-test('transform', function (bool $value, string $expected) {
+test('transforms boolean to string', function (bool $value, string $expected) {
     $transformer = new BoolTransformer;
 
     expect(
@@ -15,7 +15,7 @@ test('transform', function (bool $value, string $expected) {
     [false, 'false'],
 ]);
 
-test('allow', function (mixed $value, bool $expected) {
+test('allows only booleans', function (mixed $value, bool $expected) {
     $transformer = new BoolTransformer;
 
     expect(

@@ -6,7 +6,7 @@ use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use DragonCode\LaravelFeed\Transformers\EnumTransformer;
 use Workbench\App\Enums\FooEnum;
 
-test('transform', function (UnitEnum $value, string $expected) {
+test('transforms enum to string representation', function (UnitEnum $value, string $expected) {
     $transformer = new EnumTransformer;
 
     expect(
@@ -17,7 +17,7 @@ test('transform', function (UnitEnum $value, string $expected) {
     [FooEnum::Foo, 'Foo'],
 ]);
 
-test('allow', function (mixed $value, bool $expected) {
+test('allows only UnitEnum instances', function (mixed $value, bool $expected) {
     $transformer = new EnumTransformer;
 
     expect(

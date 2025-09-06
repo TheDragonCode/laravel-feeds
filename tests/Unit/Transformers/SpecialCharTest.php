@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Transformers\SpecialCharsTransformer;
 
-test('allow', function (mixed $value) {
+test('allows any scalar or null value', function (mixed $value) {
     $transformer = new SpecialCharsTransformer;
 
     expect($transformer->allow($value))->toBeTrue();
@@ -18,7 +18,7 @@ test('allow', function (mixed $value) {
     'emoji'            => ['😀'],
 ]);
 
-test('transform escapes html special chars', function () {
+test('escapes HTML special characters', function () {
     $transformer = new SpecialCharsTransformer;
 
     $value = '<b>Tom & "Jerry"\'</b>';
@@ -26,7 +26,7 @@ test('transform escapes html special chars', function () {
     expect($transformer->transform($value))->toBe('&lt;b&gt;Tom &amp; &quot;Jerry&quot;&#039;&lt;/b&gt;');
 });
 
-test('transform removes ASCII control characters', function () {
+test('removes ASCII control characters', function () {
     $transformer = new SpecialCharsTransformer;
 
     $value = "Hello\x00\x01\x02 World\x7F!";
@@ -34,7 +34,7 @@ test('transform removes ASCII control characters', function () {
     expect($transformer->transform($value))->toBe('Hello World!');
 });
 
-test('transform keeps multibyte and common chars', function () {
+test('preserves multibyte characters and encodes HTML brackets', function () {
     $transformer = new SpecialCharsTransformer;
 
     $value = 'Привет, мир 😀 <tag>';

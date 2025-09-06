@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\artisan;
 
-test('success', function () {
+test('dispatches FeedStarting and FeedFinished events for each generated feed', function () {
     Event::fake();
 
     artisan(FeedGenerateCommand::class)

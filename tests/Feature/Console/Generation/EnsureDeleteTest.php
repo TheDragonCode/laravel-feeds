@@ -8,7 +8,7 @@ use Illuminate\Filesystem\Filesystem;
 
 use function Pest\Laravel\artisan;
 
-test('success', function () {
+test('overwrites existing feed file and removes .draft during generation', function () {
     $filesystem = new Filesystem;
 
     $feed = Feed::firstOrFail();
