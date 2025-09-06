@@ -7,7 +7,7 @@ use DragonCode\LaravelFeed\Queries\FeedQuery;
 
 use function Pest\Laravel\assertDatabaseMissing;
 
-test('success', function () {
+test('does nothing when restoring a non-existent feed ID', function () {
     app(FeedQuery::class)->restore(1000);
 
     assertDatabaseMissing(Feed::class, [

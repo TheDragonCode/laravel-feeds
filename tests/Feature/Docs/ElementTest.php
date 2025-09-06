@@ -12,7 +12,7 @@ use Workbench\App\Feeds\Docs\RootElementFeed;
 
 use function Pest\Laravel\artisan;
 
-it('generate stub', function (string $feed, array $files = []) {
+it('generates documentation stubs for feed examples', function (string $feed, array $files = []) {
     $model = Feed::create([
         'class' => $feed,
         'title' => $feed,

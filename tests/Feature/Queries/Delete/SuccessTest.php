@@ -8,7 +8,7 @@ use DragonCode\LaravelFeed\Queries\FeedQuery;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 
-test('success', function () {
+test('soft deletes a feed and sets deleted_at', function () {
     $feed = Feed::firstOrFail();
 
     assertDatabaseHas(Feed::class, [

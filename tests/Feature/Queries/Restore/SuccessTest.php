@@ -7,7 +7,7 @@ use DragonCode\LaravelFeed\Queries\FeedQuery;
 
 use function Pest\Laravel\assertDatabaseHas;
 
-test('success', function () {
+test('restores a soft-deleted feed to active state', function () {
     $feed = Feed::firstOrFail();
     $feed->delete();
 

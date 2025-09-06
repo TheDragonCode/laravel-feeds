@@ -7,7 +7,7 @@ use DragonCode\LaravelFeed\Models\Feed;
 
 use function Pest\Laravel\artisan;
 
-test('success', function (int $id) {
+test('generates only the selected feed by ID', function (int $id) {
     $command = artisan(FeedGenerateCommand::class, [
         'feed' => $id,
     ]);

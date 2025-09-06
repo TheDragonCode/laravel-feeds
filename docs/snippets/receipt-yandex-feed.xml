@@ -17,36 +17,36 @@
 <offers>
 
 <offer id="1" available="true" type="vendor.model">
-  <url>https://example.com/products/odit-error-voluptates-blanditiis-saepe-placeat</url>
-  <barcode>GD-+/ADU|]W</barcode>
-  <name>nam suscipit dolor dignissimos</name>
-  <description>Quasi magni consectetur quis. Nulla sunt vero vel quia qui autem. Qui aut quo enim quisquam et laudantium. Eos facilis autem sint asperiores temporibus.</description>
+  <url>https://example.com/products/quas-aut-omnis-dolorum-nulla-quo-nisi</url>
+  <barcode>GD-WG&amp;$VS</barcode>
+  <name>dolorum architecto doloremque voluptatem</name>
+  <description>Asperiores eum ab deleniti ipsum consequatur consequatur totam dolorum. Velit amet in ducimus quis non unde. Delectus magnam et rerum aut quibusdam enim natus.</description>
   <delivery>true</delivery>
-  <price>708</price>
+  <price>145</price>
   <currencyId>RUR</currencyId>
-  <vendor>animi</vendor>
-  <picture>https://via.placeholder.com/640x480.png/000099?text=ullam</picture>
-  <picture>https://via.placeholder.com/640x480.png/003399?text=alias</picture>
-  <picture>https://via.placeholder.com/640x480.png/009999?text=aut</picture>
-  <param name="Артикул">GD-+/ADU|]W</param>
-  <param name="Код цвета">0</param>
-  <param name="Пол">male</param>
-</offer>
-<offer id="2" available="true" type="vendor.model">
-  <url>https://example.com/products/deleniti-rerum-ratione-voluptas-ut-explicabo-ad-provident</url>
-  <barcode>GD-0TMMSV"</barcode>
-  <name>illum sint minima consequatur</name>
-  <description>Voluptate sed rerum rerum optio asperiores ipsam consequatur. Neque maxime et voluptatibus at id. Sequi praesentium eum dolores non itaque. Eos et ullam veniam ipsam et delectus.</description>
-  <delivery>true</delivery>
-  <price>756</price>
-  <currencyId>RUR</currencyId>
-  <vendor>nostrum</vendor>
-  <picture>https://via.placeholder.com/640x480.png/005511?text=ipsum</picture>
-  <picture>https://via.placeholder.com/640x480.png/001188?text=cumque</picture>
-  <picture>https://via.placeholder.com/640x480.png/007777?text=omnis</picture>
-  <param name="Артикул">GD-0TMMSV"</param>
-  <param name="Код цвета">6</param>
+  <vendor>ea</vendor>
+  <picture>https://via.placeholder.com/640x480.png/003355?text=fugiat</picture>
+  <picture>https://via.placeholder.com/640x480.png/006622?text=laudantium</picture>
+  <picture>https://via.placeholder.com/640x480.png/00cc88?text=reiciendis</picture>
+  <param name="Артикул">GD-WG&amp;$VS</param>
+  <param name="Код цвета">7</param>
   <param name="Пол">female</param>
+</offer>
+<offer id="2" available="false" type="vendor.model">
+  <url>https://example.com/products/distinctio-qui-ratione-consequatur-aspernatur-et</url>
+  <barcode>GD-%L;]UB</barcode>
+  <name>magnam consequatur harum cupiditate</name>
+  <description>Harum in ratione perspiciatis quo consequatur id a. Totam magnam et est iusto amet totam minus voluptatum. In cum minima explicabo consectetur minus ex praesentium. Nemo maiores laboriosam dicta.</description>
+  <delivery>true</delivery>
+  <price>618</price>
+  <currencyId>RUR</currencyId>
+  <vendor>aut</vendor>
+  <picture>https://via.placeholder.com/640x480.png/00bb77?text=aut</picture>
+  <picture>https://via.placeholder.com/640x480.png/009933?text=voluptas</picture>
+  <picture>https://via.placeholder.com/640x480.png/00eeee?text=delectus</picture>
+  <param name="Артикул">GD-%L;]UB</param>
+  <param name="Код цвета">5</param>
+  <param name="Пол">male</param>
 </offer>
 
 </offers>
