@@ -1,5 +1,8 @@
 * text=auto
 
+.ai/ export-ignore
+.junie/ export-ignore
+
 docs/ export-ignore
 
 .github/ export-ignore

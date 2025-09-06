@@ -1,4 +1,10 @@
 .idea/
+.cursor/
+.vscode/
+
+!.junie/guidelines.md
+.junie/
+
 _site/
 build/
 node_modules/

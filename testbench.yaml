@@ -2,6 +2,7 @@ laravel: '@testbench'
 
 providers:
     - Workbench\App\Providers\WorkbenchServiceProvider
+    - Workbench\App\Providers\BoostServiceProvider
     - DragonCode\LaravelFeed\LaravelFeedServiceProvider
     - Spatie\LaravelData\LaravelDataServiceProvider
     - DragonCode\LaravelDeployOperations\ServiceProvider
@@ -16,7 +17,7 @@ workbench:
         web: true
         api: false
         config: true
-        commands: false
+        commands: true
         factories: true
         views: false
     build:
