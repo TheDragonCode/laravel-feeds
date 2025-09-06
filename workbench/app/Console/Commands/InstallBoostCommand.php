@@ -59,7 +59,7 @@ class InstallBoostCommand extends Command
 
     private bool $enforceTests = true;
 
-    const MIN_TEST_COUNT = 6;
+    public const MIN_TEST_COUNT = 6;
 
     private string $greenTick;
 
@@ -103,13 +103,13 @@ class InstallBoostCommand extends Command
     {
         return
             <<<'HEADER'
-        ██████╗   ██████╗   ██████╗  ███████╗ ████████╗
-        ██╔══██╗ ██╔═══██╗ ██╔═══██╗ ██╔════╝ ╚══██╔══╝
-        ██████╔╝ ██║   ██║ ██║   ██║ ███████╗    ██║
-        ██╔══██╗ ██║   ██║ ██║   ██║ ╚════██║    ██║
-        ██████╔╝ ╚██████╔╝ ╚██████╔╝ ███████║    ██║
-        ╚═════╝   ╚═════╝   ╚═════╝  ╚══════╝    ╚═╝
-        HEADER;
+                ██████╗   ██████╗   ██████╗  ███████╗ ████████╗
+                ██╔══██╗ ██╔═══██╗ ██╔═══██╗ ██╔════╝ ╚══██╔══╝
+                ██████╔╝ ██║   ██║ ██║   ██║ ███████╗    ██║
+                ██╔══██╗ ██║   ██║ ██║   ██║ ╚════██║    ██║
+                ██████╔╝ ╚██████╔╝ ╚██████╔╝ ███████║    ██║
+                ╚═════╝   ╚═════╝   ╚═════╝  ╚══════╝    ╚═╝
+                HEADER;
     }
 
     private function discoverEnvironment(): void
@@ -165,8 +165,8 @@ class InstallBoostCommand extends Command
     {
         $label = 'https://boost.laravel.com/installed';
 
-        $ideNames      =
-            $this->selectedTargetMcpClient->map(fn (McpClient $mcpClient) => 'i:' . $mcpClient->mcpClientName())
+        $ideNames
+            = $this->selectedTargetMcpClient->map(fn (McpClient $mcpClient) => 'i:' . $mcpClient->mcpClientName())
                 ->toArray();
         $agentNames    = $this->selectedTargetAgents->map(fn (Agent $agent) => 'a:' . $agent->agentName())->toArray();
         $boostFeatures = $this->selectedBoostFeatures->map(fn ($feature) => 'b:' . $feature)->toArray();
@@ -189,9 +189,9 @@ class InstallBoostCommand extends Command
         $paddingLength = (int) (floor(($this->terminal->cols() - mb_strlen($text . $label)) / 2)) - 2;
 
         echo "\033[42m\033[2K" . str_repeat(
-                ' ',
-                max(0, $paddingLength)
-            ); // Make the entire line have a green background
+            ' ',
+            max(0, $paddingLength)
+        ); // Make the entire line have a green background
         echo $this->black($this->bold($text . $link)) . $this->reset(PHP_EOL) . $this->reset(PHP_EOL);
     }
 
@@ -216,18 +216,18 @@ class InstallBoostCommand extends Command
 
             /** Count the number of tests - they'll always have :: between the filename and test name */
             $hasMinimumTests = Str::of($process->getOutput())
-                    ->trim()
-                    ->explode("\n")
-                    ->filter(fn ($line) => str_contains($line, '::'))
-                    ->count() >= self::MIN_TEST_COUNT;
+                ->trim()
+                ->explode("\n")
+                ->filter(fn ($line) => str_contains($line, '::'))
+                ->count() >= self::MIN_TEST_COUNT;
         }
 
         if (! $hasMinimumTests && $ask) {
             $hasMinimumTests = select(
-                    label  : 'Should AI always create tests?',
-                    options: ['Yes', 'No'],
-                    default: 'Yes'
-                ) === 'Yes';
+                label  : 'Should AI always create tests?',
+                options: ['Yes', 'No'],
+                default: 'Yes'
+            ) === 'Yes';
         }
 
         return $hasMinimumTests;
@@ -353,8 +353,8 @@ class InstallBoostCommand extends Command
         );
 
         foreach ($installedEnvNames as $envKey) {
-            $matchingEnv =
-                $availableEnvironments->first(
+            $matchingEnv
+                = $availableEnvironments->first(
                     fn (CodeEnvironment $env) => strtolower($envKey) === strtolower($env->name())
                 );
             if ($matchingEnv) {
@@ -425,13 +425,15 @@ class InstallBoostCommand extends Command
         $failed               = [];
         $composedAiGuidelines = $composer->compose();
 
-        $longestAgentName =
-            max(1, ...$this->selectedTargetAgents->map(fn ($agent) => Str::length($agent->agentName()))->toArray());
+        $longestAgentName
+            = max(1, ...$this->selectedTargetAgents->map(fn ($agent) => Str::length($agent->agentName()))->toArray());
+
         /** @var CodeEnvironment $agent */
         foreach ($this->selectedTargetAgents as $agent) {
             $agentName        = $agent->agentName();
             $displayAgentName = str_pad($agentName, $longestAgentName);
             $this->output->write("  {$displayAgentName}... ");
+
             /** @var Agent $agent */
             try {
                 (new GuidelineWriter($agent))
@@ -501,8 +503,8 @@ class InstallBoostCommand extends Command
         $longestIdeName = max(
             1,
             ...$this->selectedTargetMcpClient->map(
-            fn (McpClient $mcpClient) => Str::length($mcpClient->mcpClientName())
-        )->toArray()
+                fn (McpClient $mcpClient) => Str::length($mcpClient->mcpClientName())
+            )->toArray()
         );
 
         /** @var McpClient $mcpClient */
