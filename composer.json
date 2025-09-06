@@ -23,6 +23,7 @@
     "require-dev": {
         "dragon-code/codestyler": "^6.3",
         "dragon-code/laravel-deploy-operations": "^7.1",
+        "laravel/boost": "^1.1",
         "mockery/mockery": "^1.6",
         "orchestra/testbench": "^9.0 || ^10.0",
         "pestphp/pest": "^3.0 || ^4.0",
@@ -60,14 +61,16 @@
     },
     "scripts": {
         "post-update-cmd": [
-            "vendor/bin/codestyle pint 8.2 --ansi",
-            "vendor/bin/codestyle editorconfig --ansi",
-            "composer normalize --ansi"
+            "@php vendor/bin/codestyle pint 8.2 --ansi",
+            "@php vendor/bin/codestyle editorconfig --ansi",
+            "composer normalize --ansi",
+            "@ai"
         ],
         "post-autoload-dump": [
             "@clear",
             "@prepare"
         ],
+        "ai": "@php vendor/bin/testbench boost:guidelines -n",
         "build": "@php vendor/bin/testbench workbench:build --ansi",
         "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
         "migrate": "@php vendor/bin/testbench migrate:fresh --seed --ansi",
