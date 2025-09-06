@@ -10,10 +10,7 @@ test('transforms boolean to string', function (bool $value, string $expected) {
     expect(
         $transformer->transform($value)
     )->toBe($expected);
-})->with([
-    [true, 'true'],
-    [false, 'false'],
-]);
+})->with('bool transform');
 
 test('allows only booleans', function (mixed $value, bool $expected) {
     $transformer = new BoolTransformer;
@@ -21,15 +18,4 @@ test('allows only booleans', function (mixed $value, bool $expected) {
     expect(
         $transformer->allow($value)
     )->toBe($expected);
-})->with([
-    [true, true],
-    [false, true],
-    ['true', false],
-    ['false', false],
-    ['0', false],
-    ['1', false],
-    [0, false],
-    [1, false],
-    ['foo', false],
-    [null, false],
-]);
+})->with('bool allow');

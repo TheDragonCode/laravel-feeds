@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use DragonCode\LaravelFeed\Transformers\NullTransformer;
 
 test('transforms null to the string "null"', function () {
@@ -19,17 +18,4 @@ test('allows only null', function (mixed $value, bool $expected) {
     expect(
         $transformer->allow($value)
     )->toBe($expected);
-})->with([
-    [null, true],
-    [FeedFormatEnum::Xml, false],
-    [FeedFormatEnum::class, false],
-    [true, false],
-    [false, false],
-    ['true', false],
-    ['false', false],
-    ['0', false],
-    ['1', false],
-    [0, false],
-    [1, false],
-    ['foo', false],
-]);
+})->with('null allow');

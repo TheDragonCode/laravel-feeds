@@ -8,15 +8,7 @@ test('allows any scalar or null value', function (mixed $value) {
     $transformer = new SpecialCharsTransformer;
 
     expect($transformer->allow($value))->toBeTrue();
-})->with([
-    'simple string'    => ['Hello'],
-    'string with html' => ['<b>&"\'</b>'],
-    'null'             => [null],
-    'int'              => [123],
-    'bool true'        => [true],
-    'bool false'       => [false],
-    'emoji'            => ['😀'],
-]);
+})->with('special chars allow');
 
 test('escapes HTML special characters', function () {
     $transformer = new SpecialCharsTransformer;

@@ -17,36 +17,36 @@
 <offers>
 
 <offer id="1" available="true" type="vendor.model">
-  <url>https://example.com/products/quas-aut-omnis-dolorum-nulla-quo-nisi</url>
-  <barcode>GD-WG&amp;$VS</barcode>
-  <name>dolorum architecto doloremque voluptatem</name>
-  <description>Asperiores eum ab deleniti ipsum consequatur consequatur totam dolorum. Velit amet in ducimus quis non unde. Delectus magnam et rerum aut quibusdam enim natus.</description>
-  <delivery>true</delivery>
-  <price>145</price>
-  <currencyId>RUR</currencyId>
-  <vendor>ea</vendor>
-  <picture>https://via.placeholder.com/640x480.png/003355?text=fugiat</picture>
-  <picture>https://via.placeholder.com/640x480.png/006622?text=laudantium</picture>
-  <picture>https://via.placeholder.com/640x480.png/00cc88?text=reiciendis</picture>
-  <param name="Артикул">GD-WG&amp;$VS</param>
-  <param name="Код цвета">7</param>
-  <param name="Пол">female</param>
-</offer>
-<offer id="2" available="false" type="vendor.model">
-  <url>https://example.com/products/distinctio-qui-ratione-consequatur-aspernatur-et</url>
-  <barcode>GD-%L;]UB</barcode>
-  <name>magnam consequatur harum cupiditate</name>
-  <description>Harum in ratione perspiciatis quo consequatur id a. Totam magnam et est iusto amet totam minus voluptatum. In cum minima explicabo consectetur minus ex praesentium. Nemo maiores laboriosam dicta.</description>
+  <url>https://example.com/products/facere-voluptatem-nihil-qui-aut-itaque-voluptate</url>
+  <barcode>GD-)%5DC63=</barcode>
+  <name>ea placeat ut perferendis</name>
+  <description>Aut iure porro debitis ut et. Distinctio consectetur quia provident. Explicabo voluptatem at dolor velit quia.</description>
   <delivery>true</delivery>
   <price>618</price>
   <currencyId>RUR</currencyId>
-  <vendor>aut</vendor>
-  <picture>https://via.placeholder.com/640x480.png/00bb77?text=aut</picture>
-  <picture>https://via.placeholder.com/640x480.png/009933?text=voluptas</picture>
-  <picture>https://via.placeholder.com/640x480.png/00eeee?text=delectus</picture>
-  <param name="Артикул">GD-%L;]UB</param>
-  <param name="Код цвета">5</param>
-  <param name="Пол">male</param>
+  <vendor>voluptatibus</vendor>
+  <picture>https://via.placeholder.com/640x480.png/001133?text=veniam</picture>
+  <picture>https://via.placeholder.com/640x480.png/0044ee?text=ut</picture>
+  <picture>https://via.placeholder.com/640x480.png/005522?text=explicabo</picture>
+  <param name="Артикул">GD-)%5DC63=</param>
+  <param name="Код цвета">7</param>
+  <param name="Пол">female</param>
+</offer>
+<offer id="2" available="true" type="vendor.model">
+  <url>https://example.com/products/recusandae-recusandae-qui-voluptatem-repellendus</url>
+  <barcode>GD-_@E9D5MN</barcode>
+  <name>est tempore aut quia</name>
+  <description>Laboriosam tempora voluptate rerum officia sed itaque. Sapiente unde quia nemo vitae vel illo eveniet. Impedit unde dignissimos iure ipsum iusto. Quas nihil aut et et debitis.</description>
+  <delivery>true</delivery>
+  <price>692</price>
+  <currencyId>RUR</currencyId>
+  <vendor>deserunt</vendor>
+  <picture>https://via.placeholder.com/640x480.png/0055aa?text=qui</picture>
+  <picture>https://via.placeholder.com/640x480.png/00ffee?text=nulla</picture>
+  <picture>https://via.placeholder.com/640x480.png/001199?text=quasi</picture>
+  <param name="Артикул">GD-_@E9D5MN</param>
+  <param name="Код цвета">3</param>
+  <param name="Пол">female</param>
 </offer>
 
 </offers>

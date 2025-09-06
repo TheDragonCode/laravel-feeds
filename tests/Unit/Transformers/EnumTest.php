@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use DragonCode\LaravelFeed\Transformers\EnumTransformer;
-use Workbench\App\Enums\FooEnum;
 
 test('transforms enum to string representation', function (UnitEnum $value, string $expected) {
     $transformer = new EnumTransformer;
@@ -12,10 +10,7 @@ test('transforms enum to string representation', function (UnitEnum $value, stri
     expect(
         $transformer->transform($value)
     )->toBe($expected);
-})->with([
-    [FeedFormatEnum::Xml, 'xml'],
-    [FooEnum::Foo, 'Foo'],
-]);
+})->with('enum transform');
 
 test('allows only UnitEnum instances', function (mixed $value, bool $expected) {
     $transformer = new EnumTransformer;
@@ -23,19 +18,4 @@ test('allows only UnitEnum instances', function (mixed $value, bool $expected) {
     expect(
         $transformer->allow($value)
     )->toBe($expected);
-})->with([
-    [FeedFormatEnum::Xml, true],
-    [FeedFormatEnum::class, false],
-    [FooEnum::Foo, true],
-    [FooEnum::class, false],
-    [true, false],
-    [false, false],
-    ['true', false],
-    ['false', false],
-    ['0', false],
-    ['1', false],
-    [0, false],
-    [1, false],
-    ['foo', false],
-    [null, false],
-]);
+})->with('enum allow');
