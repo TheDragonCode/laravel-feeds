@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <attributes_directive>
 
-<company since="2003"/>
+<company since="2008"/>
 <url>https://example.com</url>
 
 <user>
-  <name>Prof. Jaeden Hodkiewicz</name>
-  <contact email="kutch.santos@example.com" phone="555-000-1"/>
+  <name>Lindsay Halvorson</name>
+  <contact email="jbins@example.org" phone="555-000-1"/>
 </user>
 <user>
-  <name>Miss Annetta Frami MD</name>
-  <contact email="okeefe.kristian@example.org" phone="555-000-2"/>
+  <name>Sallie Bayer</name>
+  <contact email="okoepp@example.net" phone="555-000-2"/>
 </user>
 
 </attributes_directive>

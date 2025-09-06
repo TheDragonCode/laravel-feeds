@@ -15,9 +15,9 @@ test('filename', function (string $class) {
 
     expect($feed->filename())->toMatchSnapshot();
 })->with([
-    EmptyFeed::class,
-    FullFeed::class,
-    PartialFeed::class,
-    SitemapFeed::class,
-    YandexFeed::class,
+    'EmptyFeed'   => EmptyFeed::class,
+    'FullFeed'    => FullFeed::class,
+    'PartialFeed' => PartialFeed::class,
+    'SitemapFeed' => SitemapFeed::class,
+    'YandexFeed'  => YandexFeed::class,
 ]);

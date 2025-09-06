@@ -26,6 +26,6 @@ test('generates only the selected feed by ID', function (int $id) {
             : expect($feed)->not->toMatchGeneratedFeed()
     );
 })->with([
-    fn () => Feed::query()->latest()->first()->id,
-    fn () => Feed::query()->oldest()->first()->id,
+    'latest id' => fn () => Feed::query()->latest()->first()->id,
+    'oldest id' => fn () => Feed::query()->oldest()->first()->id,
 ]);

@@ -13,8 +13,8 @@ test('transforms enum to string representation', function (UnitEnum $value, stri
         $transformer->transform($value)
     )->toBe($expected);
 })->with([
-    [FeedFormatEnum::Xml, 'xml'],
-    [FooEnum::Foo, 'Foo'],
+    'FeedFormatEnum::Xml -> "xml"' => [FeedFormatEnum::Xml, 'xml'],
+    'FooEnum::Foo -> "Foo"'        => [FooEnum::Foo, 'Foo'],
 ]);
 
 test('allows only UnitEnum instances', function (mixed $value, bool $expected) {
@@ -24,18 +24,18 @@ test('allows only UnitEnum instances', function (mixed $value, bool $expected) {
         $transformer->allow($value)
     )->toBe($expected);
 })->with([
-    [FeedFormatEnum::Xml, true],
-    [FeedFormatEnum::class, false],
-    [FooEnum::Foo, true],
-    [FooEnum::class, false],
-    [true, false],
-    [false, false],
-    ['true', false],
-    ['false', false],
-    ['0', false],
-    ['1', false],
-    [0, false],
-    [1, false],
-    ['foo', false],
-    [null, false],
+    'FeedFormatEnum::Xml => allowed' => [FeedFormatEnum::Xml, true],
+    'FeedFormatEnum::class => deny'  => [FeedFormatEnum::class, false],
+    'FooEnum::Foo => allowed'        => [FooEnum::Foo, true],
+    'FooEnum::class => deny'         => [FooEnum::class, false],
+    'bool true => deny'              => [true, false],
+    'bool false => deny'             => [false, false],
+    'string "true" => deny'          => ['true', false],
+    'string "false" => deny'         => ['false', false],
+    'string "0" => deny'             => ['0', false],
+    'string "1" => deny'             => ['1', false],
+    'int 0 => deny'                  => [0, false],
+    'int 1 => deny'                  => [1, false],
+    'string "foo" => deny'           => ['foo', false],
+    'null => deny'                   => [null, false],
 ]);

@@ -13,9 +13,9 @@ test('formats DateTimeInterface to ATOM in UTC by default', function (DateTimeIn
         $transformer->transform($value)
     )->toBe($expected);
 })->with([
-    [new DateTime('2025-09-06 03:07:04'), '2025-09-06T03:07:04+00:00'],
-    [new DateTimeImmutable('2025-09-06 03:07:04'), '2025-09-06T03:07:04+00:00'],
-    [Carbon::parse('2025-09-06 03:07:04'), '2025-09-06T03:07:04+00:00'],
+    'DateTime default'          => [new DateTime('2025-09-06 03:07:04'), '2025-09-06T03:07:04+00:00'],
+    'DateTimeImmutable default' => [new DateTimeImmutable('2025-09-06 03:07:04'), '2025-09-06T03:07:04+00:00'],
+    'Carbon default'            => [Carbon::parse('2025-09-06 03:07:04'), '2025-09-06T03:07:04+00:00'],
 ]);
 
 test('respects custom date format from config', function (DateTimeInterface $value, string $expected) {
@@ -27,9 +27,9 @@ test('respects custom date format from config', function (DateTimeInterface $val
         $transformer->transform($value)
     )->toBe($expected);
 })->with([
-    [new DateTime('2025-09-06 03:07:04'), '03_07_04 : 2025-06-09'],
-    [new DateTimeImmutable('2025-09-06 03:07:04'), '03_07_04 : 2025-06-09'],
-    [Carbon::parse('2025-09-06 03:07:04'), '03_07_04 : 2025-06-09'],
+    'DateTime custom format'          => [new DateTime('2025-09-06 03:07:04'), '03_07_04 : 2025-06-09'],
+    'DateTimeImmutable custom format' => [new DateTimeImmutable('2025-09-06 03:07:04'), '03_07_04 : 2025-06-09'],
+    'Carbon custom format'            => [Carbon::parse('2025-09-06 03:07:04'), '03_07_04 : 2025-06-09'],
 ]);
 
 test('applies custom timezone from config when formatting', function (DateTimeInterface $value, string $expected) {
@@ -41,9 +41,9 @@ test('applies custom timezone from config when formatting', function (DateTimeIn
         $transformer->transform($value)
     )->toBe($expected);
 })->with([
-    [new DateTime('2025-09-06 03:07:04'), '2025-09-06T15:07:04+12:00'],
-    [new DateTimeImmutable('2025-09-06 03:07:04'), '2025-09-06T15:07:04+12:00'],
-    [Carbon::parse('2025-09-06 03:07:04'), '2025-09-06T15:07:04+12:00'],
+    'DateTime TZ +12:00'          => [new DateTime('2025-09-06 03:07:04'), '2025-09-06T15:07:04+12:00'],
+    'DateTimeImmutable TZ +12:00' => [new DateTimeImmutable('2025-09-06 03:07:04'), '2025-09-06T15:07:04+12:00'],
+    'Carbon TZ +12:00'            => [Carbon::parse('2025-09-06 03:07:04'), '2025-09-06T15:07:04+12:00'],
 ]);
 
 test('allows only DateTimeInterface values', function (mixed $value, bool $expected) {
@@ -53,15 +53,15 @@ test('allows only DateTimeInterface values', function (mixed $value, bool $expec
         $transformer->allow($value)
     )->toBe($expected);
 })->with([
-    [new DateTime, true],
-    [new DateTimeImmutable, true],
-    [Carbon::now(), true],
-    [FeedFormatEnum::Xml, false],
-    [FeedFormatEnum::class, false],
-    ['0', false],
-    ['1', false],
-    [0, false],
-    [1, false],
-    ['foo', false],
-    [null, false],
+    'DateTime => allowed'           => [new DateTime, true],
+    'DateTimeImmutable => allowed'  => [new DateTimeImmutable, true],
+    'Carbon => allowed'             => [Carbon::now(), true],
+    'FeedFormatEnum::Xml => deny'   => [FeedFormatEnum::Xml, false],
+    'FeedFormatEnum::class => deny' => [FeedFormatEnum::class, false],
+    'string "0" => deny'            => ['0', false],
+    'string "1" => deny'            => ['1', false],
+    'int 0 => deny'                 => [0, false],
+    'int 1 => deny'                 => [1, false],
+    'string "foo" => deny'          => ['foo', false],
+    'null => deny'                  => [null, false],
 ]);

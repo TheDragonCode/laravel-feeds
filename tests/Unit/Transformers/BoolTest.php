@@ -11,8 +11,8 @@ test('transforms boolean to string', function (bool $value, string $expected) {
         $transformer->transform($value)
     )->toBe($expected);
 })->with([
-    [true, 'true'],
-    [false, 'false'],
+    'true to "true"'   => [true, 'true'],
+    'false to "false"' => [false, 'false'],
 ]);
 
 test('allows only booleans', function (mixed $value, bool $expected) {
@@ -22,14 +22,14 @@ test('allows only booleans', function (mixed $value, bool $expected) {
         $transformer->allow($value)
     )->toBe($expected);
 })->with([
-    [true, true],
-    [false, true],
-    ['true', false],
-    ['false', false],
-    ['0', false],
-    ['1', false],
-    [0, false],
-    [1, false],
-    ['foo', false],
-    [null, false],
+    'bool true => allowed'   => [true, true],
+    'bool false => allowed'  => [false, true],
+    'string "true" => deny'  => ['true', false],
+    'string "false" => deny' => ['false', false],
+    'string "0" => deny'     => ['0', false],
+    'string "1" => deny'     => ['1', false],
+    'int 0 => deny'          => [0, false],
+    'int 1 => deny'          => [1, false],
+    'string "foo" => deny'   => ['foo', false],
+    'null => deny'           => [null, false],
 ]);
