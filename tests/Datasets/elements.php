@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+use Workbench\App\Feeds\Docs\AttributeFeed;
+use Workbench\App\Feeds\Docs\HeaderFooterFeed;
+use Workbench\App\Feeds\Docs\InfoMethodBeforeFalseTest;
+use Workbench\App\Feeds\Docs\InfoMethodFeed;
+use Workbench\App\Feeds\Docs\RootElementFeed;
+
+dataset('docs elements', [
+    'root' => [
+        'feed'  => RootElementFeed::class,
+        'files' => ['RootElementFeed' => 'advanced-element-root.php'],
+    ],
+
+    'info' => [
+        'feed'  => InfoMethodFeed::class,
+        'files' => [
+            'InfoMethodFeed'          => 'advanced-element-info.php',
+            'Info/InfoMethodFeedInfo' => 'advanced-element-info-info.php',
+        ],
+    ],
+
+    'info before false' => [
+        'feed'  => InfoMethodBeforeFalseTest::class,
+        'files' => ['InfoMethodBeforeFalseTest' => 'advanced-element-info-before-false.php'],
+    ],
+
+    'header & footer' => [
+        'feed'  => HeaderFooterFeed::class,
+        'files' => ['HeaderFooterFeed' => 'advanced-element-header-footer.php'],
+    ],
+
+    'attributes' => [
+        'feed'  => AttributeFeed::class,
+        'files' => [
+            'AttributeFeed'           => 'advanced-element-attribute.php',
+            'Items/AttributeFeedItem' => 'advanced-element-attribute-item.php',
+        ],
+    ],
+]);

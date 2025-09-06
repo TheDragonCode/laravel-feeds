@@ -13,11 +13,4 @@ test('incorrect', function (mixed $id) {
     ])->run();
 })
     ->throws(InvalidFeedArgumentException::class, 'Feed ID must be of type integer, [string] given.')
-    ->with([
-        'foo bar',
-        '+',
-        '-',
-        '/',
-        '\\',
-        '_',
-    ]);
+    ->with('generation invalid');
