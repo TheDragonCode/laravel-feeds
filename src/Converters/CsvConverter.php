@@ -9,19 +9,17 @@ use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Services\TransformerService;
 use Illuminate\Container\Attributes\Config;
 
+use function implode;
 use function is_array;
-use function json_encode;
 
-class JsonLinesConverter extends Converter
+class CsvConverter extends Converter
 {
     public function __construct(
-        #[Config('feeds.converters.jsonl.options')]
-        protected int $options,
+        #[Config('feeds.converters.csv.delimiter')]
+        protected string $delimiter,
         TransformerService $transformer
     ) {
         parent::__construct(false, $transformer);
-
-        $this->options &= ~JSON_PRETTY_PRINT;
     }
 
     public function header(Feed $feed): string
@@ -43,14 +41,14 @@ class JsonLinesConverter extends Converter
     {
         $data = $this->performItem($item->toArray());
 
-        return $this->toJson($data);
+        return $this->toCsv($data);
     }
 
     public function info(array $info, bool $afterRoot): string
     {
         $data = $this->performItem($info);
 
-        return $this->toJson($data);
+        return $this->toCsv($data);
     }
 
     protected function performItem(array $data): array
@@ -68,8 +66,8 @@ class JsonLinesConverter extends Converter
         return $data;
     }
 
-    protected function toJson(array $data): string
+    protected function toCsv(array $data): string
     {
-        return json_encode($data, $this->options);
+        return implode($this->delimiter, $data);
     }
 }

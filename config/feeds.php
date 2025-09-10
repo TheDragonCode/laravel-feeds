@@ -114,5 +114,9 @@ return [
              */
             'options' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
         ],
+
+        'csv' => [
+            'delimiter' => ';',
+        ],
     ],
 ];

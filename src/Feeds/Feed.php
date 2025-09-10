@@ -43,10 +43,11 @@ abstract class Feed
 
     public function header(): string
     {
-        return match ($this->format()) {
-            FeedFormatEnum::Xml => '<?xml version="1.0" encoding="UTF-8"?>',
-            default             => ''
-        };
+        if ($this->format() !== FeedFormatEnum::Xml) {
+            return '';
+        }
+
+        return '<?xml version="1.0" encoding="UTF-8"?>';
     }
 
     public function footer(): string

@@ -9,4 +9,5 @@ enum FeedFormatEnum: string
     case Xml       = 'xml';
     case Json      = 'json';
     case JsonLines = 'jsonl';
+    case Csv       = 'csv';
 }

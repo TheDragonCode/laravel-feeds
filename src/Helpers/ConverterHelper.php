@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Helpers;
 
 use DragonCode\LaravelFeed\Converters\Converter;
+use DragonCode\LaravelFeed\Converters\CsvConverter;
 use DragonCode\LaravelFeed\Converters\JsonConverter;
 use DragonCode\LaravelFeed\Converters\JsonLinesConverter;
 use DragonCode\LaravelFeed\Converters\XmlConverter;
@@ -20,6 +21,7 @@ class ConverterHelper
             FeedFormatEnum::Xml       => app(XmlConverter::class),
             FeedFormatEnum::Json      => app(JsonConverter::class),
             FeedFormatEnum::JsonLines => app(JsonLinesConverter::class),
+            FeedFormatEnum::Csv       => app(CsvConverter::class),
         };
     }
 }

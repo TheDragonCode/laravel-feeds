@@ -22,6 +22,9 @@
         <def title="jsonl">
             Generates feeds in JSON Lines format.
         </def>
+        <def title="csv">
+            Generates feeds in CSV format.
+        </def>
     </deflist>
 
     <p>

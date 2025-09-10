@@ -63,3 +63,17 @@ expect()->extend('toBeJsonLines', function () {
 
     return $this;
 });
+
+expect()->extend('toBeCsv', function () {
+    $delimiter = config('feeds.converters.csv.delimiter');
+
+    foreach (explode("\n", $this->value) as $line) {
+        expect($line)->toContain($delimiter);
+
+        expect(
+            explode($delimiter, $line)
+        )->toBeArray()->not->toBeEmpty();
+    }
+
+    return $this;
+});

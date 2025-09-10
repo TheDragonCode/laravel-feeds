@@ -15,4 +15,8 @@
         Available for JSON Lines feeds
     </secondary-label>
 
+    <secondary-label id="format-csv" name="csv" color="blue">
+        Available for CSV feeds
+    </secondary-label>
+
 </labels>
