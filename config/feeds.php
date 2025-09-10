@@ -114,5 +114,15 @@ return [
              */
             'options' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
         ],
+
+        'csv' => [
+            /**
+             * CSV specific options applied when exporting feeds in CSV format.
+             */
+            /**
+             * The delimiter used to separate values. Common values are "," or ";".
+             */
+            'delimiter' => ';',
+        ],
     ],
 ];

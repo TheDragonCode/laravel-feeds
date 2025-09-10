@@ -7,6 +7,10 @@ namespace Workbench\Database\Seeders;
 use DragonCode\LaravelFeed\Models\Feed;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use Workbench\App\Feeds\CsvFeed;
+use Workbench\App\Feeds\CsvInfoFeed;
+use Workbench\App\Feeds\CsvRootFeed;
+use Workbench\App\Feeds\CsvRootInfoFeed;
 use Workbench\App\Feeds\EmptyFeed;
 use Workbench\App\Feeds\FullFeed;
 use Workbench\App\Feeds\JsonFeed;
@@ -44,6 +48,12 @@ class FeedSeeder extends Seeder
         JsonLinesInfoFeed::class,
         JsonLinesRootFeed::class,
         JsonLinesRootInfoFeed::class,
+
+        // Csv
+        CsvFeed::class,
+        CsvInfoFeed::class,
+        CsvRootFeed::class,
+        CsvRootInfoFeed::class,
 
         // Receipts
         SitemapFeed::class,
