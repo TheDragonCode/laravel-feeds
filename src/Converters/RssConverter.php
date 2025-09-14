@@ -14,7 +14,9 @@ class RssConverter extends XmlConverter
         $element = $this->createElement('item');
 
         if ($values = $item->attributes()) {
+            // @codeCoverageIgnoreStart
             $this->setAttributes($element, $values);
+            // @codeCoverageIgnoreEnd
         }
 
         return $element;

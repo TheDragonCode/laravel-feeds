@@ -54,13 +54,9 @@ class CsvConverter extends Converter
     protected function performItem(array $data): array
     {
         foreach ($data as &$value) {
-            if (is_array($value)) {
-                $value = $this->performItem($value);
-
-                continue;
+            if (! is_array($value)) {
+                $value = $this->transformValue($value);
             }
-
-            $value = $this->transformValue($value);
         }
 
         return $data;
