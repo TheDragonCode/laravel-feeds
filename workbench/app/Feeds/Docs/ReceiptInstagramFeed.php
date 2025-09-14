@@ -24,7 +24,7 @@ class ReceiptInstagramFeed extends InstagramFeedPreset
             ->title($model->title)
             ->description($model->description)
             ->brand($model->brand)
-            ->url(route('products.show', $model->slug))
+            ->url($model->url)
             ->price($model->price)
             ->image(Arr::first($model->images))
             ->images($model->images)

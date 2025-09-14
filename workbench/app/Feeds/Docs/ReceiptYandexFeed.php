@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 use Workbench\App\Models\Product;
 
 use function config;
-use function route;
 
 class ReceiptYandexFeed extends YandexFeedPreset
 {
@@ -34,7 +33,7 @@ class ReceiptYandexFeed extends YandexFeedPreset
     public function item(Model $model): FeedItem
     {
         return parent::item($model)
-            ->url(route('products.show', $model->slug))
+            ->url($model->url)
             ->barcode($model->article)
             ->title($model->title)
             ->description($model->description)

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Presets" id="presets">
+
+    <link-summary>Generate feeds quickly with built-in presets (Instagram, Yandex, Sitemap, RSS)</link-summary>
+    <card-summary>Generate feeds quickly with built-in presets (Instagram, Yandex, Sitemap, RSS)</card-summary>
+    <web-summary>Generate feeds quickly with built-in presets (Instagram, Yandex, Sitemap, RSS)</web-summary>
+
+    <show-structure depth="3" />
+
+    <p>
+        You can quickly create feeds using the out-of-the-box presets:
+    </p>
+
+    <list>
+        <li><code>DragonCode\LaravelFeed\Presets\InstagramFeedPreset</code></li>
+        <li><code>DragonCode\LaravelFeed\Presets\YandexFeedPreset</code></li>
+        <li><code>DragonCode\LaravelFeed\Presets\SitemapFeedPreset</code></li>
+        <li><code>DragonCode\LaravelFeed\Presets\RssFeedPreset</code></li>
+    </list>
+
+    <p>
+        Create a feed class manually or via the
+        <code>%command-make%</code> console command and extend the preset you need. For example:
+    </p>
+
+    <code-block lang="php" src="presets-all.php" include-lines="5-" />
+
+    <p>
+        Then implement the two required methods — <code>builder</code> and <code>item</code>. For example:
+    </p>
+
+    <code-block lang="php" src="receipt-instagram-feed.php" include-lines="5-" />
+
+    <p>
+        If needed, you can also override the <code>filename</code> method to change the output file name.
+    </p>
+
+    <p>
+        Technically, preset classes are the same as the base
+        <code>Feed</code> class, except they include the service-specific logic they target, including how information blocks and items are built.
+    </p>
+</topic>

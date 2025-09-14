@@ -24,6 +24,7 @@
         <toc-element topic="directives.topic" />
         <toc-element topic="eloquent.topic" />
         <toc-element topic="location.topic" />
+        <toc-element topic="presets.topic" />
         <toc-element topic="events.topic" />
     </toc-element>
     <toc-element toc-title="Receipts">
