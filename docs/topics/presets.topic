@@ -37,10 +37,6 @@
     <code-block lang="php" src="receipt-instagram-feed.php" include-lines="5-" />
 
     <p>
-        If needed, you can also override the <code>filename</code> method to change the output file name.
-    </p>
-
-    <p>
         Technically, preset classes are the same as the base
         <code>Feed</code> class, except they include the service-specific logic they target, including how information blocks and items are built.
     </p>
