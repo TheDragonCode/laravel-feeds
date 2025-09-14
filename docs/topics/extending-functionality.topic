@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+        title="Extending functionality" id="extending-functionality">
+
+    <link-summary>Extend feeds using conditional clauses and macros for Feed, FeedItem, and FeedInfo.</link-summary>
+    <card-summary>Extend feeds using conditional clauses and macros for Feed, FeedItem, and FeedInfo.</card-summary>
+    <web-summary>Extend feeds using conditional clauses and macros for Feed, FeedItem, and FeedInfo.</web-summary>
+
+    <show-structure depth="3" />
+
+    <chapter title="Conditional clauses" id="conditional_clauses">
+        <note>
+            Conditional clauses are available for <code>Feed</code>, <code>FeedInfo</code> and
+            <code>FeedItem</code> classes.
+        </note>
+
+        <p>
+            Sometimes, you may want certain feed clauses to apply to a feed based on another condition.
+            For instance, you may only want to apply a where statement if a given input value is present or another attribute has a value.
+            You can accomplish this using the <code>when</code> method:
+        </p>
+
+        <code-block lang="php" src="advanced-extends-conditional.php" include-lines="5-" />
+
+        <p>
+            The <code>when</code> method only executes the given closure when the first argument is <code>true</code>.
+            If the first argument is <code>false</code>, the closure will not be executed.
+            So, in the example above, the closure given to the <code>when</code> method will only be invoked if the
+            <code>category</code> field is present on the model and evaluates to <code>true</code>.
+        </p>
+
+        <p>
+            You may pass another closure as the third argument to the <code>when</code> method.
+            This closure will only execute if the first argument evaluates to <code>false</code>.
+            To illustrate how this feature may be used, we will use it to configure the model title suffix:
+        </p>
+
+        <code-block lang="php" src="advanced-extends-conditional-both.php" include-lines="5-" />
+
+        <p>
+            Additionally, the inverse method <code>unless</code> is available.
+            In this case, the processing logic is the exact opposite.
+        </p>
+
+        <code-block lang="php" src="advanced-extends-conditional-unless.php" include-lines="5-" />
+    </chapter>
+
+    <chapter title="Macroable" id="macroable">
+        <p>
+            <code>Feed</code>, <code>FeedItem</code>, and <code>FeedInfo</code> are "macroable",
+            which allows you to add additional methods to them at runtime.
+            The <code>macro</code> method accepts a closure that will be executed when your macro is called.
+            The macro closure may access the feed's other methods via <code>$this</code>,
+            just as if it were a real method of the feed classes.
+        </p>
+
+        <p>
+            For example, the following code adds a <code>customFilename</code> method to the <code>Feed</code> class:
+        </p>
+
+        <code-block lang="php" src="advanced-extends-macro-feed.php" include-lines="5-" />
+
+        <p>
+            Additionally, here are examples for <code>FeedInfo</code> and <code>FeedItem</code>:
+        </p>
+
+        <code-block lang="php" src="advanced-extends-macro-info.php" include-lines="5-" />
+        <code-block lang="php" src="advanced-extends-macro-item.php" include-lines="5-" />
+    </chapter>
+</topic>

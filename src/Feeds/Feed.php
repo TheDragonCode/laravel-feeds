@@ -14,11 +14,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
+use Illuminate\Support\Traits\Macroable;
 
 use function class_basename;
 
 abstract class Feed
 {
+    use Conditionable;
+    use Macroable;
+
     protected FeedFormatEnum $format = FeedFormatEnum::Xml;
 
     protected string $storage = 'public';
