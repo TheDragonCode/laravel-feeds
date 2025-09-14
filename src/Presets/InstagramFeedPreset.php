@@ -19,6 +19,11 @@ abstract class InstagramFeedPreset extends Feed
         return new ElementData('offers');
     }
 
+    public function item(Model $model): FeedItem
+    {
+        return new InstagramFeedItem($model);
+    }
+
     public function header(): string
     {
         $name = config('app.name');
@@ -36,10 +41,5 @@ abstract class InstagramFeedPreset extends Feed
     public function footer(): string
     {
         return "\n</channel>\n</rss>";
-    }
-
-    public function item(Model $model): FeedItem
-    {
-        return new InstagramFeedItem($model);
     }
 }

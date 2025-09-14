@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Presets;
 
+use Carbon\Carbon;
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use DragonCode\LaravelFeed\Feeds\Feed;
@@ -22,7 +23,9 @@ abstract class RssFeedPreset extends Feed
 
     public function item(Model $model): FeedItem
     {
-        return new RssFeedItem($model);
+        return (new RssFeedItem($model))
+            ->guid($model->getKey())
+            ->publishedAt($model->created_at ?? Carbon::now());
     }
 
     public function header(): string

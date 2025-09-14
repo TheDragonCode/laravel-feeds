@@ -128,7 +128,7 @@ class YandexFeedItem extends FeedItem
     public function attributes(): array
     {
         return [
-            'id'        => $this->attributeId ?? $this->model->getKey(),
+            'id'        => $this->attributeId,
             'available' => $this->attributeAvailable,
             'type'      => $this->attributeType,
         ];

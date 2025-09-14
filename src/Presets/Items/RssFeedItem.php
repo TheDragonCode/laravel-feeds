@@ -76,29 +76,19 @@ class RssFeedItem extends FeedItem
         return $this;
     }
 
-    protected function getGuid(): int|string
-    {
-        return $this->guid ?? $this->model->getKey();
-    }
-
-    protected function getPublishedAt(): Carbon
-    {
-        return $this->publishedAt ?? $this->model->created_at ?? Carbon::now();
-    }
-
     public function toArray(): array
     {
         return collect([
             'title' => $this->title,
 
             'link' => $this->url,
-            'guid' => $this->getGuid(),
+            'guid' => $this->guid,
 
             'description' => ['@cdata' => $this->description],
 
             'category' => $this->category,
 
-            'pubDate' => $this->getPublishedAt()->toRfc1123String(),
+            'pubDate' => $this->publishedAt->toRfc1123String(),
         ])
             ->merge($this->additional)
             ->reject(static fn (mixed $value) => blank($value))

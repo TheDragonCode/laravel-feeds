@@ -18,7 +18,7 @@
 <offers>
 
 <offer id="1" available="true" type="vendor.model">
-  <url>https://example.com/products/quae-qui-incidunt-unde-rem-quibusdam-nobis</url>
+  <url>https://example.com/products/molestias-debitis-iure-tenetur-doloremque-repellendus-quos-consectetur</url>
   <barcode>GD-PRDCT-1</barcode>
   <name>Some 1</name>
   <description>Some description 1</description>
@@ -29,7 +29,7 @@
   <foo>bar</foo>
 </offer>
 <offer id="2" available="true" type="vendor.model">
-  <url>https://example.com/products/ipsam-voluptatibus-necessitatibus-et-corrupti-facilis</url>
+  <url>https://example.com/products/et-et-ad-molestiae-omnis-saepe</url>
   <barcode>GD-PRDCT-2</barcode>
   <name>Some 2</name>
   <description>Some description 2</description>

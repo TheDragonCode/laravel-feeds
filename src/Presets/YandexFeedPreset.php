@@ -20,6 +20,17 @@ abstract class YandexFeedPreset extends Feed
         return new ElementData('offers', beforeInfo: false);
     }
 
+    public function info(): FeedInfo
+    {
+        return new YandexFeedInfo;
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return (new YandexFeedItem($model))
+            ->attributeId($model->getKey());
+    }
+
     public function header(): string
     {
         $date = Carbon::now()->toIso8601String();
@@ -34,15 +45,5 @@ abstract class YandexFeedPreset extends Feed
     public function footer(): string
     {
         return "</shop>\n</yml_catalog>";
-    }
-
-    public function info(): FeedInfo
-    {
-        return new YandexFeedInfo;
-    }
-
-    public function item(Model $model): FeedItem
-    {
-        return new YandexFeedItem($model);
     }
 }
