@@ -46,9 +46,10 @@
             <code-block
                     lang="php"
                     src="../../src/Presets/Items/InstagramFeedItem.php"
-                    include-lines="13-"
+                    include-lines="5-"
                     collapsible="true"
                     default-state="collapsed"
+                    collapsed-title="class InstagramFeedItem extends FeedItem"
             />
         </chapter>
 
@@ -56,9 +57,10 @@
             <code-block
                     lang="php"
                     src="../../src/Presets/Items/YandexFeedItem.php"
-                    include-lines="13-"
+                    include-lines="5-"
                     collapsible="true"
                     default-state="collapsed"
+                    collapsed-title="class YandexFeedItem extends FeedItem"
             />
         </chapter>
 
@@ -66,9 +68,10 @@
             <code-block
                     lang="php"
                     src="../../src/Presets/Items/SitemapFeedItem.php"
-                    include-lines="11-"
+                    include-lines="5-"
                     collapsible="true"
                     default-state="collapsed"
+                    collapsed-title="class SitemapFeedItem extends FeedItem"
             />
         </chapter>
 
@@ -76,9 +79,10 @@
             <code-block
                     lang="php"
                     src="../../src/Presets/Items/RssFeedItem.php"
-                    include-lines="14-"
+                    include-lines="5-"
                     collapsible="true"
                     default-state="collapsed"
+                    collapsed-title="class RssFeedItem extends FeedItem"
             />
         </chapter>
     </chapter>
