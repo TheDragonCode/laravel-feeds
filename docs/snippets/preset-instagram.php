@@ -49,9 +49,4 @@ class InstagramFeed extends InstagramFeedPreset
                 ],
             ]);
     }
-
-    public function filename(): string
-    {
-        return 'instagram.xml';
-    }
 }

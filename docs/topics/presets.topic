@@ -34,10 +34,52 @@
         Then implement the two required methods — <code>builder</code> and <code>item</code>. For example:
     </p>
 
-    <code-block lang="php" src="receipt-instagram-feed.php" include-lines="5-" />
+    <code-block lang="php" src="preset-instagram.php" include-lines="5-" />
 
     <p>
         Technically, preset classes are the same as the base
         <code>Feed</code> class, except they include the service-specific logic they target, including how information blocks and items are built.
     </p>
+
+    <chapter title="Defaults" id="defaults">
+        <chapter title="Instagram" id="instagram">
+            <code-block
+                    lang="php"
+                    src="../../src/Presets/Items/InstagramFeedItem.php"
+                    include-lines="13-"
+                    collapsible="true"
+                    default-state="collapsed"
+            />
+        </chapter>
+
+        <chapter title="Yandex" id="yandex">
+            <code-block
+                    lang="php"
+                    src="../../src/Presets/Items/YandexFeedItem.php"
+                    include-lines="13-"
+                    collapsible="true"
+                    default-state="collapsed"
+            />
+        </chapter>
+
+        <chapter title="Sitemap" id="sitemap">
+            <code-block
+                    lang="php"
+                    src="../../src/Presets/Items/SitemapFeedItem.php"
+                    include-lines="11-"
+                    collapsible="true"
+                    default-state="collapsed"
+            />
+        </chapter>
+
+        <chapter title="RSS" id="rss">
+            <code-block
+                    lang="php"
+                    src="../../src/Presets/Items/RssFeedItem.php"
+                    include-lines="14-"
+                    collapsible="true"
+                    default-state="collapsed"
+            />
+        </chapter>
+    </chapter>
 </topic>
