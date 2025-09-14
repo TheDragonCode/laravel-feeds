@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Feeds;
 
+use App\Models\Product;
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Presets\YandexFeedPreset;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Product;
 
 use function config;
 

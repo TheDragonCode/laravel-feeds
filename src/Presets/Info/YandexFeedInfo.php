@@ -136,8 +136,8 @@ class YandexFeedInfo extends FeedInfo
     public function toArray(): array
     {
         return collect([
-            'name'     => $this->name ?? config('app.name'),
-            'company'  => $this->company ?? config('app.name'),
+            'name'     => $this->name     ?? config('app.name'),
+            'company'  => $this->company  ?? config('app.name'),
             'platform' => $this->platform ?? config('app.name'),
 
             'url'   => $this->url ?? config('app.url'),
