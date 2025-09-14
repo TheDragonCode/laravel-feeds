@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Feeds;
 
+use App\Models\Product;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Presets\InstagramFeedPreset;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Product;
 
 class InstagramFeed extends InstagramFeedPreset
 {
