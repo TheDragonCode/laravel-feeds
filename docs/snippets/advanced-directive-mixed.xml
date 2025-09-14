@@ -2,17 +2,17 @@
 <mixed_directive>
 
 <user>
-  <name>Cornelius Zemlak</name>
+  <name>Prof. Ed Hegmann Sr.</name>
   <some>
     <first>Foo</first>
-    <second>oherman@example.org</second>
+    <second>gerlach.prince@example.com</second>
 </some>
 </user>
 <user>
-  <name>Dr. Gunner Heaney</name>
+  <name>Dr. Torrance Kris</name>
   <some>
     <first>Foo</first>
-    <second>jolie80@example.org</second>
+    <second>hreichel@example.net</second>
 </some>
 </user>
 
