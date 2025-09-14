@@ -75,7 +75,7 @@ class XmlConverter extends Converter
 
         $this->performItem($box, $item->toArray());
 
-        return $this->toXml($box);
+        return $this->encode($box);
     }
 
     public function info(array $info, bool $afterRoot): string
@@ -84,7 +84,7 @@ class XmlConverter extends Converter
 
         $this->performItem($box, $info);
 
-        return $this->toXml($box);
+        return $this->encode($box);
     }
 
     protected function performBox(FeedItem $item): DOMNode
@@ -198,7 +198,7 @@ class XmlConverter extends Converter
             ->implode(' ');
     }
 
-    protected function toXml(DOMNode $item): string
+    protected function encode(DOMNode $item): string
     {
         return $this->document->saveXML($item, LIBXML_COMPACT);
     }

@@ -47,14 +47,14 @@ class JsonConverter extends Converter
 
         $suffix = $isLast ? '' : ',';
 
-        return $this->toJson($data) . $suffix;
+        return $this->encode($data) . $suffix;
     }
 
     public function info(array $info, bool $afterRoot): string
     {
         $data = $this->performItem($info);
 
-        $json = $this->toJson($data);
+        $json = $this->encode($data);
 
         if (! $afterRoot) {
             $json = mb_substr($json, 1, -1);
@@ -78,7 +78,7 @@ class JsonConverter extends Converter
         return $data;
     }
 
-    protected function toJson(array $data): string
+    protected function encode(array $data): string
     {
         return json_encode($data, $this->jsonOptions());
     }
