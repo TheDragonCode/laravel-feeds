@@ -14,16 +14,16 @@
 
     <chapter title="Create the files" id="create_files">
         <code-block lang="bash">
-            %command-make-simple% Instagram -%command-shortcut-item%
+            %command-make-simple% Instagram
         </code-block>
     </chapter>
 
     <chapter title="Populate the feed" id="filling_the_feed">
-        <code-block lang="php" src="receipt-instagram-feed.php" />
-    </chapter>
+        <p>
+            Replace <code>extends Feed</code> with <code>extends InstagramFeedPreset</code> in the generated class:
+        </p>
 
-    <chapter title="Populate the feed item" id="filling_the_feed_item">
-        <code-block lang="php" src="receipt-instagram-feed-item.php" />
+        <code-block lang="php" src="receipt-instagram-feed.php" />
     </chapter>
 
     <chapter title="Activate" id="activate">

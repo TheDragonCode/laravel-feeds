@@ -24,11 +24,13 @@
         <toc-element topic="directives.topic" />
         <toc-element topic="eloquent.topic" />
         <toc-element topic="location.topic" />
+        <toc-element topic="presets.topic" />
         <toc-element topic="events.topic" />
     </toc-element>
     <toc-element toc-title="Receipts">
         <toc-element topic="receipt-sitemap.topic" />
         <toc-element topic="receipt-instagram.topic" />
         <toc-element topic="receipt-yandex.topic" />
+        <toc-element topic="receipt-rss-atom.topic" />
     </toc-element>
 </instance-profile>

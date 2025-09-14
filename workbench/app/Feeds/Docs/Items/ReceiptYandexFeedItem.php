@@ -28,7 +28,7 @@ class ReceiptYandexFeedItem extends FeedItem
     public function toArray(): array
     {
         return [
-            'url' => route('products.show', $this->model->slug),
+            'url' => $this->model->url,
 
             'barcode'     => $this->model->article,
             'name'        => $this->model->title,

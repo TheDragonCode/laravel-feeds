@@ -1,52 +1,45 @@
 <!DOCTYPE yml_catalog SYSTEM "shops.dtd">
 <yml_catalog date="2025-09-04T04:08:12+00:00">
     <shop>
-<name>Laravel</name>
-<company>Laravel</company>
-<platform>Laravel</platform>
+<name>My App</name>
+<company>My Company</company>
+<platform>My Platform</platform>
 <url>https://example.com</url>
-<email>test@example.com</email>
+<email>feeds@example.com</email>
 <currencies>
   <currency id="RUR" rate="1"/>
 </currencies>
 <categories>
-  <category id="41">Домашние майки</category>
-  <category id="539">Велосипедки</category>
+  <category id="1">Foo</category>
+  <category id="2">Bar</category>
 </categories>
+<foo>bar</foo>
 
 <offers>
 
 <offer id="1" available="true" type="vendor.model">
-  <url>https://example.com/products/quis-amet-nemo-maiores-id</url>
-  <barcode>GD-^L%5E]JM</barcode>
-  <name>omnis corrupti deserunt corrupti</name>
-  <description>Maiores et facere nobis rem et ea rerum. Omnis aut quis sapiente dolores inventore non rerum. At et excepturi nostrum consequatur est laboriosam.</description>
-  <delivery>true</delivery>
-  <price>660</price>
+  <url>https://example.com/products/libero-rerum-vel-non-fugit-aspernatur</url>
+  <barcode>GD-PRDCT-1</barcode>
+  <name>Some 1</name>
+  <description>Some description 1</description>
+  <price>100</price>
   <currencyId>RUR</currencyId>
-  <vendor>optio</vendor>
-  <picture>https://via.placeholder.com/640x480.png/000077?text=unde</picture>
-  <picture>https://via.placeholder.com/640x480.png/00cc11?text=ea</picture>
-  <picture>https://via.placeholder.com/640x480.png/0066aa?text=ut</picture>
-  <param name="Артикул">GD-^L%5E]JM</param>
-  <param name="Код цвета">1</param>
-  <param name="Пол">female</param>
+  <vendor>The Best</vendor>
+  <picture>https://via.placeholder.com/640x480.png/008877?text=repudiandae</picture>
+  <foo>bar</foo>
 </offer>
 <offer id="2" available="true" type="vendor.model">
-  <url>https://example.com/products/quisquam-sint-dolores-ipsa-sed-possimus</url>
-  <barcode>GD-CWL$8T+H</barcode>
-  <name>porro id rem soluta</name>
-  <description>Qui eum magnam modi fugit quae. Eos minima aut a eum. Odit quidem fugiat quo laboriosam natus sit dicta. Aut autem sed in eum sit eum omnis consequatur.</description>
-  <delivery>true</delivery>
-  <price>508</price>
+  <url>https://example.com/products/ex-vero-quia-ut-ex-laudantium-quia</url>
+  <barcode>GD-PRDCT-2</barcode>
+  <name>Some 2</name>
+  <description>Some description 2</description>
+  <price>250</price>
   <currencyId>RUR</currencyId>
-  <vendor>dolorem</vendor>
-  <picture>https://via.placeholder.com/640x480.png/00ee99?text=praesentium</picture>
-  <picture>https://via.placeholder.com/640x480.png/00ddcc?text=magni</picture>
-  <picture>https://via.placeholder.com/640x480.png/00bb00?text=a</picture>
-  <param name="Артикул">GD-CWL$8T+H</param>
-  <param name="Код цвета">1</param>
-  <param name="Пол">male</param>
+  <vendor>The Best</vendor>
+  <picture>https://via.placeholder.com/640x480.png/009966?text=beatae</picture>
+  <picture>https://via.placeholder.com/640x480.png/000011?text=deleniti</picture>
+  <picture>https://via.placeholder.com/640x480.png/009999?text=voluptates</picture>
+  <foo>bar</foo>
 </offer>
 
 </offers>

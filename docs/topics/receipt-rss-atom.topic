@@ -4,26 +4,26 @@
 <topic
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
-        title="Yandex" id="receipt-yandex" help-id="yandex">
+        title="RSS Atom" id="receipt-rss-atom">
 
-    <link-summary>Feed generation recipe for Yandex</link-summary>
-    <card-summary>Feed generation recipe for Yandex</card-summary>
-    <web-summary>Feed generation recipe for Yandex</web-summary>
+    <link-summary>Feed generation recipe for RSS Atom</link-summary>
+    <card-summary>Feed generation recipe for RSS Atom</card-summary>
+    <web-summary>Feed generation recipe for RSS Atom</web-summary>
 
     <show-structure depth="3" />
 
     <chapter title="Create the files" id="create_files">
         <code-block lang="bash">
-            %command-make-simple% Yandex
+            %command-make-simple% Rss
         </code-block>
     </chapter>
 
     <chapter title="Populate the feed" id="filling_the_feed">
         <p>
-            Replace <code>extends Feed</code> with <code>extends YandexFeedPreset</code> in the generated class:
+            Replace <code>extends Feed</code> with <code>extends RssFeedPreset</code> in the generated class:
         </p>
 
-        <code-block lang="php" src="receipt-yandex-feed.php" />
+        <code-block lang="php" src="receipt-rss-feed.php" />
     </chapter>
 
     <chapter title="Activate" id="activate">
@@ -35,6 +35,6 @@
     </chapter>
 
     <chapter title="Result" id="result">
-        <code-block lang="xml" src="receipt-yandex-feed.xml" />
+        <code-block lang="xml" src="receipt-rss-feed.xml" />
     </chapter>
 </topic>

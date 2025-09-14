@@ -13,9 +13,9 @@ function createNews(...$sequence): void
     )->createMany();
 }
 
-function createProducts(): void
+function createProducts(int $count = 3): void
 {
-    Product::factory()->count(3)->sequence(
+    Product::factory()->count($count)->sequence(
         ...ProductFakeData::toArray()
     )->create();
 }

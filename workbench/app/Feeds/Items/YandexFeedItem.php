@@ -28,7 +28,7 @@ class YandexFeedItem extends FeedItem
     public function toArray(): array
     {
         return [
-            'url' => route('products.show', $this->model->article),
+            'url' => $this->model->url,
 
             'barcode'     => $this->model->article,
             'name'        => $this->model->title,

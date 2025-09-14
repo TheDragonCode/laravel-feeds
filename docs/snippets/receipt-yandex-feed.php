@@ -4,52 +4,57 @@ declare(strict_types=1);
 
 namespace App\Feeds;
 
-use App\Feeds\Info\YandexFeedInfo;
-use App\Feeds\Items\YandexFeedItem;
 use App\Models\Product;
-use DragonCode\LaravelFeed\Data\ElementData;
-use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\YandexFeedPreset;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class YandexFeed extends Feed
+use function config;
+
+class YandexFeed extends YandexFeedPreset
 {
     public function builder(): Builder
     {
         return Product::query();
     }
 
-    public function root(): ElementData
-    {
-        return new ElementData('offers', beforeInfo: false);
-    }
-
-    public function header(): string
-    {
-        $date = now()->toIso8601String();
-
-        return <<<XML
-            <!DOCTYPE yml_catalog SYSTEM "shops.dtd">
-            <yml_catalog date="$date">
-                <shop>
-            XML;
-    }
-
-    public function footer(): string
-    {
-        return "</shop>\n</yml_catalog>";
-    }
-
     public function info(): FeedInfo
     {
-        return new YandexFeedInfo;
+        return parent::info()
+            ->name('My App')        // By default, config('app.name')
+            ->company('My Company')       // By default, config('app.name')
+            ->platform('My Platform')     // By default, config('app.name')
+            ->url(config('app.url')) // By default, config('app.url')
+            ->email(config('app.email', 'feeds@example.com'))
+            ->currencies(['RUR' => 1])   // By default, ['RUR' => 1]
+            ->categories([
+                1 => 'Foo',
+                2 => 'Bar',
+            ])
+            ->additional([
+                'foo' => 'bar',
+            ]);
     }
 
     public function item(Model $model): FeedItem
     {
-        return new YandexFeedItem($model);
+        return parent::item($model)
+            ->attributeId($model->getKey()) // By default, $model->getKey()
+            ->attributeAvailable($model->quantity > 0) // By default, true
+            ->attributeType('vendor.model') // By default, 'vendor.model'
+            ->barcode($model->article)      // By default, null
+            ->url($model->url)
+            ->title($model->title)
+            ->description($model->description)
+            ->price($model->price)
+            ->currencyId('RUR')     // By default, 'RUR'
+            ->vendor($model->brand) // By default, null
+            ->images($model->images)
+            ->additional([
+                'foo' => 'bar',
+            ]);
     }
 
     public function filename(): string

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+
+<item>
+  <title>Some 1</title>
+  <link>https://example.com/news/some-1</link>
+  <guid>1</guid>
+  <description><![CDATA[Some content 1]]></description>
+  <category>Some category 1</category>
+  <pubDate>Wed, 03 Sep 2025 06:52:54 +0000</pubDate>
+  <foo>bar</foo>
+</item>
+<item>
+  <title>Some 2</title>
+  <link>https://example.com/news/some-2</link>
+  <guid>2</guid>
+  <description><![CDATA[Some content 2]]></description>
+  <category>Some category 2</category>
+  <pubDate>Wed, 03 Sep 2025 10:00:45 +0000</pubDate>
+  <foo>bar</foo>
+</item>
+
+</channel>
+</rss>

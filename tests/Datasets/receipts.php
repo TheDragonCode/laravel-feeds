@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Workbench\App\Feeds\Docs\ReceiptInstagramFeed;
+use Workbench\App\Feeds\Docs\ReceiptRssFeed;
 use Workbench\App\Feeds\Docs\ReceiptSitemapFeed;
 use Workbench\App\Feeds\Docs\ReceiptYandexFeed;
 
@@ -11,15 +12,29 @@ dataset('docs receipts', [
         'feed' => ReceiptSitemapFeed::class,
 
         'files' => [
-            'ReceiptSitemapFeed'           => 'receipt-sitemap-feed.php',
-            'Items/ReceiptSitemapFeedItem' => 'receipt-sitemap-feed-item.php',
+            'ReceiptSitemapFeed' => 'receipt-sitemap-feed.php',
         ],
 
         'replaces' => [
             'ReceiptSitemapFeed'       => 'ProductFeed',
             'Workbench\App\Feeds\Docs' => 'App\Feeds\Sitemaps',
 
-            '../../../../../../../../../docs/snippets/receipt-sitemap-feed.xml' => 'sitemaps/products.xml',
+            '\'../../../../../../../../../docs/snippets/receipt-sitemap-feed.xml\'' => '\'sitemaps/\' . parent::filename()',
+        ],
+    ],
+
+    'instagram' => [
+        'feed' => ReceiptInstagramFeed::class,
+
+        'files' => [
+            'ReceiptInstagramFeed' => 'receipt-instagram-feed.php',
+        ],
+
+        'replaces' => [
+            'ReceiptInstagramFeed'     => 'InstagramFeed',
+            'Workbench\App\Feeds\Docs' => 'App\Feeds',
+
+            '../../../../../../../../../docs/snippets/receipt-instagram-feed.xml' => 'instagram.xml',
         ],
     ],
 
@@ -27,9 +42,7 @@ dataset('docs receipts', [
         'feed' => ReceiptYandexFeed::class,
 
         'files' => [
-            'ReceiptYandexFeed'           => 'receipt-yandex-feed.php',
-            'Info/ReceiptYandexFeedInfo'  => 'receipt-yandex-feed-info.php',
-            'Items/ReceiptYandexFeedItem' => 'receipt-yandex-feed-item.php',
+            'ReceiptYandexFeed' => 'receipt-yandex-feed.php',
         ],
 
         'replaces' => [
@@ -40,19 +53,18 @@ dataset('docs receipts', [
         ],
     ],
 
-    'instagram' => [
-        'feed' => ReceiptInstagramFeed::class,
+    'rss' => [
+        'feed' => ReceiptRssFeed::class,
 
         'files' => [
-            'ReceiptInstagramFeed'           => 'receipt-instagram-feed.php',
-            'Items/ReceiptInstagramFeedItem' => 'receipt-instagram-feed-item.php',
+            'ReceiptRssFeed' => 'receipt-rss-feed.php',
         ],
 
         'replaces' => [
-            'ReceiptInstagramFeed'     => 'InstagramFeed',
+            'ReceiptRssFeed'           => 'RssFeed',
             'Workbench\App\Feeds\Docs' => 'App\Feeds',
 
-            '../../../../../../../../../docs/snippets/receipt-instagram-feed.xml' => 'instagram.xml',
+            '../../../../../../../../../docs/snippets/receipt-rss-feed.xml' => 'rss.xml',
         ],
     ],
 ]);
