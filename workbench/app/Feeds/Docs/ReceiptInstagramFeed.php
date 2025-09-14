@@ -8,6 +8,7 @@ use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Presets\InstagramFeedPreset;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Workbench\App\Models\Product;
 
 class ReceiptInstagramFeed extends InstagramFeedPreset
@@ -25,7 +26,7 @@ class ReceiptInstagramFeed extends InstagramFeedPreset
             ->brand($model->brand)
             ->url(route('products.show', $model->slug))
             ->price($model->price)
-            ->image(array_first($model->images))
+            ->image(Arr::first($model->images))
             ->images($model->images)
             ->availability($model->quantity > 0 ? 'in stock' : 'out of stock')
             ->status($model->quantity > 0 ? 'active' : 'inactive')

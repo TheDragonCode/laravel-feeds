@@ -17,7 +17,7 @@
 <offers>
 
 <offer id="1" available="true" type="vendor.model">
-  <url>https://example.com/products/expedita-debitis-ab-et-rerum</url>
+  <url>https://example.com/products/aut-et-et-rem-quas-ullam-eos</url>
   <barcode>GD-PRDCT-1</barcode>
   <name>Some 1</name>
   <description>Some description 1</description>
@@ -27,7 +27,7 @@
   <picture>https://via.placeholder.com/640x480.png/008877?text=repudiandae</picture>
 </offer>
 <offer id="2" available="true" type="vendor.model">
-  <url>https://example.com/products/velit-maxime-blanditiis-deleniti-sint</url>
+  <url>https://example.com/products/atque-dolor-illum-quo-incidunt-officiis-vel-omnis-velit</url>
   <barcode>GD-PRDCT-2</barcode>
   <name>Some 2</name>
   <description>Some description 2</description>
