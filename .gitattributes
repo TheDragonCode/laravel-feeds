@@ -3,6 +3,7 @@
 .ai/ export-ignore
 
 docs/ export-ignore
+dev/ export-ignore
 
 .github/ export-ignore
 tests/ export-ignore

@@ -1,0 +1,26 @@
+{
+    "$schema": "https://laravel-ide.com/schema/laravel-ide-v2.json",
+    "codeGenerations": [
+        {
+            "id": "dragon-code.feeds.transformer",
+            "name": "Create Feed Transformer",
+            "classSuffix": "Transformer",
+            "regex": ".+",
+            "files": [
+                {
+                    "appNamespace": "Transformers",
+                    "name": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}.php",
+                    "template": {
+                        "type": "stub",
+                        "path": "/stubs/transformer.stub",
+                        "fallbackPath": "stubs/transformer.stub",
+                        "parameters": {
+                            "DummyNamespace": "${INPUT_FQN|namespace}",
+                            "DummyClass": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
