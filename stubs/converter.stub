@@ -7,22 +7,12 @@ namespace DummyNamespace;
 use DragonCode\LaravelFeed\Converters\Converter;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
-use DragonCode\LaravelFeed\Services\TransformerService;
-use Illuminate\Container\Attributes\Config;
 
+use function implode;
 use function is_array;
-use function json_encode;
 
 class DummyClass extends Converter
 {
-    public function __construct(
-        #[Config('feeds.converters.jsonl.options')]
-        protected int $options,
-        TransformerService $transformer
-    ) {
-        parent::__construct(false, $transformer);
-    }
-
     public function header(Feed $feed): string
     {
         return '';
@@ -69,6 +59,6 @@ class DummyClass extends Converter
 
     protected function encode(array $data): string
     {
-        return json_encode($data, $this->options);
+        return implode(';', $data);
     }
 }
