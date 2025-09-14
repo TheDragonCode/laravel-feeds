@@ -43,14 +43,14 @@ class JsonLinesConverter extends Converter
     {
         $data = $this->performItem($item->toArray());
 
-        return $this->toJson($data);
+        return $this->encode($data);
     }
 
     public function info(array $info, bool $afterRoot): string
     {
         $data = $this->performItem($info);
 
-        return $this->toJson($data);
+        return $this->encode($data);
     }
 
     protected function performItem(array $data): array
@@ -68,7 +68,7 @@ class JsonLinesConverter extends Converter
         return $data;
     }
 
-    protected function toJson(array $data): string
+    protected function encode(array $data): string
     {
         return json_encode($data, $this->options);
     }

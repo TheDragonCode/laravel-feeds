@@ -2,21 +2,22 @@
 
 declare(strict_types=1);
 
-namespace DragonCode\LaravelFeed\Converters;
+namespace DummyNamespace;
 
+use DragonCode\LaravelFeed\Converters\Converter;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Services\TransformerService;
 use Illuminate\Container\Attributes\Config;
 
-use function implode;
 use function is_array;
+use function json_encode;
 
-class CsvConverter extends Converter
+class DummyClass extends Converter
 {
     public function __construct(
-        #[Config('feeds.converters.csv.delimiter')]
-        protected string $delimiter,
+        #[Config('feeds.converters.jsonl.options')]
+        protected int $options,
         TransformerService $transformer
     ) {
         parent::__construct(false, $transformer);
@@ -68,6 +69,6 @@ class CsvConverter extends Converter
 
     protected function encode(array $data): string
     {
-        return implode($this->delimiter, $data);
+        return json_encode($data, $this->options);
     }
 }
