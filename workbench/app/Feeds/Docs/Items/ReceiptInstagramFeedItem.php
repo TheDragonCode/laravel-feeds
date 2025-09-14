@@ -26,7 +26,7 @@ class ReceiptInstagramFeedItem extends FeedItem
             'g:title'       => ['@cdata' => $this->model->title],
             'g:description' => ['@cdata' => $this->model->description],
 
-            'g:link'       => route('products.show', $this->model->slug),
+            'g:link'       => $this->model->url,
             'g:image_link' => $this->firstImage(),
 
             '@g:additional_image_link' => $this->images(),

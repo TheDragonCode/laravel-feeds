@@ -30,5 +30,6 @@
         <toc-element topic="receipt-sitemap.topic" />
         <toc-element topic="receipt-instagram.topic" />
         <toc-element topic="receipt-yandex.topic" />
+        <toc-element topic="receipt-rss-atom.topic" />
     </toc-element>
 </instance-profile>

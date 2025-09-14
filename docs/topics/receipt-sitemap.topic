@@ -14,33 +14,39 @@
 
     <p>
         This recipe walks you through creating a product sitemap feed using Laravel Feeds. You will:
-        - Generate the necessary classes
-        - Implement the feed logic
-        - Expose the files via the file system
-        - Optionally reference the generated sitemap from a root sitemap.xml file
     </p>
+
+    <list>
+        <li>Generate the necessary classes.</li>
+        <li>Implement the feed logic.</li>
+        <li>Expose the files via the file system.</li>
+        <li>Optionally reference the generated sitemap from a root <code>sitemap.xml</code> file.</li>
+    </list>
 
     <chapter title="Create the files" id="create_files">
         <p>
             Generate the feed and its item class using the following console command:
         </p>
         <code-block lang="bash">
-            %command-make-simple% Sitemaps/Product -%command-shortcut-item%
+            %command-make-simple% Sitemaps/Product
         </code-block>
     </chapter>
 
     <chapter title="Populate the feed" id="filling_the_feed">
         <p>
-            Implement the feed root element, attributes, query builder, output filename, and item mapping as shown below:
+            Replace <code>extends Feed</code> with <code>extends SitemapFeedPreset</code> in the generated class:
         </p>
         <code-block lang="php" src="receipt-sitemap-feed.php" />
-    </chapter>
 
-    <chapter title="Populate the feed item" id="filling_the_feed_item">
         <p>
-            Define the XML element name and map your model’s properties to the corresponding sitemap tags:
+            Available methods of the `FeedItem` class:
         </p>
-        <code-block lang="php" src="receipt-sitemap-feed-item.php" />
+
+        <list>
+            <li><code>url</code> - It is required to indicate</li>
+            <li><code>modifiedAt</code> - by default, <code>$model->updated_at</code></li>
+            <li><code>priority</code> - by default, <code>0.9</code></li>
+        </list>
     </chapter>
 
     <chapter title="Activate" id="activate">
@@ -50,7 +56,8 @@
     <chapter title="Links" id="links">
         <p>
             Add a file system disk that points to the directory containing your sitemaps in
-            the <a href="https://github.com/laravel/laravel/blob/12.x/config/filesystems.php#L76-L78">config/filesystems.php</a> configuration file:
+            the
+            <a href="https://github.com/laravel/laravel/blob/12.x/config/filesystems.php#L76-L78">config/filesystems.php</a> configuration file:
         </p>
 
         <code-block lang="php" src="receipt-sitemap-links.php" include-lines="5-" />

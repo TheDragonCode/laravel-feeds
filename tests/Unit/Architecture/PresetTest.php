@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-arch()->preset()->php()->ignoring('Workbench\App');
-
-arch()->preset()->laravel();
-arch()->preset()->security()->ignoring(['assert']);
+arch()
+    ->expect('DragonCode\LaravelFeed\Presets')
+    ->toHaveSuffix('FeedPreset')
+    ->ignoring('DragonCode\LaravelFeed\Presets\Items');

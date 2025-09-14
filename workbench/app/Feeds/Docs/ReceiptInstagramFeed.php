@@ -4,48 +4,46 @@ declare(strict_types=1);
 
 namespace Workbench\App\Feeds\Docs;
 
-use DragonCode\LaravelFeed\Data\ElementData;
-use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\InstagramFeedPreset;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Workbench\App\Feeds\Docs\Items\ReceiptInstagramFeedItem;
 use Workbench\App\Models\Product;
 
-class ReceiptInstagramFeed extends Feed
+class ReceiptInstagramFeed extends InstagramFeedPreset
 {
     public function builder(): Builder
     {
         return Product::query();
     }
 
-    public function root(): ElementData
-    {
-        return new ElementData('offers');
-    }
-
-    public function header(): string
-    {
-        $name = config('app.name');
-        $url  = config('app.url');
-
-        return <<<XML
-            <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
-            <channel>
-                <title>$name</title>
-                <link>$url</link>
-
-            XML;
-    }
-
-    public function footer(): string
-    {
-        return "\n</channel>\n</rss>";
-    }
-
     public function item(Model $model): FeedItem
     {
-        return new ReceiptInstagramFeedItem($model);
+        return parent::item($model)
+            ->title($model->title)
+            ->description($model->description)
+            ->brand($model->brand)
+            ->url(route('products.show', $model->slug))
+            ->price($model->price)
+            ->image(array_first($model->images))
+            ->images($model->images)
+            ->availability($model->quantity > 0 ? 'in stock' : 'out of stock')
+            ->status($model->quantity > 0 ? 'active' : 'inactive')
+            ->additional([
+                'g:foo' => 'Some foo',
+                'g:bar' => 'Some bar',
+
+                'g:baz' => [
+                    '@attributes' => ['qwe' => 'rty'],
+                    '@value'      => 'Some baz',
+                ],
+
+                '@g:arrayable' => [
+                    'a',
+                    'b',
+                    'c',
+                ],
+            ]);
     }
 
     public function filename(): string

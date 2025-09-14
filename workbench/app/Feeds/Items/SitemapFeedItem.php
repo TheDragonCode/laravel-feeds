@@ -17,7 +17,7 @@ class SitemapFeedItem extends FeedItem
     public function toArray(): array
     {
         return [
-            'loc' => route('products.show', $this->model->article),
+            'loc' => $this->model->url,
 
             'lastmod' => $this->model->updated_at,
 
