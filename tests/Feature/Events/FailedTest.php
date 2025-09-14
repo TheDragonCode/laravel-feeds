@@ -25,3 +25,21 @@ test('failed', function () {
     exception       : FeedGenerationException::class,
     exceptionMessage: 'Something went wrong while generating the feed.'
 );
+
+test('feed class link', function () {
+    Event::fake();
+
+    $feed = Feed::create([
+        'class' => FailedFeed::class,
+        'title' => 'Failed',
+    ]);
+
+    try {
+        artisan(FeedGenerateCommand::class, ['feed' => $feed->id])
+            ->assertSuccessful()
+            ->run();
+    } catch (FeedGenerationException $e) {
+        expect($e->getMessage())->toContain('Something went wrong while generating the feed.');
+        expect($e->getFeed())->toBe(FailedFeed::class);
+    }
+});
