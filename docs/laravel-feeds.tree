@@ -26,6 +26,7 @@
         <toc-element topic="location.topic" />
         <toc-element topic="presets.topic" />
         <toc-element topic="events.topic" />
+        <toc-element topic="extending-functionality.topic" />
     </toc-element>
     <toc-element toc-title="Receipts">
         <toc-element topic="receipt-sitemap.topic" />

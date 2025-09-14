@@ -7,11 +7,16 @@ namespace DragonCode\LaravelFeed\Feeds\Items;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
+use Illuminate\Support\Traits\Macroable;
 
 use function class_basename;
 
 class FeedItem implements Arrayable
 {
+    use Conditionable;
+    use Macroable;
+
     protected ?string $name = null;
 
     public function __construct(
