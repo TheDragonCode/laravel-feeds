@@ -23,6 +23,10 @@ use Workbench\App\Feeds\JsonRootFeed;
 use Workbench\App\Feeds\JsonRootInfoFeed;
 use Workbench\App\Feeds\ModelFeed;
 use Workbench\App\Feeds\PartialFeed;
+use Workbench\App\Feeds\RssFeed;
+use Workbench\App\Feeds\RssInfoFeed;
+use Workbench\App\Feeds\RssRootFeed;
+use Workbench\App\Feeds\RssRootInfoFeed;
 use Workbench\App\Feeds\SitemapFeed;
 use Workbench\App\Feeds\YandexFeed;
 
@@ -54,6 +58,12 @@ class FeedSeeder extends Seeder
         CsvInfoFeed::class,
         CsvRootFeed::class,
         CsvRootInfoFeed::class,
+
+        // Rss
+        RssFeed::class,
+        RssInfoFeed::class,
+        RssRootFeed::class,
+        RssRootInfoFeed::class,
 
         // Receipts
         SitemapFeed::class,

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+
+<title>Laravel</title>
+<link>https://example.com</link>
+<description>RSS Feed for Laravel</description>
+<language>en</language>
+<ttl>10</ttl>
+<atom:link rel="self" type="application/rss+xml" href="https://example.com/rss.xml"/>
+
+<item>
+  <title>Some 1</title>
+  <link>https://example.com/news/some-1</link>
+  <guid>https://example.com/news/some-1</guid>
+  <description><![CDATA[Some content 1]]></description>
+  <category>Some category 1</category>
+  <pubDate>Thu, 04 Sep 2025 04:08:12 +0000</pubDate>
+</item>
+<item>
+  <title>Some 2</title>
+  <link>https://example.com/news/some-2</link>
+  <guid>https://example.com/news/some-2</guid>
+  <description><![CDATA[Some content 2]]></description>
+  <category>Some category 2</category>
+  <pubDate>Thu, 04 Sep 2025 04:08:12 +0000</pubDate>
+</item>
+<item>
+  <title>Some 3</title>
+  <link>https://example.com/news/some-3</link>
+  <guid>https://example.com/news/some-3</guid>
+  <description><![CDATA[Some content 3]]></description>
+  <category>Some category 3</category>
+  <pubDate>Thu, 04 Sep 2025 04:08:12 +0000</pubDate>
+</item>
+
+</channel>
+</rss>

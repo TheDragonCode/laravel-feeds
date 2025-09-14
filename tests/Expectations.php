@@ -77,3 +77,12 @@ expect()->extend('toBeCsv', function () {
 
     return $this;
 });
+
+expect()->extend('toBeRss', function () {
+    // expect($this->value)->toContain('<rss version="2.0"');
+    // expect($this->value)->toContain('<channel>');
+    // expect($this->value)->toContain('</channel>');
+    // expect($this->value)->toContain('</rss>');
+
+    return $this;
+});

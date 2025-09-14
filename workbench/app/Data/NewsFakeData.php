@@ -16,6 +16,8 @@ class NewsFakeData
                 'title'   => 'Some 1',
                 'content' => 'Some content 1',
 
+                'category' => 'Some category 1',
+
                 'updated_at' => fake()->dateTimeBetween(
                     startDate: static::startDate(),
                     endDate  : static::endDate()
@@ -25,6 +27,8 @@ class NewsFakeData
                 'title'   => 'Some 2',
                 'content' => 'Some content 2',
 
+                'category' => 'Some category 2',
+
                 'updated_at' => fake()->dateTimeBetween(
                     startDate: static::startDate(),
                     endDate  : static::endDate()
@@ -33,6 +37,8 @@ class NewsFakeData
             [
                 'title'   => 'Some 3',
                 'content' => 'Some content 3',
+
+                'category' => 'Some category 3',
 
                 'updated_at' => fake()->dateTimeBetween(
                     startDate: static::startDate(),

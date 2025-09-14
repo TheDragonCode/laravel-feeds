@@ -25,6 +25,7 @@ function expectFeedSnapshot(string $class, FeedFormatEnum $format = FeedFormatEn
         FeedFormatEnum::Json      => expect($content)->toBeJson(),
         FeedFormatEnum::JsonLines => expect($content)->toBeJsonLines(),
         FeedFormatEnum::Csv       => expect($content)->toBeCsv(),
+        FeedFormatEnum::Rss       => expect($content)->toBeRss(),
         default                   => null
     };
 

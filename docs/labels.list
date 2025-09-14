@@ -19,4 +19,8 @@
         Available for CSV feeds
     </secondary-label>
 
+    <secondary-label id="format-rss" name="rss" color="red">
+        Available for RSS Atom feeds
+    </secondary-label>
+
 </labels>
