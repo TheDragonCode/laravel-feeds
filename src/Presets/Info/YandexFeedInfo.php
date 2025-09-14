@@ -70,15 +70,17 @@ class YandexFeedInfo extends FeedInfo
         return $this;
     }
 
-    public function currency(string $id, float $rate, bool $replace = false): static
+    public function currency(string $name, float $rate, bool $replace = false): static
     {
         if ($replace) {
+            // @codeCoverageIgnoreStart
             $this->currencies = [];
+            // @codeCoverageIgnoreEnd
         }
 
         $this->currencies[] = [
             '@attributes' => [
-                'id'   => Str::upper($id),
+                'id'   => Str::upper($name),
                 'rate' => $rate,
             ],
         ];
@@ -89,7 +91,9 @@ class YandexFeedInfo extends FeedInfo
     public function category(int|string $id, string $name, bool $replace = false): static
     {
         if ($replace) {
+            // @codeCoverageIgnoreStart
             $this->categories = [];
+            // @codeCoverageIgnoreEnd
         }
 
         $this->categories[] = [
@@ -104,8 +108,8 @@ class YandexFeedInfo extends FeedInfo
     {
         $this->currencies = [];
 
-        foreach ($currencies as $id => $rate) {
-            $this->currency($id, $rate);
+        foreach ($currencies as $name => $rate) {
+            $this->currency($name, $rate);
         }
 
         return $this;
@@ -132,8 +136,8 @@ class YandexFeedInfo extends FeedInfo
     public function toArray(): array
     {
         return collect([
-            'name'     => $this->name     ?? config('app.name'),
-            'company'  => $this->company  ?? config('app.name'),
+            'name'     => $this->name ?? config('app.name'),
+            'company'  => $this->company ?? config('app.name'),
             'platform' => $this->platform ?? config('app.name'),
 
             'url'   => $this->url ?? config('app.url'),

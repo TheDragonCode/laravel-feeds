@@ -27,9 +27,9 @@ class RssFeedItem extends FeedItem
 
     public array $additional = [];
 
-    public function guid(string $guid): static
+    public function guid(int|string $guid): static
     {
-        $this->guid = $guid;
+        $this->guid = (string) $guid;
 
         return $this;
     }
@@ -65,6 +65,13 @@ class RssFeedItem extends FeedItem
     public function publishedAt(Carbon $publishedAt): static
     {
         $this->publishedAt = $publishedAt;
+
+        return $this;
+    }
+
+    public function additional(array $additional): static
+    {
+        $this->additional = $additional;
 
         return $this;
     }

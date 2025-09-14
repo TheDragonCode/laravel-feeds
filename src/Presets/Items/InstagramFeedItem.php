@@ -111,9 +111,9 @@ class InstagramFeedItem extends FeedItem
         return $this;
     }
 
-    public function group(?int $id): static
+    public function group(int|string|null $id): static
     {
-        $this->groupId = $id;
+        $this->groupId = (string) $id ?: null;
 
         return $this;
     }

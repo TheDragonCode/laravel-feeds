@@ -20,10 +20,13 @@ class ReceiptRssFeed extends RssFeedPreset
     public function item(Model $model): FeedItem
     {
         return parent::item($model)
+            ->guid($model->id) // By default, $model->getKey()
             ->title($model->title)
             ->description($model->content)
             ->category($model->category)
-            ->url($model->url);
+            ->url($model->url)
+            ->publishedAt($model->updated_at) // By default, $model->created_at ?? Carbon::now()
+            ->additional(['foo' => 'bar']); // By default, []
     }
 
     public function filename(): string

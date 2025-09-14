@@ -35,9 +35,4 @@ abstract class SitemapFeedPreset extends Feed
         return (new SitemapFeedItem($model))
             ->modifiedAt($model->updated_at);
     }
-
-    public function filename(): string
-    {
-        return 'sitemaps/' . parent::filename();
-    }
 }

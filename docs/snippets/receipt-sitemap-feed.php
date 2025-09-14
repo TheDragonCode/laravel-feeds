@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Feeds\Sitemaps;
 
-use App\Models\Product;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Presets\SitemapFeedPreset;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Product;
 
 class ProductFeed extends SitemapFeedPreset
 {
@@ -19,9 +19,10 @@ class ProductFeed extends SitemapFeedPreset
 
     public function item(Model $model): FeedItem
     {
-        return parent::item($model)->url(
-            $model->url
-        );
+        return parent::item($model)
+            ->url($model->url)
+            ->modifiedAt($model->updated_at) // By default, $model->updated_at
+            ->priority(0.9); // By default, 0.9
     }
 
     public function filename(): string

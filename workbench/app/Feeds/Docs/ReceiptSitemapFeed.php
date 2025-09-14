@@ -19,9 +19,10 @@ class ReceiptSitemapFeed extends SitemapFeedPreset
 
     public function item(Model $model): FeedItem
     {
-        return parent::item($model)->url(
-            $model->url
-        );
+        return parent::item($model)
+            ->url($model->url)
+            ->modifiedAt($model->updated_at) // By default, $model->updated_at
+            ->priority(0.9); // By default, 0.9
     }
 
     public function filename(): string

@@ -1,9 +1,9 @@
 <!DOCTYPE yml_catalog SYSTEM "shops.dtd">
 <yml_catalog date="2025-09-04T04:08:12+00:00">
     <shop>
-<name>Laravel</name>
-<company>Laravel</company>
-<platform>Laravel</platform>
+<name>My App</name>
+<company>My Company</company>
+<platform>My Platform</platform>
 <url>https://example.com</url>
 <email>feeds@example.com</email>
 <currencies>
@@ -13,11 +13,12 @@
   <category id="1">Foo</category>
   <category id="2">Bar</category>
 </categories>
+<foo>bar</foo>
 
 <offers>
 
 <offer id="1" available="true" type="vendor.model">
-  <url>https://example.com/products/aut-et-et-rem-quas-ullam-eos</url>
+  <url>https://example.com/products/quae-qui-incidunt-unde-rem-quibusdam-nobis</url>
   <barcode>GD-PRDCT-1</barcode>
   <name>Some 1</name>
   <description>Some description 1</description>
@@ -25,9 +26,10 @@
   <currencyId>RUR</currencyId>
   <vendor>The Best</vendor>
   <picture>https://via.placeholder.com/640x480.png/008877?text=repudiandae</picture>
+  <foo>bar</foo>
 </offer>
 <offer id="2" available="true" type="vendor.model">
-  <url>https://example.com/products/atque-dolor-illum-quo-incidunt-officiis-vel-omnis-velit</url>
+  <url>https://example.com/products/ipsam-voluptatibus-necessitatibus-et-corrupti-facilis</url>
   <barcode>GD-PRDCT-2</barcode>
   <name>Some 2</name>
   <description>Some description 2</description>
@@ -37,6 +39,7 @@
   <picture>https://via.placeholder.com/640x480.png/009966?text=beatae</picture>
   <picture>https://via.placeholder.com/640x480.png/000011?text=deleniti</picture>
   <picture>https://via.placeholder.com/640x480.png/009999?text=voluptates</picture>
+  <foo>bar</foo>
 </offer>
 
 </offers>

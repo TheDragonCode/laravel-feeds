@@ -45,9 +45,4 @@ abstract class YandexFeedPreset extends Feed
     {
         return new YandexFeedItem($model);
     }
-
-    public function filename(): string
-    {
-        return 'yandex/' . parent::filename();
-    }
 }
