@@ -42,6 +42,7 @@
     "id": 1,
     "title": "Some 1",
     "content": "Some content 1",
+    "category": "Some category 1",
     "created_at": "2025-09-04T04:08:12.000000Z",
     "updated_at": "2025-09-04T04:08:12.000000Z"
 },
@@ -49,6 +50,7 @@
     "id": 2,
     "title": "Some 2",
     "content": "Some content 2",
+    "category": "Some category 2",
     "created_at": "2025-09-04T04:08:12.000000Z",
     "updated_at": "2025-09-04T04:08:12.000000Z"
 },
@@ -56,6 +58,7 @@
     "id": 3,
     "title": "Some 3",
     "content": "Some content 3",
+    "category": "Some category 3",
     "created_at": "2025-09-04T04:08:12.000000Z",
     "updated_at": "2025-09-04T04:08:12.000000Z"
 }

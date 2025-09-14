@@ -8,6 +8,7 @@ use DragonCode\LaravelFeed\Converters\Converter;
 use DragonCode\LaravelFeed\Converters\CsvConverter;
 use DragonCode\LaravelFeed\Converters\JsonConverter;
 use DragonCode\LaravelFeed\Converters\JsonLinesConverter;
+use DragonCode\LaravelFeed\Converters\RssConverter;
 use DragonCode\LaravelFeed\Converters\XmlConverter;
 use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 
@@ -22,6 +23,7 @@ class ConverterHelper
             FeedFormatEnum::Json      => app(JsonConverter::class),
             FeedFormatEnum::JsonLines => app(JsonLinesConverter::class),
             FeedFormatEnum::Csv       => app(CsvConverter::class),
+            FeedFormatEnum::Rss       => app(RssConverter::class),
         };
     }
 }

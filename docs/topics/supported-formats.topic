@@ -25,6 +25,9 @@
         <def title="csv">
             Generates feeds in CSV format.
         </def>
+        <def title="rss">
+            Generates feeds in RSS Atom format.
+        </def>
     </deflist>
 
     <p>

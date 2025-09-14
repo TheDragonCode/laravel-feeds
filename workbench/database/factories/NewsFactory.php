@@ -15,6 +15,8 @@ class NewsFactory extends Factory
         return [
             'title'   => fake()->unique()->word(),
             'content' => fake()->text(),
+
+            'category' => fake()->word(),
         ];
     }
 }
