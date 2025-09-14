@@ -21,6 +21,27 @@
                     }
                 }
             ]
+        },
+        {
+            "id": "dragon-code.feeds.converter",
+            "name": "Create Feed Converter",
+            "classSuffix": "Converter",
+            "regex": ".+",
+            "files": [
+                {
+                    "appNamespace": "Converters",
+                    "name": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}.php",
+                    "template": {
+                        "type": "stub",
+                        "path": "/stubs/converter.stub",
+                        "fallbackPath": "stubs/converter.stub",
+                        "parameters": {
+                            "DummyNamespace": "${INPUT_FQN|namespace}",
+                            "DummyClass": "${INPUT_CLASS|replace: ,_|className|upperCamelCase}"
+                        }
+                    }
+                }
+            ]
         }
     ]
 }
