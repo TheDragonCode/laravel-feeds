@@ -72,7 +72,7 @@
             />
         </chapter>
 
-        <chapter title="RSS Atom" id="rss">
+        <chapter title="RSS" id="rss">
             <code-block
                     lang="php"
                     src="../../src/Presets/Items/RssFeedItem.php"
