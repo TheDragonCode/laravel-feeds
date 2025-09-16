@@ -25,7 +25,6 @@ class FilesystemService
 {
     public function __construct(
         protected File $file,
-        protected TemporaryDirectory $directory,
     ) {}
 
     /**
@@ -109,7 +108,7 @@ class FilesystemService
 
     protected function draftPath(string $filename): string
     {
-        return $this->directory
+        return (new TemporaryDirectory)
             ->name($this->temporaryFilename($filename))
             ->create()
             ->path((string) microtime(true));
