@@ -40,13 +40,15 @@ class FilesystemService
 
             if ($resource === false) {
                 // @codeCoverageIgnoreStart
-                throw new RuntimeException($temp);
+                throw new RuntimeException('Unable to open resource for writing.');
                 // @codeCoverageIgnoreEnd
             }
 
             return $resource;
+            // @codeCoverageIgnoreStart
         } catch (Throwable $e) {
             throw new OpenFeedException($temp, $e);
+            // @codeCoverageIgnoreEnd
         }
     }
 
