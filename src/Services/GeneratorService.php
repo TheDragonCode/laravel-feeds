@@ -34,8 +34,8 @@ class GeneratorService
         try {
             $this->started($feed);
 
-            $file = $this->openFile(
-                $path = $feed->path()
+            $file = $this->createDraft(
+                $feed->filename()
             );
 
             $this->performHeader($file, $feed);
@@ -45,11 +45,11 @@ class GeneratorService
             $this->performItem($file, $feed, $output);
             $this->performFooter($file, $feed);
 
-            $this->release($file, $path);
+            $this->release($file, $feed->path());
 
             $this->setLastActivity($feed);
 
-            $this->finished($feed, $path);
+            $this->finished($feed, $feed->path());
         } catch (Throwable $e) {
             throw new FeedGenerationException(get_class($feed), $e);
         }
@@ -142,9 +142,9 @@ class GeneratorService
         $this->filesystem->release($file, $path);
     }
 
-    protected function openFile(string $path) // @pest-ignore-type
+    protected function createDraft(string $filename) // @pest-ignore-type
     {
-        return $this->filesystem->open($path);
+        return $this->filesystem->createDraft($filename);
     }
 
     protected function setLastActivity(Feed $feed): void

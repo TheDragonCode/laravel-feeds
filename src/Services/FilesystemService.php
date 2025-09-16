@@ -5,40 +5,49 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Services;
 
 use DragonCode\LaravelFeed\Exceptions\OpenFeedException;
+use DragonCode\LaravelFeed\Exceptions\ResourceMetaException;
 use DragonCode\LaravelFeed\Exceptions\WriteFeedException;
 use Illuminate\Filesystem\Filesystem as File;
+use Illuminate\Support\Str;
+use RuntimeException;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Throwable;
 
 use function dirname;
 use function fclose;
 use function fopen;
 use function fwrite;
 use function is_resource;
+use function microtime;
+use function stream_get_meta_data;
 
 class FilesystemService
 {
     public function __construct(
         protected File $file,
+        protected TemporaryDirectory $directory,
     ) {}
 
     /**
      * @return resource
      */
-    public function open(string $path) // @pest-ignore-type
+    public function createDraft(string $filename) // @pest-ignore-type
     {
-        $path = $this->draft($path);
+        $temp = $this->draftPath($filename);
 
-        $this->ensureFileDelete($path);
-        $this->ensureDirectory($path);
+        try {
+            $resource = fopen($temp, 'ab');
 
-        $resource = fopen($path, 'ab');
+            if ($resource === false) {
+                // @codeCoverageIgnoreStart
+                throw new RuntimeException($temp);
+                // @codeCoverageIgnoreEnd
+            }
 
-        if ($resource === false) {
-            // @codeCoverageIgnoreStart
-            throw new OpenFeedException($path);
-            // @codeCoverageIgnoreEnd
+            return $resource;
+        } catch (Throwable $e) {
+            throw new OpenFeedException($temp, $e);
         }
-
-        return $resource;
     }
 
     /**
@@ -58,16 +67,21 @@ class FilesystemService
      */
     public function release($resource, string $path): void // @pest-ignore-type
     {
+        $temp = $this->getMetaPath($resource);
+
         $this->close($resource);
 
         if ($this->file->exists($path)) {
             $this->file->delete($path);
         }
 
-        $this->file->move(
-            $this->draft($path),
-            $path
+        $this->file->ensureDirectoryExists(
+            dirname($path)
         );
+
+        $this->file->move($temp, $path);
+
+        $this->cleanTemporaryDirectory($temp);
     }
 
     /**
@@ -84,20 +98,37 @@ class FilesystemService
         fclose($resource);
     }
 
-    protected function ensureFileDelete(string $path): void
+    protected function cleanTemporaryDirectory(string $filename): void
     {
-        if ($this->file->exists($path)) {
-            $this->file->delete($path);
-        }
+        $this->file->deleteDirectory(
+            dirname($filename)
+        );
     }
 
-    protected function ensureDirectory(string $path): void
+    protected function draftPath(string $filename): string
     {
-        $this->file->ensureDirectoryExists(dirname($path));
+        return $this->directory
+            ->name($this->temporaryFilename($filename))
+            ->create()
+            ->path((string) microtime(true));
     }
 
-    protected function draft(string $path): string
+    protected function temporaryFilename(string $filename): string
     {
-        return $path . '.draft';
+        return Str::of($filename)
+            ->prepend('feeds_draft_')
+            ->append('_', microtime(true))
+            ->slug('_')
+            ->toString();
+    }
+
+    /**
+     * @param  resource  $file
+     */
+    protected function getMetaPath($file): string
+    {
+        $meta = stream_get_meta_data($file);
+
+        return $meta['uri'] ?? throw new ResourceMetaException;
     }
 }
