@@ -18,7 +18,8 @@
         "illuminate/database": "^11.0 || ^12.0",
         "illuminate/filesystem": "^11.0 || ^12.0",
         "illuminate/support": "^11.0 || ^12.0",
-        "laravel/prompts": ">=0.3.6"
+        "laravel/prompts": ">=0.3.6",
+        "spatie/temporary-directory": "^2.3"
     },
     "require-dev": {
         "dragon-code/codestyler": "^6.3",

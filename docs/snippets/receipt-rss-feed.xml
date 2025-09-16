@@ -8,7 +8,7 @@
   <guid>1</guid>
   <description><![CDATA[Some content 1]]></description>
   <category>Some category 1</category>
-  <pubDate>Wed, 03 Sep 2025 06:52:54 +0000</pubDate>
+  <pubDate>Wed, 03 Sep 2025 13:26:59 +0000</pubDate>
   <foo>bar</foo>
 </item>
 <item>
@@ -17,7 +17,7 @@
   <guid>2</guid>
   <description><![CDATA[Some content 2]]></description>
   <category>Some category 2</category>
-  <pubDate>Wed, 03 Sep 2025 10:00:45 +0000</pubDate>
+  <pubDate>Wed, 03 Sep 2025 14:17:03 +0000</pubDate>
   <foo>bar</foo>
 </item>
 
