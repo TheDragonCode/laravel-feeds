@@ -5,7 +5,6 @@
 
 [![Stable Version][badge_stable]][link_packagist]
 [![Total Downloads][badge_downloads]][link_packagist]
-[![Github Workflow Status][badge_build]][link_build]
 [![License][badge_license]][link_license]
 
 **Laravel Feeds** is an easy and fast way to export large amounts of data into feeds for marketplaces and other
@@ -76,18 +75,12 @@ php artisan feed:generate
 This package is licensed under the [MIT License](LICENSE).
 
 
-[badge_build]:          https://img.shields.io/github/actions/workflow/status/TheDragonCode/laravel-feeds/tests.yml?style=flat-square
-
 [badge_downloads]:      https://img.shields.io/packagist/dt/dragon-code/laravel-feeds.svg?style=flat-square
 
 [badge_license]:        https://img.shields.io/packagist/l/dragon-code/laravel-feeds.svg?style=flat-square
 
 [badge_stable]:         https://img.shields.io/github/v/release/TheDragonCode/laravel-feeds?label=packagist&style=flat-square
 
-[link_build]:           https://github.com/TheDragonCode/laravel-feeds/actions
-
 [link_license]:         LICENSE
 
 [link_packagist]:       https://packagist.org/packages/dragon-code/laravel-feeds
-
-[link_website]:         https://deploy-operations.dragon-code.pro
