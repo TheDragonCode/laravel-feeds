@@ -8,7 +8,7 @@ use RuntimeException;
 use Throwable;
 
 // @codeCoverageIgnoreStart
-class OpenFeedException extends RuntimeException
+class CloseFeedException extends RuntimeException
 {
     public function __construct(string $path, Throwable $e)
     {

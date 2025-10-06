@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Services;
 
+use DragonCode\LaravelFeed\Exceptions\CloseFeedException;
 use DragonCode\LaravelFeed\Exceptions\OpenFeedException;
 use DragonCode\LaravelFeed\Exceptions\ResourceMetaException;
 use DragonCode\LaravelFeed\Exceptions\WriteFeedException;
@@ -73,22 +74,26 @@ class FilesystemService
      */
     public function release($resource, string $path): void // @pest-ignore-type
     {
-        $temp = $this->getMetaPath($resource);
+        try {
+            $temp = $this->getMetaPath($resource);
 
-        $this->unlock($resource);
-        $this->close($resource);
+            $this->unlock($resource);
+            $this->close($resource);
 
-        if ($this->file->exists($path)) {
-            $this->file->delete($path);
+            if ($this->file->exists($path)) {
+                $this->file->delete($path);
+            }
+
+            $this->file->ensureDirectoryExists(
+                dirname($path)
+            );
+
+            $this->file->move($temp, $path);
+
+            $this->cleanTemporaryDirectory($temp);
+        } catch (Throwable $e) {
+            throw new CloseFeedException($path, $e);
         }
-
-        $this->file->ensureDirectoryExists(
-            dirname($path)
-        );
-
-        $this->file->move($temp, $path);
-
-        $this->cleanTemporaryDirectory($temp);
     }
 
     /**
