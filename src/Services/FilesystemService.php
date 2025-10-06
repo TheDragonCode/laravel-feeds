@@ -15,7 +15,10 @@ use Throwable;
 
 use function dirname;
 use function fclose;
+use function fflush;
+use function flock;
 use function fopen;
+use function ftruncate;
 use function fwrite;
 use function is_resource;
 use function microtime;
@@ -42,6 +45,8 @@ class FilesystemService
                 throw new RuntimeException('Unable to open resource for writing.');
                 // @codeCoverageIgnoreEnd
             }
+
+            $this->lock($resource);
 
             return $resource;
             // @codeCoverageIgnoreStart
@@ -70,6 +75,7 @@ class FilesystemService
     {
         $temp = $this->getMetaPath($resource);
 
+        $this->unlock($resource);
         $this->close($resource);
 
         if ($this->file->exists($path)) {
@@ -131,5 +137,28 @@ class FilesystemService
         $meta = stream_get_meta_data($file);
 
         return $meta['uri'] ?? throw new ResourceMetaException;
+    }
+
+    /**
+     * @param  resource  $resource
+     */
+    protected function lock($resource): void // @pest-ignore-type
+    {
+        if (! flock($resource, LOCK_EX)) {
+            // @codeCoverageIgnoreStart
+            throw new RuntimeException('Resource lock error. The resource may be in use by another process.');
+            // @codeCoverageIgnoreEnd
+        }
+
+        ftruncate($resource, 0);
+    }
+
+    /**
+     * @param  resource  $resource
+     */
+    protected function unlock($resource): void // @pest-ignore-type
+    {
+        fflush($resource);
+        flock($resource, LOCK_UN);
     }
 }
