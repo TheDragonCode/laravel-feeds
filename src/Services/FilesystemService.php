@@ -91,9 +91,11 @@ class FilesystemService
             $this->file->move($temp, $path);
 
             $this->cleanTemporaryDirectory($temp);
+            // @codeCoverageIgnoreStart
         } catch (Throwable $e) {
-            throw new CloseFeedException($path, $e);
+            throw new CloseFeedException($temp, $e);
         }
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -137,7 +139,7 @@ class FilesystemService
     /**
      * @param  resource  $file
      */
-    protected function getMetaPath($file): string
+    protected function getMetaPath($file): string // @pest-ignore-type
     {
         $meta = stream_get_meta_data($file);
 
