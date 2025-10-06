@@ -5,29 +5,18 @@
 <item>
   <title>Some 1</title>
   <link>https://example.com/news/some-1</link>
-  <guid>1</guid>
+  <guid>https://example.com/news/some-1</guid>
   <description><![CDATA[Some content 1]]></description>
   <category>Some category 1</category>
-  <pubDate>Wed, 03 Sep 2025 11:09:19 +0000</pubDate>
-  <foo>bar</foo>
+  <pubDate>Thu, 04 Sep 2025 04:08:12 +0000</pubDate>
 </item>
 <item>
   <title>Some 2</title>
   <link>https://example.com/news/some-2</link>
-  <guid>2</guid>
+  <guid>https://example.com/news/some-2</guid>
   <description><![CDATA[Some content 2]]></description>
   <category>Some category 2</category>
-  <pubDate>Wed, 03 Sep 2025 22:21:20 +0000</pubDate>
-  <foo>bar</foo>
-</item>
-<item>
-  <title>Some 3</title>
-  <link>https://example.com/news/some-3</link>
-  <guid>3</guid>
-  <description><![CDATA[Some content 3]]></description>
-  <category>Some category 3</category>
-  <pubDate>Wed, 03 Sep 2025 23:36:51 +0000</pubDate>
-  <foo>bar</foo>
+  <pubDate>Thu, 04 Sep 2025 04:08:12 +0000</pubDate>
 </item>
 
 </channel>

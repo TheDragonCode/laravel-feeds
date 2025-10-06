@@ -3,12 +3,10 @@
 declare(strict_types=1);
 
 use Workbench\App\Data\NewsFakeData;
-use Workbench\App\Feeds\FullFeed;
+use Workbench\App\Feeds\SplitXmlFeed;
 
-test('export', function (bool $pretty) {
-    setPrettyXml($pretty);
-
+test('export', function () {
     createNews(...NewsFakeData::toArray());
 
-    //expectFeedSnapshot(FullFeed::class);
-})->with('boolean');
+    expectFeedSnapshot(SplitXmlFeed::class, indexes: [1, 2]);
+});

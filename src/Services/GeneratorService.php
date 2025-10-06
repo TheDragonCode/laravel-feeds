@@ -50,9 +50,9 @@ class GeneratorService
                 create: $this->createFile($feed),
                 close : $this->closeFile($feed)
             )
-            ->item(fn (Model $model, int $index) => $this->converter($feed)->item(
+            ->item(fn (Model $model, bool $last) => $this->converter($feed)->item(
                 item  : $feed->item($model),
-                isLast: $index <= 1
+                isLast: $last
             ))
             ->chunk($feed->chunkSize())
             ->export();

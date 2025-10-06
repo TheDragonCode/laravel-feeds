@@ -13,6 +13,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use function blank;
 use function implode;
 use function max;
+use function min;
 use function value;
 
 class ExportService
@@ -90,7 +91,7 @@ class ExportService
                 $this->records++;
                 $this->total--;
 
-                $this->content[] = value($this->item, $model, $this->line);
+                $this->content[] = value($this->item, $model, $this->isLastItem());
 
                 $this->store();
 
@@ -98,9 +99,9 @@ class ExportService
                     return false;
                 }
 
-                //if ($this->maxFiles && $this->file >= $this->maxFiles) {
-                //    return false;
-                //}
+                if ($this->maxFiles && $this->file >= $this->maxFiles) {
+                    return false;
+                }
             });
 
         $this->store(true);
@@ -125,6 +126,11 @@ class ExportService
         }
     }
 
+    protected function isLastItem(): bool
+    {
+        return $this->line >= min($this->perFile, $this->total);
+    }
+
     protected function getFile() // @pest-ignore-type
     {
         if (! empty($this->resource)) {
@@ -140,7 +146,9 @@ class ExportService
             return;
         }
 
-        value($this->closeFile, $this->resource, $this->file);
+        $index = $this->maxFiles ? $this->file : 0;
+
+        value($this->closeFile, $this->resource, $index);
 
         $this->resource = null;
 

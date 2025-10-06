@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<array_directive>
+
+<user>
+  <name>Cedrick Stoltenberg</name>
+  <avatar>https://via.placeholder.com/640x480.png/006611?text=sapiente</avatar>
+  <avatar>https://via.placeholder.com/640x480.png/0099aa?text=voluptates</avatar>
+  <images name="perspiciatis enim voluptates">https://via.placeholder.com/640x480.png/008833?text=facere</images>
+  <images name="est totam officiis">https://via.placeholder.com/640x480.png/005500?text=illo</images>
+</user>
+<user>
+  <name>Cale Murazik</name>
+  <avatar>https://via.placeholder.com/640x480.png/00bb22?text=nisi</avatar>
+  <avatar>https://via.placeholder.com/640x480.png/0022aa?text=illo</avatar>
+  <images name="ea aperiam est">https://via.placeholder.com/640x480.png/0066ee?text=omnis</images>
+  <images name="sunt eum voluptate">https://via.placeholder.com/640x480.png/0099bb?text=maxime</images>
+</user>
+
+</array_directive>

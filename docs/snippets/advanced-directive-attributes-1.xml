@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<attributes_directive>
+
+<company since="1995"/>
+<url>https://example.com</url>
+
+<user>
+  <name>Mr. Cameron Nader</name>
+  <contact email="jerel08@example.net" phone="555-000-1"/>
+</user>
+<user>
+  <name>Prof. Ernestine Murphy MD</name>
+  <contact email="xlemke@example.com" phone="555-000-2"/>
+</user>
+
+</attributes_directive>

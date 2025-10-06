@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<info_method>
+
 <company>Laravel</company>
 <url>https://example.com</url>
 
-<info_method>
-
 <user>
   <id>1</id>
-  <name>Willy Wilkinson</name>
+  <name>Mr. Odell Keeling MD</name>
 </user>
 <user>
   <id>2</id>
-  <name>Delphine Mohr</name>
+  <name>Cesar Swaniawski</name>
 </user>
 
 </info_method>

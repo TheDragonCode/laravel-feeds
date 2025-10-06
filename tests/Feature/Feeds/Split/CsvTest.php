@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use Workbench\App\Data\NewsFakeData;
-use Workbench\App\Feeds\CsvFeed;
+use Workbench\App\Feeds\SplitCsvFeed;
 
-test('export', function (bool $pretty) {
-    setPrettyXml($pretty);
-
+test('export', function () {
     createNews(...NewsFakeData::toArray());
 
-    //expectFeedSnapshot(CsvFeed::class, FeedFormatEnum::Csv);
-})->with('boolean');
+    expectFeedSnapshot(SplitCsvFeed::class, FeedFormatEnum::Csv, indexes: [1, 2]);
+});

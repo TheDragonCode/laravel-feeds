@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use Workbench\App\Data\NewsFakeData;
-use Workbench\App\Feeds\JsonLinesFeed;
+use Workbench\App\Feeds\SplitJsonLinesFeed;
 
-test('export', function (bool $pretty) {
-    setPrettyXml($pretty);
-
+test('export', function () {
     createNews(...NewsFakeData::toArray());
 
-    //expectFeedSnapshot(JsonLinesFeed::class, FeedFormatEnum::JsonLines);
-})->with('boolean');
+    expectFeedSnapshot(SplitJsonLinesFeed::class, FeedFormatEnum::JsonLines, indexes: [1, 2]);
+});

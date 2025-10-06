@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<value_directive>
+
+<user>
+  <name>Onie Hahn</name>
+  <contact type="email">mozelle.eichmann@example.com</contact>
+</user>
+<user>
+  <name>Heaven Hauck</name>
+  <contact type="email">grady.rocky@example.org</contact>
+</user>
+
+</value_directive>
