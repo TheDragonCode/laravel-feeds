@@ -28,6 +28,8 @@ use Workbench\App\Feeds\RssInfoFeed;
 use Workbench\App\Feeds\RssRootFeed;
 use Workbench\App\Feeds\RssRootInfoFeed;
 use Workbench\App\Feeds\SitemapFeed;
+use Workbench\App\Feeds\SplitMaxFilesFeed;
+use Workbench\App\Feeds\SplitPerFileFeed;
 use Workbench\App\Feeds\YandexFeed;
 
 use function fake;
@@ -68,6 +70,10 @@ class FeedSeeder extends Seeder
         // Receipts
         SitemapFeed::class,
         YandexFeed::class,
+
+        // Split
+        SplitPerFileFeed::class,
+        SplitMaxFilesFeed::class,
     ];
 
     public function run(): void

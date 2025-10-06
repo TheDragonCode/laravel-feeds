@@ -7,7 +7,7 @@ use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 
 use function Pest\Laravel\artisan;
 
-function expectFeedSnapshot(string $class, FeedFormatEnum $format = FeedFormatEnum::Xml): void
+function expectFeedSnapshot(string $class, FeedFormatEnum $format = FeedFormatEnum::Xml, array $indexes = ['']): void
 {
     $feed = findFeed($class);
 
@@ -17,17 +17,19 @@ function expectFeedSnapshot(string $class, FeedFormatEnum $format = FeedFormatEn
         'feed' => $feed->id,
     ])->assertSuccessful()->run();
 
-    expect($instance->path())->toBeFile();
+    foreach ($indexes as $index) {
+        expect($instance->path($index))->toBeFile();
 
-    $content = file_get_contents($instance->path());
+        $content = file_get_contents($instance->path($index));
 
-    match ($format) {
-        FeedFormatEnum::Json      => expect($content)->toBeJson(),
-        FeedFormatEnum::JsonLines => expect($content)->toBeJsonLines(),
-        FeedFormatEnum::Csv       => expect($content)->toBeCsv(),
-        FeedFormatEnum::Rss       => expect($content)->toBeRss(),
-        default                   => null
-    };
+        match ($format) {
+            FeedFormatEnum::Json      => expect($content)->toBeJson(),
+            FeedFormatEnum::JsonLines => expect($content)->toBeJsonLines(),
+            FeedFormatEnum::Csv       => expect($content)->toBeCsv(),
+            FeedFormatEnum::Rss       => expect($content)->toBeRss(),
+            default                   => null
+        };
 
-    expect($content)->toMatchSnapshot();
+        expect($content)->toMatchSnapshot();
+    }
 }

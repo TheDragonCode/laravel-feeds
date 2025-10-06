@@ -8,7 +8,7 @@ use Workbench\App\Models\Product;
 
 function createNews(...$sequence): void
 {
-    News::factory()->count(3)->sequence(
+    News::factory()->count(count($sequence))->sequence(
         ...$sequence
     )->createMany();
 }
