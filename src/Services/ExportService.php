@@ -115,7 +115,7 @@ class ExportService
     protected function store(bool $force = false): void
     {
         $whenRecords = $this->records >= $this->perFile;
-        $whenLeft    = $this->total && $this->left <= 0;
+        $whenLeft    = $this->total    && $this->left <= 0;
         $whenFile    = $this->file > 1 && ! $this->content;
 
         if (! $force && $whenFile) {
