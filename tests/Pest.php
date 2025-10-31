@@ -23,6 +23,8 @@ pest()
         deleteMigrations();
     })
     ->afterEach(function () {
+        expect('end of snapshots')->toMatchSnapshot();
+
         deleteOperations();
         deleteMigrations();
     });

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Services;
 
+use Closure;
 use DragonCode\LaravelFeed\Converters\Converter;
 use DragonCode\LaravelFeed\Events\FeedFinishedEvent;
 use DragonCode\LaravelFeed\Events\FeedStartingEvent;
@@ -12,14 +13,12 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Helpers\ConverterHelper;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use Illuminate\Console\OutputStyle;
-use Illuminate\Database\Eloquent\Collection;
-use Symfony\Component\Console\Helper\ProgressBar;
+use Illuminate\Database\Eloquent\Model;
 use Throwable;
 
 use function blank;
 use function event;
 use function get_class;
-use function implode;
 
 class GeneratorService
 {
@@ -34,18 +33,7 @@ class GeneratorService
         try {
             $this->started($feed);
 
-            $file = $this->createDraft(
-                $feed->filename()
-            );
-
-            $this->performHeader($file, $feed);
-            $this->performRoot($file, $feed, true);
-            $this->performInfo($file, $feed);
-            $this->performRoot($file, $feed, false);
-            $this->performItem($file, $feed, $output);
-            $this->performFooter($file, $feed);
-
-            $this->release($file, $feed->path());
+            $this->export($feed, $output, $this->filesystem);
 
             $this->setLastActivity($feed);
 
@@ -55,37 +43,42 @@ class GeneratorService
         }
     }
 
-    protected function performItem($file, Feed $feed, ?OutputStyle $output): void // @pest-ignore-type
+    protected function export(Feed $feed, ?OutputStyle $output, FilesystemService $filesystem): void
     {
-        $count = $feed->builder()->count();
+        (new ExportService($feed, $filesystem, $output))
+            ->file(
+                create: $this->createFile($feed),
+                close : $this->closeFile($feed)
+            )
+            ->item(fn (Model $model, bool $last) => $this->converter($feed)->item(
+                item  : $feed->item($model),
+                isLast: $last
+            ))
+            ->chunk($feed->chunkSize())
+            ->export();
+    }
 
-        // @codeCoverageIgnoreStart
-        $bar = $this->progressBar($count, $output);
-        // @codeCoverageIgnoreEnd
+    protected function createFile(Feed $feed): Closure
+    {
+        return function () use ($feed) {
+            $file = $this->createDraft($feed->filename());
 
-        $progress = $count;
+            $this->performHeader($file, $feed);
+            $this->performRoot($file, $feed, true);
+            $this->performInfo($file, $feed);
+            $this->performRoot($file, $feed, false);
 
-        $feed->builder()->chunkById(
-            $feed->chunkSize(),
-            function (Collection $models) use ($file, $feed, $bar, &$progress) {
-                $content = [];
+            return $file;
+        };
+    }
 
-                foreach ($models as $model) {
-                    $content[] = $this->converter($feed)->item(
-                        item: $feed->item($model),
-                        isLast: $progress <= 1
-                    );
+    protected function closeFile(Feed $feed): Closure
+    {
+        return function ($file, int $index) use ($feed) {
+            $this->performFooter($file, $feed);
 
-                    $bar?->advance();
-                    $progress--;
-                }
-
-                $this->append($file, implode(PHP_EOL, $content), $feed->path());
-            }
-        );
-
-        $bar?->finish();
-        $output?->newLine();
+            $this->release($file, $feed->path($index));
+        };
     }
 
     protected function performHeader($file, Feed $feed): void // @pest-ignore-type
@@ -159,11 +152,6 @@ class GeneratorService
         return $this->converter->get(
             $feed->format()
         );
-    }
-
-    protected function progressBar(int $count, ?OutputStyle $output): ?ProgressBar
-    {
-        return $output?->createProgressBar($count);
     }
 
     protected function started(Feed $feed): void

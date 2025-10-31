@@ -46,6 +46,16 @@ abstract class Feed
         return 1000;
     }
 
+    public function perFile(): int
+    {
+        return 0;
+    }
+
+    public function maxFiles(): int
+    {
+        return 0;
+    }
+
     public function header(): string
     {
         return match ($this->format()) {
@@ -87,10 +97,26 @@ abstract class Feed
             ->toString();
     }
 
-    public function path(): string
+    public function path(int|string $suffix = ''): string
     {
+        if (empty($suffix)) {
+            return $this->storage()->path(
+                $this->filename()
+            );
+        }
+
+        $filename = $this->filename();
+
+        $directory = pathinfo($filename, PATHINFO_DIRNAME);
+        $basename  = pathinfo($filename, PATHINFO_FILENAME);
+        $extension = pathinfo($filename, PATHINFO_EXTENSION);
+
+        if ($suffix) {
+            $suffix = '-' . $suffix;
+        }
+
         return $this->storage()->path(
-            $this->filename()
+            "$directory/$basename$suffix.$extension"
         );
     }
 
