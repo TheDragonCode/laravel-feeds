@@ -22,6 +22,8 @@ function expectFeedSnapshot(string $class, FeedFormatEnum $format = FeedFormatEn
 
         $content = file_get_contents($instance->path($index));
 
+        expect($content)->toMatchSnapshot();
+
         match ($format) {
             FeedFormatEnum::Json      => expect($content)->toBeJson(),
             FeedFormatEnum::JsonLines => expect($content)->toBeJsonLines(),
@@ -29,7 +31,5 @@ function expectFeedSnapshot(string $class, FeedFormatEnum $format = FeedFormatEn
             FeedFormatEnum::Rss       => expect($content)->toBeRss(),
             default                   => null
         };
-
-        expect($content)->toMatchSnapshot();
     }
 }

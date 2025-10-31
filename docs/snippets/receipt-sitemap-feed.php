@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Feeds\Sitemaps;
 
-use App\Models\Product;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Presets\SitemapFeedPreset;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Product;
 
 class ProductFeed extends SitemapFeedPreset
 {

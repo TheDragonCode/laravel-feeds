@@ -13,7 +13,6 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use function blank;
 use function implode;
 use function max;
-use function min;
 use function value;
 
 class ExportService
@@ -28,6 +27,8 @@ class ExportService
 
     protected int $total;
 
+    protected int $file;
+
     protected Closure $createFile;
 
     protected Closure $closeFile;
@@ -36,11 +37,8 @@ class ExportService
 
     protected ?ProgressBar $progressBar;
 
+    /** @var resource */
     protected $resource;
-
-    protected int $file = 1;
-
-    protected int $line = 0;
 
     protected int $records = 0;
 
@@ -54,6 +52,7 @@ class ExportService
         $this->perFile  = $this->perFile($this->feed);
         $this->maxFiles = $this->maxFiles($this->feed);
         $this->total    = $this->total();
+        $this->file     = $this->fileIndex();
 
         $this->progressBar = $this->createProgressBar(
             $this->total
@@ -84,10 +83,26 @@ class ExportService
 
     public function export(): void
     {
+        $this->total
+            ? $this->exportFilled()
+            : $this->exportEmpty();
+
+        $this->store(true);
+
+        $this->progressBar?->finish();
+    }
+
+    protected function exportEmpty(): void {
+        //dd(
+        //    'aaa'
+        //);
+    }
+
+    protected function exportFilled(): void
+    {
         $this->feed->builder()
             ->lazyById($this->chunk)
             ->each(function (Model $model) {
-                $this->line++;
                 $this->records++;
                 $this->total--;
 
@@ -103,32 +118,26 @@ class ExportService
                     return false;
                 }
             });
-
-        $this->store(true);
-
-        $this->progressBar?->finish();
     }
 
     protected function store(bool $force = false): void
     {
-        if ($force || $this->records >= $this->perFile || $this->line >= $this->chunk) {
-            $this->line = 0;
+        if ($force || $this->records >= $this->perFile) {
+            $this->records = 0;
 
             $this->append();
 
             $this->content = [];
         }
 
-        if ($force || $this->records >= $this->perFile) {
-            $this->records = 0;
-
+        if ($force || $this->records >= $this->perFile || $this->total <= 0) {
             $this->releaseFile();
         }
     }
 
     protected function isLastItem(): bool
     {
-        return $this->line >= min($this->perFile, $this->total);
+        return $this->records === $this->perFile || $this->total <= 0;
     }
 
     protected function getFile() // @pest-ignore-type
@@ -146,9 +155,7 @@ class ExportService
             return;
         }
 
-        $index = $this->maxFiles ? $this->file : 0;
-
-        value($this->closeFile, $this->resource, $index);
+        value($this->closeFile, $this->resource, $this->file);
 
         $this->resource = null;
 
@@ -157,9 +164,9 @@ class ExportService
 
     protected function append(): void
     {
-        if (blank($this->content)) {
-            return;
-        }
+        //if (blank($this->content)) {
+        //    return;
+        //}
 
         $this->filesystem->append($this->getFile(), implode(PHP_EOL, $this->content), $this->feed->path());
     }
@@ -180,11 +187,24 @@ class ExportService
 
     protected function total(): int
     {
-        if ($this->maxFiles <= 0) {
+        if ($this->maxFiles === 0) {
             return $this->modelCount();
         }
 
         return $this->perFile * $this->maxFiles;
+    }
+
+    protected function fileIndex(): int
+    {
+        if ($this->perFile === 0 || $this->perFile === $this->total) {
+            return 0;
+        }
+
+        if ($this->perFile >= $this->total) {
+            return 0;
+        }
+
+        return 1;
     }
 
     protected function modelCount(): int
