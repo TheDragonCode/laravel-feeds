@@ -18,7 +18,7 @@
 <offers>
 
 <offer id="1" available="true" type="vendor.model">
-  <url>https://example.com/products/explicabo-qui-dolorem-asperiores-vitae-numquam-dolores-ex</url>
+  <url>https://example.com/products/eligendi-iste-mollitia-vel</url>
   <barcode>GD-PRDCT-1</barcode>
   <name>Some 1</name>
   <description>Some description 1</description>
@@ -29,7 +29,7 @@
   <foo>bar</foo>
 </offer>
 <offer id="2" available="true" type="vendor.model">
-  <url>https://example.com/products/odit-distinctio-autem-ea-nisi</url>
+  <url>https://example.com/products/reiciendis-et-saepe-nemo-ea-voluptatibus</url>
   <barcode>GD-PRDCT-2</barcode>
   <name>Some 2</name>
   <description>Some description 2</description>
