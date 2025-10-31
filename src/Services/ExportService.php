@@ -45,6 +45,8 @@ class ExportService
 
     protected array $content = [];
 
+    protected bool $fileCreated = false;
+
     public function __construct(
         protected Feed $feed,
         protected FilesystemService $filesystem,
@@ -123,7 +125,9 @@ class ExportService
         if ($force || $whenRecords || $whenLeft) {
             $this->records = 0;
 
-            $this->append();
+            if ($this->content || ! $this->fileCreated) {
+                $this->append();
+            }
 
             $this->content = [];
         }
@@ -143,6 +147,8 @@ class ExportService
         if (! empty($this->resource)) {
             return $this->resource;
         }
+
+        $this->fileCreated = true;
 
         return $this->resource ??= value($this->createFile);
     }
