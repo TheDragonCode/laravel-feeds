@@ -113,4 +113,33 @@
 
         <code-block lang="xml" src="advanced-element-attribute.xml" />
     </chapter>
+
+    <chapter title="Split files" id="split_files">
+        <secondary-label ref="format-xml" />
+        <secondary-label ref="format-rss" />
+        <secondary-label ref="format-json" />
+        <secondary-label ref="format-jsonl" />
+        <secondary-label ref="format-csv" />
+
+        <p>
+            If necessary, you can limit the number of lines output to a file, as well as the number of files themselves.
+            To do this, use the perFile and maxFiles functions.
+        </p>
+
+        <code-block lang="php" src="advanced-element-split.php" include-lines="5-" />
+
+        <p>
+            The methods work independently of each other.
+        </p>
+
+        <p>
+            When splitting, a sequential number will be added to the file names. For example:
+        </p>
+
+        <list>
+            <li>attribute-1.xml</li>
+            <li>attribute-2.xml</li>
+            <li>attribute-3.xml</li>
+        </list>
+    </chapter>
 </topic>
