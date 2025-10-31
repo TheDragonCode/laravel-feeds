@@ -10,7 +10,6 @@ use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\Console\Helper\ProgressBar;
 
-use function blank;
 use function implode;
 use function max;
 use function value;
@@ -42,6 +41,8 @@ class ExportService
 
     protected int $records = 0;
 
+    protected int $left;
+
     protected array $content = [];
 
     public function __construct(
@@ -53,6 +54,8 @@ class ExportService
         $this->maxFiles = $this->maxFiles($this->feed);
         $this->total    = $this->total();
         $this->file     = $this->fileIndex();
+
+        $this->left = $this->total;
 
         $this->progressBar = $this->createProgressBar(
             $this->total
@@ -83,34 +86,17 @@ class ExportService
 
     public function export(): void
     {
-        $this->total
-            ? $this->exportFilled()
-            : $this->exportEmpty();
-
-        $this->store(true);
-
-        $this->progressBar?->finish();
-    }
-
-    protected function exportEmpty(): void {
-        //dd(
-        //    'aaa'
-        //);
-    }
-
-    protected function exportFilled(): void
-    {
         $this->feed->builder()
             ->lazyById($this->chunk)
             ->each(function (Model $model) {
                 $this->records++;
-                $this->total--;
+                $this->left--;
 
                 $this->content[] = value($this->item, $model, $this->isLastItem());
 
                 $this->store();
 
-                if ($this->total <= 0) {
+                if ($this->left <= 0) {
                     return false;
                 }
 
@@ -118,11 +104,23 @@ class ExportService
                     return false;
                 }
             });
+
+        $this->store(true);
+
+        $this->progressBar?->finish();
     }
 
     protected function store(bool $force = false): void
     {
-        if ($force || $this->records >= $this->perFile) {
+        $whenRecords = $this->records >= $this->perFile;
+        $whenLeft    = $this->total && $this->left <= 0;
+        $whenFile    = $this->file > 1 && ! $this->content;
+
+        if (! $force && $whenFile) {
+            return;
+        }
+
+        if ($force || $whenRecords || $whenLeft) {
             $this->records = 0;
 
             $this->append();
@@ -130,14 +128,14 @@ class ExportService
             $this->content = [];
         }
 
-        if ($force || $this->records >= $this->perFile || $this->total <= 0) {
+        if ($force || $whenRecords) {
             $this->releaseFile();
         }
     }
 
     protected function isLastItem(): bool
     {
-        return $this->records === $this->perFile || $this->total <= 0;
+        return $this->records === $this->perFile || $this->left <= 0;
     }
 
     protected function getFile() // @pest-ignore-type
@@ -164,10 +162,6 @@ class ExportService
 
     protected function append(): void
     {
-        //if (blank($this->content)) {
-        //    return;
-        //}
-
         $this->filesystem->append($this->getFile(), implode(PHP_EOL, $this->content), $this->feed->path());
     }
 

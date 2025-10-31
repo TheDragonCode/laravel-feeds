@@ -13,13 +13,12 @@ use Workbench\App\Feeds\Items\NewsFeedItem;
 use Workbench\App\Models\News;
 
 use function class_basename;
-use function now;
 
 class FullFeed extends Feed
 {
     public function builder(): Builder
     {
-        return News::query()->where('updated_at', '>', now()->subDay());
+        return News::query();
     }
 
     public function root(): ElementData

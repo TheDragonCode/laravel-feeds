@@ -1,0 +1,24 @@
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2025-09-04T04:08:12+00:00">
+    <shop>
+<name>My App</name>
+<company>My Company</company>
+<platform>My Platform</platform>
+<url>https://example.com</url>
+<email>feeds@example.com</email>
+<currencies>
+  <currency id="RUR" rate="1"/>
+</currencies>
+<categories>
+  <category id="1">Foo</category>
+  <category id="2">Bar</category>
+</categories>
+<foo>bar</foo>
+
+<offers>
+
+
+
+</offers>
+</shop>
+</yml_catalog>
