@@ -35,4 +35,9 @@ abstract class SitemapFeedPreset extends Feed
         return (new SitemapFeedItem($model))
             ->modifiedAt($model->updated_at);
     }
+
+    public function perFile(): int
+    {
+        return 50000;
+    }
 }
