@@ -42,7 +42,7 @@ jobs:
                     docker-version: ${{ env.BUILDER_VERSION }}
 
             -   name: Upload artifacts
-                uses: actions/upload-artifact@v5
+                uses: actions/upload-artifact@v6
                 with:
                     name: docs
                     path: |
@@ -51,7 +51,7 @@ jobs:
                     retention-days: 7
 
             -   name: Upload search indexes
-                uses: actions/upload-artifact@v5
+                uses: actions/upload-artifact@v6
                 with:
                     name: ${{ env.ARTIFACT_INDEXES }}
                     path: artifacts/${{ env.ALGOLIA_ARTIFACT }}
@@ -89,7 +89,7 @@ jobs:
                     echo "Sitemap: https://${{ env.DOMAIN_NAME }}/sitemap.xml" >> robots.txt
 
             -   name: Upload artifacts
-                uses: actions/upload-artifact@v5
+                uses: actions/upload-artifact@v6
                 with:
                     name: robots
                     path: robots.txt
