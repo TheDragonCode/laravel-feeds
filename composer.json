@@ -10,6 +10,16 @@
             "homepage": "https://dragon-code.pro"
         }
     ],
+    "funding": [
+        {
+            "type": "boosty",
+            "url": "https://boosty.to/dragon-code"
+        },
+        {
+            "type": "yoomoney",
+            "url": "https://yoomoney.ru/to/410012608840929"
+        }
+    ],
     "require": {
         "php": "^8.2",
         "ext-dom": "*",
