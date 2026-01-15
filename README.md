@@ -1,7 +1,9 @@
 # 📃 Laravel Feeds
 
-![the dragon code laravel feeds](docs/images/social-logo.png#gh-light-mode-only)
-![the dragon code laravel feeds](docs/images/social-logo_dark.png#gh-dark-mode-only)
+<picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://banners.beyondco.de/Laravel%20Feeds.png?theme=dark&pattern=topography&style=style_2&fontSize=100px&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg&packageManager=composer+require&packageName=dragon-code%2Flaravel-feeds&description=Fast+export+of+large+datasets+to+feeds+for+marketplaces+and+services&md=1&showWatermark=1">
+    <img src="https://banners.beyondco.de/Laravel%20Feeds.png?theme=light&pattern=topography&style=style_2&fontSize=100px&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg&packageManager=composer+require&packageName=dragon-code%2Flaravel-feeds&description=Fast+export+of+large+datasets+to+feeds+for+marketplaces+and+services&md=1&showWatermark=1" alt="Laravel Feeds">
+</picture>
 
 [![Stable Version][badge_stable]][link_packagist]
 [![Total Downloads][badge_downloads]][link_packagist]
