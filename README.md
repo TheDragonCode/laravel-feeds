@@ -1,8 +1,8 @@
 # 📃 Laravel Feeds
 
 <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://banners.beyondco.de/Laravel%20Feeds.png?theme=dark&pattern=topography&style=style_2&fontSize=100px&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg&packageManager=composer+require&packageName=dragon-code%2Flaravel-feeds&description=Fast+export+of+large+datasets+to+feeds+for+marketplaces+and+services&md=1&showWatermark=1">
-    <img src="https://banners.beyondco.de/Laravel%20Feeds.png?theme=light&pattern=topography&style=style_2&fontSize=100px&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg&packageManager=composer+require&packageName=dragon-code%2Flaravel-feeds&description=Fast+export+of+large+datasets+to+feeds+for+marketplaces+and+services&md=1&showWatermark=1" alt="Laravel Feeds">
+    <source media="(prefers-color-scheme: dark)" srcset="https://banners.beyondco.de/Laravel%20Feeds.png?pattern=topography&style=style_2&fontSize=100px&md=1&showWatermark=1&theme=dark&packageManager=composer+require&packageName=dragon-code%2Flaravel-feeds&description=Fast+export+of+large+datasets+to+feeds+for+marketplaces+and+services&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg">
+    <img src="https://banners.beyondco.de/Laravel%20Feeds.png?pattern=topography&style=style_2&fontSize=100px&md=1&showWatermark=1&theme=light&packageManager=composer+require&packageName=dragon-code%2Flaravel-feeds&description=Fast+export+of+large+datasets+to+feeds+for+marketplaces+and+services&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg" alt="Laravel Feeds">
 </picture>
 
 [![Stable Version][badge_stable]][link_packagist]
