@@ -21,9 +21,7 @@ class TransformerService
         return $value;
     }
 
-    /**
-     * @return \DragonCode\LaravelFeed\Contracts\Transformer[]
-     */
+    /** @return \DragonCode\LaravelFeed\Contracts\Transformer[] */
     protected function transformers(array $transformers): array
     {
         return (new Collection(config('feeds.transformers')))

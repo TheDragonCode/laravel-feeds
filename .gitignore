@@ -2,6 +2,7 @@
 .idea/
 .junie/
 .vscode/
+.ai/mcp
 
 _site/
 build/

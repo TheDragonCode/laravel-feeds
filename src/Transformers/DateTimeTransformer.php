@@ -17,9 +17,7 @@ class DateTimeTransformer implements Transformer
         return $value instanceof DateTimeInterface;
     }
 
-    /**
-     * @param  DateTimeInterface  $value
-     */
+    /** @param  DateTimeInterface  $value */
     public function transform(mixed $value): string
     {
         return $this->resolve($value)
