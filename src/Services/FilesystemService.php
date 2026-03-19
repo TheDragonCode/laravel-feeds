@@ -28,9 +28,7 @@ class FilesystemService
         protected File $file,
     ) {}
 
-    /**
-     * @return resource
-     */
+    /** @return resource */
     public function createDraft(string $filename) // @pest-ignore-type
     {
         $temp = $this->draftPath($filename);
@@ -52,9 +50,7 @@ class FilesystemService
         }
     }
 
-    /**
-     * @param  resource  $resource
-     */
+    /** @param  resource  $resource */
     public function append($resource, string $content, string $path): void // @pest-ignore-type
     {
         if (fwrite($resource, $content) === false) {
@@ -64,9 +60,7 @@ class FilesystemService
         }
     }
 
-    /**
-     * @param  resource  $resource
-     */
+    /** @param  resource  $resource */
     public function release($resource, string $path): void // @pest-ignore-type
     {
         try {
@@ -92,9 +86,7 @@ class FilesystemService
         // @codeCoverageIgnoreEnd
     }
 
-    /**
-     * @param  resource  $resource
-     */
+    /** @param  resource  $resource */
     public function close($resource): void // @pest-ignore-type
     {
         if (! is_resource($resource)) {
@@ -130,9 +122,7 @@ class FilesystemService
             ->toString();
     }
 
-    /**
-     * @param  resource  $file
-     */
+    /** @param  resource  $file */
     protected function getMetaPath($file): string // @pest-ignore-type
     {
         $meta = stream_get_meta_data($file);

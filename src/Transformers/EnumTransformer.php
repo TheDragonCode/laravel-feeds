@@ -15,9 +15,7 @@ class EnumTransformer implements Transformer
         return $value instanceof UnitEnum;
     }
 
-    /**
-     * @param  UnitEnum|BackedEnum  $value
-     */
+    /** @param  UnitEnum|BackedEnum  $value */
     public function transform(mixed $value): string
     {
         return (string) ($value?->value ?? $value->name);

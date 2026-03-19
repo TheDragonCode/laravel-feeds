@@ -13,9 +13,7 @@ class FeedGenerationException extends RuntimeException
     /** @var class-string<Feed> */
     public readonly string $feed;
 
-    /**
-     * @param  class-string<Feed>  $feed
-     */
+    /** @param  class-string<Feed>  $feed */
     public function __construct(string $feed, Throwable $e)
     {
         parent::__construct($e->getMessage(), previous: $e);
@@ -23,9 +21,7 @@ class FeedGenerationException extends RuntimeException
         $this->feed = $feed;
     }
 
-    /**
-     * @return class-string<Feed>
-     */
+    /** @return class-string<Feed> */
     public function getFeed(): string
     {
         return $this->feed;

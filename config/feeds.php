@@ -20,9 +20,7 @@ return [
      */
     'pretty' => (bool) env('FEED_PRETTY', false),
 
-    /**
-     * Output date/time options.
-     */
+    /** Output date/time options. */
     'date' => [
         /**
          * Date/time format used when serializing timestamps to feeds.
@@ -30,15 +28,11 @@ return [
          */
         'format' => DATE_ATOM,
 
-        /**
-         * The timezone applied when formatting dates.
-         */
+        /** The timezone applied when formatting dates. */
         'timezone' => env('FEED_TIMEZONE', 'UTC'),
     ],
 
-    /**
-     * Database table settings used by the package (for logs or internal state).
-     */
+    /** Database table settings used by the package (for logs or internal state). */
     'table' => [
         /**
          * The database connection name to use.
@@ -46,15 +40,11 @@ return [
          */
         'connection' => env('DB_CONNECTION', 'sqlite'),
 
-        /**
-         * The database table name used by the package.
-         */
+        /** The database table name used by the package. */
         'table' => env('FEED_TABLE', 'feeds'),
     ],
 
-    /**
-     * Scheduling options for feed generation/update tasks.
-     */
+    /** Scheduling options for feed generation/update tasks. */
     'schedule' => [
         /**
          * Time-to-live (in minutes) for the schedule lock or cache.
@@ -69,13 +59,9 @@ return [
         'background' => (bool) env('FEED_SCHEDULE_RUN_BACKGROUND', true),
     ],
 
-    /**
-     * Console display options.
-     */
+    /** Console display options. */
     'console' => [
-        /**
-         * Show a progress bar when generating feeds in the console.
-         */
+        /** Show a progress bar when generating feeds in the console. */
         'progress_bar' => (bool) env('FEED_CONSOLE_PROGRESS_BAR_ENABLED', false),
     ],
 
@@ -101,9 +87,7 @@ return [
      */
     'converters' => [
         'json' => [
-            /**
-             * JSON encoding flags used when exporting feeds to JSON.
-             */
+            /** JSON encoding flags used when exporting feeds to JSON. */
             'options' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
         ],
 
@@ -116,12 +100,8 @@ return [
         ],
 
         'csv' => [
-            /**
-             * CSV specific options applied when exporting feeds in CSV format.
-             */
-            /**
-             * The delimiter used to separate values. Common values are "," or ";".
-             */
+            /** CSV specific options applied when exporting feeds in CSV format. */
+            /** The delimiter used to separate values. Common values are "," or ";". */
             'delimiter' => ';',
         ],
     ],
