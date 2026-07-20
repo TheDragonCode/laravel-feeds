@@ -145,8 +145,8 @@ class ExportService
         }
 
         if ($force || $whenRecords) {
-            $this->records = 0;
             $this->releaseFile();
+            $this->records = 0;
         }
     }
 
@@ -172,7 +172,7 @@ class ExportService
             return;
         }
 
-        value($this->closeFile, $this->resource, $this->fileIndex);
+        value($this->closeFile, $this->resource, $this->fileIndex, $this->records);
 
         $this->resource = null;
 

@@ -6,6 +6,7 @@ namespace DragonCode\LaravelFeed\Services;
 
 use Closure;
 use DragonCode\LaravelFeed\Converters\Converter;
+use DragonCode\LaravelFeed\Data\GenerationResultData;
 use DragonCode\LaravelFeed\Events\FeedFinishedEvent;
 use DragonCode\LaravelFeed\Events\FeedStartingEvent;
 use DragonCode\LaravelFeed\Exceptions\FeedGenerationException;
@@ -14,8 +15,10 @@ use DragonCode\LaravelFeed\Helpers\ConverterHelper;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Model;
+use RuntimeException;
 use Throwable;
 
+use function array_keys;
 use function blank;
 use function count;
 use function event;
@@ -30,7 +33,7 @@ class GeneratorService
         protected FeedQuery $query,
     ) {}
 
-    public function feed(Feed $feed, ?OutputStyle $output = null): void
+    public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData
     {
         $class = get_class($feed);
         $path  = $feed->path();
@@ -43,35 +46,47 @@ class GeneratorService
         try {
             $this->started($feed);
 
-            $this->filesystem->publish($path, function (string $staging) use ($feed, $output) {
+            $result = null;
+
+            $this->filesystem->publish($path, function (string $staging) use ($feed, $output, &$result) {
                 $this->debug($output, 'Publication lock acquired and staging created.', [
                     'feed'    => get_class($feed),
                     'staging' => $staging,
                 ]);
 
-                $drafts = $this->export($feed, $output, $this->filesystem, $staging);
+                $drafts = [];
+                $result = $this->export($feed, $output, $this->filesystem, $staging, $drafts);
 
                 $this->debug($output, 'All feed parts staged.', [
-                    'feed'  => get_class($feed),
-                    'parts' => count($drafts),
+                    'feed'    => get_class($feed),
+                    'parts'   => count($result->paths),
+                    'paths'   => $result->paths,
+                    'records' => $result->records,
                 ]);
 
                 return $drafts;
             });
 
+            if (! $result instanceof GenerationResultData) {
+                throw new RuntimeException('Feed generation did not produce a result.');
+            }
+
             $this->debug($output, 'Publication committed.', [
-                'feed' => $class,
-                'path' => $path,
+                'feed'  => $class,
+                'paths' => $result->paths,
             ]);
 
             $this->setLastActivity($feed);
 
-            $this->finished($feed, $path);
+            $this->finished($feed, $result);
 
             $this->debug($output, 'Generation finished.', [
-                'feed' => $class,
-                'path' => $path,
+                'feed'    => $class,
+                'paths'   => $result->paths,
+                'records' => $result->records,
             ]);
+
+            return $result;
         } catch (Throwable $e) {
             $this->debug($output, 'Generation failed.', [
                 'feed'      => $class,
@@ -88,15 +103,16 @@ class GeneratorService
         Feed $feed,
         ?OutputStyle $output,
         FilesystemService $filesystem,
-        string $staging
-    ): array {
-        $drafts    = [];
+        string $staging,
+        array &$drafts,
+    ): GenerationResultData {
+        $records   = [];
         $converter = $this->converter($feed);
 
         (new ExportService($feed, $filesystem, $output))
             ->file(
                 create: $this->createFile($feed, $staging, $converter),
-                close : $this->closeFile($feed, $drafts, $converter)
+                close : $this->closeFile($feed, $drafts, $records, $converter)
             )
             ->item(fn (Model $model, bool $last) => $converter->item(
                 item  : $feed->item($model),
@@ -106,7 +122,10 @@ class GeneratorService
             ->chunk($feed->chunkSize())
             ->export();
 
-        return $drafts;
+        return new GenerationResultData(
+            paths  : array_keys($drafts),
+            records: $records,
+        );
     }
 
     protected function createFile(Feed $feed, string $staging, Converter $converter): Closure
@@ -129,12 +148,15 @@ class GeneratorService
         };
     }
 
-    protected function closeFile(Feed $feed, array &$drafts, Converter $converter): Closure
+    protected function closeFile(Feed $feed, array &$drafts, array &$records, Converter $converter): Closure
     {
-        return function ($file, int $index) use ($feed, &$drafts, $converter) {
+        return function ($file, int $index, int $count) use ($feed, &$drafts, &$records, $converter) {
             $this->performFooter($file, $feed, $converter);
 
-            $drafts[$feed->path($index)] = $this->filesystem->finishDraft($file);
+            $path = $feed->path($index);
+
+            $drafts[$path]  = $this->filesystem->finishDraft($file);
+            $records[$path] = $count;
         };
     }
 
@@ -220,8 +242,8 @@ class GeneratorService
         event(new FeedStartingEvent(get_class($feed)));
     }
 
-    protected function finished(Feed $feed, string $path): void
+    protected function finished(Feed $feed, GenerationResultData $result): void
     {
-        event(new FeedFinishedEvent(get_class($feed), $path));
+        event(new FeedFinishedEvent(get_class($feed), $result->paths[0], $result->paths));
     }
 }
