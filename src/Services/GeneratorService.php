@@ -46,16 +46,17 @@ class GeneratorService
         try {
             $this->started($feed);
 
-            $result = null;
+            $converter = $this->converter($feed);
+            $result    = null;
 
-            $this->filesystem->publish($path, function (string $staging) use ($feed, $output, &$result) {
+            $this->filesystem->publish($path, function (string $staging) use ($feed, $output, $converter, &$result) {
                 $this->debug($output, 'Publication lock acquired and staging created.', [
                     'feed'    => get_class($feed),
                     'staging' => $staging,
                 ]);
 
                 $drafts = [];
-                $result = $this->export($feed, $output, $this->filesystem, $staging, $drafts);
+                $result = $this->export($feed, $output, $this->filesystem, $staging, $drafts, $converter);
 
                 $this->debug($output, 'All feed parts staged.', [
                     'feed'    => get_class($feed),
@@ -105,9 +106,9 @@ class GeneratorService
         FilesystemService $filesystem,
         string $staging,
         array &$drafts,
+        Converter $converter,
     ): GenerationResultData {
-        $records   = [];
-        $converter = $this->converter($feed);
+        $records = [];
 
         (new ExportService($feed, $filesystem, $output))
             ->file(

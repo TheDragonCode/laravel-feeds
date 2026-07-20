@@ -6,9 +6,9 @@
         xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
         title="Extending functionality" id="extending-functionality">
 
-    <link-summary>Extend feeds using conditional clauses and macros for Feed, FeedItem, and FeedInfo.</link-summary>
-    <card-summary>Extend feeds using conditional clauses and macros for Feed, FeedItem, and FeedInfo.</card-summary>
-    <web-summary>Extend feeds using conditional clauses and macros for Feed, FeedItem, and FeedInfo.</web-summary>
+    <link-summary>Extend feeds with conditional clauses, macros, and custom transformers.</link-summary>
+    <card-summary>Extend feeds with conditional clauses, macros, and custom transformers.</card-summary>
+    <web-summary>Extend feeds with conditional clauses, macros, and custom transformers.</web-summary>
 
     <show-structure depth="3" />
 
@@ -70,5 +70,33 @@
 
         <code-block lang="php" src="advanced-extends-macro-info.php" include-lines="5-" />
         <code-block lang="php" src="advanced-extends-macro-item.php" include-lines="5-" />
+    </chapter>
+
+    <chapter title="Custom transformers" id="custom_transformers">
+        <p>
+            A transformer converts a supported value before the converter serializes it. Register transformer class
+            names in <path>config/feeds.php</path>. Laravel resolves each class through the service container, so
+            constructor dependencies and custom container bindings are supported.
+        </p>
+
+        <code-block lang="php" src="advanced-extends-transformer.php" include-lines="5-" />
+
+        <p>
+            Add the transformer to the configured list after the built-in transformers:
+        </p>
+
+        <code-block lang="php" src="advanced-extends-transformer-config.php" />
+
+        <p>
+            The configured transformers run in declaration order. Converter-specific transformers are appended after
+            the configured list. Each <code>allow()</code> call receives the current value, including changes made by
+            earlier transformers, and every matching transformer may update it. Duplicate entries are removed after
+            container resolution while the first occurrence keeps its position.
+        </p>
+
+        <p>
+            A converter builds this ordered pipeline once and reuses the same transformer instances for every field
+            in that feed generation.
+        </p>
     </chapter>
 </topic>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Converters;
 
+use Closure;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Services\TransformerService;
@@ -12,6 +13,8 @@ use Illuminate\Container\Attributes\Config;
 abstract class Converter
 {
     protected array $transformers = [];
+
+    protected ?Closure $transformerPipeline = null;
 
     public function __construct(
         #[Config('feeds.pretty')]
@@ -36,6 +39,6 @@ abstract class Converter
 
     protected function transformValue(mixed $value): bool|float|int|string|null
     {
-        return $this->transformer->transform($value, $this->transformers);
+        return ($this->transformerPipeline ??= $this->transformer->pipeline($this->transformers))($value);
     }
 }
