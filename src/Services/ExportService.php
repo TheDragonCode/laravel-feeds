@@ -48,6 +48,8 @@ class ExportService
 
     protected bool $fileCreated = false;
 
+    protected string $lineEnding = PHP_EOL;
+
     public function __construct(
         protected Feed $feed,
         protected FilesystemService $filesystem,
@@ -87,6 +89,13 @@ class ExportService
     public function item(Closure $callback): static
     {
         $this->item = $callback;
+
+        return $this;
+    }
+
+    public function lineEnding(string $lineEnding): static
+    {
+        $this->lineEnding = $lineEnding;
 
         return $this;
     }
@@ -175,7 +184,7 @@ class ExportService
     protected function append(string $content): void
     {
         if ($this->records > 1) {
-            $content = PHP_EOL . $content;
+            $content = $this->lineEnding . $content;
         }
 
         $this->filesystem->append($this->getFile(), $content, $this->feed->path());

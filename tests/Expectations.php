@@ -65,18 +65,55 @@ expect()->extend('toBeJsonLines', function () {
 });
 
 expect()->extend('toBeCsv', function () {
-    $delimiter = config('feeds.converters.csv.delimiter');
+    $rows = parseCsv($this->value);
 
-    foreach (explode("\n", $this->value) as $line) {
-        expect($line)->toContain($delimiter);
+    expect($rows)->not->toBeEmpty();
 
-        expect(
-            explode($delimiter, $line)
-        )->toBeArray()->not->toBeEmpty();
+    $columns = count($rows[0]);
+
+    foreach ($rows as $row) {
+        expect($row)->toHaveCount($columns);
     }
 
     return $this;
 });
+
+function parseCsv(string $content): array
+{
+    $stream = fopen('php://temp', 'w+b');
+
+    if ($stream === false) {
+        throw new RuntimeException('Unable to create a temporary CSV test stream.');
+    }
+
+    try {
+        $written = fwrite($stream, $content);
+
+        if ($written === false || $written !== strlen($content)) {
+            throw new RuntimeException('Unable to write CSV content to the temporary test stream.');
+        }
+
+        if (! rewind($stream)) {
+            throw new RuntimeException('Unable to rewind the temporary CSV test stream.');
+        }
+
+        $rows = [];
+
+        while (($row = fgetcsv(
+            $stream,
+            null,
+            config('feeds.converters.csv.delimiter', ';'),
+            config('feeds.converters.csv.enclosure', '"'),
+            config('feeds.converters.csv.escape', '')
+        )) !== false) {
+            $rows[] = $row;
+        }
+
+        return $rows;
+    } finally {
+        fclose($stream);
+    }
+}
 
 expect()->extend('toBeRss', function () {
     // expect($this->value)->toContain('<rss version="2.0"');

@@ -90,33 +90,35 @@ class GeneratorService
         FilesystemService $filesystem,
         string $staging
     ): array {
-        $drafts = [];
+        $drafts    = [];
+        $converter = $this->converter($feed);
 
         (new ExportService($feed, $filesystem, $output))
             ->file(
-                create: $this->createFile($feed, $staging),
-                close : $this->closeFile($feed, $drafts)
+                create: $this->createFile($feed, $staging, $converter),
+                close : $this->closeFile($feed, $drafts, $converter)
             )
-            ->item(fn (Model $model, bool $last) => $this->converter($feed)->item(
+            ->item(fn (Model $model, bool $last) => $converter->item(
                 item  : $feed->item($model),
                 isLast: $last
             ))
+            ->lineEnding($converter->lineEnding())
             ->chunk($feed->chunkSize())
             ->export();
 
         return $drafts;
     }
 
-    protected function createFile(Feed $feed, string $staging): Closure
+    protected function createFile(Feed $feed, string $staging, Converter $converter): Closure
     {
-        return function () use ($feed, $staging) {
+        return function () use ($feed, $staging, $converter) {
             $file = $this->createDraft($feed->filename(), $staging);
 
             try {
-                $this->performHeader($file, $feed);
-                $this->performRoot($file, $feed, true);
-                $this->performInfo($file, $feed);
-                $this->performRoot($file, $feed, false);
+                $this->performHeader($file, $feed, $converter);
+                $this->performRoot($file, $feed, $converter, true);
+                $this->performInfo($file, $feed, $converter);
+                $this->performRoot($file, $feed, $converter, false);
 
                 return $file;
             } catch (Throwable $e) {
@@ -127,10 +129,10 @@ class GeneratorService
         };
     }
 
-    protected function closeFile(Feed $feed, array &$drafts): Closure
+    protected function closeFile(Feed $feed, array &$drafts, Converter $converter): Closure
     {
-        return function ($file, int $index) use ($feed, &$drafts) {
-            $this->performFooter($file, $feed);
+        return function ($file, int $index) use ($feed, &$drafts, $converter) {
+            $this->performFooter($file, $feed, $converter);
 
             $drafts[$feed->path($index)] = $this->filesystem->finishDraft($file);
         };
@@ -145,25 +147,25 @@ class GeneratorService
         $output->writeln('[laravel-feeds] ' . $message . ' ' . json_encode($context));
     }
 
-    protected function performHeader($file, Feed $feed): void // @pest-ignore-type
+    protected function performHeader($file, Feed $feed, Converter $converter): void // @pest-ignore-type
     {
-        $value = $this->converter($feed)->header($feed);
+        $value = $converter->header($feed);
 
         $this->append($file, $value, $feed->path());
     }
 
-    protected function performInfo($file, Feed $feed): void // @pest-ignore-type
+    protected function performInfo($file, Feed $feed, Converter $converter): void // @pest-ignore-type
     {
         if (blank($info = $feed->info()->toArray())) {
             return;
         }
 
-        $value = $this->converter($feed)->info($info, $feed->root()->beforeInfo);
+        $value = $converter->info($info, $feed->root()->beforeInfo);
 
-        $this->append($file, $value . PHP_EOL, $feed->path());
+        $this->append($file, $value . $converter->lineEnding(), $feed->path());
     }
 
-    protected function performRoot($file, Feed $feed, bool $when): void // @pest-ignore-type
+    protected function performRoot($file, Feed $feed, Converter $converter, bool $when): void // @pest-ignore-type
     {
         if ($feed->root()->beforeInfo !== $when) {
             return;
@@ -173,14 +175,14 @@ class GeneratorService
             return;
         }
 
-        $value = $this->converter($feed)->root($feed);
+        $value = $converter->root($feed);
 
         $this->append($file, $value, $feed->path());
     }
 
-    protected function performFooter($file, Feed $feed): void // @pest-ignore-type
+    protected function performFooter($file, Feed $feed, Converter $converter): void // @pest-ignore-type
     {
-        $value = $this->converter($feed)->footer($feed);
+        $value = $converter->footer($feed);
 
         $this->append($file, $value, $feed->path());
     }

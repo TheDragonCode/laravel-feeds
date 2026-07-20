@@ -14,6 +14,7 @@ class CsvFeedInfo extends FeedInfo
             'id',
             'title',
             'content',
+            'category',
             'created_at',
             'updated_at',
         ];

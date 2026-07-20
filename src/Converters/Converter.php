@@ -29,6 +29,11 @@ abstract class Converter
 
     abstract public function info(array $info, bool $afterRoot): string;
 
+    public function lineEnding(): string
+    {
+        return PHP_EOL;
+    }
+
     protected function transformValue(mixed $value): bool|float|int|string|null
     {
         return $this->transformer->transform($value, $this->transformers);
