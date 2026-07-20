@@ -55,3 +55,109 @@ test('writes each serialized item immediately', function () {
         PHP_EOL . 'item-3',
     ]);
 });
+
+test('respects split capacity', function (
+    int $modelCount,
+    array $expectedItems,
+    array $expectedFiles,
+) {
+    $models = LazyCollection::make(function () use ($modelCount) {
+        foreach (range(1, $modelCount) as $id) {
+            $model = mock(Model::class);
+            $model->shouldReceive('getKey')->andReturn($id);
+
+            yield $model;
+        }
+    });
+
+    $builder = mock(Builder::class);
+    $builder->shouldReceive('count')->once()->andReturn($modelCount);
+    $builder->shouldReceive('lazyById')->once()->with(2)->andReturn($models);
+
+    $feed = mock(Feed::class);
+    $feed->shouldReceive('perFile')->once()->andReturn(2);
+    $feed->shouldReceive('maxFiles')->once()->andReturn(3);
+    $feed->shouldReceive('builder')->twice()->andReturn($builder);
+    $feed->shouldReceive('path')->times(count($expectedItems))->andReturn('feed.json');
+
+    $filesystem = mock(FilesystemService::class);
+    $filesystem->shouldReceive('append')->times(count($expectedItems));
+
+    $items = [];
+    $files = [];
+
+    (new ExportService($feed, $filesystem, null))
+        ->file(
+            create: fn () => fopen('php://memory', 'wb'),
+            close : function ($file, int $index) use (&$files) {
+                $files[] = $index;
+
+                fclose($file);
+            }
+        )
+        ->item(function (Model $model, bool $isLast) use (&$items) {
+            $items[] = [$model->getKey(), $isLast];
+
+            return 'item-' . $model->getKey();
+        })
+        ->chunk(2)
+        ->export();
+
+    expect($items)
+        ->toBe($expectedItems)
+        ->and($files)
+        ->toBe($expectedFiles);
+})->with([
+    'single file' => [
+        2,
+        [[1, false], [2, true]],
+        [0],
+    ],
+    'partial final file' => [
+        3,
+        [[1, false], [2, true], [3, true]],
+        [1, 2],
+    ],
+    'exact capacity' => [
+        6,
+        [[1, false], [2, true], [3, false], [4, true], [5, false], [6, true]],
+        [1, 2, 3],
+    ],
+    'over capacity' => [
+        10,
+        [[1, false], [2, true], [3, false], [4, true], [5, false], [6, true]],
+        [1, 2, 3],
+    ],
+]);
+
+test('rejects a negative per-file limit', function () {
+    $feed = mock(Feed::class);
+    $feed->shouldReceive('perFile')->once()->andReturn(-1);
+
+    expect(fn () => new ExportService($feed, mock(FilesystemService::class), null))
+        ->toThrow(InvalidArgumentException::class);
+});
+
+test('rejects a negative file limit', function () {
+    $feed = mock(Feed::class);
+    $feed->shouldReceive('perFile')->once()->andReturn(1);
+    $feed->shouldReceive('maxFiles')->once()->andReturn(-1);
+
+    expect(fn () => new ExportService($feed, mock(FilesystemService::class), null))
+        ->toThrow(InvalidArgumentException::class);
+});
+
+test('rejects a non-positive chunk size', function (int $chunk) {
+    $builder = mock(Builder::class);
+    $builder->shouldReceive('count')->once()->andReturn(1);
+
+    $feed = mock(Feed::class);
+    $feed->shouldReceive('perFile')->once()->andReturn(1);
+    $feed->shouldReceive('maxFiles')->once()->andReturn(0);
+    $feed->shouldReceive('builder')->once()->andReturn($builder);
+
+    $service = new ExportService($feed, mock(FilesystemService::class), null);
+
+    expect(fn () => $service->chunk($chunk))
+        ->toThrow(InvalidArgumentException::class);
+})->with([0, -1]);
