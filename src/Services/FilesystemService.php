@@ -9,7 +9,6 @@ use DragonCode\LaravelFeed\Exceptions\OpenFeedException;
 use DragonCode\LaravelFeed\Exceptions\ResourceMetaException;
 use DragonCode\LaravelFeed\Exceptions\WriteFeedException;
 use Illuminate\Filesystem\Filesystem as File;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use RuntimeException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
@@ -59,42 +58,16 @@ class FilesystemService
         $expectedBytes = strlen($content);
         $writtenBytes  = 0;
 
-        Log::debug('[FIX:160] Feed write started', [
-            'path'           => $path,
-            'expected_bytes' => $expectedBytes,
-        ]);
-
         while ($writtenBytes < $expectedBytes) {
             $buffer = $writtenBytes === 0 ? $content : substr($content, $writtenBytes);
             $bytes  = fwrite($resource, $buffer);
 
             if ($bytes === false || $bytes === 0) {
-                Log::error('[FIX:160] Feed write failed', [
-                    'path'           => $path,
-                    'written_bytes'  => $writtenBytes,
-                    'expected_bytes' => $expectedBytes,
-                    'write_result'   => $bytes,
-                ]);
-
                 throw new WriteFeedException($path, $writtenBytes, $expectedBytes);
             }
 
             $writtenBytes += $bytes;
-
-            if ($writtenBytes < $expectedBytes) {
-                Log::debug('[FIX:160] Partial feed write', [
-                    'path'           => $path,
-                    'written_bytes'  => $writtenBytes,
-                    'expected_bytes' => $expectedBytes,
-                ]);
-            }
         }
-
-        Log::debug('[FIX:160] Feed write completed', [
-            'path'           => $path,
-            'written_bytes'  => $writtenBytes,
-            'expected_bytes' => $expectedBytes,
-        ]);
     }
 
     /** @param  resource  $resource */
