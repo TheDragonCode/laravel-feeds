@@ -6,13 +6,18 @@ use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use DragonCode\LaravelFeed\Events\FeedFinishedEvent;
 use DragonCode\LaravelFeed\Exceptions\FeedGenerationException;
 use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Models\Feed as FeedModel;
 use DragonCode\LaravelFeed\Services\GeneratorService;
+use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Event;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 use Workbench\App\Data\NewsFakeData;
 use Workbench\App\Models\News;
 
@@ -54,6 +59,28 @@ final class PublicationSafetyFeedItem extends FeedItem
         }
 
         return parent::toArray();
+    }
+}
+
+final class InvalidCsvInfoFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return News::query();
+    }
+
+    public function info(): FeedInfo
+    {
+        return new class extends FeedInfo {
+            public function toArray(): array
+            {
+                return [
+                    'meta' => ['nested'],
+                ];
+            }
+        };
     }
 }
 
@@ -101,10 +128,12 @@ beforeEach(function () {
     PublicationSafetyFeed::$failOnId = null;
 
     cleanupPublicationSafety(app(PublicationSafetyFeed::class));
+    cleanupPublicationSafety(app(InvalidCsvInfoFeed::class));
 });
 
 afterEach(function () {
     cleanupPublicationSafety(app(PublicationSafetyFeed::class));
+    cleanupPublicationSafety(app(InvalidCsvInfoFeed::class));
 });
 
 test('keeps every published part unchanged when a later split conversion fails', function () {
@@ -144,6 +173,28 @@ test('keeps every published part unchanged when a later split conversion fails',
         ->toBe([]);
 
     Event::assertNotDispatched(FeedFinishedEvent::class);
+});
+
+test('closes an invalid CSV info draft and reports debug context', function () {
+    $feed   = app(InvalidCsvInfoFeed::class);
+    $buffer = new BufferedOutput(OutputInterface::VERBOSITY_DEBUG);
+    $output = new OutputStyle(new ArrayInput([]), $buffer);
+
+    expect(fn () => app(GeneratorService::class)->feed($feed, $output))
+        ->toThrow(
+            FeedGenerationException::class,
+            'CSV column [meta] contains a nested value. Nested arrays are not supported.'
+        );
+
+    $debug = $buffer->fetch();
+
+    expect($feed->path())
+        ->not->toBeFile()
+        ->and(publicationSafetyArtifacts($feed))
+        ->toBe([])
+        ->and($debug)
+        ->toContain('[laravel-feeds] Generation failed.')
+        ->toContain('InvalidCsvValueException');
 });
 
 test('publishes one part and removes only obsolete numeric parts', function () {

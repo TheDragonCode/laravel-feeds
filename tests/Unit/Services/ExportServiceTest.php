@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\LazyCollection;
 
-test('writes each serialized item immediately', function () {
+test('writes each serialized item immediately', function (string $lineEnding) {
     $models = LazyCollection::make(function () {
         foreach (range(1, 3) as $id) {
             $model = mock(Model::class);
@@ -46,15 +46,16 @@ test('writes each serialized item immediately', function () {
             close : fn ($file) => fclose($file)
         )
         ->item(fn (Model $model) => 'item-' . $model->getKey())
+        ->lineEnding($lineEnding)
         ->chunk(2)
         ->export();
 
     expect($writes)->toBe([
         'item-1',
-        PHP_EOL . 'item-2',
-        PHP_EOL . 'item-3',
+        $lineEnding . 'item-2',
+        $lineEnding . 'item-3',
     ]);
-});
+})->with([PHP_EOL, '<EOL>']);
 
 test('respects split capacity', function (
     int $modelCount,
