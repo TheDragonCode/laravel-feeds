@@ -6,17 +6,22 @@ namespace DragonCode\LaravelFeed\Converters;
 
 use DOMDocument;
 use DOMNode;
-use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Exceptions\InvalidXmlCDataException;
+use DragonCode\LaravelFeed\Exceptions\InvalidXmlFragmentException;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Services\TransformerService;
 use DragonCode\LaravelFeed\Transformers\SpecialCharsTransformer;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Str;
+use Throwable;
 
-use function collect;
+use function array_slice;
+use function count;
 use function is_array;
-use function sprintf;
+use function libxml_clear_errors;
+use function libxml_get_errors;
+use function libxml_use_internal_errors;
 use function str_replace;
 use function str_starts_with;
 use function trim;
@@ -64,9 +69,19 @@ class XmlConverter extends Converter
 
     public function root(Feed $feed): string
     {
-        return ! empty($feed->root()->attributes)
-            ? sprintf("<%s %s>\n\n", $feed->root()->name, $this->rootAttributes($feed->root()))
-            : sprintf("<%s>\n\n", $feed->root()->name);
+        $root = $feed->root();
+
+        if (! $root->name) {
+            return '';
+        }
+
+        $element = $this->createElement($root->name);
+
+        if ($root->attributes) {
+            $this->setAttributes($element, $root->attributes);
+        }
+
+        return Str::replaceEnd('/>', ">\n\n", $this->encode($element));
     }
 
     public function item(FeedItem $item, bool $isLast): string
@@ -141,7 +156,11 @@ class XmlConverter extends Converter
 
     protected function createElement(string $name, mixed $value = ''): DOMNode
     {
-        return $this->document->createElement($name, (string) $this->transformValue($value));
+        $element = $this->document->createElement($name);
+
+        $this->appendText($element, $value);
+
+        return $element;
     }
 
     protected function setAttributes(DOMNode $element, array $attributes): void
@@ -153,15 +172,43 @@ class XmlConverter extends Converter
 
     protected function setCData(DOMNode $element, string $value): void
     {
-        $element->appendChild(
-            $this->document->createCDATASection($value)
-        );
+        try {
+            $section = $this->document->createCDATASection($value);
+        } catch (Throwable $exception) {
+            throw new InvalidXmlCDataException($exception);
+        }
+
+        if ($section === false) {
+            throw new InvalidXmlCDataException;
+        }
+
+        $element->appendChild($section);
     }
 
     protected function setMixed(DOMNode $element, string $value): void
     {
-        $fragment = $this->document->createDocumentFragment();
-        $fragment->appendXML($value);
+        $fragment       = $this->document->createDocumentFragment();
+        $internalErrors = libxml_use_internal_errors(true);
+        $errorCount     = count(libxml_get_errors());
+        $reason         = null;
+
+        try {
+            $appended = $fragment->appendXML($value);
+            $errors   = array_slice(libxml_get_errors(), $errorCount);
+            $reason   = isset($errors[0]) ? trim($errors[0]->message) : null;
+        } catch (Throwable $exception) {
+            throw new InvalidXmlFragmentException(previous: $exception);
+        } finally {
+            if (! $internalErrors) {
+                libxml_clear_errors();
+            }
+
+            libxml_use_internal_errors($internalErrors);
+        }
+
+        if (! $appended) {
+            throw new InvalidXmlFragmentException($reason);
+        }
 
         $element->appendChild($fragment);
     }
@@ -188,14 +235,24 @@ class XmlConverter extends Converter
 
     protected function setRaw(DOMNode $parent, mixed $value): void
     {
-        $parent->nodeValue = (string) $this->transformValue($value);
+        while ($parent->firstChild) {
+            $parent->removeChild($parent->firstChild);
+        }
+
+        $this->appendText($parent, $value);
     }
 
-    protected function rootAttributes(ElementData $item): string
+    protected function appendText(DOMNode $parent, mixed $value): void
     {
-        return collect($item->attributes)
-            ->map(fn (mixed $value, int|string $key) => sprintf('%s="%s"', $key, $value))
-            ->implode(' ');
+        $value = (string) $this->transformValue($value);
+
+        if ($value === '') {
+            return;
+        }
+
+        $parent->appendChild(
+            $this->document->createTextNode($value)
+        );
     }
 
     protected function encode(DOMNode $item): string

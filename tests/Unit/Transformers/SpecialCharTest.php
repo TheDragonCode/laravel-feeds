@@ -10,12 +10,12 @@ test('allows any scalar or null value', function (mixed $value) {
     expect($transformer->allow($value))->toBeTrue();
 })->with('special chars allow');
 
-test('escapes HTML special characters', function () {
+test('preserves XML special characters', function () {
     $transformer = new SpecialCharsTransformer;
 
     $value = '<b>Tom & "Jerry"\'</b>';
 
-    expect($transformer->transform($value))->toBe('&lt;b&gt;Tom &amp; &quot;Jerry&quot;&#039;&lt;/b&gt;');
+    expect($transformer->transform($value))->toBe($value);
 });
 
 test('removes ASCII control characters', function () {
@@ -26,10 +26,10 @@ test('removes ASCII control characters', function () {
     expect($transformer->transform($value))->toBe('Hello World!');
 });
 
-test('preserves multibyte characters and encodes HTML brackets', function () {
+test('preserves multibyte characters and XML brackets', function () {
     $transformer = new SpecialCharsTransformer;
 
     $value = 'Привет, мир 😀 <tag>';
 
-    expect($transformer->transform($value))->toBe('Привет, мир 😀 &lt;tag&gt;');
+    expect($transformer->transform($value))->toBe($value);
 });

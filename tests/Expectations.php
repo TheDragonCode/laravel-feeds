@@ -115,11 +115,38 @@ function parseCsv(string $content): array
     }
 }
 
-expect()->extend('toBeRss', function () {
-    // expect($this->value)->toContain('<rss version="2.0"');
-    // expect($this->value)->toContain('<channel>');
-    // expect($this->value)->toContain('</channel>');
-    // expect($this->value)->toContain('</rss>');
+expect()->extend('toBeXml', function () {
+    parseXmlDocument($this->value);
 
     return $this;
 });
+
+expect()->extend('toBeRss', function () {
+    $document = parseXmlDocument($this->value);
+
+    expect($document->documentElement?->nodeName)->toBe('rss');
+
+    return $this;
+});
+
+function parseXmlDocument(string $content): DOMDocument
+{
+    $document       = new DOMDocument;
+    $internalErrors = libxml_use_internal_errors(true);
+
+    try {
+        $loaded = $document->loadXML($content, LIBXML_NONET);
+        $error  = libxml_get_last_error();
+    } finally {
+        libxml_clear_errors();
+        libxml_use_internal_errors($internalErrors);
+    }
+
+    if (! $loaded) {
+        $reason = $error ? trim($error->message) : 'Unknown parsing error.';
+
+        throw new RuntimeException("Invalid XML: $reason");
+    }
+
+    return $document;
+}
