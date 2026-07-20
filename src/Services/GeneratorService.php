@@ -17,8 +17,10 @@ use Illuminate\Database\Eloquent\Model;
 use Throwable;
 
 use function blank;
+use function count;
 use function event;
 use function get_class;
+use function json_encode;
 
 class GeneratorService
 {
@@ -30,25 +32,70 @@ class GeneratorService
 
     public function feed(Feed $feed, ?OutputStyle $output = null): void
     {
+        $class = get_class($feed);
+        $path  = $feed->path();
+
+        $this->debug($output, 'Generation started.', [
+            'feed' => $class,
+            'path' => $path,
+        ]);
+
         try {
             $this->started($feed);
 
-            $this->export($feed, $output, $this->filesystem);
+            $this->filesystem->publish($path, function (string $staging) use ($feed, $output) {
+                $this->debug($output, 'Publication lock acquired and staging created.', [
+                    'feed'    => get_class($feed),
+                    'staging' => $staging,
+                ]);
+
+                $drafts = $this->export($feed, $output, $this->filesystem, $staging);
+
+                $this->debug($output, 'All feed parts staged.', [
+                    'feed'  => get_class($feed),
+                    'parts' => count($drafts),
+                ]);
+
+                return $drafts;
+            });
+
+            $this->debug($output, 'Publication committed.', [
+                'feed' => $class,
+                'path' => $path,
+            ]);
 
             $this->setLastActivity($feed);
 
-            $this->finished($feed, $feed->path());
+            $this->finished($feed, $path);
+
+            $this->debug($output, 'Generation finished.', [
+                'feed' => $class,
+                'path' => $path,
+            ]);
         } catch (Throwable $e) {
-            throw new FeedGenerationException(get_class($feed), $e);
+            $this->debug($output, 'Generation failed.', [
+                'feed'      => $class,
+                'path'      => $path,
+                'exception' => get_class($e),
+                'message'   => $e->getMessage(),
+            ]);
+
+            throw new FeedGenerationException($class, $e);
         }
     }
 
-    protected function export(Feed $feed, ?OutputStyle $output, FilesystemService $filesystem): void
-    {
+    protected function export(
+        Feed $feed,
+        ?OutputStyle $output,
+        FilesystemService $filesystem,
+        string $staging
+    ): array {
+        $drafts = [];
+
         (new ExportService($feed, $filesystem, $output))
             ->file(
-                create: $this->createFile($feed),
-                close : $this->closeFile($feed)
+                create: $this->createFile($feed, $staging),
+                close : $this->closeFile($feed, $drafts)
             )
             ->item(fn (Model $model, bool $last) => $this->converter($feed)->item(
                 item  : $feed->item($model),
@@ -56,29 +103,46 @@ class GeneratorService
             ))
             ->chunk($feed->chunkSize())
             ->export();
+
+        return $drafts;
     }
 
-    protected function createFile(Feed $feed): Closure
+    protected function createFile(Feed $feed, string $staging): Closure
     {
-        return function () use ($feed) {
-            $file = $this->createDraft($feed->filename());
+        return function () use ($feed, $staging) {
+            $file = $this->createDraft($feed->filename(), $staging);
 
-            $this->performHeader($file, $feed);
-            $this->performRoot($file, $feed, true);
-            $this->performInfo($file, $feed);
-            $this->performRoot($file, $feed, false);
+            try {
+                $this->performHeader($file, $feed);
+                $this->performRoot($file, $feed, true);
+                $this->performInfo($file, $feed);
+                $this->performRoot($file, $feed, false);
 
-            return $file;
+                return $file;
+            } catch (Throwable $e) {
+                $this->filesystem->close($file);
+
+                throw $e;
+            }
         };
     }
 
-    protected function closeFile(Feed $feed): Closure
+    protected function closeFile(Feed $feed, array &$drafts): Closure
     {
-        return function ($file, int $index) use ($feed) {
+        return function ($file, int $index) use ($feed, &$drafts) {
             $this->performFooter($file, $feed);
 
-            $this->release($file, $feed->path($index));
+            $drafts[$feed->path($index)] = $this->filesystem->finishDraft($file);
         };
+    }
+
+    protected function debug(?OutputStyle $output, string $message, array $context): void
+    {
+        if (! $output?->isDebug()) {
+            return;
+        }
+
+        $output->writeln('[laravel-feeds] ' . $message . ' ' . json_encode($context));
     }
 
     protected function performHeader($file, Feed $feed): void // @pest-ignore-type
@@ -130,14 +194,9 @@ class GeneratorService
         $this->filesystem->append($file, $content, $path);
     }
 
-    protected function release($file, string $path): void // @pest-ignore-type
+    protected function createDraft(string $filename, string $staging) // @pest-ignore-type
     {
-        $this->filesystem->release($file, $path);
-    }
-
-    protected function createDraft(string $filename) // @pest-ignore-type
-    {
-        return $this->filesystem->createDraft($filename);
+        return $this->filesystem->createDraft($filename, $staging);
     }
 
     protected function setLastActivity(Feed $feed): void

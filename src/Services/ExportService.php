@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
 
+use function is_resource;
 use function min;
 use function value;
 
@@ -92,30 +93,38 @@ class ExportService
 
     public function export(): void
     {
-        $this->feed->builder()
-            ->lazyById($this->chunk)
-            ->each(function (Model $model) {
-                $this->records++;
-                $this->left--;
+        try {
+            $this->feed->builder()
+                ->lazyById($this->chunk)
+                ->each(function (Model $model) {
+                    $this->records++;
+                    $this->left--;
 
-                $this->append(
-                    value($this->item, $model, $this->isLastItem())
-                );
+                    $this->append(
+                        value($this->item, $model, $this->isLastItem())
+                    );
 
-                $this->store();
+                    $this->store();
 
-                if ($this->left <= 0) {
-                    return false;
-                }
+                    if ($this->left <= 0) {
+                        return false;
+                    }
 
-                if ($this->maxFiles && $this->writtenFiles >= $this->maxFiles) {
-                    return false;
-                }
-            });
+                    if ($this->maxFiles && $this->writtenFiles >= $this->maxFiles) {
+                        return false;
+                    }
+                });
 
-        $this->store(true);
+            $this->store(true);
 
-        $this->progressBar?->finish();
+            $this->progressBar?->finish();
+        } finally {
+            if (is_resource($this->resource)) {
+                $this->filesystem->close($this->resource);
+            }
+
+            $this->resource = null;
+        }
     }
 
     protected function store(bool $force = false): void
