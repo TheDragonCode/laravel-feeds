@@ -30,7 +30,7 @@ jobs:
                     coverage: xdebug
 
             -   name: Install dependencies
-                run: composer require --dev laravel/framework:^${{ matrix.laravel }}
+                run: composer require --no-blocking --dev laravel/framework:^${{ matrix.laravel }}
 
             -   name: Execute tests
                 run: composer test
@@ -52,7 +52,7 @@ jobs:
                     coverage: xdebug
 
             -   name: Install dependencies
-                run: composer update
+                run: composer update --no-blocking
 
             -   name: Execute tests
                 run: composer test:type
@@ -74,7 +74,7 @@ jobs:
                     coverage: xdebug
 
             -   name: Install dependencies
-                run: composer update
+                run: composer update --no-blocking
 
             -   name: Execute tests
                 run: composer test:coverage
