@@ -21,6 +21,8 @@ use function fwrite;
 use function is_resource;
 use function microtime;
 use function stream_get_meta_data;
+use function strlen;
+use function substr;
 
 class FilesystemService
 {
@@ -53,10 +55,18 @@ class FilesystemService
     /** @param  resource  $resource */
     public function append($resource, string $content, string $path): void // @pest-ignore-type
     {
-        if (fwrite($resource, $content) === false) {
-            // @codeCoverageIgnoreStart
-            throw new WriteFeedException($path);
-            // @codeCoverageIgnoreEnd
+        $expectedBytes = strlen($content);
+        $writtenBytes  = 0;
+
+        while ($writtenBytes < $expectedBytes) {
+            $buffer = $writtenBytes === 0 ? $content : substr($content, $writtenBytes);
+            $bytes  = fwrite($resource, $buffer);
+
+            if ($bytes === false || $bytes === 0) {
+                throw new WriteFeedException($path, $writtenBytes, $expectedBytes);
+            }
+
+            $writtenBytes += $bytes;
         }
     }
 

@@ -9,9 +9,17 @@ use RuntimeException;
 // @codeCoverageIgnoreStart
 class WriteFeedException extends RuntimeException
 {
-    public function __construct(string $path)
+    public function __construct(string $path, ?int $writtenBytes = null, ?int $expectedBytes = null)
     {
-        parent::__construct("Failed to write to the feed: [$path].");
+        if ($writtenBytes === null || $expectedBytes === null) {
+            parent::__construct("Failed to write to the feed: [$path].");
+
+            return;
+        }
+
+        parent::__construct(
+            "Failed to write to the feed: [$path]. Written [$writtenBytes] of [$expectedBytes] bytes."
+        );
     }
 }
 // @codeCoverageIgnoreEnd
