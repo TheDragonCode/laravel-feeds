@@ -70,6 +70,7 @@
         }
     },
     "scripts": {
+        "benchmark": "@php benchmarks/export.php",
         "post-update-cmd": [
             "@php vendor/bin/codestyle pint 8.2 --ansi",
             "@php vendor/bin/codestyle editorconfig --ansi",

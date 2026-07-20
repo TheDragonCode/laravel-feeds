@@ -11,19 +11,29 @@ use DragonCode\LaravelFeed\Converters\JsonLinesConverter;
 use DragonCode\LaravelFeed\Converters\RssConverter;
 use DragonCode\LaravelFeed\Converters\XmlConverter;
 use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
-
-use function app;
+use Illuminate\Container\Container as LaravelContainer;
+use Illuminate\Contracts\Container\Container;
 
 class ConverterHelper
 {
+    protected Container $container;
+
+    public function __construct(
+        ?Container $container = null,
+    ) {
+        $this->container = $container ?? LaravelContainer::getInstance();
+    }
+
     public function get(FeedFormatEnum $format): Converter
     {
-        return match ($format) {
-            FeedFormatEnum::Xml       => app(XmlConverter::class),
-            FeedFormatEnum::Json      => app(JsonConverter::class),
-            FeedFormatEnum::JsonLines => app(JsonLinesConverter::class),
-            FeedFormatEnum::Csv       => app(CsvConverter::class),
-            FeedFormatEnum::Rss       => app(RssConverter::class),
-        };
+        return $this->container->make(
+            match ($format) {
+                FeedFormatEnum::Xml       => XmlConverter::class,
+                FeedFormatEnum::Json      => JsonConverter::class,
+                FeedFormatEnum::JsonLines => JsonLinesConverter::class,
+                FeedFormatEnum::Csv       => CsvConverter::class,
+                FeedFormatEnum::Rss       => RssConverter::class,
+            }
+        );
     }
 }

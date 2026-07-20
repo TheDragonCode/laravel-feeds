@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
 
+use function intdiv;
 use function is_resource;
 use function min;
 use function value;
@@ -23,11 +24,11 @@ class ExportService
 
     protected readonly int $maxFiles;
 
-    protected readonly int $modelCount;
+    protected readonly ?int $capacity;
 
-    protected int $total;
+    protected readonly ?int $total;
 
-    protected int $fileIndex;
+    protected int $fileIndex = 0;
 
     protected Closure $createFile;
 
@@ -42,29 +43,27 @@ class ExportService
 
     protected int $records = 0;
 
-    protected int $writtenFiles = 0;
+    protected int $exportedRecords = 0;
 
-    protected int $left;
+    protected int $writtenFiles = 0;
 
     protected bool $fileCreated = false;
 
     protected string $lineEnding = PHP_EOL;
+
+    protected ?int $modelCount = null;
 
     public function __construct(
         protected Feed $feed,
         protected FilesystemService $filesystem,
         protected ?OutputStyle $output,
     ) {
-        $this->perFile   = $this->perFile($this->feed);
-        $this->maxFiles  = $this->maxFiles($this->feed);
-        $this->total     = $this->total();
-        $this->fileIndex = $this->fileIndex();
+        $this->perFile  = $this->perFile($this->feed);
+        $this->maxFiles = $this->maxFiles($this->feed);
+        $this->capacity = $this->capacity();
+        $this->total    = $this->output === null ? null : $this->total();
 
-        $this->left = $this->total;
-
-        $this->progressBar = $this->createProgressBar(
-            $this->total
-        );
+        $this->progressBar = $this->total === null ? null : $this->createProgressBar($this->total);
     }
 
     public function chunk(int $chunk): static
@@ -103,26 +102,23 @@ class ExportService
     public function export(): void
     {
         try {
-            $this->feed->builder()
-                ->lazyById($this->chunk)
-                ->each(function (Model $model) {
-                    $this->records++;
-                    $this->left--;
+            $pending = null;
 
-                    $this->append(
-                        value($this->item, $model, $this->isLastItem())
-                    );
+            foreach ($this->feed->builder()->lazyById($this->chunk) as $model) {
+                if ($pending instanceof Model) {
+                    $this->write($pending, true);
+                }
 
-                    $this->store();
+                $pending = $model;
 
-                    if ($this->left <= 0) {
-                        return false;
-                    }
+                if ($this->capacity !== null && $this->exportedRecords + 1 >= $this->capacity) {
+                    break;
+                }
+            }
 
-                    if ($this->maxFiles && $this->writtenFiles >= $this->maxFiles) {
-                        return false;
-                    }
-                });
+            if ($pending instanceof Model) {
+                $this->write($pending, false);
+            }
 
             $this->store(true);
 
@@ -138,7 +134,7 @@ class ExportService
 
     protected function store(bool $force = false): void
     {
-        $whenRecords = $this->records >= $this->perFile;
+        $whenRecords = $this->perFile > 0 && $this->records >= $this->perFile;
 
         if ($force && ! $this->fileCreated) {
             $this->getFile();
@@ -150,9 +146,26 @@ class ExportService
         }
     }
 
-    protected function isLastItem(): bool
+    protected function write(Model $model, bool $hasNext): void
     {
-        return $this->records === $this->perFile || $this->left <= 0;
+        $this->records++;
+        $this->exportedRecords++;
+
+        $fileCompleted = $this->perFile > 0 && $this->records >= $this->perFile;
+
+        if ($this->writtenFiles === 0 && $fileCompleted && $hasNext) {
+            $this->fileIndex = 1;
+        }
+
+        $this->append(
+            value($this->item, $model, $fileCompleted || ! $hasNext)
+        );
+
+        $this->progressBar?->advance();
+
+        if ($fileCompleted) {
+            $this->store();
+        }
     }
 
     protected function getFile() // @pest-ignore-type
@@ -198,11 +211,7 @@ class ExportService
             throw new InvalidArgumentException("Feed perFile must be greater than or equal to 0, [$count] given.");
         }
 
-        if ($count) {
-            return $count;
-        }
-
-        return $this->modelCount();
+        return $count;
     }
 
     protected function maxFiles(Feed $feed): int
@@ -218,27 +227,27 @@ class ExportService
 
     protected function total(): int
     {
-        if ($this->maxFiles === 0) {
+        if ($this->capacity === null) {
             return $this->modelCount();
         }
 
         return min(
             $this->modelCount(),
-            $this->perFile * $this->maxFiles
+            $this->capacity
         );
     }
 
-    protected function fileIndex(): int
+    protected function capacity(): ?int
     {
-        if ($this->perFile === 0 || $this->perFile === $this->total) {
-            return 0;
+        if ($this->perFile === 0 || $this->maxFiles === 0) {
+            return null;
         }
 
-        if ($this->perFile >= $this->total) {
-            return 0;
+        if ($this->maxFiles > intdiv(PHP_INT_MAX, $this->perFile)) {
+            return PHP_INT_MAX;
         }
 
-        return 1;
+        return $this->perFile * $this->maxFiles;
     }
 
     protected function modelCount(): int

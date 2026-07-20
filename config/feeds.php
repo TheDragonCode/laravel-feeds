@@ -67,8 +67,8 @@ return [
 
     /**
      * Transformers convert rich/complex values to simple scalar representations
-     * suitable for feeds (XML/JSON). Order matters: the first transformer that
-     * supports the value will handle it.
+     * suitable for feeds (XML/JSON). Transformers run in declaration order and
+     * each transformer receives the value produced by the previous transformer.
      *
      * You may add your own transformers by implementing
      * `DragonCode\LaravelFeed\Contracts\Transformer` and registering the class
