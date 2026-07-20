@@ -161,3 +161,36 @@ test('rejects a non-positive chunk size', function (int $chunk) {
     expect(fn () => $service->chunk($chunk))
         ->toThrow(InvalidArgumentException::class);
 })->with([0, -1]);
+
+test('closes the active resource when export fails', function () {
+    $model = mock(Model::class);
+
+    $builder = mock(Builder::class);
+    $builder->shouldReceive('count')->once()->andReturn(1);
+    $builder->shouldReceive('lazyById')->once()->with(1)->andReturn(LazyCollection::make([$model]));
+
+    $feed = mock(Feed::class);
+    $feed->shouldReceive('perFile')->once()->andReturn(0);
+    $feed->shouldReceive('maxFiles')->once()->andReturn(0);
+    $feed->shouldReceive('builder')->twice()->andReturn($builder);
+    $feed->shouldReceive('path')->once()->andReturn('feed.json');
+
+    $resource = fopen('php://memory', 'wb');
+
+    $filesystem = mock(FilesystemService::class);
+    $filesystem->shouldReceive('append')->once()->andThrow(new RuntimeException('Write failed.'));
+    $filesystem->shouldReceive('close')->once()->with($resource)->andReturnUsing(fclose(...));
+
+    $service = (new ExportService($feed, $filesystem, null))
+        ->file(
+            create: fn () => $resource,
+            close : fn () => null
+        )
+        ->item(fn () => 'item')
+        ->chunk(1);
+
+    expect(fn () => $service->export())
+        ->toThrow(RuntimeException::class, 'Write failed.')
+        ->and(is_resource($resource))
+        ->toBeFalse();
+});
