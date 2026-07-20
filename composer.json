@@ -87,7 +87,7 @@
         "style": "@php vendor/bin/pint --parallel --ansi",
         "style:snippets": "@php vendor/bin/pint --dirty --ansi docs/snippets",
         "test": [
-            "@php vendor/bin/pest --parallel --colors=always",
+            "@php vendor/bin/pest --colors=always",
             "@style:snippets",
             "@reset:snippets"
         ],

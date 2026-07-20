@@ -24,6 +24,11 @@ class SplitJsonFeed extends Feed
         return 2;
     }
 
+    public function maxFiles(): int
+    {
+        return 3;
+    }
+
     public function root(): ElementData
     {
         return new ElementData(

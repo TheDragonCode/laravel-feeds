@@ -8,9 +8,12 @@ use Closure;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Throwable;
 
-use function max;
+use function min;
 use function value;
 
 class ExportService
@@ -25,7 +28,7 @@ class ExportService
 
     protected int $total;
 
-    protected int $file;
+    protected int $fileIndex;
 
     protected Closure $createFile;
 
@@ -40,6 +43,8 @@ class ExportService
 
     protected int $records = 0;
 
+    protected int $writtenFiles = 0;
+
     protected int $left;
 
     protected bool $fileCreated = false;
@@ -49,10 +54,10 @@ class ExportService
         protected FilesystemService $filesystem,
         protected ?OutputStyle $output,
     ) {
-        $this->perFile  = $this->perFile($this->feed);
-        $this->maxFiles = $this->maxFiles($this->feed);
-        $this->total    = $this->total();
-        $this->file     = $this->fileIndex();
+        $this->perFile   = $this->perFile($this->feed);
+        $this->maxFiles  = $this->maxFiles($this->feed);
+        $this->total     = $this->total();
+        $this->fileIndex = $this->fileIndex();
 
         $this->left = $this->total;
 
@@ -63,6 +68,15 @@ class ExportService
 
     public function chunk(int $chunk): static
     {
+        if ($chunk <= 0) {
+            Log::warning('[FIX:159] Invalid feed chunk size', [
+                'feed'       => $this->feed::class,
+                'chunk_size' => $chunk,
+            ]);
+
+            throw new InvalidArgumentException("Feed chunkSize must be greater than 0, [$chunk] given.");
+        }
+
         $this->chunk = $chunk;
 
         return $this;
@@ -85,30 +99,55 @@ class ExportService
 
     public function export(): void
     {
-        $this->feed->builder()
-            ->lazyById($this->chunk)
-            ->each(function (Model $model) {
-                $this->records++;
-                $this->left--;
+        Log::debug('[FIX:159] Feed export started', [
+            'feed'        => $this->feed::class,
+            'chunk_size'  => $this->chunk,
+            'per_file'    => $this->perFile,
+            'max_files'   => $this->maxFiles,
+            'model_count' => $this->modelCount(),
+            'total'       => $this->total,
+        ]);
 
-                $this->append(
-                    value($this->item, $model, $this->isLastItem())
-                );
+        try {
+            $this->feed->builder()
+                ->lazyById($this->chunk)
+                ->each(function (Model $model) {
+                    $this->records++;
+                    $this->left--;
 
-                $this->store();
+                    $this->append(
+                        value($this->item, $model, $this->isLastItem())
+                    );
 
-                if ($this->left <= 0) {
-                    return false;
-                }
+                    $this->store();
 
-                if ($this->maxFiles && $this->file >= $this->maxFiles) {
-                    return false;
-                }
-            });
+                    if ($this->left <= 0) {
+                        return false;
+                    }
 
-        $this->store(true);
+                    if ($this->maxFiles && $this->writtenFiles >= $this->maxFiles) {
+                        return false;
+                    }
+                });
 
-        $this->progressBar?->finish();
+            $this->store(true);
+
+            $this->progressBar?->finish();
+        } catch (Throwable $e) {
+            Log::error('[FIX:159] Feed export failed', [
+                'feed'          => $this->feed::class,
+                'written_files' => $this->writtenFiles,
+                'exception'     => $e,
+            ]);
+
+            throw $e;
+        }
+
+        Log::debug('[FIX:159] Feed export completed', [
+            'feed'          => $this->feed::class,
+            'written_files' => $this->writtenFiles,
+            'total'         => $this->total,
+        ]);
     }
 
     protected function store(bool $force = false): void
@@ -147,11 +186,19 @@ class ExportService
             return;
         }
 
-        value($this->closeFile, $this->resource, $this->file);
+        value($this->closeFile, $this->resource, $this->fileIndex);
 
         $this->resource = null;
 
-        $this->file++;
+        $this->writtenFiles++;
+
+        Log::debug('[FIX:159] Feed file written', [
+            'feed'          => $this->feed::class,
+            'file_index'    => $this->fileIndex,
+            'written_files' => $this->writtenFiles,
+        ]);
+
+        $this->fileIndex++;
     }
 
     protected function append(string $content): void
@@ -165,7 +212,18 @@ class ExportService
 
     protected function perFile(Feed $feed): int
     {
-        if ($count = max($feed->perFile(), 0)) {
+        $count = $feed->perFile();
+
+        if ($count < 0) {
+            Log::warning('[FIX:159] Invalid feed per-file limit', [
+                'feed'     => $feed::class,
+                'per_file' => $count,
+            ]);
+
+            throw new InvalidArgumentException("Feed perFile must be greater than or equal to 0, [$count] given.");
+        }
+
+        if ($count) {
             return $count;
         }
 
@@ -174,7 +232,18 @@ class ExportService
 
     protected function maxFiles(Feed $feed): int
     {
-        return max($feed->maxFiles(), 0);
+        $count = $feed->maxFiles();
+
+        if ($count < 0) {
+            Log::warning('[FIX:159] Invalid feed file limit', [
+                'feed'      => $feed::class,
+                'max_files' => $count,
+            ]);
+
+            throw new InvalidArgumentException("Feed maxFiles must be greater than or equal to 0, [$count] given.");
+        }
+
+        return $count;
     }
 
     protected function total(): int
@@ -183,7 +252,10 @@ class ExportService
             return $this->modelCount();
         }
 
-        return $this->perFile * $this->maxFiles;
+        return min(
+            $this->modelCount(),
+            $this->perFile * $this->maxFiles
+        );
     }
 
     protected function fileIndex(): int
