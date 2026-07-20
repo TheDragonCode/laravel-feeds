@@ -14,15 +14,13 @@ abstract class Converter
 {
     protected array $transformers = [];
 
-    protected readonly Closure $transformerPipeline;
+    protected ?Closure $transformerPipeline = null;
 
     public function __construct(
         #[Config('feeds.pretty')]
         protected bool $pretty,
         protected readonly TransformerService $transformer,
-    ) {
-        $this->transformerPipeline = $this->transformer->pipeline($this->transformers);
-    }
+    ) {}
 
     abstract public function header(Feed $feed): string;
 
@@ -41,6 +39,6 @@ abstract class Converter
 
     protected function transformValue(mixed $value): bool|float|int|string|null
     {
-        return ($this->transformerPipeline)($value);
+        return ($this->transformerPipeline ??= $this->transformer->pipeline($this->transformers))($value);
     }
 }

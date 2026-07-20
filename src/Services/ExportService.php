@@ -103,17 +103,18 @@ class ExportService
     {
         try {
             $pending = null;
+            $models  = $this->feed->builder()->lazyById($this->chunk);
 
-            foreach ($this->feed->builder()->lazyById($this->chunk) as $model) {
+            if (($limit = $this->total ?? $this->capacity) !== null) {
+                $models = $models->take($limit);
+            }
+
+            foreach ($models as $model) {
                 if ($pending instanceof Model) {
                     $this->write($pending, true);
                 }
 
                 $pending = $model;
-
-                if ($this->capacity !== null && $this->exportedRecords + 1 >= $this->capacity) {
-                    break;
-                }
             }
 
             if ($pending instanceof Model) {

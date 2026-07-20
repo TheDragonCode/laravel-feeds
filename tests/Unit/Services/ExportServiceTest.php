@@ -275,3 +275,50 @@ test('counts models once when progress reporting needs an exact total', function
         ->chunk(2)
         ->export();
 });
+
+test('stops progress exports at the counted total', function () {
+    $models = LazyCollection::make(function () {
+        foreach (range(1, 5) as $id) {
+            $model = mock(Model::class);
+            $model->shouldReceive('getKey')->andReturn($id);
+
+            yield $model;
+        }
+    });
+
+    $builder = mock(Builder::class);
+    $builder->shouldReceive('count')->once()->andReturn(3);
+    $builder->shouldReceive('lazyById')->once()->with(2)->andReturn($models);
+
+    $feed = mock(Feed::class);
+    $feed->shouldReceive('perFile')->once()->andReturn(0);
+    $feed->shouldReceive('maxFiles')->once()->andReturn(0);
+    $feed->shouldReceive('builder')->twice()->andReturn($builder);
+    $feed->shouldReceive('path')->andReturn('feed.jsonl');
+
+    $output = new OutputStyle(new ArrayInput([]), new BufferedOutput);
+
+    $filesystem = mock(FilesystemService::class);
+    $filesystem->shouldReceive('append');
+
+    $items = [];
+
+    (new ExportService($feed, $filesystem, $output))
+        ->file(
+            create: fn () => fopen('php://memory', 'wb'),
+            close : fn ($file) => fclose($file)
+        )
+        ->item(function (Model $model, bool $isLast) use (&$items) {
+            $items[] = [$model->getKey(), $isLast];
+
+            return 'item-' . $model->getKey();
+        })
+        ->chunk(2)
+        ->export();
+
+    expect($items)->toBe([
+        [1, false],
+        [2, false],
+        [3, true],
+    ]);
+});
