@@ -19,3 +19,7 @@ pint.json export-ignore
 
 phpunit.xml export-ignore
 testbench.yaml export-ignore
+
+.agents/ export-ignore
+.ai-factory/ export-ignore
+.ai-factory.json export-ignore
