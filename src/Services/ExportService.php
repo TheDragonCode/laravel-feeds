@@ -10,7 +10,6 @@ use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\Console\Helper\ProgressBar;
 
-use function implode;
 use function max;
 use function value;
 
@@ -42,8 +41,6 @@ class ExportService
     protected int $records = 0;
 
     protected int $left;
-
-    protected array $content = [];
 
     protected bool $fileCreated = false;
 
@@ -94,7 +91,9 @@ class ExportService
                 $this->records++;
                 $this->left--;
 
-                $this->content[] = value($this->item, $model, $this->isLastItem());
+                $this->append(
+                    value($this->item, $model, $this->isLastItem())
+                );
 
                 $this->store();
 
@@ -115,24 +114,13 @@ class ExportService
     protected function store(bool $force = false): void
     {
         $whenRecords = $this->records >= $this->perFile;
-        $whenLeft    = $this->total    && $this->left <= 0;
-        $whenFile    = $this->file > 1 && ! $this->content;
 
-        if (! $force && $whenFile) {
-            return;
-        }
-
-        if ($force || $whenRecords || $whenLeft) {
-            $this->records = 0;
-
-            if ($this->content || ! $this->fileCreated) {
-                $this->append();
-            }
-
-            $this->content = [];
+        if ($force && ! $this->fileCreated) {
+            $this->getFile();
         }
 
         if ($force || $whenRecords) {
+            $this->records = 0;
             $this->releaseFile();
         }
     }
@@ -166,9 +154,13 @@ class ExportService
         $this->file++;
     }
 
-    protected function append(): void
+    protected function append(string $content): void
     {
-        $this->filesystem->append($this->getFile(), implode(PHP_EOL, $this->content), $this->feed->path());
+        if ($this->records > 1) {
+            $content = PHP_EOL . $content;
+        }
+
+        $this->filesystem->append($this->getFile(), $content, $this->feed->path());
     }
 
     protected function perFile(Feed $feed): int
