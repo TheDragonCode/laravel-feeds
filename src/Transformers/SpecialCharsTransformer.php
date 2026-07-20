@@ -16,7 +16,7 @@ class SpecialCharsTransformer implements Transformer
     public function transform(mixed $value): string
     {
         return $this->removeControlCharacters(
-            htmlspecialchars((string) $value)
+            (string) $value
         );
     }
 

@@ -7,11 +7,12 @@ use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 
 use function Pest\Laravel\artisan;
 
-function expectFeedSnapshot(string $class, FeedFormatEnum $format = FeedFormatEnum::Xml, array $indexes = ['']): void
+function expectFeedSnapshot(string $class, ?FeedFormatEnum $format = null, array $indexes = ['']): void
 {
     $feed = findFeed($class);
 
     $instance = app($feed->class);
+    $format ??= $instance->format();
 
     artisan(FeedGenerateCommand::class, [
         'feed' => $feed->id,
@@ -29,7 +30,7 @@ function expectFeedSnapshot(string $class, FeedFormatEnum $format = FeedFormatEn
             FeedFormatEnum::JsonLines => expect($content)->toBeJsonLines(),
             FeedFormatEnum::Csv       => expect($content)->toBeCsv(),
             FeedFormatEnum::Rss       => expect($content)->toBeRss(),
-            default                   => null
+            FeedFormatEnum::Xml       => expect($content)->toBeXml(),
         };
     }
 }
