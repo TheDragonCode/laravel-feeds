@@ -70,7 +70,6 @@
         }
     },
     "scripts": {
-        "benchmark": "@php benchmarks/export.php",
         "post-update-cmd": [
             "@php vendor/bin/codestyle pint 8.2 --ansi",
             "@php vendor/bin/codestyle editorconfig --ansi",
@@ -80,6 +79,7 @@
             "@clear",
             "@prepare"
         ],
+        "benchmark": "@php benchmarks/export.php",
         "build": "@php vendor/bin/testbench workbench:build --ansi",
         "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
         "migrate": "@php vendor/bin/testbench migrate:fresh --seed --ansi",
