@@ -6,6 +6,8 @@ namespace DragonCode\LaravelFeed\Events;
 
 use DragonCode\LaravelFeed\Feeds\Feed;
 
+use function array_values;
+
 class FeedFinishedEvent
 {
     /**
@@ -18,5 +20,9 @@ class FeedFinishedEvent
     public function __construct(
         public string $feed,
         public string $path,
-    ) {}
+        public array $paths = [],
+    ) {
+        $this->paths = array_values($this->paths === [] ? [$this->path] : $this->paths);
+        $this->path  = $this->paths[0];
+    }
 }

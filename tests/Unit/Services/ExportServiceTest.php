@@ -61,6 +61,7 @@ test('respects split capacity', function (
     int $modelCount,
     array $expectedItems,
     array $expectedFiles,
+    array $expectedRecords,
 ) {
     $models = LazyCollection::make(function () use ($modelCount) {
         foreach (range(1, $modelCount) as $id) {
@@ -84,14 +85,16 @@ test('respects split capacity', function (
     $filesystem = mock(FilesystemService::class);
     $filesystem->shouldReceive('append')->times(count($expectedItems));
 
-    $items = [];
-    $files = [];
+    $items   = [];
+    $files   = [];
+    $records = [];
 
     (new ExportService($feed, $filesystem, null))
         ->file(
             create: fn () => fopen('php://memory', 'wb'),
-            close : function ($file, int $index) use (&$files) {
-                $files[] = $index;
+            close : function ($file, int $index, int $count) use (&$files, &$records) {
+                $files[]   = $index;
+                $records[] = $count;
 
                 fclose($file);
             }
@@ -107,27 +110,33 @@ test('respects split capacity', function (
     expect($items)
         ->toBe($expectedItems)
         ->and($files)
-        ->toBe($expectedFiles);
+        ->toBe($expectedFiles)
+        ->and($records)
+        ->toBe($expectedRecords);
 })->with([
     'single file' => [
         2,
         [[1, false], [2, true]],
         [0],
+        [2],
     ],
     'partial final file' => [
         3,
         [[1, false], [2, true], [3, true]],
         [1, 2],
+        [2, 1],
     ],
     'exact capacity' => [
         6,
         [[1, false], [2, true], [3, false], [4, true], [5, false], [6, true]],
         [1, 2, 3],
+        [2, 2, 2],
     ],
     'over capacity' => [
         10,
         [[1, false], [2, true], [3, false], [4, true], [5, false], [6, true]],
         [1, 2, 3],
+        [2, 2, 2],
     ],
 ]);
 

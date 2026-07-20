@@ -21,7 +21,29 @@
             The <code>FeedStartingEvent</code> is dispatched immediately before the draft file is created.
         </def>
         <def title="DragonCode\LaravelFeed\Events\FeedFinishedEvent">
-            The <code>FeedFinishedEvent</code> is dispatched right after the feed file generation has completed.
+            The <code>FeedFinishedEvent</code> is dispatched after every generated file has been published successfully.
+            A failed generation does not dispatch this event.
         </def>
     </deflist>
+
+    <chapter title="Finished event contract" id="finished_event_contract">
+        <p>
+            The finished event exposes these public properties:
+        </p>
+
+        <list>
+            <li><code>$feed</code> contains the generated feed class.</li>
+            <li><code>$paths</code> contains every published file path in output order.</li>
+            <li>
+                <code>$path</code> remains available for backward compatibility and contains the first published path.
+                Use <code>$paths</code> when a feed can be split across files.
+            </li>
+        </list>
+
+        <p>
+            <code>GeneratorService::feed()</code> returns a <code>GenerationResultData</code> object.
+            Its <code>$paths</code> property contains the same ordered paths, and its <code>$records</code> property maps
+            each path to the number of records written to that file.
+        </p>
+    </chapter>
 </topic>
