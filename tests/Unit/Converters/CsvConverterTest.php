@@ -110,6 +110,28 @@ test('rejects rows with different columns', function () {
         );
 });
 
+test('rejects rows with missing columns', function () {
+    $first = mock(FeedItem::class);
+    $first->shouldReceive('toArray')->once()->andReturn([
+        'id'    => 1,
+        'title' => 'First',
+    ]);
+
+    $second = mock(FeedItem::class);
+    $second->shouldReceive('toArray')->once()->andReturn([
+        'id' => 2,
+    ]);
+
+    $converter = app(CsvConverter::class);
+    $converter->item($first, false);
+
+    expect(fn () => $converter->item($second, true))
+        ->toThrow(
+            InvalidCsvRowException::class,
+            'CSV row columns do not match the established schema. Expected [id, title], got [id].'
+        );
+});
+
 test('rejects nested values', function () {
     $item = mock(FeedItem::class);
     $item->shouldReceive('toArray')->once()->andReturn([
