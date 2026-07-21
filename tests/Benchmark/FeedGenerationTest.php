@@ -34,7 +34,7 @@ it('keeps feed generation time within the calibrated regression limit', function
     $storage->delete($path);
 
     (new Benchmark)
-        ->snapshots(dirname(__DIR__, 2) . '/.benchmarks')
+        ->snapshots(dirname(__DIR__) . '/.benchmarks')
         ->warmup(3)
         ->iterations(20)
         ->disableProgressBar()
