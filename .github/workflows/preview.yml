@@ -5,10 +5,12 @@ on:
         -   cron: '20 2 * * *'
     workflow_dispatch:
 
-permissions:
-    contents: write
-    pull-requests: write
+permissions: {}
 
 jobs:
     preview:
-        uses: TheDragonCode/.github/.github/workflows/preview.yml@main
+        permissions:
+            contents: write
+            pull-requests: write
+
+        uses: TheDragonCode/.github/.github/workflows/preview.yml@114cea00473063594c1ac778a22344341c177a70

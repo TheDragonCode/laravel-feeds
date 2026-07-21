@@ -5,6 +5,12 @@ on:
     - cron: '0 3 1 1 *'
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   Update:
-    uses: TheDragonCode/.github/.github/workflows/license.yml@main
+    permissions:
+      contents: write
+      pull-requests: write
+
+    uses: TheDragonCode/.github/.github/workflows/license.yml@114cea00473063594c1ac778a22344341c177a70

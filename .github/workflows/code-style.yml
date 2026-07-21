@@ -3,10 +3,15 @@ name: Code Style
 on:
     push:
 
-permissions: write-all
+permissions: {}
 
 jobs:
     Checks:
-        uses: TheDragonCode/.github/.github/workflows/code-style.yml@main
+        permissions:
+            artifact-metadata: write
+            contents: write
+            pull-requests: write
+
+        uses: TheDragonCode/.github/.github/workflows/code-style.yml@114cea00473063594c1ac778a22344341c177a70
         with:
             node: false
