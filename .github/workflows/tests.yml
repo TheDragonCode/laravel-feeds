@@ -4,6 +4,24 @@ on:
     push:
 
 jobs:
+    validate:
+        runs-on: ubuntu-latest
+
+        name: Composer Validate
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v7
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 8.5
+                    coverage: none
+
+            -   name: Validate Composer configuration
+                run: composer validate --strict
+
     unit:
         runs-on: ubuntu-latest
 
@@ -31,6 +49,28 @@ jobs:
 
             -   name: Install dependencies
                 run: composer require --no-blocking --dev laravel/framework:^${{ matrix.laravel }}
+
+            -   name: Execute tests
+                run: composer test
+
+    lowest:
+        runs-on: ubuntu-latest
+
+        name: Lowest Dependencies
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v7
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 8.2
+                    extensions: curl, mbstring, zip, pcntl, pdo, pdo_sqlite, iconv
+                    coverage: none
+
+            -   name: Install lowest supported dependencies
+                run: composer update --no-blocking --prefer-lowest --prefer-stable
 
             -   name: Execute tests
                 run: composer test
