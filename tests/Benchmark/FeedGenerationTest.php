@@ -8,41 +8,43 @@ use Illuminate\Support\Facades\Storage;
 use Tests\Helpers\Benchmark\RegressionFeed;
 use Tests\Helpers\Benchmark\RegressionGeneratorService;
 
-beforeEach(function () {
-    config()->set('feeds.pretty', false);
+beforeEach(fn () => config()->set('feeds.pretty', false));
 
-    $this->application = app();
-    $this->generator   = app(RegressionGeneratorService::class);
-    $this->models      = makeRegressionFeedModels(2000);
-    $this->storage     = Storage::fake('public');
-});
-
-afterEach(function () {
-    $this->storage->deleteDirectory('benchmark');
-});
+afterEach(fn () => Storage::disk('public')->deleteDirectory('benchmark'));
 
 it('keeps feed generation time within the calibrated regression limit', function (
     FeedFormatEnum $format,
     float $max,
 ) {
-    $path = 'benchmark/feed.' . $format->value;
+    $application = app();
+    $generator   = app(RegressionGeneratorService::class);
+    $models      = makeRegressionFeedModels(2000);
+    $storage     = Storage::fake('public');
+    $path        = 'benchmark/feed.' . $format->value;
+    $feed        = fn () => new RegressionFeed(
+        $application,
+        mockRegressionFeedBuilder($models),
+        $format,
+    );
+
+    $result = $generator->feed($feed());
+
+    expect(array_sum($result->records))->toBe(2000);
+
+    $storage->delete($path);
 
     (new Benchmark)
         ->snapshots(dirname(__DIR__, 2) . '/.benchmarks')
         ->warmup(3)
         ->iterations(20)
         ->disableProgressBar()
-        ->beforeEach(fn () => new RegressionFeed(
-            $this->application,
-            mockRegressionFeedBuilder($this->models),
-            $format,
-        ))
-        ->afterEach(fn () => $this->storage->delete($path))
+        ->beforeEach($feed)
+        ->afterEach(fn () => $storage->delete($path))
         ->compare([
-            $format->value => fn (int $_iteration, RegressionFeed $feed) => $this->generator->feed($feed),
+            $format->value => fn (int $_iteration, RegressionFeed $feed) => $generator->feed($feed),
         ])
         ->toAssert()
         ->toBeRegressionTime(max: $max);
 
-    expect($this->storage->exists($path))->toBeFalse();
+    expect($storage->exists($path))->toBeFalse();
 })->with('feed generation regression formats');

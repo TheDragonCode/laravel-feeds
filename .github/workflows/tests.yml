@@ -27,10 +27,10 @@ jobs:
                 run: composer validate --strict
 
     benchmark:
-        runs-on: ubuntu-24.04
+        runs-on: ubuntu-latest
         timeout-minutes: 20
 
-        name: Feed Generation Benchmarks
+        name: Benchmarks
 
         steps:
             -   name: Checkout code
@@ -44,10 +44,11 @@ jobs:
                     php-version: 8.5
                     extensions: bcmath, curl, dom, iconv, libxml, mbstring, pdo, pdo_sqlite, zip
                     coverage: none
-                    tools: composer:2.10.2
 
             -   name: Install dependencies
                 run: |
+                    cp .benchmarks/dependencies.lock composer.lock
+                    composer validate --strict
                     composer install --no-interaction --no-progress --prefer-dist --no-scripts
                     composer clear
                     composer prepare
@@ -89,9 +90,7 @@ jobs:
                     coverage: xdebug
 
             -   name: Install dependencies
-                run: |
-                    composer require --no-update --dev laravel/framework:^${{ matrix.laravel }}
-                    composer update --no-blocking
+                run: composer require --no-blocking --dev laravel/framework:^${{ matrix.laravel }}
 
             -   name: Execute tests
                 run: composer test
