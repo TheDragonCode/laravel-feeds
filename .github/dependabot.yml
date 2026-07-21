@@ -7,3 +7,10 @@ updates:
             interval: daily
         labels:
             - dependabot
+    -
+        package-ecosystem: composer
+        directory: /
+        schedule:
+            interval: daily
+        labels:
+            - dependabot
