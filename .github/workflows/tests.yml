@@ -26,6 +26,31 @@ jobs:
             -   name: Validate Composer configuration
                 run: composer validate --strict
 
+    benchmark:
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+
+        name: Benchmarks
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+                with:
+                    persist-credentials: false
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+                with:
+                    php-version: 8.5
+                    extensions: bcmath, curl, dom, iconv, libxml, mbstring, pdo, pdo_sqlite, zip
+                    coverage: none
+
+            -   name: Install dependencies
+                run: composer update
+
+            -   name: Execute feed generation benchmarks
+                run: composer test:benchmark
+
     unit:
         runs-on: ubuntu-latest
 
