@@ -11,7 +11,6 @@ use DragonCode\LaravelFeed\Exceptions\ResourceMetaException;
 use DragonCode\LaravelFeed\Exceptions\WriteFeedException;
 use Illuminate\Filesystem\Filesystem as File;
 use Illuminate\Filesystem\LockableFile;
-use Illuminate\Support\Str;
 use RuntimeException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Throwable;
@@ -42,9 +41,12 @@ use function stream_get_meta_data;
 use function strlen;
 use function strtolower;
 use function substr;
+use function sys_get_temp_dir;
 
 class FilesystemService
 {
+    protected const MAX_PATH_ATTEMPTS = 10;
+
     public function __construct(
         protected File $file,
     ) {}
@@ -52,22 +54,39 @@ class FilesystemService
     /** @return resource */
     public function createDraft(string $filename, ?string $directory = null) // @pest-ignore-type
     {
-        $temp = $this->draftPath($filename, $directory);
+        $temp    = $filename;
+        $cleanup = false;
 
         try {
-            $resource = fopen($temp, 'xb');
+            for ($attempt = 0; $attempt < self::MAX_PATH_ATTEMPTS; $attempt++) {
+                $temp     = $this->draftPath($filename, $directory);
+                $cleanup  = true;
+                $resource = @fopen($temp, 'xb');
 
-            if ($resource === false) {
-                // @codeCoverageIgnoreStart
-                throw new RuntimeException('Unable to open resource for writing.');
-                // @codeCoverageIgnoreEnd
+                if ($resource !== false) {
+                    return $resource;
+                }
+
+                $collision = $this->file->exists($temp);
+
+                $this->cleanTemporaryDirectory($temp);
+
+                $cleanup = false;
+
+                if (! $collision) {
+                    throw new RuntimeException('Unable to open resource for writing.');
+                }
             }
 
-            return $resource;
-            // @codeCoverageIgnoreStart
+            throw new RuntimeException(
+                'Unable to create a unique feed draft after [' . self::MAX_PATH_ATTEMPTS . '] attempts.'
+            );
         } catch (Throwable $e) {
+            if ($cleanup) {
+                $this->cleanTemporaryDirectory($temp);
+            }
+
             throw new OpenFeedException($temp, $e);
-            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -280,10 +299,10 @@ class FilesystemService
         try {
             $this->file->ensureDirectoryExists(dirname($path));
 
-            return (new TemporaryDirectory)
-                ->location(dirname($path))
-                ->name('.feeds_staging_' . bin2hex(random_bytes(16)))
-                ->create();
+            return $this->createTemporaryDirectory(
+                dirname($path),
+                fn () => '.feeds_staging_' . $this->uniqueIdentifier()
+            );
         } catch (Throwable $e) {
             throw new OpenFeedException($path, $e);
         }
@@ -291,14 +310,39 @@ class FilesystemService
 
     protected function draftPath(string $filename, ?string $directory = null): string
     {
-        if ($directory !== null) {
-            return $directory . DIRECTORY_SEPARATOR . $this->temporaryFilename($filename);
+        $draft = $this->createTemporaryDirectory(
+            $directory ?? sys_get_temp_dir(),
+            fn () => $this->temporaryFilename($filename)
+        );
+
+        try {
+            return $draft->path() . DIRECTORY_SEPARATOR . $this->temporaryFilename($filename);
+        } catch (Throwable $e) {
+            $draft->delete();
+
+            throw $e;
+        }
+    }
+
+    protected function createTemporaryDirectory(string $location, Closure $name): TemporaryDirectory
+    {
+        for ($attempt = 0; $attempt < self::MAX_PATH_ATTEMPTS; $attempt++) {
+            $directory = (new TemporaryDirectory)
+                ->location($location)
+                ->name($name());
+
+            if ($this->file->makeDirectory($directory->path(), 0o777, false, true)) {
+                return $directory;
+            }
+
+            if (! $this->file->exists($directory->path())) {
+                throw new RuntimeException("Unable to create the temporary directory: [{$directory->path()}].");
+            }
         }
 
-        return (new TemporaryDirectory)
-            ->name($this->temporaryFilename($filename))
-            ->create()
-            ->path($this->temporaryFilename($filename));
+        throw new RuntimeException(
+            'Unable to create a unique temporary directory after [' . self::MAX_PATH_ATTEMPTS . '] attempts.'
+        );
     }
 
     protected function isPublicationPath(string $path, string $publication): bool
@@ -410,11 +454,12 @@ class FilesystemService
 
     protected function temporaryFilename(string $filename): string
     {
-        return Str::of($filename)
-            ->prepend('feeds_draft_')
-            ->append('_', bin2hex(random_bytes(16)))
-            ->slug('_')
-            ->toString();
+        return 'feeds_draft_' . $this->uniqueIdentifier();
+    }
+
+    protected function uniqueIdentifier(): string
+    {
+        return bin2hex(random_bytes(16));
     }
 
     protected function validateDrafts(string $path, array $drafts): array
