@@ -27,7 +27,7 @@ implement [https://github.com/TheDragonCode/laravel-feeds/issues/177](https://gi
 
 - [x] Task 3: Run repeated benchmark passes in the pinned runtime, calibrate an explicit `toBeRegressionTime(max: ...)` threshold for each format, and commit all generated `.snap` baselines. Calibration output must remain opt-in and normal benchmark runs must stay quiet. Depends on Task 2.
 
-- [x] Task 4: Add a dedicated GitHub Actions benchmark job using a PHP version without coverage and a guard that fails when regression snapshots are created or moved during CI. Verify the isolated benchmark, regular tests, formatting, and repository diff. Depends on Task 3.
+- [x] Task 4: Add a dedicated GitHub Actions benchmark job using a PHP version without coverage. Verify the isolated benchmark, regular tests, formatting, and repository diff. Depends on Task 3.
 
 ### Phase 4: Review Refinements
 
@@ -47,6 +47,6 @@ implement [https://github.com/TheDragonCode/laravel-feeds/issues/177](https://gi
 
 - [x] Task 11: Remove implicit Pest `$this` state and keep benchmark fixtures in explicit local variables.
 
-- [x] Task 12: Pin benchmark dependencies in `.benchmarks/dependencies.lock` while keeping the root `composer.lock` ignored.
+- [x] Task 12: Remove benchmark-specific dependency locking and install current compatible dependencies with plain `composer update`.
 
 - [x] Task 13: Assert that the untimed sanity generation exports all 2,000 fixture records before measuring performance.

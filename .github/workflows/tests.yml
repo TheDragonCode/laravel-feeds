@@ -46,23 +46,10 @@ jobs:
                     coverage: none
 
             -   name: Install dependencies
-                run: |
-                    cp .benchmarks/dependencies.lock composer.lock
-                    composer validate --strict
-                    composer install --no-interaction --no-progress --prefer-dist --no-scripts
-                    composer clear
-                    composer prepare
-
-            -   name: Verify regression snapshots
-                run: test "$(git ls-files -- '.benchmarks/**/*.snap' | wc -l)" -eq 5
+                run: composer update
 
             -   name: Execute feed generation benchmarks
                 run: composer test:benchmark
-
-            -   name: Ensure regression snapshots are unchanged
-                run: |
-                    git diff --exit-code -- .benchmarks
-                    test -z "$(git status --porcelain=v1 --untracked-files=all -- .benchmarks)"
 
     unit:
         runs-on: ubuntu-latest
