@@ -27,4 +27,16 @@ implement [https://github.com/TheDragonCode/laravel-feeds/issues/177](https://gi
 
 - [x] Task 3: Run repeated benchmark passes in the pinned runtime, calibrate an explicit `toBeRegressionTime(max: ...)` threshold for each format, and commit all generated `.snap` baselines. Calibration output must remain opt-in and normal benchmark runs must stay quiet. Depends on Task 2.
 
-- [x] Task 4: Add a dedicated GitHub Actions benchmark job using a pinned OS, container digest, PHP version, Composer version, CPU/memory limits, no coverage, and a guard that fails when regression snapshots are created or moved during CI. Verify the isolated benchmark, regular tests, formatting, and repository diff. Depends on Task 3.
+- [x] Task 4: Add a dedicated GitHub Actions benchmark job using a pinned OS, PHP version, Composer version, no coverage, and a guard that fails when regression snapshots are created or moved during CI. Verify the isolated benchmark, regular tests, formatting, and repository diff. Depends on Task 3.
+
+### Phase 4: Review Refinements
+
+- [x] Task 5: Remove Docker from the benchmark GitHub Actions job and configure PHP, extensions, Composer, and coverage mode through the existing `setup-php` action.
+
+- [x] Task 6: Move benchmark-only feed, model, generator, and factory helpers into focused files under `tests/Helpers/Benchmark/`.
+
+- [x] Task 7: Move the feed-format regression dataset into `tests/Datasets/` using the project Pest dataset convention.
+
+- [x] Task 8: Rewrite `FeedGenerationTest.php` as an idiomatic Pest test using Pest lifecycle hooks, relocate snapshots to the new assertion call site, and rerun validation.
+
+- [x] Task 9: Restore the original `composer.lock` ignore rule and remove the generated lock file from the pull request.

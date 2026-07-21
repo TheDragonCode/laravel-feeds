@@ -22,6 +22,7 @@ vendor/
 *.clover
 *.orig
 
+composer.lock
 package-lock.json
 
 playground/
