@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Exceptions\CloseFeedException;
+use DragonCode\LaravelFeed\Exceptions\OpenFeedException;
 use DragonCode\LaravelFeed\Exceptions\WriteFeedException;
 use DragonCode\LaravelFeed\Services\FilesystemService;
 use Illuminate\Contracts\Filesystem\LockTimeoutException;
@@ -67,6 +68,81 @@ final class ControlledMoveFilesystem extends Filesystem
         }
 
         return parent::move($path, $target);
+    }
+}
+
+final class ControlledDraftNameFilesystemService extends FilesystemService
+{
+    public static array $filenames = [];
+
+    public static function reset(string ...$filenames): void
+    {
+        self::$filenames = $filenames;
+    }
+
+    protected function temporaryFilename(string $filename): string
+    {
+        return array_shift(self::$filenames) ?? throw new LogicException('Missing controlled draft filename.');
+    }
+}
+
+final class ControlledIdentifierFilesystemService extends FilesystemService
+{
+    public static array $identifiers = [];
+
+    public static function reset(string ...$identifiers): void
+    {
+        self::$identifiers = $identifiers;
+    }
+
+    protected function uniqueIdentifier(): string
+    {
+        return array_shift(self::$identifiers) ?? throw new LogicException('Missing controlled identifier.');
+    }
+}
+
+final class ControlledDraftCollisionFilesystemService extends FilesystemService
+{
+    protected int $attempt = 0;
+
+    protected ?string $directoryName = null;
+
+    public function __construct(
+        Filesystem $file,
+        protected string $location,
+        protected int $collisions,
+    ) {
+        parent::__construct($file);
+    }
+
+    protected function temporaryFilename(string $filename): string
+    {
+        if ($this->directoryName === null) {
+            return $this->directoryName = 'feeds_draft_directory_' . $this->attempt;
+        }
+
+        $filename = 'feeds_draft_file_' . $this->attempt++;
+
+        if ($this->collisions > 0) {
+            file_put_contents(
+                $this->location . DIRECTORY_SEPARATOR . $this->directoryName . DIRECTORY_SEPARATOR . $filename,
+                'collision'
+            );
+
+            $this->collisions--;
+        }
+
+        $this->directoryName = null;
+
+        return $filename;
+    }
+}
+
+final class MissingDraftPathFilesystemService extends FilesystemService
+{
+    protected function draftPath(string $filename, ?string $directory = null): string
+    {
+        return $directory . DIRECTORY_SEPARATOR . 'missing' . DIRECTORY_SEPARATOR . 'feeds_draft_file';
     }
 }
 
@@ -166,6 +242,191 @@ test('creates collision-resistant drafts and cleans the staging directory', func
     }
 });
 
+test('retries draft creation when the generated path already exists', function () {
+    $directory = (new TemporaryDirectory)->create();
+    $collision = $directory->path() . DIRECTORY_SEPARATOR . 'feeds_draft_collision';
+    $sentinel  = $collision . DIRECTORY_SEPARATOR . 'sentinel.txt';
+
+    mkdir($collision);
+    file_put_contents($sentinel, 'existing');
+
+    ControlledDraftNameFilesystemService::reset(
+        'feeds_draft_collision',
+        'feeds_draft_directory',
+        'feeds_draft_file'
+    );
+
+    try {
+        $service   = new ControlledDraftNameFilesystemService(new Filesystem);
+        $draft     = $service->createDraft('feed.json', $directory->path());
+        $draftPath = $service->finishDraft($draft);
+
+        expect(basename(dirname($draftPath)))
+            ->toBe('feeds_draft_directory')
+            ->and(basename($draftPath))
+            ->toBe('feeds_draft_file')
+            ->and(file_get_contents($sentinel))
+            ->toBe('existing');
+    } finally {
+        $directory->delete();
+    }
+});
+
+test('retries exclusive draft file creation after a collision', function () {
+    $directory = (new TemporaryDirectory)->create();
+
+    try {
+        $service = new ControlledDraftCollisionFilesystemService(
+            new Filesystem,
+            $directory->path(),
+            1
+        );
+        $draft     = $service->createDraft('feed.json', $directory->path());
+        $draftPath = $service->finishDraft($draft);
+
+        expect(basename(dirname($draftPath)))
+            ->toBe('feeds_draft_directory_1')
+            ->and(basename($draftPath))
+            ->toBe('feeds_draft_file_1')
+            ->and($directory->path() . DIRECTORY_SEPARATOR . 'feeds_draft_directory_0')
+            ->not->toBeDirectory();
+    } finally {
+        $directory->delete();
+    }
+});
+
+test('stops retrying after repeated draft file collisions', function () {
+    $directory = (new TemporaryDirectory)->create();
+
+    try {
+        $service = new ControlledDraftCollisionFilesystemService(
+            new Filesystem,
+            $directory->path(),
+            10
+        );
+
+        expect(fn () => $service->createDraft('feed.json', $directory->path()))
+            ->toThrow(
+                OpenFeedException::class,
+                'Unable to create a unique feed draft after [10] attempts.'
+            )
+            ->and(glob($directory->path() . DIRECTORY_SEPARATOR . 'feeds_draft_directory_*'))
+            ->toBe([]);
+    } finally {
+        $directory->delete();
+    }
+});
+
+test('stops retrying after repeated draft directory collisions', function () {
+    $directory = (new TemporaryDirectory)->create();
+    $collision = $directory->path() . DIRECTORY_SEPARATOR . 'feeds_draft_collision';
+    $sentinel  = $collision . DIRECTORY_SEPARATOR . 'sentinel.txt';
+
+    mkdir($collision);
+    file_put_contents($sentinel, 'existing');
+
+    ControlledDraftNameFilesystemService::reset(
+        ...array_fill(0, 10, 'feeds_draft_collision')
+    );
+
+    try {
+        $service = new ControlledDraftNameFilesystemService(new Filesystem);
+
+        expect(fn () => $service->createDraft('feed.json', $directory->path()))
+            ->toThrow(
+                OpenFeedException::class,
+                'Unable to create a unique temporary directory after [10] attempts.'
+            )
+            ->and(file_get_contents($sentinel))
+            ->toBe('existing');
+    } finally {
+        $directory->delete();
+    }
+});
+
+test('removes an allocated draft directory when filename generation fails', function () {
+    $directory = (new TemporaryDirectory)->create();
+
+    ControlledDraftNameFilesystemService::reset('feeds_draft_directory');
+
+    try {
+        $service = new ControlledDraftNameFilesystemService(new Filesystem);
+
+        expect(fn () => $service->createDraft('feed.json', $directory->path()))
+            ->toThrow(OpenFeedException::class, 'Missing controlled draft filename.')
+            ->and($directory->path() . DIRECTORY_SEPARATOR . 'feeds_draft_directory')
+            ->not->toBeDirectory();
+    } finally {
+        $directory->delete();
+    }
+});
+
+test('does not retry draft creation after a non-collision failure', function () {
+    $directory = (new TemporaryDirectory)->create();
+
+    try {
+        $service = new MissingDraftPathFilesystemService(new Filesystem);
+
+        expect(fn () => $service->createDraft('feed.json', $directory->path()))
+            ->toThrow(OpenFeedException::class, 'Unable to open resource for writing.');
+    } finally {
+        $directory->delete();
+    }
+});
+
+test('keeps draft paths independent from output filenames', function () {
+    $directory = (new TemporaryDirectory)->create();
+    $service   = new FilesystemService(new Filesystem);
+
+    try {
+        $draft     = $service->createDraft('private-catalog.json', $directory->path());
+        $draftPath = $service->finishDraft($draft);
+
+        expect(basename(dirname($draftPath)))
+            ->toMatch('/^feeds_draft_[a-f0-9]{32}$/')
+            ->and(basename($draftPath))
+            ->toMatch('/^feeds_draft_[a-f0-9]{32}$/')
+            ->and($draftPath)
+            ->not->toContain('private_catalog');
+    } finally {
+        $directory->delete();
+    }
+});
+
+test('retries staging creation without removing the colliding directory', function () {
+    $directory = (new TemporaryDirectory)->create();
+    $path      = $directory->path('feed.json');
+    $collision = $directory->path() . DIRECTORY_SEPARATOR . '.feeds_staging_collision';
+    $sentinel  = $collision . DIRECTORY_SEPARATOR . 'sentinel.txt';
+
+    mkdir($collision);
+    file_put_contents($sentinel, 'existing');
+
+    ControlledIdentifierFilesystemService::reset('collision', 'staging', 'draft_directory', 'draft_file');
+
+    try {
+        $service = new ControlledIdentifierFilesystemService(new Filesystem);
+
+        $service->publish($path, function (string $staging) use ($path, $service) {
+            expect(basename($staging))->toBe('.feeds_staging_staging');
+
+            $draft = $service->createDraft('feed.json', $staging);
+            $service->append($draft, 'published', $path);
+
+            return [$path => $service->finishDraft($draft)];
+        });
+
+        expect(file_get_contents($path))
+            ->toBe('published')
+            ->and(file_get_contents($sentinel))
+            ->toBe('existing')
+            ->and(glob($directory->path() . DIRECTORY_SEPARATOR . '.feeds_staging_*'))
+            ->toBe([$collision]);
+    } finally {
+        $directory->delete();
+    }
+});
+
 test('prevents overlapping publication for the same feed', function () {
     $directory = (new TemporaryDirectory)->create();
     $path      = $directory->path('feed.json');
@@ -223,12 +484,15 @@ test('restores every published part when a staged move fails', function () {
 test('release restores the published feed and cleans its draft when move fails', function () {
     $directory   = (new TemporaryDirectory)->create();
     $publication = $directory->path('feed.json');
+    $drafts      = $directory->path('drafts');
+    $foreign     = $drafts . DIRECTORY_SEPARATOR . 'foreign-draft';
     $file        = new ControlledMoveFilesystem;
     $service     = new FilesystemService($file);
-    $draft       = $service->createDraft('feed.json', $directory->path('drafts'));
+    $draft       = $service->createDraft('feed.json', $drafts);
     $draftPath   = stream_get_meta_data($draft)['uri'];
 
     file_put_contents($publication, 'old');
+    file_put_contents($foreign, 'foreign');
 
     $service->append($draft, 'new', $publication);
     $file->failNextMoveTo($publication);
@@ -239,7 +503,9 @@ test('release restores the published feed and cleans its draft when move fails',
             ->and(file_get_contents($publication))
             ->toBe('old')
             ->and(dirname($draftPath))
-            ->not->toBeDirectory();
+            ->not->toBeDirectory()
+            ->and(file_get_contents($foreign))
+            ->toBe('foreign');
     } finally {
         $directory->delete();
     }
