@@ -26,6 +26,46 @@ jobs:
             -   name: Validate Composer configuration
                 run: composer validate --strict
 
+    benchmark:
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+
+        name: Feed Generation Benchmarks
+
+        env:
+            BENCHMARK_IMAGE: composer:2.10.2@sha256:5946476338742b200bb9ff88f8be56275ddae4b3949c72305cb0dbf10cfcb760
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+                with:
+                    persist-credentials: false
+
+            -   name: Verify benchmark runtime
+                run: |
+                    test "$(docker run --rm "$BENCHMARK_IMAGE" php -r 'echo PHP_VERSION;')" = "8.5.8"
+                    test "$(docker run --rm "$BENCHMARK_IMAGE" composer --version --no-ansi | awk '{print $3}')" = "2.10.2"
+                    test "$(docker run --rm "$BENCHMARK_IMAGE" php -r 'echo extension_loaded("xdebug") ? "yes" : "no";')" = "no"
+
+            -   name: Verify regression snapshots
+                run: test "$(git ls-files -- '.benchmarks/**/*.snap' | wc -l)" -eq 5
+
+            -   name: Execute feed generation benchmarks
+                run: |
+                    docker run --rm \
+                        --cpus=1 \
+                        --memory=1g \
+                        --memory-swap=1g \
+                        --volume "$GITHUB_WORKSPACE:/app" \
+                        --workdir /app \
+                        "$BENCHMARK_IMAGE" \
+                        sh -lc 'composer install --no-interaction --no-progress --prefer-dist --no-scripts --ignore-platform-req=ext-bcmath && composer clear && composer prepare && composer test:benchmark'
+
+            -   name: Ensure regression snapshots are unchanged
+                run: |
+                    git diff --exit-code -- .benchmarks
+                    test -z "$(git status --porcelain=v1 --untracked-files=all -- .benchmarks)"
+
     unit:
         runs-on: ubuntu-latest
 
@@ -52,7 +92,9 @@ jobs:
                     coverage: xdebug
 
             -   name: Install dependencies
-                run: composer require --no-blocking --dev laravel/framework:^${{ matrix.laravel }}
+                run: |
+                    composer require --no-update --dev laravel/framework:^${{ matrix.laravel }}
+                    composer update --no-blocking
 
             -   name: Execute tests
                 run: composer test
