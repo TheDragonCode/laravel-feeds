@@ -6,11 +6,12 @@ namespace DragonCode\LaravelFeed\Feeds;
 
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Exceptions\UnsupportedStorageDiskException;
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,6 +19,7 @@ use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
 
 use function class_basename;
+use function get_debug_type;
 
 abstract class Feed
 {
@@ -99,10 +101,15 @@ abstract class Feed
 
     public function path(int|string $suffix = ''): string
     {
+        return $this->storage()->path(
+            $this->storagePath($suffix)
+        );
+    }
+
+    public function storagePath(int|string $suffix = ''): string
+    {
         if (empty($suffix)) {
-            return $this->storage()->path(
-                $this->filename()
-            );
+            return $this->filename();
         }
 
         $filename = $this->filename();
@@ -115,14 +122,20 @@ abstract class Feed
             $suffix = '-' . $suffix;
         }
 
-        return $this->storage()->path(
-            "$directory/$basename$suffix.$extension"
-        );
+        $filename = "$basename$suffix.$extension";
+
+        return $directory === '.' ? $filename : "$directory/$filename";
     }
 
-    public function storage(): Filesystem
+    public function storage(): FilesystemAdapter
     {
-        return Storage::disk($this->storage);
+        $storage = Storage::disk($this->storage);
+
+        if (! $storage instanceof FilesystemAdapter) {
+            throw new UnsupportedStorageDiskException($this->storage, get_debug_type($storage));
+        }
+
+        return $storage;
     }
 
     public function format(): FeedFormatEnum

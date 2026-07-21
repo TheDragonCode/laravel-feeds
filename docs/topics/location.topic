@@ -33,4 +33,54 @@
     </p>
 
     <code-block lang="php" src="advanced-feed-storage.php" include-lines="5-" />
+
+    <chapter title="Supported disks" id="supported_disks">
+        <p>
+            Feed generation supports Laravel disks that resolve to
+            <code>Illuminate\Filesystem\FilesystemAdapter</code>. This includes the <code>local</code>,
+            <code>s3</code>, <code>sftp</code>, and <code>ftp</code> drivers when their Flysystem adapters are installed and
+            configured. Custom adapters are supported when they provide writable streams, file moves, directory
+            management and listings, and deletion through Flysystem.
+        </p>
+
+        <warning>
+            Read-only disks and custom disks that implement only
+            <code>Illuminate\Contracts\Filesystem\Filesystem</code> are not supported. An incompatible disk fails before
+            the feed database query starts with an <code>UnsupportedStorageDiskException</code>.
+        </warning>
+    </chapter>
+
+    <chapter title="Path contract" id="path_contract">
+        <list>
+            <li><code>storage()</code> returns the configured <code>FilesystemAdapter</code>.</li>
+            <li>
+                <code>storagePath()</code> returns the disk-relative path used for storage operations, including an
+                optional split-file suffix.
+            </li>
+            <li>
+                <code>path()</code> returns the path resolved by Laravel's adapter. It is an absolute filesystem path for
+                a local disk and an adapter-resolved path for a remote disk.
+            </li>
+        </list>
+    </chapter>
+
+    <chapter title="Publication guarantees" id="publication_guarantees">
+        <p>
+            Every feed part is completed before publication starts. Local disks publish staged files with filesystem
+            moves under an exclusive application lock. If a move fails, Laravel Feeds attempts to restore every
+            previous file from its staging backup.
+        </p>
+
+        <p>
+            Remote disks receive complete staged files through Flysystem streams before published objects are changed.
+            Publication then moves each staged object into place and attempts the same rollback on failure.
+        </p>
+
+        <warning>
+            Remote moves can be implemented as copy-and-delete operations and may be eventually consistent. Atomic
+            replacement of one object or an entire split feed is therefore not guaranteed. The publication lock is
+            local to the application host, so generators running on different hosts require an external distributed
+            lock if they can publish the same feed concurrently.
+        </warning>
+    </chapter>
 </topic>
