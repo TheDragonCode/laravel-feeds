@@ -21,12 +21,12 @@ function expectFeedSnapshot(string $class, ?FeedFormatEnum $format = null, array
     foreach ($indexes as $index) {
         expect($instance->path($index))->toBeFile();
 
-        $content = file_get_contents($instance->path($index));
+        $content = readFeedFile($instance->path($index));
 
         expect($content)->toMatchSnapshot();
 
         match ($format) {
-            FeedFormatEnum::Json      => expect($content)->toBeJson(),
+            FeedFormatEnum::Json      => expect($content)->toBeJsonDocument(),
             FeedFormatEnum::JsonLines => expect($content)->toBeJsonLines(),
             FeedFormatEnum::Csv       => expect($content)->toBeCsv(),
             FeedFormatEnum::Rss       => expect($content)->toBeRss(),

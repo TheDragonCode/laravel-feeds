@@ -13,8 +13,8 @@ test('export', function () {
 
     $feed = app(SplitCsvFeed::class);
 
-    $first  = parseCsv(file_get_contents($feed->path(1)));
-    $second = parseCsv(file_get_contents($feed->path(2)));
+    $first  = parseCsv(readFeedFile($feed->path(1)));
+    $second = parseCsv(readFeedFile($feed->path(2)));
 
     expect($first)
         ->toHaveCount(2)

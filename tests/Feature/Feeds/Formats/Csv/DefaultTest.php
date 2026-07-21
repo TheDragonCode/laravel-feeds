@@ -14,7 +14,7 @@ test('export', function (bool $pretty) {
     expectFeedSnapshot(CsvFeed::class, FeedFormatEnum::Csv);
 
     $rows = parseCsv(
-        file_get_contents(app(CsvFeed::class)->path())
+        readFeedFile(app(CsvFeed::class)->path())
     );
 
     expect($rows[0][1])
