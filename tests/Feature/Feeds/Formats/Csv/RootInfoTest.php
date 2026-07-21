@@ -13,6 +13,6 @@ test('export', function (bool $pretty) {
 
     expectFeedSnapshot(CsvRootInfoFeed::class, FeedFormatEnum::Csv);
 
-    expect(parseCsv(file_get_contents(app(CsvRootInfoFeed::class)->path()))[0])
+    expect(parseCsv(readFeedFile(app(CsvRootInfoFeed::class)->path()))[0])
         ->toBe(['id', 'title', 'content', 'category', 'created_at', 'updated_at']);
 })->with('boolean');
