@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<foo count="2" generated_at="2025-09-04 04:08:12">
+<foo count="2" generated_at="2025-09-04T04:08:12+00:00">
 
 <user>
   <id>1</id>
-  <name>Jaime Lesch PhD</name>
+  <name>User 1</name>
 </user>
 <user>
   <id>2</id>
-  <name>Bert Kuhn</name>
+  <name>User 2</name>
 </user>
 
 </foo>

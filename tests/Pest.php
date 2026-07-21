@@ -23,10 +23,24 @@ pest()
         deleteMigrations();
     })
     ->afterEach(function () {
-        expect('end of snapshots')->toMatchSnapshot();
+        try {
+            expect('end of snapshots')->toMatchSnapshot();
+        } finally {
+            try {
+                finishDocsWorkspace();
+            } finally {
+                deleteOperations();
+                deleteMigrations();
+            }
+        }
+    });
 
-        deleteOperations();
-        deleteMigrations();
+pest()
+    ->in('Feature/Docs')
+    ->beforeEach(function () {
+        createDocsWorkspace();
+        configureDocsWorkspace();
+        stabilizeDocsFixtures();
     });
 
 pest()
