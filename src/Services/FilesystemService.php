@@ -10,7 +10,10 @@ use DragonCode\LaravelFeed\Exceptions\OpenFeedException;
 use DragonCode\LaravelFeed\Exceptions\ResourceMetaException;
 use DragonCode\LaravelFeed\Exceptions\WriteFeedException;
 use Illuminate\Filesystem\Filesystem as File;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Filesystem\LockableFile;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use RuntimeException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Throwable;
@@ -154,6 +157,35 @@ class FilesystemService
         }
     }
 
+    public function publishTo(FilesystemAdapter $storage, string $path, Closure $callback): void
+    {
+        if ($storage->getAdapter() instanceof LocalFilesystemAdapter) {
+            $this->publish($storage->path($path), function (string $staging) use ($callback, $storage) {
+                $drafts = $callback($staging);
+
+                if (! is_array($drafts)) {
+                    return $drafts;
+                }
+
+                $resolved = [];
+
+                foreach ($drafts as $target => $draft) {
+                    if (! is_string($target)) {
+                        throw new RuntimeException('Staged feed paths and publication targets must be strings.');
+                    }
+
+                    $resolved[$storage->path($target)] = $draft;
+                }
+
+                return $resolved;
+            });
+
+            return;
+        }
+
+        $this->publishRemote($storage, $path, $callback);
+    }
+
     public function publish(string $path, Closure $callback): void
     {
         $this->lock($path, function () use ($callback, $path) {
@@ -184,6 +216,55 @@ class FilesystemService
                 }
 
                 throw $cleanupFailure;
+            }
+
+            if ($failure !== null) {
+                throw $failure;
+            }
+        });
+    }
+
+    protected function publishRemote(FilesystemAdapter $storage, string $path, Closure $callback): void
+    {
+        $filesystem = $storage->getDriver();
+        $lock       = get_class($storage->getAdapter()) . ':' . $storage->path($path);
+
+        $this->lock($lock, function () use ($callback, $filesystem, $path) {
+            $localStaging = $this->createTemporaryDirectory(
+                sys_get_temp_dir(),
+                fn () => 'laravel_feeds_' . $this->uniqueIdentifier()
+            );
+            $remoteStaging = $this->storageStagingPath($path);
+            $cleanupRemote = false;
+            $failure       = null;
+
+            try {
+                $drafts = $callback($localStaging->path());
+
+                $this->commitStorage($filesystem, $path, $drafts, $remoteStaging, $cleanupRemote);
+            } catch (Throwable $e) {
+                $failure = $e;
+            }
+
+            if (! $localStaging->delete()) {
+                $failure = $this->withCleanupFailure(
+                    $failure,
+                    new RuntimeException("Unable to clean the local feed staging directory: [{$localStaging->path()}].")
+                );
+            }
+
+            if ($cleanupRemote) {
+                try {
+                    $filesystem->deleteDirectory($remoteStaging);
+                } catch (Throwable $e) {
+                    $failure = $this->withCleanupFailure(
+                        $failure,
+                        new RuntimeException(
+                            "Unable to clean the remote feed staging directory: [$remoteStaging].",
+                            previous: $e
+                        )
+                    );
+                }
             }
 
             if ($failure !== null) {
@@ -228,6 +309,67 @@ class FilesystemService
         }
 
         return $backup;
+    }
+
+    protected function commitStorage(
+        FilesystemOperator $storage,
+        string $path,
+        mixed $drafts,
+        string $staging,
+        bool &$cleanup,
+    ): void {
+        $drafts = $this->validateStorageDrafts($path, $drafts);
+
+        $cleanup   = true;
+        $backups   = [];
+        $installed = [];
+
+        try {
+            $drafts   = $this->stageStorageDrafts($storage, $drafts, $staging);
+            $existing = $this->publishedStoragePaths($storage, $path);
+            $targets  = array_keys($drafts);
+
+            foreach ($drafts as $target => $draft) {
+                if ($storage->fileExists($target)) {
+                    $backup           = $this->storageBackupPath($storage, $staging);
+                    $backups[$target] = $backup;
+
+                    $storage->move($target, $backup);
+                }
+
+                $installed[] = $target;
+
+                $storage->move($draft, $target);
+            }
+
+            foreach ($existing as $published) {
+                if ($this->containsStoragePath($targets, $published) || ! $storage->fileExists($published)) {
+                    continue;
+                }
+
+                $backup              = $this->storageBackupPath($storage, $staging);
+                $backups[$published] = $backup;
+
+                $storage->move($published, $backup);
+            }
+        } catch (Throwable $e) {
+            $rollbackFailure = $this->rollbackStorage($storage, $installed, $backups);
+
+            if ($rollbackFailure !== null) {
+                $cleanup = false;
+
+                throw new CloseFeedException(
+                    $path,
+                    new RuntimeException(
+                        $e->getMessage() . ' Rollback failed: ' . $rollbackFailure->getMessage()
+                        . " Backups were preserved at: [$staging].",
+                        previous: $e
+                    )
+                );
+            }
+
+            throw new CloseFeedException($path, $e);
+        }
     }
 
     protected function commit(string $path, array $drafts, string $staging, bool &$cleanup): void
@@ -287,6 +429,19 @@ class FilesystemService
 
         foreach ($paths as $path) {
             if ($this->pathKey($path) === $key) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function containsStoragePath(array $paths, string $expected): bool
+    {
+        $key = $this->storagePathKey($expected);
+
+        foreach ($paths as $path) {
+            if ($this->storagePathKey($path) === $key) {
                 return true;
             }
         }
@@ -392,6 +547,31 @@ class FilesystemService
         return DIRECTORY_SEPARATOR === '\\' ? strtolower($path) : $path;
     }
 
+    protected function publishedStoragePaths(FilesystemOperator $storage, string $path): array
+    {
+        $paths = [];
+
+        if ($storage->fileExists($path)) {
+            $paths[] = $path;
+        }
+
+        foreach ($storage->listContents($this->storageDirectory($path), false) as $file) {
+            if (! $file->isFile()) {
+                continue;
+            }
+
+            $candidate = $file->path();
+
+            if ($this->matchesSplitFilename(basename($candidate), basename($path))) {
+                $paths[] = $candidate;
+            }
+        }
+
+        sort($paths, SORT_NATURAL);
+
+        return $paths;
+    }
+
     protected function publishedPaths(string $path): array
     {
         $paths = [];
@@ -452,6 +632,110 @@ class FilesystemService
         return new RuntimeException(implode('; ', $messages), previous: $failures[0]);
     }
 
+    protected function rollbackStorage(FilesystemOperator $storage, array $installed, array $backups): ?Throwable
+    {
+        $failures = [];
+
+        foreach (array_reverse($installed) as $path) {
+            try {
+                if ($storage->fileExists($path)) {
+                    $storage->delete($path);
+                }
+            } catch (Throwable $e) {
+                $failures[] = $e;
+            }
+        }
+
+        foreach (array_reverse($backups, true) as $path => $backup) {
+            try {
+                $targetExists = $storage->fileExists($path);
+
+                if (! $storage->fileExists($backup)) {
+                    if (! $targetExists) {
+                        throw new RuntimeException("Feed backup is missing during rollback: [$backup].");
+                    }
+
+                    continue;
+                }
+
+                if ($targetExists) {
+                    $storage->delete($path);
+                }
+
+                $storage->move($backup, $path);
+            } catch (Throwable $e) {
+                $failures[] = $e;
+            }
+        }
+
+        if ($failures === []) {
+            return null;
+        }
+
+        $messages = [];
+
+        foreach ($failures as $failure) {
+            $messages[] = get_class($failure) . ': ' . $failure->getMessage();
+        }
+
+        return new RuntimeException(implode('; ', $messages), previous: $failures[0]);
+    }
+
+    protected function stageStorageDrafts(FilesystemOperator $storage, array $drafts, string $staging): array
+    {
+        $staged = [];
+
+        foreach ($drafts as $target => $draft) {
+            $path     = $staging . '/drafts/' . $this->uniqueIdentifier();
+            $resource = @fopen($draft, 'rb');
+
+            if ($resource === false) {
+                throw new RuntimeException("Unable to open the staged feed for reading: [$draft].");
+            }
+
+            try {
+                $storage->writeStream($path, $resource);
+            } finally {
+                fclose($resource);
+            }
+
+            $staged[$target] = $path;
+        }
+
+        return $staged;
+    }
+
+    protected function storageBackupPath(FilesystemOperator $storage, string $staging): string
+    {
+        $directory = $staging . '/backups';
+
+        if (! $storage->directoryExists($directory)) {
+            $storage->createDirectory($directory);
+        }
+
+        return $directory . '/' . $this->uniqueIdentifier();
+    }
+
+    protected function storageDirectory(string $path): string
+    {
+        $directory = pathinfo($path, PATHINFO_DIRNAME);
+
+        return $directory === '.' ? '' : $directory;
+    }
+
+    protected function storagePathKey(string $path): string
+    {
+        return str_replace('\\', '/', $path);
+    }
+
+    protected function storageStagingPath(string $path): string
+    {
+        $directory = $this->storageDirectory($path);
+        $staging   = '.feeds_staging_' . $this->uniqueIdentifier();
+
+        return $directory === '' ? $staging : "$directory/$staging";
+    }
+
     protected function temporaryFilename(string $filename): string
     {
         return 'feeds_draft_' . $this->uniqueIdentifier();
@@ -464,6 +748,34 @@ class FilesystemService
 
     protected function validateDrafts(string $path, array $drafts): array
     {
+        return $this->validateDraftMap(
+            $path,
+            $drafts,
+            fn (string $target, string $publication) => $this->isPublicationPath($target, $publication),
+            fn (string $target)                      => $this->pathKey($target),
+        );
+    }
+
+    protected function validateStorageDrafts(string $path, mixed $drafts): array
+    {
+        if (! is_array($drafts)) {
+            throw new RuntimeException('The publication callback must return an array of staged files.');
+        }
+
+        return $this->validateDraftMap(
+            $path,
+            $drafts,
+            fn (string $target, string $publication) => $this->isStoragePublicationPath($target, $publication),
+            fn (string $target)                      => $this->storagePathKey($target),
+        );
+    }
+
+    protected function validateDraftMap(
+        string $path,
+        array $drafts,
+        Closure $isPublicationPath,
+        Closure $targetPathKey,
+    ): array {
         if ($drafts === []) {
             throw new RuntimeException("No staged feeds were provided for publication: [$path].");
         }
@@ -477,7 +789,7 @@ class FilesystemService
                 throw new RuntimeException('Staged feed paths and publication targets must be strings.');
             }
 
-            if (! $this->isPublicationPath($target, $path)) {
+            if (! $isPublicationPath($target, $path)) {
                 throw new RuntimeException("Invalid feed publication target: [$target].");
             }
 
@@ -485,7 +797,7 @@ class FilesystemService
                 throw new RuntimeException("Staged feed does not exist: [$draft].");
             }
 
-            $targetKey = $this->pathKey($target);
+            $targetKey = $targetPathKey($target);
             $sourceKey = $this->pathKey($draft);
 
             if (isset($targets[$targetKey])) {
@@ -502,6 +814,31 @@ class FilesystemService
         }
 
         return $validated;
+    }
+
+    protected function isStoragePublicationPath(string $path, string $publication): bool
+    {
+        if ($this->storagePathKey($path) === $this->storagePathKey($publication)) {
+            return true;
+        }
+
+        if ($this->storagePathKey(dirname($path)) !== $this->storagePathKey(dirname($publication))) {
+            return false;
+        }
+
+        return $this->matchesSplitFilename(basename($path), basename($publication));
+    }
+
+    protected function withCleanupFailure(?Throwable $failure, Throwable $cleanupFailure): Throwable
+    {
+        if ($failure === null) {
+            return $cleanupFailure;
+        }
+
+        return new RuntimeException(
+            $failure->getMessage() . ' ' . $cleanupFailure->getMessage(),
+            previous: $failure
+        );
     }
 
     /** @param  resource  $file */

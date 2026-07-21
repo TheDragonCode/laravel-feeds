@@ -6,7 +6,7 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 
 class UserFeed extends Feed
 {
-    protected string $storage = 'public';
+    protected string $storage = 's3';
 
     public function filename(): string
     {

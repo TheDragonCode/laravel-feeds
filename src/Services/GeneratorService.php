@@ -35,8 +35,9 @@ class GeneratorService
 
     public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData
     {
-        $class = get_class($feed);
-        $path  = $feed->path();
+        $class   = get_class($feed);
+        $storage = $feed->storage();
+        $path    = $feed->path();
 
         $this->debug($output, 'Generation started.', [
             'feed' => $class,
@@ -49,24 +50,28 @@ class GeneratorService
             $converter = $this->converter($feed);
             $result    = null;
 
-            $this->filesystem->publish($path, function (string $staging) use ($feed, $output, $converter, &$result) {
-                $this->debug($output, 'Publication lock acquired and staging created.', [
-                    'feed'    => get_class($feed),
-                    'staging' => $staging,
-                ]);
+            $this->filesystem->publishTo(
+                $storage,
+                $feed->storagePath(),
+                function (string $staging) use ($feed, $output, $converter, &$result) {
+                    $this->debug($output, 'Publication lock acquired and staging created.', [
+                        'feed'    => get_class($feed),
+                        'staging' => $staging,
+                    ]);
 
-                $drafts = [];
-                $result = $this->export($feed, $output, $this->filesystem, $staging, $drafts, $converter);
+                    $drafts = [];
+                    $result = $this->export($feed, $output, $this->filesystem, $staging, $drafts, $converter);
 
-                $this->debug($output, 'All feed parts staged.', [
-                    'feed'    => get_class($feed),
-                    'parts'   => count($result->paths),
-                    'paths'   => $result->paths,
-                    'records' => $result->records,
-                ]);
+                    $this->debug($output, 'All feed parts staged.', [
+                        'feed'    => get_class($feed),
+                        'parts'   => count($result->paths),
+                        'paths'   => $result->paths,
+                        'records' => $result->records,
+                    ]);
 
-                return $drafts;
-            });
+                    return $drafts;
+                }
+            );
 
             if (! $result instanceof GenerationResultData) {
                 throw new RuntimeException('Feed generation did not produce a result.');
@@ -124,7 +129,7 @@ class GeneratorService
             ->export();
 
         return new GenerationResultData(
-            paths  : array_keys($drafts),
+            paths  : array_keys($records),
             records: $records,
         );
     }
@@ -154,10 +159,11 @@ class GeneratorService
         return function ($file, int $index, int $count) use ($feed, &$drafts, &$records, $converter) {
             $this->performFooter($file, $feed, $converter);
 
-            $path = $feed->path($index);
+            $storagePath = $feed->storagePath($index);
+            $path        = $feed->path($index);
 
-            $drafts[$path]  = $this->filesystem->finishDraft($file);
-            $records[$path] = $count;
+            $drafts[$storagePath] = $this->filesystem->finishDraft($file);
+            $records[$path]       = $count;
         };
     }
 
