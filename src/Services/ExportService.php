@@ -7,12 +7,18 @@ namespace DragonCode\LaravelFeed\Services;
 use Closure;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Console\OutputStyle;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\LazyCollection;
 use InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Throwable;
 
+use function get_class;
 use function intdiv;
 use function is_resource;
+use function json_encode;
 use function min;
 use function value;
 
@@ -103,7 +109,7 @@ class ExportService
     {
         try {
             $pending = null;
-            $models  = $this->feed->builder()->lazyById($this->chunk);
+            $models  = $this->models();
 
             if (($limit = $this->total ?? $this->capacity) !== null) {
                 $models = $models->take($limit);
@@ -123,7 +129,19 @@ class ExportService
 
             $this->store(true);
 
+            $this->debug('Export query iteration finished.', [
+                'records' => $this->exportedRecords,
+            ]);
+
             $this->progressBar?->finish();
+        } catch (Throwable $e) {
+            $this->debug('Export query iteration failed.', [
+                'records'   => $this->exportedRecords,
+                'exception' => get_class($e),
+                'message'   => $e->getMessage(),
+            ]);
+
+            throw $e;
         } finally {
             if (is_resource($this->resource)) {
                 $this->filesystem->close($this->resource);
@@ -251,9 +269,98 @@ class ExportService
         return $this->perFile * $this->maxFiles;
     }
 
+    protected function models(): LazyCollection
+    {
+        $builder = $this->feed->builder()->applyScopes()->withoutGlobalScopes();
+        $query   = $builder->getQuery();
+        $bounded = $this->isBounded($query);
+
+        $this->debug('Export query iteration configured.', [
+            'mode'       => $bounded ? 'bounded_chunks' : 'chunks',
+            'chunk_size' => $this->chunk,
+        ]);
+
+        return $bounded
+            ? $this->boundedModels($builder, $query)
+            : $builder->lazy($this->chunk);
+    }
+
+    protected function boundedModels(Builder $builder, QueryBuilder $query): LazyCollection
+    {
+        $offset    = $this->queryOffset($query);
+        $remaining = $this->queryLimit($query);
+
+        if (empty($query->orders) && empty($query->unionOrders)) {
+            $key = empty($query->unions)
+                ? $builder->getModel()->getQualifiedKeyName()
+                : $builder->getModel()->getKeyName();
+
+            $builder->orderBy($key);
+        }
+
+        return LazyCollection::make(function () use ($builder, $offset, $remaining) {
+            while ($remaining === null || $remaining > 0) {
+                $limit  = $remaining === null ? $this->chunk : min($this->chunk, $remaining);
+                $models = (clone $builder)->offset($offset)->limit($limit)->get();
+                $count  = $models->count();
+
+                if ($count === 0) {
+                    return;
+                }
+
+                foreach ($models as $model) {
+                    yield $model;
+                }
+
+                if ($count < $limit) {
+                    return;
+                }
+
+                $offset += $count;
+
+                if ($remaining !== null) {
+                    $remaining -= $count;
+                }
+            }
+        });
+    }
+
     protected function modelCount(): int
     {
-        return $this->modelCount ??= $this->feed->builder()->count();
+        if ($this->modelCount !== null) {
+            return $this->modelCount;
+        }
+
+        $builder = $this->feed->builder();
+        $query   = $builder->toBase();
+
+        return $this->modelCount = $this->isBounded($query)
+            ? $query->newQuery()->fromSub($query, 'feed_models')->count()
+            : $builder->count();
+    }
+
+    protected function isBounded(QueryBuilder $query): bool
+    {
+        return $this->queryLimit($query) !== null || $this->queryOffset($query) > 0;
+    }
+
+    protected function queryLimit(QueryBuilder $query): ?int
+    {
+        return empty($query->unions) ? $query->limit : $query->unionLimit;
+    }
+
+    protected function queryOffset(QueryBuilder $query): int
+    {
+        return (int) (empty($query->unions) ? $query->offset : $query->unionOffset);
+    }
+
+    protected function debug(string $message, array $context): void
+    {
+        if (! $this->output?->isDebug()) {
+            return;
+        }
+
+        $this->output->writeln('[laravel-feeds] [FIX:190] ' . $message . ' ' . json_encode($context));
     }
 
     protected function createProgressBar(int $total): ?ProgressBar
