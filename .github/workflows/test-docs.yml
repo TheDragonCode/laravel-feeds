@@ -5,7 +5,8 @@ on:
         branches-ignore:
             - main
 
-permissions: read-all
+permissions:
+    contents: read
 
 env:
     COMPOSER_TOKEN: ${{ secrets.COMPOSER_TOKEN }}
@@ -19,12 +20,12 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            -   uses: actions/checkout@v7
+            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
                 with:
                     fetch-depth: 0
 
             -   name: Build documentation
-                uses: JetBrains/writerside-github-action@v4
+                uses: JetBrains/writerside-github-action@738910d7cf197d67188300d0e0f84b2e708db3cf
                 with:
                     instance: ${{ env.INSTANCE }}
                     artifact: ${{ env.ARTIFACT_DOCS }}
@@ -32,6 +33,6 @@ jobs:
 
 
             -   name: Test documentation
-                uses: JetBrains/writerside-checker-action@v1
+                uses: JetBrains/writerside-checker-action@79ff89902dcd3d5c5a3f26a79bc35830377f38c5
                 with:
                     instance: ${{ env.INSTANCE }}

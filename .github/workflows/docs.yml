@@ -6,9 +6,7 @@ on:
             - main
     workflow_dispatch:
 
-permissions:
-    id-token: write
-    pages: write
+permissions: {}
 
 env:
     COMPOSER_TOKEN: ${{ secrets.COMPOSER_TOKEN }}
@@ -27,22 +25,24 @@ env:
 jobs:
     build:
         name: Build application
+        permissions:
+            contents: read
         runs-on: ubuntu-latest
 
         steps:
-            -   uses: actions/checkout@v7
+            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
                 with:
                     fetch-depth: 0
 
             -   name: Build documentation
-                uses: JetBrains/writerside-github-action@v4
+                uses: JetBrains/writerside-github-action@738910d7cf197d67188300d0e0f84b2e708db3cf
                 with:
                     instance: ${{ env.INSTANCE }}
                     artifact: ${{ env.ARTIFACT_DOCS }}
                     docker-version: ${{ env.BUILDER_VERSION }}
 
             -   name: Upload artifacts
-                uses: actions/upload-artifact@v7
+                uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
                 with:
                     name: docs
                     path: |
@@ -51,7 +51,7 @@ jobs:
                     retention-days: 7
 
             -   name: Upload search indexes
-                uses: actions/upload-artifact@v7
+                uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
                 with:
                     name: ${{ env.ARTIFACT_INDEXES }}
                     path: artifacts/${{ env.ALGOLIA_ARTIFACT }}
@@ -60,23 +60,26 @@ jobs:
     test:
         needs: build
         name: Testing
+        permissions:
+            contents: read
         runs-on: ubuntu-latest
 
         steps:
             -   name: Download docs artifact
-                uses: actions/download-artifact@v8
+                uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
                 with:
                     name: docs
                     path: artifacts
 
             -   name: Test documentation
-                uses: JetBrains/writerside-checker-action@v1
+                uses: JetBrains/writerside-checker-action@79ff89902dcd3d5c5a3f26a79bc35830377f38c5
                 with:
                     instance: ${{ env.INSTANCE }}
 
     robots:
         needs: build
         name: Generate robots.txt
+        permissions: {}
         runs-on: ubuntu-latest
 
         steps:
@@ -89,7 +92,7 @@ jobs:
                     echo "Sitemap: https://${{ env.DOMAIN_NAME }}/sitemap.xml" >> robots.txt
 
             -   name: Upload artifacts
-                uses: actions/upload-artifact@v7
+                uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
                 with:
                     name: robots
                     path: robots.txt
@@ -105,16 +108,19 @@ jobs:
             - robots
 
         name: Deploy to pages
+        permissions:
+            id-token: write
+            pages: write
         runs-on: ubuntu-latest
 
         steps:
             -   name: Download docs artifact
-                uses: actions/download-artifact@v8
+                uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
                 with:
                     name: docs
 
             -   name: Download robots artifact
-                uses: actions/download-artifact@v8
+                uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
                 with:
                     name: robots
 
@@ -126,16 +132,16 @@ jobs:
                     sudo mv robots.txt dir/robots.txt
 
             -   name: Setup Pages
-                uses: actions/configure-pages@v6
+                uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
 
             -   name: Upload artifact
-                uses: actions/upload-pages-artifact@v5
+                uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
                 with:
                     path: dir
 
             -   name: Deploy to GitHub Pages
                 id: deployment
-                uses: actions/deploy-pages@v5
+                uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128
 
     deploy-indexes:
         environment: deploy
@@ -144,6 +150,7 @@ jobs:
             - test
         
         name: Deploy to Algolia
+        permissions: {}
         runs-on: ubuntu-latest
         timeout-minutes: 3
 
@@ -152,7 +159,7 @@ jobs:
 
         steps:
             -   name: Download search artifact
-                uses: actions/download-artifact@v8
+                uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
                 with:
                     name: ${{ env.ARTIFACT_INDEXES }}
 
