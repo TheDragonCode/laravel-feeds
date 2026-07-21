@@ -69,7 +69,7 @@ function configureDocsWorkspace(): void
 
 function stabilizeDocsFixtures(): void
 {
-    fake()->seed(168);
+    stabilizeDocsFaker();
 
     foreach (User::query()->orderBy('id')->get() as $index => $user) {
         $number = $index + 1;
@@ -81,6 +81,13 @@ function stabilizeDocsFixtures(): void
             'updated_at' => getDefaultDateTime(),
         ])->saveQuietly();
     }
+}
+
+function stabilizeDocsFaker(): void
+{
+    fake();
+
+    mt_srand(168, MT_RAND_MT19937);
 }
 
 function finishDocsWorkspace(?bool $update = null): void

@@ -55,6 +55,17 @@ test('writes documentation updates with LF line endings', function () {
     }
 });
 
+test('stabilizes documentation Faker output across PHP versions', function () {
+    try {
+        stabilizeDocsFaker();
+
+        expect(fake()->randomElements(range(1, 10), 4))
+            ->toBe([2, 10, 8, 4]);
+    } finally {
+        mt_srand();
+    }
+});
+
 test('deletes the documentation workspace when comparison fails', function () {
     createDocsWorkspace();
 
