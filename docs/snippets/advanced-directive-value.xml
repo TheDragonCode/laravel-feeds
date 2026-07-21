@@ -2,12 +2,12 @@
 <value_directive>
 
 <user>
-  <name>Prof. Kristoffer Monahan DDS</name>
-  <contact type="email">dexter07@example.net</contact>
+  <name>User 1</name>
+  <contact type="email">user1@example.com</contact>
 </user>
 <user>
-  <name>Nikko Lesch</name>
-  <contact type="email">homenick.dennis@example.net</contact>
+  <name>User 2</name>
+  <contact type="email">user2@example.com</contact>
 </user>
 
 </value_directive>
