@@ -29,6 +29,8 @@ use Workbench\App\Models\News;
 
 final class RemoteFeedFilesystemAdapter extends DecoratedAdapter
 {
+    public array $moves = [];
+
     public int $streamWrites = 0;
 
     protected ?string $failedDestination = null;
@@ -83,6 +85,8 @@ final class RemoteFeedFilesystemAdapter extends DecoratedAdapter
 
     public function move(string $source, string $destination, Config $config): void
     {
+        $this->moves[] = [$source, $destination];
+
         if ($this->failedDestination === $destination) {
             $this->failedDestination = null;
 
@@ -288,6 +292,22 @@ test('restores remote feed parts when publication fails', function () {
 
     expect(remoteStagingFiles($storage))->toBe([]);
 
+    $ownership = dirname($feed->storagePath()) . '/.laravel-feeds/ownership.json';
+
+    RemoteFeedStorage::$adapter->failNextMoveTo($ownership);
+
+    expect(fn () => $generator->feed($feed))
+        ->toThrow(FeedGenerationException::class, $ownership);
+
+    foreach ($published as $path => $content) {
+        expect($storage->get($path))->toBe($content);
+    }
+
+    expect($storage->exists($ownership))
+        ->toBeTrue()
+        ->and(remoteStagingFiles($storage))
+        ->toBe([]);
+
     Event::assertNotDispatched(FeedFinishedEvent::class);
 });
 
@@ -321,6 +341,58 @@ test('replaces remote feeds and removes obsolete split parts', function () {
 
     expect($storage->get($feed->storagePath()))
         ->not->toBe('old-single')
+        ->and(remoteStagingFiles($storage))
+        ->toBe([]);
+
+    $independent = $feed->storagePath(1);
+
+    $storage->put($independent, 'independent');
+
+    $generator->feed($feed);
+
+    $published = $storage->get($feed->storagePath());
+    $moveCount = count(RemoteFeedStorage::$adapter->moves);
+
+    expect($storage->get($independent))->toBe('independent');
+
+    RemoteStorageFeed::$perFile = 1;
+
+    expect(fn () => $generator->feed($feed))
+        ->toThrow(
+            FeedGenerationException::class,
+            "Feed publication target is not owned: [$independent]."
+        );
+
+    expect($storage->get($feed->storagePath()))
+        ->toBe($published)
+        ->and($storage->get($independent))
+        ->toBe('independent')
+        ->and(RemoteFeedStorage::$adapter->moves)
+        ->toHaveCount($moveCount)
+        ->and(remoteStagingFiles($storage))
+        ->toBe([]);
+});
+
+test('removes a pre-registry remote primary file when publishing split parts', function () {
+    $storage     = app(RemoteStorageFeed::class)->storage();
+    $filesystem  = app(FilesystemService::class);
+    $publication = 'exports/legacy.jsonl';
+    $first       = 'exports/legacy-1.jsonl';
+    $second      = 'exports/legacy-2.jsonl';
+
+    $storage->put($publication, 'legacy-primary');
+
+    $filesystem->publishTo($storage, $publication, static fn (string $staging) => [
+        $first  => remoteFeedDraft($staging, 'first'),
+        $second => remoteFeedDraft($staging, 'second'),
+    ]);
+
+    expect($storage->exists($publication))
+        ->toBeFalse()
+        ->and($storage->get($first))
+        ->toBe('first')
+        ->and($storage->get($second))
+        ->toBe('second')
         ->and(remoteStagingFiles($storage))
         ->toBe([]);
 });

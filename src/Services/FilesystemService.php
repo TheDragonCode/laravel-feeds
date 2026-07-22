@@ -32,6 +32,9 @@ use function implode;
 use function is_array;
 use function is_resource;
 use function is_string;
+use function json_decode;
+use function json_encode;
+use function ksort;
 use function pathinfo;
 use function preg_match;
 use function preg_quote;
@@ -39,6 +42,7 @@ use function random_bytes;
 use function realpath;
 use function sort;
 use function storage_path;
+use function str_contains;
 use function str_replace;
 use function stream_get_meta_data;
 use function strlen;
@@ -48,7 +52,11 @@ use function sys_get_temp_dir;
 
 class FilesystemService
 {
-    protected const MAX_PATH_ATTEMPTS = 10;
+    protected const MAX_PATH_ATTEMPTS   = 10;
+    protected const OWNERSHIP_DIRECTORY = '.laravel-feeds';
+    protected const OWNERSHIP_FILENAME  = 'ownership.json';
+    protected const OWNERSHIP_FORMAT    = 'dragon-code/laravel-feeds-ownership';
+    protected const OWNERSHIP_VERSION   = 1;
 
     public function __construct(
         protected File $file,
@@ -200,7 +208,12 @@ class FilesystemService
                     throw new RuntimeException('The publication callback must return an array of staged files.');
                 }
 
-                $this->commit($path, $drafts, $staging->path(), $cleanup);
+                $this->lock(
+                    $this->ownershipPath($path),
+                    function () use ($drafts, $path, $staging, &$cleanup) {
+                        $this->commit($path, $drafts, $staging->path(), $cleanup);
+                    }
+                );
             } catch (Throwable $e) {
                 $failure = $e;
             }
@@ -228,8 +241,11 @@ class FilesystemService
     {
         $filesystem = $storage->getDriver();
         $lock       = get_class($storage->getAdapter()) . ':' . $storage->path($path);
+        $ownership  = get_class($storage->getAdapter()) . ':' . $storage->path(
+            $this->storageOwnershipPath($path)
+        );
 
-        $this->lock($lock, function () use ($callback, $filesystem, $path) {
+        $this->lock($lock, function () use ($callback, $filesystem, $ownership, $path) {
             $localStaging = $this->createTemporaryDirectory(
                 sys_get_temp_dir(),
                 fn () => 'laravel_feeds_' . $this->uniqueIdentifier()
@@ -241,7 +257,12 @@ class FilesystemService
             try {
                 $drafts = $callback($localStaging->path());
 
-                $this->commitStorage($filesystem, $path, $drafts, $remoteStaging, $cleanupRemote);
+                $this->lock(
+                    $ownership,
+                    function () use ($drafts, $filesystem, $path, $remoteStaging, &$cleanupRemote) {
+                        $this->commitStorage($filesystem, $path, $drafts, $remoteStaging, $cleanupRemote);
+                    }
+                );
             } catch (Throwable $e) {
                 $failure = $e;
             }
@@ -318,16 +339,23 @@ class FilesystemService
         string $staging,
         bool &$cleanup,
     ): void {
-        $drafts = $this->validateStorageDrafts($path, $drafts);
+        $drafts        = $this->validateStorageDrafts($path, $drafts);
+        $targets       = array_keys($drafts);
+        $ownershipPath = $this->storageOwnershipPath($path);
+        $ownership     = $this->storageOwnership($storage, $path);
+
+        $this->assertStorageOwnership($storage, $path, $targets, $ownership);
+
+        $existing      = $this->storageOwnedPaths($storage, $path, $ownership);
+        $nextOwnership = $this->nextStorageOwnership($path, $targets, $ownership);
 
         $cleanup   = true;
         $backups   = [];
         $installed = [];
 
         try {
-            $drafts   = $this->stageStorageDrafts($storage, $drafts, $staging);
-            $existing = $this->publishedStoragePaths($storage, $path);
-            $targets  = array_keys($drafts);
+            $drafts         = $this->stageStorageDrafts($storage, $drafts, $staging);
+            $ownershipDraft = $this->stageStorageOwnership($storage, $nextOwnership, $staging);
 
             foreach ($drafts as $target => $draft) {
                 if ($storage->fileExists($target)) {
@@ -352,6 +380,23 @@ class FilesystemService
 
                 $storage->move($published, $backup);
             }
+
+            if ($storage->fileExists($ownershipPath)) {
+                $backup                  = $this->storageBackupPath($storage, $staging);
+                $backups[$ownershipPath] = $backup;
+
+                $storage->move($ownershipPath, $backup);
+            }
+
+            $ownershipDirectory = $this->storageDirectory($ownershipPath);
+
+            if (! $storage->directoryExists($ownershipDirectory)) {
+                $storage->createDirectory($ownershipDirectory);
+            }
+
+            $installed[] = $ownershipPath;
+
+            $storage->move($ownershipDraft, $ownershipPath);
         } catch (Throwable $e) {
             $rollbackFailure = $this->rollbackStorage($storage, $installed, $backups);
 
@@ -374,9 +419,16 @@ class FilesystemService
 
     protected function commit(string $path, array $drafts, string $staging, bool &$cleanup): void
     {
-        $drafts   = $this->validateDrafts($path, $drafts);
-        $existing = $this->publishedPaths($path);
-        $targets  = array_keys($drafts);
+        $drafts        = $this->validateDrafts($path, $drafts);
+        $targets       = array_keys($drafts);
+        $ownershipPath = $this->ownershipPath($path);
+        $ownership     = $this->ownership($path);
+
+        $this->assertOwnership($path, $targets, $ownership);
+
+        $existing       = $this->ownedPaths($path, $ownership);
+        $nextOwnership  = $this->nextOwnership($path, $targets, $ownership);
+        $ownershipDraft = $this->ownershipDraft($ownershipPath, $nextOwnership, $staging);
 
         $backups   = [];
         $installed = [];
@@ -403,6 +455,24 @@ class FilesystemService
 
                 $backups[$published] = $this->backup($published, $staging);
             }
+
+            if ($this->file->exists($ownershipPath)) {
+                $backups[$ownershipPath] = $this->backup($ownershipPath, $staging);
+            }
+
+            $this->file->ensureDirectoryExists(dirname($ownershipPath));
+
+            if (! $this->file->isDirectory(dirname($ownershipPath))) {
+                throw new RuntimeException(
+                    'Unable to create the feed ownership directory: [' . dirname($ownershipPath) . '].'
+                );
+            }
+
+            if (! $this->file->move($ownershipDraft, $ownershipPath)) {
+                throw new RuntimeException("Unable to publish the feed ownership registry: [$ownershipPath].");
+            }
+
+            $installed[] = $ownershipPath;
         } catch (Throwable $e) {
             $rollbackFailure = $this->rollback($installed, $backups);
 
@@ -547,23 +617,226 @@ class FilesystemService
         return DIRECTORY_SEPARATOR === '\\' ? strtolower($path) : $path;
     }
 
-    protected function publishedStoragePaths(FilesystemOperator $storage, string $path): array
+    protected function ownership(string $path): array
     {
-        $paths = [];
+        $ownershipPath = $this->ownershipPath($path);
 
-        if ($storage->fileExists($path)) {
-            $paths[] = $path;
+        if (! $this->file->exists($ownershipPath)) {
+            return [];
         }
 
-        foreach ($storage->listContents($this->storageDirectory($path), false) as $file) {
-            if (! $file->isFile()) {
+        try {
+            if (! $this->file->isFile($ownershipPath)) {
+                throw new RuntimeException("Feed ownership registry is not a file: [$ownershipPath].");
+            }
+
+            return $this->decodeOwnership(
+                $this->file->get($ownershipPath),
+                fn (string $filename) => $this->pathInDirectory($path, $filename),
+                fn (string $target)   => $this->pathKey($target),
+            );
+        } catch (Throwable $e) {
+            throw new RuntimeException(
+                "Unable to read a valid feed ownership registry: [$ownershipPath].",
+                previous: $e
+            );
+        }
+    }
+
+    protected function storageOwnership(FilesystemOperator $storage, string $path): array
+    {
+        $ownershipPath = $this->storageOwnershipPath($path);
+
+        if (! $storage->fileExists($ownershipPath)) {
+            if ($storage->directoryExists($ownershipPath)) {
+                throw new RuntimeException("Unable to read a valid feed ownership registry: [$ownershipPath].");
+            }
+
+            return [];
+        }
+
+        try {
+            return $this->decodeOwnership(
+                $storage->read($ownershipPath),
+                fn (string $filename) => $this->storagePathInDirectory($path, $filename),
+                fn (string $target)   => $this->storagePathKey($target),
+            );
+        } catch (Throwable $e) {
+            throw new RuntimeException(
+                "Unable to read a valid feed ownership registry: [$ownershipPath].",
+                previous: $e
+            );
+        }
+    }
+
+    protected function decodeOwnership(string $contents, Closure $resolvePath, Closure $pathKey): array
+    {
+        $decoded = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
+        $keys    = is_array($decoded) ? array_keys($decoded) : [];
+
+        sort($keys);
+
+        if (
+            $keys                  !== ['format', 'owners', 'version']
+            || $decoded['format']  !== self::OWNERSHIP_FORMAT
+            || $decoded['version'] !== self::OWNERSHIP_VERSION
+            || ! is_array($decoded['owners'])
+        ) {
+            throw new RuntimeException('Unsupported feed ownership registry.');
+        }
+
+        $targets = [];
+
+        foreach ($decoded['owners'] as $target => $owner) {
+            if (
+                ! is_string($target)
+                || ! is_string($owner)
+                || ! $this->isOwnershipFilename($target)
+                || ! $this->isOwnershipFilename($owner)
+                || ($target !== $owner && ! $this->matchesSplitFilename($target, $owner))
+            ) {
+                throw new RuntimeException('Invalid feed ownership entry.');
+            }
+
+            $targetKey = $pathKey($resolvePath($target));
+
+            if (isset($targets[$targetKey])) {
+                throw new RuntimeException('Duplicate feed ownership entry.');
+            }
+
+            $targets[$targetKey] = true;
+        }
+
+        $ownership = $decoded['owners'];
+
+        ksort($ownership, SORT_NATURAL);
+
+        return $ownership;
+    }
+
+    protected function isOwnershipFilename(string $filename): bool
+    {
+        return $filename !== ''
+            && $filename !== '.'
+            && $filename !== '..'
+            && ! str_contains($filename, '/')
+            && ! str_contains($filename, '\\');
+    }
+
+    protected function assertOwnership(string $path, array $targets, array $ownership): void
+    {
+        $this->assertOwnedTargets(
+            $path,
+            $targets,
+            $ownership,
+            fn (string $target)   => $this->file->exists($target),
+            fn (string $filename) => $this->pathInDirectory($path, $filename),
+            fn (string $target)   => $this->pathKey($target),
+        );
+    }
+
+    protected function assertStorageOwnership(
+        FilesystemOperator $storage,
+        string $path,
+        array $targets,
+        array $ownership,
+    ): void {
+        $this->assertOwnedTargets(
+            $path,
+            $targets,
+            $ownership,
+            fn (string $target)   => $storage->fileExists($target),
+            fn (string $filename) => $this->storagePathInDirectory($path, $filename),
+            fn (string $target)   => $this->storagePathKey($target),
+        );
+    }
+
+    protected function assertOwnedTargets(
+        string $path,
+        array $targets,
+        array $ownership,
+        Closure $exists,
+        Closure $resolvePath,
+        Closure $pathKey,
+    ): void {
+        $publicationKey = $pathKey($path);
+
+        foreach ($targets as $target) {
+            $owner = $this->ownerOf($target, $ownership, $resolvePath, $pathKey);
+
+            if ($owner !== null) {
+                if ($pathKey($owner) !== $publicationKey) {
+                    throw new RuntimeException("Feed publication target is not owned: [$target].");
+                }
+
                 continue;
             }
 
-            $candidate = $file->path();
+            if ($pathKey($target) !== $publicationKey && $exists($target)) {
+                throw new RuntimeException("Feed publication target is not owned: [$target].");
+            }
+        }
+    }
 
-            if ($this->matchesSplitFilename(basename($candidate), basename($path))) {
-                $paths[] = $candidate;
+    protected function ownerOf(
+        string $target,
+        array $ownership,
+        Closure $resolvePath,
+        Closure $pathKey,
+    ): ?string {
+        $targetKey = $pathKey($target);
+
+        foreach ($ownership as $owned => $owner) {
+            if ($pathKey($resolvePath($owned)) === $targetKey) {
+                return $resolvePath($owner);
+            }
+        }
+
+        return null;
+    }
+
+    protected function ownedPaths(string $path, array $ownership): array
+    {
+        return $this->publicationOwnedPaths(
+            $path,
+            $ownership,
+            fn (string $target)   => $this->file->exists($target),
+            fn (string $filename) => $this->pathInDirectory($path, $filename),
+            fn (string $target)   => $this->pathKey($target),
+        );
+    }
+
+    protected function storageOwnedPaths(
+        FilesystemOperator $storage,
+        string $path,
+        array $ownership,
+    ): array {
+        return $this->publicationOwnedPaths(
+            $path,
+            $ownership,
+            fn (string $target)   => $storage->fileExists($target),
+            fn (string $filename) => $this->storagePathInDirectory($path, $filename),
+            fn (string $target)   => $this->storagePathKey($target),
+        );
+    }
+
+    protected function publicationOwnedPaths(
+        string $path,
+        array $ownership,
+        Closure $exists,
+        Closure $resolvePath,
+        Closure $pathKey,
+    ): array {
+        $ownerKey = $pathKey($path);
+        $paths    = [];
+
+        if ($this->ownerOf($path, $ownership, $resolvePath, $pathKey) === null && $exists($path)) {
+            $paths[] = $path;
+        }
+
+        foreach ($ownership as $target => $owner) {
+            if ($pathKey($resolvePath($owner)) === $ownerKey) {
+                $paths[] = $resolvePath($target);
             }
         }
 
@@ -572,23 +845,122 @@ class FilesystemService
         return $paths;
     }
 
-    protected function publishedPaths(string $path): array
+    protected function nextOwnership(string $path, array $targets, array $ownership): array
     {
-        $paths = [];
+        return $this->nextPublicationOwnership(
+            $path,
+            $targets,
+            $ownership,
+            fn (string $filename) => $this->pathInDirectory($path, $filename),
+            fn (string $target)   => $this->pathKey($target),
+        );
+    }
 
-        if ($this->file->exists($path)) {
-            $paths[] = $path;
-        }
+    protected function nextStorageOwnership(string $path, array $targets, array $ownership): array
+    {
+        return $this->nextPublicationOwnership(
+            $path,
+            $targets,
+            $ownership,
+            fn (string $filename) => $this->storagePathInDirectory($path, $filename),
+            fn (string $target)   => $this->storagePathKey($target),
+        );
+    }
 
-        foreach ($this->file->files(dirname($path)) as $file) {
-            if ($this->matchesSplitFilename($file->getFilename(), basename($path))) {
-                $paths[] = $file->getPathname();
+    protected function nextPublicationOwnership(
+        string $path,
+        array $targets,
+        array $ownership,
+        Closure $resolvePath,
+        Closure $pathKey,
+    ): array {
+        $ownerKey = $pathKey($path);
+
+        foreach ($ownership as $target => $owner) {
+            if ($pathKey($resolvePath($owner)) === $ownerKey) {
+                unset($ownership[$target]);
             }
         }
 
-        sort($paths, SORT_NATURAL);
+        foreach ($targets as $target) {
+            $targetKey = $pathKey($target);
 
-        return $paths;
+            foreach ($ownership as $owned => $owner) {
+                if ($pathKey($resolvePath($owned)) === $targetKey) {
+                    unset($ownership[$owned]);
+                }
+            }
+
+            $ownership[basename($target)] = $targetKey === $ownerKey
+                ? basename($target)
+                : basename($path);
+        }
+
+        ksort($ownership, SORT_NATURAL);
+
+        return $ownership;
+    }
+
+    protected function ownershipDraft(string $path, array $ownership, string $staging): string
+    {
+        $draft = $this->createDraft(basename($path), $staging);
+
+        try {
+            $this->append($draft, $this->encodeOwnership($ownership), $path);
+
+            return $this->finishDraft($draft);
+        } catch (Throwable $e) {
+            $this->close($draft);
+
+            throw $e;
+        }
+    }
+
+    protected function stageStorageOwnership(
+        FilesystemOperator $storage,
+        array $ownership,
+        string $staging,
+    ): string {
+        $path = $staging . '/ownership/' . $this->uniqueIdentifier();
+
+        $storage->write($path, $this->encodeOwnership($ownership));
+
+        return $path;
+    }
+
+    protected function encodeOwnership(array $ownership): string
+    {
+        return json_encode([
+            'format'  => self::OWNERSHIP_FORMAT,
+            'version' => self::OWNERSHIP_VERSION,
+            'owners'  => $ownership,
+        ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
+    }
+
+    protected function ownershipPath(string $path): string
+    {
+        return dirname($path) . DIRECTORY_SEPARATOR . self::OWNERSHIP_DIRECTORY
+            . DIRECTORY_SEPARATOR . self::OWNERSHIP_FILENAME;
+    }
+
+    protected function storageOwnershipPath(string $path): string
+    {
+        return $this->storagePathInDirectory(
+            $path,
+            self::OWNERSHIP_DIRECTORY . '/' . self::OWNERSHIP_FILENAME
+        );
+    }
+
+    protected function pathInDirectory(string $path, string $filename): string
+    {
+        return dirname($path) . DIRECTORY_SEPARATOR . $filename;
+    }
+
+    protected function storagePathInDirectory(string $path, string $filename): string
+    {
+        $directory = $this->storageDirectory($path);
+
+        return $directory === '' ? $filename : "$directory/$filename";
     }
 
     protected function rollback(array $installed, array $backups): ?Throwable
