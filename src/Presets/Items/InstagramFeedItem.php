@@ -34,7 +34,7 @@ class InstagramFeedItem extends FeedItem
 
     protected ?string $groupId = null;
 
-    protected string $status = 'active';
+    protected ?string $status = 'active';
 
     protected ?int $googleCategory = null;
 
@@ -75,7 +75,7 @@ class InstagramFeedItem extends FeedItem
         return $this;
     }
 
-    public function image(?string $url): static
+    public function image(string $url): static
     {
         $this->image = $url;
 
@@ -89,21 +89,21 @@ class InstagramFeedItem extends FeedItem
         return $this;
     }
 
-    public function condition(?string $condition): static
+    public function condition(string $condition): static
     {
         $this->condition = $condition;
 
         return $this;
     }
 
-    public function availability(?string $availability): static
+    public function availability(string $availability): static
     {
         $this->availability = $availability;
 
         return $this;
     }
 
-    public function price(?float $price, ?float $salePrice = null): static
+    public function price(float $price, ?float $salePrice = null): static
     {
         $this->price     = $price;
         $this->salePrice = $salePrice ?? $price;
