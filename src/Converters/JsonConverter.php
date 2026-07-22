@@ -17,6 +17,8 @@ use function sprintf;
 
 class JsonConverter extends Converter implements FileAwareInfoConverter
 {
+    private bool $fileHasItems = true;
+
     public function __construct(
         #[Config('feeds.converters.json.options')]
         protected int $options,
@@ -53,11 +55,6 @@ class JsonConverter extends Converter implements FileAwareInfoConverter
 
     public function info(array $info, bool $afterRoot): string
     {
-        return $this->infoForFile($info, $afterRoot, true);
-    }
-
-    public function infoForFile(array $info, bool $afterRoot, bool $hasItems): string
-    {
         $data = $this->performItem($info);
 
         $json = $this->encode($data);
@@ -66,9 +63,22 @@ class JsonConverter extends Converter implements FileAwareInfoConverter
             $json = mb_substr($json, 1, -1);
         }
 
-        $suffix = $afterRoot && ! $hasItems ? '' : ',';
+        $suffix = $afterRoot && ! $this->fileHasItems ? '' : ',';
 
         return $json . $suffix;
+    }
+
+    public function infoForFile(array $info, bool $afterRoot, bool $hasItems): string
+    {
+        $previous = $this->fileHasItems;
+
+        $this->fileHasItems = $hasItems;
+
+        try {
+            return $this->info($info, $afterRoot);
+        } finally {
+            $this->fileHasItems = $previous;
+        }
     }
 
     protected function performItem(array $data): array

@@ -37,6 +37,16 @@ final class ConstructorConfiguredJsonConverter extends JsonConverter
     }
 }
 
+final class InfoOverriddenJsonConverter extends JsonConverter
+{
+    public function info(array $info, bool $afterRoot): string
+    {
+        $info['overridden'] = 'yes';
+
+        return parent::info($info, $afterRoot);
+    }
+}
+
 test('compiles the transformer pipeline after subclass construction', function () {
     ConstructorConfiguredTransformer::$instances = 0;
 
@@ -56,4 +66,19 @@ test('compiles the transformer pipeline after subclass construction', function (
         ->toBe('{"value":"second:custom"}')
         ->and(ConstructorConfiguredTransformer::$instances)
         ->toBe(1);
+});
+
+test('preserves info overrides during file-aware serialization', function () {
+    $converter = new InfoOverriddenJsonConverter(
+        JSON_THROW_ON_ERROR,
+        false,
+        new TransformerService(app(), [])
+    );
+
+    expect($converter->infoForFile(['name' => 'Laravel'], true, false))
+        ->toBe('{"name":"Laravel","overridden":"yes"}')
+        ->and($converter->info(['name' => 'Laravel'], true))
+        ->toBe('{"name":"Laravel","overridden":"yes"},')
+        ->and($converter->infoForFile(['name' => 'Laravel'], true, true))
+        ->toBe('{"name":"Laravel","overridden":"yes"},');
 });
