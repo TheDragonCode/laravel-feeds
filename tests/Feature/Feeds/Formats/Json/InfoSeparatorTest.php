@@ -61,6 +61,10 @@ test('keeps info separators valid', function () {
                 ->toBeArray()
                 ->and(data_get($document, $infoPath))
                 ->toBe('Laravel');
+
+            if ($withItems) {
+                expect(data_get($document, 'items.1.title'))->toBe('Some 1');
+            }
         }
     }
 });

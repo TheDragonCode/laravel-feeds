@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Converters;
 
+use DragonCode\LaravelFeed\Contracts\FileAwareInfoConverter;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Services\TransformerService;
@@ -14,10 +15,8 @@ use function json_encode;
 use function mb_substr;
 use function sprintf;
 
-class JsonConverter extends Converter
+class JsonConverter extends Converter implements FileAwareInfoConverter
 {
-    protected bool $hasItems = false;
-
     public function __construct(
         #[Config('feeds.converters.json.options')]
         protected int $options,
@@ -35,8 +34,6 @@ class JsonConverter extends Converter
 
     public function footer(Feed $feed): string
     {
-        $this->hasItems = false;
-
         return $feed->root()->name ? "\n]\n}\n" : "\n]\n";
     }
 
@@ -50,14 +47,16 @@ class JsonConverter extends Converter
         $data = $this->performItem($item->toArray());
 
         $suffix = $isLast ? '' : ',';
-        $json   = $this->encode($data);
 
-        $this->hasItems = true;
-
-        return $json . $suffix;
+        return $this->encode($data) . $suffix;
     }
 
     public function info(array $info, bool $afterRoot): string
+    {
+        return $this->infoForFile($info, $afterRoot, true);
+    }
+
+    public function infoForFile(array $info, bool $afterRoot, bool $hasItems): string
     {
         $data = $this->performItem($info);
 
@@ -67,7 +66,7 @@ class JsonConverter extends Converter
             $json = mb_substr($json, 1, -1);
         }
 
-        $suffix = $afterRoot && ! $this->hasItems ? '' : ',';
+        $suffix = $afterRoot && ! $hasItems ? '' : ',';
 
         return $json . $suffix;
     }
