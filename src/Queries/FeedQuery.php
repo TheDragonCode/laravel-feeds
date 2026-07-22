@@ -55,6 +55,13 @@ class FeedQuery
         Feed::destroy($id);
     }
 
+    public function deleteByClass(string $class): void
+    {
+        Feed::withTrashed()
+            ->whereClass($class)
+            ->forceDelete();
+    }
+
     public function restore(int $id): void
     {
         Feed::query()
