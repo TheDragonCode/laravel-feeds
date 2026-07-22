@@ -11,6 +11,7 @@ use DragonCode\LaravelFeed\Presets\Items\InstagramFeedItem;
 use Illuminate\Database\Eloquent\Model;
 
 use function config;
+use function htmlspecialchars;
 
 abstract class InstagramFeedPreset extends Feed
 {
@@ -26,8 +27,8 @@ abstract class InstagramFeedPreset extends Feed
 
     public function header(): string
     {
-        $name = config('app.name');
-        $url  = config('app.url');
+        $name = $this->escapeXmlText((string) config('app.name'));
+        $url  = $this->escapeXmlText((string) config('app.url'));
 
         return <<<XML
             <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
@@ -41,5 +42,15 @@ abstract class InstagramFeedPreset extends Feed
     public function footer(): string
     {
         return "\n</channel>\n</rss>";
+    }
+
+    private function escapeXmlText(string $value): string
+    {
+        return htmlspecialchars(
+            string       : $value,
+            flags        : ENT_QUOTES | ENT_SUBSTITUTE | ENT_XML1,
+            encoding     : 'UTF-8',
+            double_encode: true
+        );
     }
 }
