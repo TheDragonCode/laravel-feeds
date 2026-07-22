@@ -41,7 +41,10 @@ class JsonConverter extends Converter implements FileAwareInfoConverter
 
     public function root(Feed $feed): string
     {
-        return sprintf("\"%s\": [\n", $feed->root()->name);
+        return sprintf(
+            "%s: [\n",
+            json_encode($feed->root()->name, $this->jsonOptions() & ~JSON_NUMERIC_CHECK)
+        );
     }
 
     public function item(FeedItem $item, bool $isLast): string
