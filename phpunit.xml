@@ -5,6 +5,7 @@
         bootstrap="vendor/autoload.php"
         cacheResult="false"
         colors="true"
+        failOnIncomplete="true"
 >
     <testsuites>
         <testsuite name="Feature">
