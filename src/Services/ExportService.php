@@ -177,7 +177,7 @@ class ExportService
 
         $this->fileCreated = true;
 
-        return $this->resource ??= value($this->createFile);
+        return $this->resource ??= value($this->createFile, $this->records > 0);
     }
 
     protected function releaseFile(): void

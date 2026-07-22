@@ -74,6 +74,60 @@ test('writes each serialized item immediately', function (string $lineEnding) {
     ]);
 })->with([PHP_EOL, '<EOL>']);
 
+test('passes item presence to each file creation', function (
+    int $modelCount,
+    int $perFile,
+    int $maxFiles,
+    array $expected,
+) {
+    $models = LazyCollection::make(function () use ($modelCount) {
+        for ($id = 1; $id <= $modelCount; $id++) {
+            $model = mock(Model::class);
+            $model->shouldReceive('getKey')->andReturn($id);
+
+            yield $model;
+        }
+    });
+
+    $builder = mockUnboundedExportBuilder($models, 2);
+    $builder->shouldNotReceive('count');
+
+    $feed = mock(Feed::class);
+    $feed->shouldReceive('perFile')->once()->andReturn($perFile);
+    $feed->shouldReceive('maxFiles')->once()->andReturn($maxFiles);
+    $feed->shouldReceive('builder')->once()->andReturn($builder);
+
+    $filesystem = mock(FilesystemService::class);
+
+    if ($modelCount === 0) {
+        $filesystem->shouldNotReceive('append');
+    } else {
+        $feed->shouldReceive('path')->times($modelCount)->andReturn('feed.json');
+        $filesystem->shouldReceive('append')->times($modelCount);
+    }
+
+    $presence = [];
+
+    (new ExportService($feed, $filesystem, null))
+        ->file(
+            create: function (?bool $hasItems = null) use (&$presence) {
+                $presence[] = $hasItems;
+
+                return fopen('php://memory', 'wb');
+            },
+            close: fn ($file) => fclose($file)
+        )
+        ->item(fn (Model $model) => 'item-' . $model->getKey())
+        ->chunk(2)
+        ->export();
+
+    expect($presence)->toBe($expected);
+})->with([
+    'empty file'     => [0, 0, 0, [false]],
+    'non-empty file' => [1, 0, 0, [true]],
+    'split files'    => [3, 2, 3, [true, true]],
+]);
+
 test('respects split capacity', function (
     int $modelCount,
     array $expectedItems,

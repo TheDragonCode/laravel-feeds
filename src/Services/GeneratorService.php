@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Services;
 
 use Closure;
+use DragonCode\LaravelFeed\Contracts\FileAwareInfoConverter;
 use DragonCode\LaravelFeed\Converters\Converter;
 use DragonCode\LaravelFeed\Data\GenerationResultData;
 use DragonCode\LaravelFeed\Events\FeedFinishedEvent;
@@ -136,13 +137,13 @@ class GeneratorService
 
     protected function createFile(Feed $feed, string $staging, Converter $converter): Closure
     {
-        return function () use ($feed, $staging, $converter) {
+        return function (bool $hasItems) use ($feed, $staging, $converter) {
             $file = $this->createDraft($feed->filename(), $staging);
 
             try {
                 $this->performHeader($file, $feed, $converter);
                 $this->performRoot($file, $feed, $converter, true);
-                $this->performInfo($file, $feed, $converter);
+                $this->performInfo($file, $feed, $converter, $hasItems);
                 $this->performRoot($file, $feed, $converter, false);
 
                 return $file;
@@ -183,13 +184,15 @@ class GeneratorService
         $this->append($file, $value, $feed->path());
     }
 
-    protected function performInfo($file, Feed $feed, Converter $converter): void // @pest-ignore-type
+    protected function performInfo($file, Feed $feed, Converter $converter, bool $hasItems): void // @pest-ignore-type
     {
         if (blank($info = $feed->info()->toArray())) {
             return;
         }
 
-        $value = $converter->info($info, $feed->root()->beforeInfo);
+        $value = $converter instanceof FileAwareInfoConverter
+            ? $converter->infoForFile($info, $feed->root()->beforeInfo, $hasItems)
+            : $converter->info($info, $feed->root()->beforeInfo);
 
         $this->append($file, $value . $converter->lineEnding(), $feed->path());
     }
