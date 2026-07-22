@@ -578,6 +578,40 @@ test('removes only obsolete numeric split parts after a successful commit', func
     }
 });
 
+test('removes a pre-registry primary file when publishing split parts', function () {
+    $directory   = (new TemporaryDirectory)->create();
+    $publication = $directory->path('feed.json');
+    $first       = $directory->path('feed-1.json');
+    $second      = $directory->path('feed-2.json');
+    $service     = new FilesystemService(new Filesystem);
+
+    file_put_contents($publication, 'legacy-primary');
+
+    try {
+        $service->publish($publication, function (string $staging) use ($first, $second, $service) {
+            $firstDraft = $service->createDraft('feed.json', $staging);
+            $service->append($firstDraft, 'first', $first);
+
+            $secondDraft = $service->createDraft('feed.json', $staging);
+            $service->append($secondDraft, 'second', $second);
+
+            return [
+                $first  => $service->finishDraft($firstDraft),
+                $second => $service->finishDraft($secondDraft),
+            ];
+        });
+
+        expect($publication)
+            ->not->toBeFile()
+            ->and(file_get_contents($first))
+            ->toBe('first')
+            ->and(file_get_contents($second))
+            ->toBe('second');
+    } finally {
+        $directory->delete();
+    }
+});
+
 test('preserves an unowned numeric sibling and rejects it as a split target', function () {
     $directory   = (new TemporaryDirectory)->create();
     $publication = $directory->path('catalog.json');
@@ -652,6 +686,37 @@ test('rejects a primary target owned by another feed publication', function () {
             ->toBe('owned-split')
             ->and(glob($directory->path() . DIRECTORY_SEPARATOR . '.feeds_staging_*'))
             ->toBe([]);
+    } finally {
+        $directory->delete();
+    }
+});
+
+test('preserves a primary path owned by another publication when publishing split parts', function () {
+    $directory   = (new TemporaryDirectory)->create();
+    $root        = $directory->path('catalog.json');
+    $publication = $directory->path('catalog-1.json');
+    $nested      = $directory->path('catalog-1-1.json');
+    $service     = new FilesystemService(new Filesystem);
+
+    try {
+        $service->publish($root, function (string $staging) use ($publication, $service) {
+            $draft = $service->createDraft('catalog.json', $staging);
+            $service->append($draft, 'parent-feed', $publication);
+
+            return [$publication => $service->finishDraft($draft)];
+        });
+
+        $service->publish($publication, function (string $staging) use ($nested, $service) {
+            $draft = $service->createDraft('catalog-1.json', $staging);
+            $service->append($draft, 'nested-feed', $nested);
+
+            return [$nested => $service->finishDraft($draft)];
+        });
+
+        expect(file_get_contents($publication))
+            ->toBe('parent-feed')
+            ->and(file_get_contents($nested))
+            ->toBe('nested-feed');
     } finally {
         $directory->delete();
     }

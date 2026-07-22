@@ -373,6 +373,30 @@ test('replaces remote feeds and removes obsolete split parts', function () {
         ->toBe([]);
 });
 
+test('removes a pre-registry remote primary file when publishing split parts', function () {
+    $storage     = app(RemoteStorageFeed::class)->storage();
+    $filesystem  = app(FilesystemService::class);
+    $publication = 'exports/legacy.jsonl';
+    $first       = 'exports/legacy-1.jsonl';
+    $second      = 'exports/legacy-2.jsonl';
+
+    $storage->put($publication, 'legacy-primary');
+
+    $filesystem->publishTo($storage, $publication, static fn (string $staging) => [
+        $first  => remoteFeedDraft($staging, 'first'),
+        $second => remoteFeedDraft($staging, 'second'),
+    ]);
+
+    expect($storage->exists($publication))
+        ->toBeFalse()
+        ->and($storage->get($first))
+        ->toBe('first')
+        ->and($storage->get($second))
+        ->toBe('second')
+        ->and(remoteStagingFiles($storage))
+        ->toBe([]);
+});
+
 test('validates remote publication drafts', function () {
     $storage     = app(RemoteStorageFeed::class)->storage();
     $filesystem  = app(FilesystemService::class);

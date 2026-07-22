@@ -346,7 +346,7 @@ class FilesystemService
 
         $this->assertStorageOwnership($storage, $path, $targets, $ownership);
 
-        $existing      = $this->storageOwnedPaths($path, $ownership);
+        $existing      = $this->storageOwnedPaths($storage, $path, $ownership);
         $nextOwnership = $this->nextStorageOwnership($path, $targets, $ownership);
 
         $cleanup   = true;
@@ -800,16 +800,21 @@ class FilesystemService
         return $this->publicationOwnedPaths(
             $path,
             $ownership,
+            fn (string $target)   => $this->file->exists($target),
             fn (string $filename) => $this->pathInDirectory($path, $filename),
             fn (string $target)   => $this->pathKey($target),
         );
     }
 
-    protected function storageOwnedPaths(string $path, array $ownership): array
-    {
+    protected function storageOwnedPaths(
+        FilesystemOperator $storage,
+        string $path,
+        array $ownership,
+    ): array {
         return $this->publicationOwnedPaths(
             $path,
             $ownership,
+            fn (string $target)   => $storage->fileExists($target),
             fn (string $filename) => $this->storagePathInDirectory($path, $filename),
             fn (string $target)   => $this->storagePathKey($target),
         );
@@ -818,11 +823,16 @@ class FilesystemService
     protected function publicationOwnedPaths(
         string $path,
         array $ownership,
+        Closure $exists,
         Closure $resolvePath,
         Closure $pathKey,
     ): array {
         $ownerKey = $pathKey($path);
         $paths    = [];
+
+        if ($this->ownerOf($path, $ownership, $resolvePath, $pathKey) === null && $exists($path)) {
+            $paths[] = $path;
+        }
 
         foreach ($ownership as $target => $owner) {
             if ($pathKey($resolvePath($owner)) === $ownerKey) {
