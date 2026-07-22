@@ -16,6 +16,8 @@ use function sprintf;
 
 class JsonConverter extends Converter
 {
+    protected bool $hasItems = false;
+
     public function __construct(
         #[Config('feeds.converters.json.options')]
         protected int $options,
@@ -33,6 +35,8 @@ class JsonConverter extends Converter
 
     public function footer(Feed $feed): string
     {
+        $this->hasItems = false;
+
         return $feed->root()->name ? "\n]\n}\n" : "\n]\n";
     }
 
@@ -46,8 +50,11 @@ class JsonConverter extends Converter
         $data = $this->performItem($item->toArray());
 
         $suffix = $isLast ? '' : ',';
+        $json   = $this->encode($data);
 
-        return $this->encode($data) . $suffix;
+        $this->hasItems = true;
+
+        return $json . $suffix;
     }
 
     public function info(array $info, bool $afterRoot): string
@@ -60,7 +67,9 @@ class JsonConverter extends Converter
             $json = mb_substr($json, 1, -1);
         }
 
-        return $json . ',';
+        $suffix = $afterRoot && ! $this->hasItems ? '' : ',';
+
+        return $json . $suffix;
     }
 
     protected function performItem(array $data): array
