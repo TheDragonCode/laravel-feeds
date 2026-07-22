@@ -9,11 +9,8 @@ on:
 permissions: {}
 
 env:
-    COMPOSER_TOKEN: ${{ secrets.COMPOSER_TOKEN }}
-    ALGOLIA_APP_NAME: ${{ secrets.ALGOLIA_APPLICATION_ID }}
     ALGOLIA_ARTIFACT: algolia-indexes-LARAVEL-FEEDS.zip
     ALGOLIA_INDEX_NAME: laravel-feeds
-    ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
     ARTIFACT_DOCS: webHelpLARAVEL-FEEDS2-all.zip
     ARTIFACT_INDEXES: search-indexes
     CONFIG_JSON_PRODUCT: LARAVEL-FEEDS
@@ -167,10 +164,13 @@ jobs:
                 run: unzip -O UTF-8 -qq '${{ env.ALGOLIA_ARTIFACT }}' -d ${{ env.ARTIFACT_INDEXES }}
 
             -   name: Deploy to Algolia
+                env:
+                    ALGOLIA_APP_NAME: ${{ secrets.ALGOLIA_APPLICATION_ID }}
+                    ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
                 run: |
-                    env algolia-key='${{ env.ALGOLIA_KEY }}' java -jar /opt/builder/help-publication-agent.jar \
+                    env algolia-key="$ALGOLIA_KEY" java -jar /opt/builder/help-publication-agent.jar \
                     update-index \
-                    --application-name '${{ env.ALGOLIA_APP_NAME }}' \
+                    --application-name "$ALGOLIA_APP_NAME" \
                     --index-name '${{ env.ALGOLIA_INDEX_NAME }}' \
                     --product '${{ env.CONFIG_JSON_PRODUCT }}' \
                     --version '${{ env.CONFIG_JSON_VERSION }}' \
