@@ -23,9 +23,11 @@ class FeedMakeCommand extends GeneratorCommand
 
     protected $type = 'Feed';
 
-    public function handle(): void
+    public function handle(): int
     {
-        parent::handle();
+        if (parent::handle() === false) {
+            return self::FAILURE;
+        }
 
         if ($this->option('item')) {
             $this->makeFeedItem(
@@ -45,6 +47,8 @@ class FeedMakeCommand extends GeneratorCommand
             $this->argument('name'),
             $this->getQualifyClass()
         );
+
+        return self::SUCCESS;
     }
 
     protected function makeOperation(string $name, string $class): void
