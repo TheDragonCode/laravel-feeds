@@ -152,7 +152,7 @@ jobs:
         timeout-minutes: 3
 
         container:
-            image: registry.jetbrains.team/p/writerside/builder/algolia-publisher:2.0.32-3
+            image: registry.jetbrains.team/p/writerside/builder/algolia-publisher:2.0.32-3@sha256:fae5a7ab5f11f23b5c08014e507d11149a4e6844c7e3acd1957671428709ae9b
 
         steps:
             -   name: Download search artifact
