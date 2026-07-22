@@ -17,4 +17,9 @@ return new class extends Migration {
             expression: '* * * * *'
         );
     }
+
+    public function down(): void
+    {
+        app(FeedQuery::class)->deleteByClass(DummyBaseClass::class);
+    }
 };
