@@ -26,3 +26,32 @@ test('fails the test gate for incomplete snapshots', function () {
     expect($configuration->documentElement?->getAttribute('failOnIncomplete'))
         ->toBe('true');
 });
+
+test('updates an existing snapshot in update mode', function () {
+    $directory = dirname(__DIR__, 2) . '/.pest/snapshots/Unit/Support/SnapshotTest';
+    $path      = $directory . '/updates_an_existing_snapshot_in_update_mode.snap';
+    $arguments = $_SERVER['argv'] ?? null;
+
+    if (! is_dir($directory)) {
+        mkdir($directory, 0o755, true);
+    }
+
+    file_put_contents($path, 'previous snapshot');
+    $_SERVER['argv'][] = '--update-snapshots';
+
+    try {
+        Snapshot::assertMatches('updated snapshot');
+
+        expect(file_get_contents($path))->toBe('updated snapshot');
+    } finally {
+        if ($arguments === null) {
+            unset($_SERVER['argv']);
+        } else {
+            $_SERVER['argv'] = $arguments;
+        }
+
+        if (is_file($path)) {
+            unlink($path);
+        }
+    }
+});

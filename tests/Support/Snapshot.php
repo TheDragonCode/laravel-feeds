@@ -45,6 +45,12 @@ final class Snapshot
             throw new RuntimeException("Unable to read snapshot file: [$path].");
         }
 
+        if (self::isUpdating()) {
+            self::save($path, $value);
+
+            return;
+        }
+
         Assert::assertSame(
             self::normalizeLineEndings($snapshot),
             self::normalizeLineEndings($value),
