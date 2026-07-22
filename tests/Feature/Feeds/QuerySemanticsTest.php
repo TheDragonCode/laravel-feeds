@@ -76,10 +76,11 @@ test('counts bounded queries exactly for progress reporting', function () {
     $buffer = new BufferedOutput(OutputInterface::VERBOSITY_DEBUG);
     $output = new OutputStyle(new ArrayInput([]), $buffer);
 
-    expect(querySemanticsIds(News::query()->orderBy('id')->offset(1)->limit(2), $output))
-        ->toBe([2, 3])
+    expect(querySemanticsIds(News::query()->orderBy('id')->offset(1), $output))
+        ->toBe([2, 3, 4])
         ->and($buffer->fetch())
-        ->toContain('[laravel-feeds] [FIX:190] Export query iteration configured.');
+        ->toContain('3/3')
+        ->not->toContain('[FIX:190]');
 });
 
 test('keeps unbounded queries streamed in configured chunks', function () {

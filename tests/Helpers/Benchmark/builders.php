@@ -25,7 +25,7 @@ function mockRegressionFeedBuilder(array $models): Builder
         ->once()
         ->andReturn($query);
     $builder
-        ->shouldReceive('lazy')
+        ->shouldReceive('lazyById')
         ->once()
         ->with(1000)
         ->andReturn(LazyCollection::make($models));

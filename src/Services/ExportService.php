@@ -13,12 +13,9 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\LazyCollection;
 use InvalidArgumentException;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Throwable;
 
-use function get_class;
 use function intdiv;
 use function is_resource;
-use function json_encode;
 use function min;
 use function value;
 
@@ -48,8 +45,6 @@ class ExportService
     protected $resource;
 
     protected int $records = 0;
-
-    protected int $exportedRecords = 0;
 
     protected int $writtenFiles = 0;
 
@@ -129,19 +124,7 @@ class ExportService
 
             $this->store(true);
 
-            $this->debug('Export query iteration finished.', [
-                'records' => $this->exportedRecords,
-            ]);
-
             $this->progressBar?->finish();
-        } catch (Throwable $e) {
-            $this->debug('Export query iteration failed.', [
-                'records'   => $this->exportedRecords,
-                'exception' => get_class($e),
-                'message'   => $e->getMessage(),
-            ]);
-
-            throw $e;
         } finally {
             if (is_resource($this->resource)) {
                 $this->filesystem->close($this->resource);
@@ -168,7 +151,6 @@ class ExportService
     protected function write(Model $model, bool $hasNext): void
     {
         $this->records++;
-        $this->exportedRecords++;
 
         $fileCompleted = $this->perFile > 0 && $this->records >= $this->perFile;
 
@@ -273,16 +255,14 @@ class ExportService
     {
         $builder = $this->feed->builder()->applyScopes()->withoutGlobalScopes();
         $query   = $builder->getQuery();
-        $bounded = $this->isBounded($query);
 
-        $this->debug('Export query iteration configured.', [
-            'mode'       => $bounded ? 'bounded_chunks' : 'chunks',
-            'chunk_size' => $this->chunk,
-        ]);
+        if ($this->isBounded($query)) {
+            return $this->boundedModels($builder, $query);
+        }
 
-        return $bounded
-            ? $this->boundedModels($builder, $query)
-            : $builder->lazy($this->chunk);
+        return $this->isOrdered($query)
+            ? $builder->lazy($this->chunk)
+            : $builder->lazyById($this->chunk);
     }
 
     protected function boundedModels(Builder $builder, QueryBuilder $query): LazyCollection
@@ -290,7 +270,7 @@ class ExportService
         $offset    = $this->queryOffset($query);
         $remaining = $this->queryLimit($query);
 
-        if (empty($query->orders) && empty($query->unionOrders)) {
+        if (! $this->isOrdered($query)) {
             $key = empty($query->unions)
                 ? $builder->getModel()->getQualifiedKeyName()
                 : $builder->getModel()->getKeyName();
@@ -334,14 +314,25 @@ class ExportService
         $builder = $this->feed->builder();
         $query   = $builder->toBase();
 
-        return $this->modelCount = $this->isBounded($query)
-            ? $query->newQuery()->fromSub($query, 'feed_models')->count()
-            : $builder->count();
+        if (! $this->isBounded($query)) {
+            return $this->modelCount = $builder->count();
+        }
+
+        if ($this->queryLimit($query) === null) {
+            $query->limit(PHP_INT_MAX);
+        }
+
+        return $this->modelCount = $query->newQuery()->fromSub($query, 'feed_models')->count();
     }
 
     protected function isBounded(QueryBuilder $query): bool
     {
         return $this->queryLimit($query) !== null || $this->queryOffset($query) > 0;
+    }
+
+    protected function isOrdered(QueryBuilder $query): bool
+    {
+        return ! empty($query->orders) || ! empty($query->unionOrders);
     }
 
     protected function queryLimit(QueryBuilder $query): ?int
@@ -352,15 +343,6 @@ class ExportService
     protected function queryOffset(QueryBuilder $query): int
     {
         return (int) (empty($query->unions) ? $query->offset : $query->unionOffset);
-    }
-
-    protected function debug(string $message, array $context): void
-    {
-        if (! $this->output?->isDebug()) {
-            return;
-        }
-
-        $this->output->writeln('[laravel-feeds] [FIX:190] ' . $message . ' ' . json_encode($context));
     }
 
     protected function createProgressBar(int $total): ?ProgressBar

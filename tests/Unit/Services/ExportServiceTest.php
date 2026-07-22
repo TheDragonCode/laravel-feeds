@@ -22,7 +22,7 @@ function mockUnboundedExportBuilder(LazyCollection $models, int $chunk): Builder
     $builder->shouldReceive('applyScopes')->once()->andReturnSelf();
     $builder->shouldReceive('withoutGlobalScopes')->once()->andReturnSelf();
     $builder->shouldReceive('getQuery')->once()->andReturn($query);
-    $builder->shouldReceive('lazy')->once()->with($chunk)->andReturn($models);
+    $builder->shouldReceive('lazyById')->once()->with($chunk)->andReturn($models);
 
     return $builder;
 }
