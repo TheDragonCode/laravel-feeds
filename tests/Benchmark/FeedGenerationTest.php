@@ -5,6 +5,7 @@ declare(strict_types=1);
 use DragonCode\Benchmark\Benchmark;
 use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use Illuminate\Support\Facades\Storage;
+use Tests\Helpers\Benchmark\BenchmarkRegression;
 use Tests\Helpers\Benchmark\RegressionFeed;
 use Tests\Helpers\Benchmark\RegressionGeneratorService;
 
@@ -21,6 +22,7 @@ it('keeps feed generation time within the calibrated regression limit', function
     $models      = makeRegressionFeedModels(2000);
     $storage     = Storage::fake('public');
     $path        = 'benchmark/feed.' . $format->value;
+    $results     = getenv('LARAVEL_FEEDS_BENCHMARK_RESULTS');
     $feed        = fn () => new RegressionFeed(
         $application,
         mockRegressionFeedBuilder($models),
@@ -33,7 +35,7 @@ it('keeps feed generation time within the calibrated regression limit', function
 
     $storage->delete($path);
 
-    (new Benchmark)
+    $benchmark = (new Benchmark)
         ->snapshots(dirname(__DIR__) . '/.benchmarks')
         ->warmup(3)
         ->iterations(20)
@@ -42,9 +44,15 @@ it('keeps feed generation time within the calibrated regression limit', function
         ->afterEach(fn () => $storage->delete($path))
         ->compare([
             $format->value => fn (int $_iteration, RegressionFeed $feed) => $generator->feed($feed),
-        ])
-        ->toAssert()
-        ->toBeRegressionTime(max: $max);
+        ]);
+
+    if ($results) {
+        $average = $benchmark->toData()[$format->value]->avg->time;
+
+        (new BenchmarkRegression)->record($results, $format->value, $average);
+    } else {
+        $benchmark->toAssert()->toBeRegressionTime(max: $max);
+    }
 
     expect($storage->exists($path))->toBeFalse();
 })->with('feed generation regression formats');
