@@ -24,5 +24,6 @@ vendor/
 
 composer.lock
 package-lock.json
+tests/.benchmarks/
 
 playground/

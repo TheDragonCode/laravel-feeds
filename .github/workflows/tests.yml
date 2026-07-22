@@ -27,7 +27,7 @@ jobs:
                 run: composer validate --strict
 
     benchmark:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 20
 
         name: Benchmarks
@@ -36,20 +36,56 @@ jobs:
             -   name: Checkout code
                 uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
                 with:
+                    fetch-depth: 0
                     persist-credentials: false
 
             -   name: Setup PHP
                 uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
                 with:
-                    php-version: 8.5
+                    php-version: 8.5.8
                     extensions: bcmath, curl, dom, iconv, libxml, mbstring, pdo, pdo_sqlite, zip
                     coverage: none
+                    tools: composer:2.10.2
 
             -   name: Install dependencies
                 run: composer update
 
             -   name: Execute feed generation benchmarks
-                run: composer test:benchmark
+                env:
+                    BENCHMARK_BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+                    BENCHMARK_RESULTS: ${{ runner.temp }}/laravel-feeds-benchmarks
+                run: |
+                    candidate_sha="$(git rev-parse HEAD)"
+                    base_sha="$BENCHMARK_BASE_SHA"
+
+                    if [[ -z "$base_sha" || "$base_sha" == "0000000000000000000000000000000000000000" ]]; then
+                        base_sha="$(git rev-parse HEAD^)"
+                    fi
+
+                    git cat-file -e "${base_sha}^{commit}"
+
+                    trap 'git restore --source="$candidate_sha" -- src config' EXIT
+
+                    run_benchmark() {
+                        git restore --source="$1" -- src config
+                        LARAVEL_FEEDS_BENCHMARK_RESULTS="$2" composer test:benchmark
+                    }
+
+                    for attempt in 1 2 3 4; do
+                        base_results="${BENCHMARK_RESULTS}/base-${attempt}"
+                        candidate_results="${BENCHMARK_RESULTS}/candidate-${attempt}"
+
+                        if (( attempt % 2 == 0 )); then
+                            run_benchmark "$candidate_sha" "$candidate_results"
+                            run_benchmark "$base_sha" "$base_results"
+                        else
+                            run_benchmark "$base_sha" "$base_results"
+                            run_benchmark "$candidate_sha" "$candidate_results"
+                        fi
+                    done
+
+                    git restore --source="$candidate_sha" -- src config
+                    php tests/Benchmark/assert-regression.php "$BENCHMARK_RESULTS" 4
 
     unit:
         runs-on: ubuntu-latest
