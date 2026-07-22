@@ -8,9 +8,24 @@ use DragonCode\LaravelFeed\Services\FilesystemService;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\LazyCollection;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+
+function mockUnboundedExportBuilder(LazyCollection $models, int $chunk): Builder
+{
+    $builder = mock(Builder::class);
+    $query   = mock(QueryBuilder::class);
+
+    $builder->shouldReceive('toBase')->atMost()->once()->andReturn($query);
+    $builder->shouldReceive('applyScopes')->once()->andReturnSelf();
+    $builder->shouldReceive('withoutGlobalScopes')->once()->andReturnSelf();
+    $builder->shouldReceive('getQuery')->once()->andReturn($query);
+    $builder->shouldReceive('lazyById')->once()->with($chunk)->andReturn($models);
+
+    return $builder;
+}
 
 test('writes each serialized item immediately', function (string $lineEnding) {
     $models = LazyCollection::make(function () {
@@ -22,9 +37,8 @@ test('writes each serialized item immediately', function (string $lineEnding) {
         }
     });
 
-    $builder = mock(Builder::class);
+    $builder = mockUnboundedExportBuilder($models, 2);
     $builder->shouldNotReceive('count');
-    $builder->shouldReceive('lazyById')->once()->with(2)->andReturn($models);
 
     $feed = mock(Feed::class);
     $feed->shouldReceive('perFile')->once()->andReturn(0);
@@ -75,9 +89,8 @@ test('respects split capacity', function (
         }
     });
 
-    $builder = mock(Builder::class);
+    $builder = mockUnboundedExportBuilder($models, 2);
     $builder->shouldNotReceive('count');
-    $builder->shouldReceive('lazyById')->once()->with(2)->andReturn($models);
 
     $feed = mock(Feed::class);
     $feed->shouldReceive('perFile')->once()->andReturn(2);
@@ -175,9 +188,8 @@ test('rejects a non-positive chunk size', function (int $chunk) {
 test('closes the active resource when export fails', function () {
     $model = mock(Model::class);
 
-    $builder = mock(Builder::class);
+    $builder = mockUnboundedExportBuilder(LazyCollection::make([$model]), 1);
     $builder->shouldNotReceive('count');
-    $builder->shouldReceive('lazyById')->once()->with(1)->andReturn(LazyCollection::make([$model]));
 
     $feed = mock(Feed::class);
     $feed->shouldReceive('perFile')->once()->andReturn(0);
@@ -206,9 +218,8 @@ test('closes the active resource when export fails', function () {
 });
 
 test('creates an empty feed without counting models', function () {
-    $builder = mock(Builder::class);
+    $builder = mockUnboundedExportBuilder(LazyCollection::make([]), 10);
     $builder->shouldNotReceive('count');
-    $builder->shouldReceive('lazyById')->once()->with(10)->andReturn(LazyCollection::make([]));
 
     $feed = mock(Feed::class);
     $feed->shouldReceive('perFile')->once()->andReturn(0);
@@ -251,9 +262,8 @@ test('counts models once when progress reporting needs an exact total', function
         }
     });
 
-    $builder = mock(Builder::class);
+    $builder = mockUnboundedExportBuilder($models, 2);
     $builder->shouldReceive('count')->once()->andReturn(3);
-    $builder->shouldReceive('lazyById')->once()->with(2)->andReturn($models);
 
     $feed = mock(Feed::class);
     $feed->shouldReceive('perFile')->once()->andReturn(0);
@@ -286,9 +296,8 @@ test('stops progress exports at the counted total', function () {
         }
     });
 
-    $builder = mock(Builder::class);
+    $builder = mockUnboundedExportBuilder($models, 2);
     $builder->shouldReceive('count')->once()->andReturn(3);
-    $builder->shouldReceive('lazyById')->once()->with(2)->andReturn($models);
 
     $feed = mock(Feed::class);
     $feed->shouldReceive('perFile')->once()->andReturn(0);

@@ -20,15 +20,6 @@
   <pubDate>Thu, 04 Sep 2025 02:44:27 +0000</pubDate>
   <foo>bar</foo>
 </item>
-<item>
-  <title>Some 3</title>
-  <link>https://example.com/news/some-3</link>
-  <guid>3</guid>
-  <description><![CDATA[Some content 3]]></description>
-  <category>Some category 3</category>
-  <pubDate>Thu, 04 Sep 2025 01:06:18 +0000</pubDate>
-  <foo>bar</foo>
-</item>
 
 </channel>
 </rss>
