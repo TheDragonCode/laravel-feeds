@@ -27,7 +27,7 @@ class Feed extends Model
     ];
 
     protected $attributes = [
-        'expression' => '* * * * *',
+        'expression' => '0 * * * *',
 
         'is_active' => true,
     ];
