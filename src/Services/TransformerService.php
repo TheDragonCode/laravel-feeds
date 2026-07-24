@@ -7,36 +7,16 @@ namespace DragonCode\LaravelFeed\Services;
 use Closure;
 use DragonCode\LaravelFeed\Contracts\Transformer;
 use Illuminate\Container\Attributes\Config;
-use Illuminate\Container\Container as LaravelContainer;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Collection;
 
-use function config;
-use function implode;
-
 class TransformerService
 {
-    protected array $pipelines = [];
-
-    protected Container $container;
-
-    protected array $configuredTransformers;
-
     public function __construct(
-        ?Container $container = null,
-        #[Config('feeds.transformers')]
-        ?array $configuredTransformers = null,
-    ) {
-        $this->container              = $container              ?? LaravelContainer::getInstance();
-        $this->configuredTransformers = $configuredTransformers ?? config('feeds.transformers', []);
-    }
-
-    public function transform(mixed $value, array $transformers = []): bool|float|int|string|null
-    {
-        $key = implode('|', $transformers);
-
-        return ($this->pipelines[$key] ??= $this->pipeline($transformers))($value);
-    }
+        protected Container $container,
+        #[Config('feeds.transformers', [])]
+        protected array $configuredTransformers,
+    ) {}
 
     public function pipeline(array $transformers = []): Closure
     {

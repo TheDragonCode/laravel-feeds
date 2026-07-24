@@ -83,16 +83,3 @@ test('resolves an ordered transformer pipeline once through the container', func
         ->and(TransformerPipelineSecond::$calls)
         ->toBe(2);
 });
-
-test('reuses a compiled pipeline for repeated service transformations', function () {
-    $service = new TransformerService(app(), [TransformerPipelineFirst::class]);
-
-    expect($service->transform('value', [TransformerPipelineSecond::class]))
-        ->toBe('value:first:second')
-        ->and($service->transform('next', [TransformerPipelineSecond::class]))
-        ->toBe('next:first:second')
-        ->and(TransformerPipelineFirst::$instances)
-        ->toBe(1)
-        ->and(TransformerPipelineSecond::$instances)
-        ->toBe(1);
-});
