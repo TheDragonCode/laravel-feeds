@@ -10,6 +10,7 @@ use DragonCode\LaravelFeed\Queries\FeedQuery;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Support\Facades\Schedule;
+use Illuminate\Support\Facades\Schema;
 
 use function app;
 
@@ -21,6 +22,10 @@ class ScheduleFeedHelper
         protected bool $canBackground,
         #[Config('feeds.schedule.ttl')]
         protected int $ttl,
+        #[Config('feeds.table.connection')]
+        protected ?string $connection,
+        #[Config('feeds.table.table')]
+        protected string $table,
     ) {}
 
     public static function register(): void
@@ -30,6 +35,10 @@ class ScheduleFeedHelper
 
     public function commands(): void
     {
+        if (! $this->canRegister()) {
+            return;
+        }
+
         $this->query->active()->each(
             fn (Feed $feed) => $this->schedule($feed)
         );
@@ -49,5 +58,10 @@ class ScheduleFeedHelper
         return Schedule::command(FeedGenerateCommand::class, [$feed->id])
             ->withoutOverlapping($this->ttl)
             ->cron($feed->expression);
+    }
+
+    protected function canRegister(): bool
+    {
+        return Schema::connection($this->connection)->hasTable($this->table);
     }
 }
