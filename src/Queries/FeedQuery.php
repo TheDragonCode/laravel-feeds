@@ -15,7 +15,7 @@ class FeedQuery
     public function create(
         string $class,
         string $title,
-        string $expression = '0 1 * * *',
+        string $expression = '0 * * * *',
         bool $isActive = true,
     ): Feed {
         return Feed::create([
