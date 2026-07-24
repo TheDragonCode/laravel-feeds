@@ -11,18 +11,13 @@ use DragonCode\LaravelFeed\Converters\JsonLinesConverter;
 use DragonCode\LaravelFeed\Converters\RssConverter;
 use DragonCode\LaravelFeed\Converters\XmlConverter;
 use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
-use Illuminate\Container\Container as LaravelContainer;
-use Illuminate\Contracts\Container\Container;
+use Illuminate\Container\Container;
 
 class ConverterHelper
 {
-    protected Container $container;
-
     public function __construct(
-        ?Container $container = null,
-    ) {
-        $this->container = $container ?? LaravelContainer::getInstance();
-    }
+        protected Container $container,
+    ) {}
 
     public function get(FeedFormatEnum $format): Converter
     {
