@@ -86,6 +86,8 @@ class CsvConverter extends Converter
     {
         foreach ($data as $column => &$value) {
             if ($this->isOptional($value)) {
+                $value = '';
+
                 continue;
             }
 
@@ -125,8 +127,7 @@ class CsvConverter extends Converter
             }
 
             return $content;
-        }
-        finally {
+        } finally {
             fclose($stream);
         }
     }

@@ -9,6 +9,8 @@ use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Services\TransformerService;
 use Illuminate\Container\Attributes\Config;
 
+use function array_is_list;
+use function array_values;
 use function is_array;
 use function json_encode;
 
@@ -55,8 +57,12 @@ class JsonLinesConverter extends Converter
 
     protected function performItem(array $data): array
     {
-        foreach ($data as &$value) {
+        $isList = array_is_list($data);
+
+        foreach ($data as $key => &$value) {
             if ($this->isOptional($value)) {
+                unset($data[$key]);
+
                 continue;
             }
 
@@ -69,7 +75,9 @@ class JsonLinesConverter extends Converter
             $value = $this->transformValue($value);
         }
 
-        return $data;
+        unset($value);
+
+        return $isList ? array_values($data) : $data;
     }
 
     protected function encode(array $data): string

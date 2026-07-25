@@ -96,6 +96,35 @@
                 </p>
 
                 <code-block lang="php" src="generation-feed-item.php" include-lines="5-" />
+
+                <chapter title="Optional values" id="optional_values">
+                    <p>
+                        To omit a field when its value is unavailable, return an instance of
+                        <code>DragonCode\LaravelFeed\Data\OptionalData</code> as its value:
+                    </p>
+
+                    <code-block lang="php" src="optional-values.php" include-lines="5-" />
+
+                    <p>
+                        Optional fields are removed from JSON and JSON Lines objects and from XML and RSS elements,
+                        including regular nested fields. CSV keeps the column position and writes an empty field.
+                    </p>
+
+                    <p>
+                        If your application uses
+                        <a href="https://spatie.be/docs/laravel-data/v4/as-a-data-transfer-object/optional-properties">
+                            Spatie Laravel Data
+                        </a>, you can return
+                        <code>Spatie\LaravelData\Optional</code> instead. Both optional value classes are handled
+                        automatically.
+                    </p>
+
+                    <code-block lang="php">
+                        use Spatie\LaravelData\Optional;
+
+                        'updatedAt' => $this->model->updated_at ?? Optional::create(),
+                    </code-block>
+                </chapter>
             </chapter>
         </chapter>
     </chapter>
