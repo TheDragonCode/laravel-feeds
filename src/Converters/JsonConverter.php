@@ -63,6 +63,10 @@ class JsonConverter extends Converter implements FileAwareInfoConverter
     {
         $data = $this->performValue($info);
 
+        if ($data instanceof stdClass) {
+            return '';
+        }
+
         $json = $this->encodeValue($data);
 
         if (! $afterRoot) {
