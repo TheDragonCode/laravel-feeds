@@ -56,6 +56,10 @@ class JsonLinesConverter extends Converter
     protected function performItem(array $data): array
     {
         foreach ($data as &$value) {
+            if ($this->isOptional($value)) {
+                continue;
+            }
+
             if (is_array($value)) {
                 $value = $this->performItem($value);
 

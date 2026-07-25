@@ -79,7 +79,8 @@ class JsonConverter extends Converter implements FileAwareInfoConverter
 
         try {
             return $this->info($info, $afterRoot);
-        } finally {
+        }
+        finally {
             $this->fileHasItems = $previous;
         }
     }
@@ -87,6 +88,10 @@ class JsonConverter extends Converter implements FileAwareInfoConverter
     protected function performItem(array $data): array
     {
         foreach ($data as &$value) {
+            if ($this->isOptional($value)) {
+                continue;
+            }
+
             if (is_array($value)) {
                 $value = $this->performItem($value);
 

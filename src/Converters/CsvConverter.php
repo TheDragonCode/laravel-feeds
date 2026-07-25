@@ -85,6 +85,10 @@ class CsvConverter extends Converter
     protected function transform(array $data): array
     {
         foreach ($data as $column => &$value) {
+            if ($this->isOptional($value)) {
+                continue;
+            }
+
             if (is_array($value)) {
                 throw new InvalidCsvValueException($column);
             }
@@ -121,7 +125,8 @@ class CsvConverter extends Converter
             }
 
             return $content;
-        } finally {
+        }
+        finally {
             fclose($stream);
         }
     }
