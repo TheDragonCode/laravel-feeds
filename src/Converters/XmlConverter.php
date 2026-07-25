@@ -202,8 +202,7 @@ class XmlConverter extends Converter
             $reason   = isset($errors[0]) ? trim($errors[0]->message) : null;
         } catch (Throwable $exception) {
             throw new InvalidXmlFragmentException(previous: $exception);
-        }
-        finally {
+        } finally {
             if (! $internalErrors) {
                 libxml_clear_errors();
             }

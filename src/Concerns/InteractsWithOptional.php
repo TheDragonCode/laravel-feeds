@@ -17,10 +17,6 @@ trait InteractsWithOptional
             return true;
         }
 
-        if (class_exists(Optional::class) && $value instanceof Optional) {
-            return true;
-        }
-
-        return false;
+        return class_exists(Optional::class) && $value instanceof Optional;
     }
 }
