@@ -118,6 +118,10 @@ class XmlConverter extends Converter
         foreach ($items as $key => $value) {
             $key = $this->convertKey($key);
 
+            if ($this->isOptional($value)) {
+                continue;
+            }
+
             match (true) {
                 $this->isAttributes($key) => $this->setAttributes($parent, $value),
                 $this->isCData($key)      => $this->setCData($parent, $value),

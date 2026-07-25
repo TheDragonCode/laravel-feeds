@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Data\OptionalData;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use DragonCode\LaravelFeed\Services\GeneratorService;
 use Workbench\App\Data\NewsFakeData;
 use Workbench\App\Feeds\JsonInfoFeed;
@@ -22,18 +24,40 @@ final class JsonRootBeforeInfoFeed extends JsonInfoFeed
     }
 }
 
+final class JsonOptionalInfoFeed extends JsonRootInfoFeed
+{
+    public function info(): FeedInfo
+    {
+        return new class extends FeedInfo {
+            public function toArray(): array
+            {
+                return [
+                    'optional' => new OptionalData,
+                ];
+            }
+        };
+    }
+
+    public function filename(): string
+    {
+        return 'json-optional-info.json';
+    }
+}
+
 test('keeps info separators valid', function () {
     $cases = [
-        'rootless empty feed'         => [JsonInfoFeed::class, false, '0.name'],
-        'root before info empty feed' => [JsonRootBeforeInfoFeed::class, false, 'items.0.name'],
-        'info before root empty feed' => [JsonRootInfoFeed::class, false, 'name'],
-        'root before info with items' => [JsonRootBeforeInfoFeed::class, true, 'items.0.name'],
+        'rootless empty feed'                   => [JsonInfoFeed::class, false, '0.name', 'Laravel', null],
+        'root before info empty feed'           => [JsonRootBeforeInfoFeed::class, false, 'items.0.name', 'Laravel', null],
+        'info before root empty feed'           => [JsonRootInfoFeed::class, false, 'name', 'Laravel', null],
+        'root before info with items'           => [JsonRootBeforeInfoFeed::class, true, 'items.0.name', 'Laravel', 'items.1.title'],
+        'fully optional info before root'       => [JsonOptionalInfoFeed::class, false, 'optional', null, null],
+        'fully optional info before root items' => [JsonOptionalInfoFeed::class, true, 'optional', null, 'items.0.title'],
     ];
 
     foreach ([false, true] as $pretty) {
         setPrettyXml($pretty);
 
-        foreach ($cases as $case => [$class, $withItems, $infoPath]) {
+        foreach ($cases as $case => [$class, $withItems, $infoPath, $expected, $itemPath]) {
             News::query()->delete();
 
             if ($withItems) {
@@ -60,10 +84,16 @@ test('keeps info separators valid', function () {
             expect($document)
                 ->toBeArray()
                 ->and(data_get($document, $infoPath))
-                ->toBe('Laravel');
+                ->toBe($expected);
 
-            if ($withItems) {
-                expect(data_get($document, 'items.1.title'))->toBe('Some 1');
+            if ($itemPath !== null) {
+                expect(data_get($document, $itemPath))->toBe('Some 1');
+            }
+
+            if ($class === JsonOptionalInfoFeed::class) {
+                expect($document)
+                    ->toHaveKey('items')
+                    ->not->toHaveKey('optional');
             }
         }
     }

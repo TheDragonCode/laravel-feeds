@@ -40,6 +40,7 @@
         "pestphp/pest": "^3.8.7 || ^4.0",
         "pestphp/pest-plugin-laravel": "^3.2 || ^4.0",
         "pestphp/pest-plugin-type-coverage": "^3.6.1 || ^4.0",
+        "spatie/laravel-data": "^4.23",
         "symfony/var-dumper": "^7.3 || ^8.0"
     },
     "minimum-stability": "stable",
