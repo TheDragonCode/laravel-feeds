@@ -9,6 +9,7 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Services\TransformerService;
 use Illuminate\Container\Attributes\Config;
+use stdClass;
 
 use function array_is_list;
 use function array_values;
@@ -51,18 +52,18 @@ class JsonConverter extends Converter implements FileAwareInfoConverter
 
     public function item(FeedItem $item, bool $isLast): string
     {
-        $data = $this->performItem($item->toArray());
+        $data = $this->performValue($item->toArray());
 
         $suffix = $isLast ? '' : ',';
 
-        return $this->encode($data) . $suffix;
+        return $this->encodeValue($data) . $suffix;
     }
 
     public function info(array $info, bool $afterRoot): string
     {
-        $data = $this->performItem($info);
+        $data = $this->performValue($info);
 
-        $json = $this->encode($data);
+        $json = $this->encodeValue($data);
 
         if (! $afterRoot) {
             $json = mb_substr($json, 1, -1);
@@ -98,7 +99,7 @@ class JsonConverter extends Converter implements FileAwareInfoConverter
             }
 
             if (is_array($value)) {
-                $value = $this->performItem($value);
+                $value = $this->performValue($value);
 
                 continue;
             }
@@ -109,6 +110,23 @@ class JsonConverter extends Converter implements FileAwareInfoConverter
         unset($value);
 
         return $isList ? array_values($data) : $data;
+    }
+
+    private function encodeValue(array|stdClass $data): string
+    {
+        if ($data instanceof stdClass) {
+            return json_encode($data, $this->jsonOptions());
+        }
+
+        return $this->encode($data);
+    }
+
+    private function performValue(array $data): array|stdClass
+    {
+        $isList = array_is_list($data);
+        $data   = $this->performItem($data);
+
+        return ! $isList && $data === [] ? new stdClass : $data;
     }
 
     protected function encode(array $data): string

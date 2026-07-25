@@ -50,6 +50,42 @@ test('omits optional values from JSON formats', function (string $converter, obj
     'Spatie Laravel Data optional' => Optional::create(),
 ]);
 
+test('preserves JSON container shapes after omitting optional values', function (string $converter, object $optional) {
+    $nestedItem = mock(FeedItem::class);
+    $nestedItem->shouldReceive('toArray')->once()->andReturn([
+        'object' => [
+            'optional' => $optional,
+        ],
+        'list' => [
+            $optional,
+        ],
+    ]);
+
+    $emptyItem = mock(FeedItem::class);
+    $emptyItem->shouldReceive('toArray')->once()->andReturn([
+        'optional' => $optional,
+    ]);
+
+    $instance   = app($converter);
+    $nestedData = json_decode($instance->item($nestedItem, true), flags: JSON_THROW_ON_ERROR);
+    $emptyData  = json_decode($instance->item($emptyItem, true), flags: JSON_THROW_ON_ERROR);
+
+    expect($nestedData)
+        ->toBeInstanceOf(stdClass::class)
+        ->and($nestedData->object)
+        ->toBeInstanceOf(stdClass::class)
+        ->and($nestedData->list)
+        ->toBe([])
+        ->and($emptyData)
+        ->toBeInstanceOf(stdClass::class);
+})->with([
+    JsonConverter::class,
+    JsonLinesConverter::class,
+])->with([
+    'Laravel Feeds optional'       => new OptionalData,
+    'Spatie Laravel Data optional' => Optional::create(),
+]);
+
 test('omits optional values from XML formats', function (string $converter, object $optional) {
     $item = mock(FeedItem::class);
     $item->shouldReceive('name')->andReturn('item');

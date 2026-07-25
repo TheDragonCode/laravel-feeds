@@ -8,6 +8,7 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Services\TransformerService;
 use Illuminate\Container\Attributes\Config;
+use stdClass;
 
 use function array_is_list;
 use function array_values;
@@ -43,16 +44,16 @@ class JsonLinesConverter extends Converter
 
     public function item(FeedItem $item, bool $isLast): string
     {
-        $data = $this->performItem($item->toArray());
+        $data = $this->performValue($item->toArray());
 
-        return $this->encode($data);
+        return $this->encodeValue($data);
     }
 
     public function info(array $info, bool $afterRoot): string
     {
-        $data = $this->performItem($info);
+        $data = $this->performValue($info);
 
-        return $this->encode($data);
+        return $this->encodeValue($data);
     }
 
     protected function performItem(array $data): array
@@ -67,7 +68,7 @@ class JsonLinesConverter extends Converter
             }
 
             if (is_array($value)) {
-                $value = $this->performItem($value);
+                $value = $this->performValue($value);
 
                 continue;
             }
@@ -78,6 +79,23 @@ class JsonLinesConverter extends Converter
         unset($value);
 
         return $isList ? array_values($data) : $data;
+    }
+
+    private function encodeValue(array|stdClass $data): string
+    {
+        if ($data instanceof stdClass) {
+            return json_encode($data, $this->options);
+        }
+
+        return $this->encode($data);
+    }
+
+    private function performValue(array $data): array|stdClass
+    {
+        $isList = array_is_list($data);
+        $data   = $this->performItem($data);
+
+        return ! $isList && $data === [] ? new stdClass : $data;
     }
 
     protected function encode(array $data): string
