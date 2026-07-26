@@ -117,6 +117,57 @@ test('omits optional values from XML formats', function (string $converter, obje
     'Spatie Laravel Data optional' => Optional::create(),
 ]);
 
+test('omits optional values from XML attributes and repeated elements', function (string $converter, object $optional) {
+    $item = mock(FeedItem::class);
+    $item->shouldReceive('name')->andReturn('item');
+    $item->shouldReceive('attributes')->once()->andReturn([
+        'id'       => 123,
+        'optional' => $optional,
+    ]);
+    $item->shouldReceive('toArray')->once()->andReturn([
+        'meta' => [
+            '@attributes' => [
+                'name'     => 'Laravel Feeds',
+                'optional' => $optional,
+            ],
+        ],
+        '@tag' => [
+            'laravel',
+            $optional,
+            'feeds',
+        ],
+    ]);
+
+    $document = parseXmlDocument(
+        app($converter)->item($item, true)
+    );
+
+    $root = $document->documentElement;
+    $meta = $document->getElementsByTagName('meta')->item(0);
+    $tags = $document->getElementsByTagName('tag');
+
+    expect($root?->getAttribute('id'))
+        ->toBe('123')
+        ->and($root?->hasAttribute('optional'))
+        ->toBeFalse()
+        ->and($meta?->getAttribute('name'))
+        ->toBe('Laravel Feeds')
+        ->and($meta?->hasAttribute('optional'))
+        ->toBeFalse()
+        ->and($tags->length)
+        ->toBe(2)
+        ->and($tags->item(0)?->textContent)
+        ->toBe('laravel')
+        ->and($tags->item(1)?->textContent)
+        ->toBe('feeds');
+})->with([
+    XmlConverter::class,
+    RssConverter::class,
+])->with([
+    'Laravel Feeds optional'       => new OptionalData,
+    'Spatie Laravel Data optional' => Optional::create(),
+]);
+
 test('writes optional values as empty CSV fields', function (object $optional) {
     $item = mock(FeedItem::class);
     $item->shouldReceive('toArray')->once()->andReturn([
