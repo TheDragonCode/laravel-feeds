@@ -5,7 +5,9 @@ declare(strict_types=1);
 use DragonCode\LaravelFeed\Transformers;
 
 /**
+ * --------------------------------------------------------------------------
  * Laravel Feeds configuration
+ * --------------------------------------------------------------------------
  *
  * This file defines how feeds are generated and presented, including
  * formatting, persistence, scheduling, console UX and value transformers.
@@ -13,14 +15,20 @@ use DragonCode\LaravelFeed\Transformers;
  */
 return [
     /**
-     * Pretty-print the generated feed output.
+     * --------------------------------------------------------------------------
+     * Pretty-print the generated feed output
+     * --------------------------------------------------------------------------
      *
      * When enabled, the resulting XML/JSON will include indentation and
      * human‑friendly formatting. Disable to reduce payload size.
      */
     'pretty' => (bool) env('FEED_PRETTY', false),
 
-    /** Output date/time options. */
+    /**
+     * --------------------------------------------------------------------------
+     * Output date/time options
+     * -------------------------------------------------------------------------- 
+     */
     'date' => [
         /**
          * Date/time format used when serializing timestamps to feeds.
@@ -32,7 +40,11 @@ return [
         'timezone' => env('FEED_TIMEZONE', 'UTC'),
     ],
 
-    /** Database table settings used by the package (for logs or internal state). */
+    /**
+     * --------------------------------------------------------------------------
+     * Database table settings used by the package (for logs or internal state)
+     * --------------------------------------------------------------------------
+     */
     'table' => [
         /**
          * The database connection name to use.
@@ -44,7 +56,11 @@ return [
         'table' => env('FEED_TABLE', 'feeds'),
     ],
 
-    /** Scheduling options for feed generation/update tasks. */
+    /**
+     * --------------------------------------------------------------------------
+     * Scheduling options for feed generation/update tasks
+     * --------------------------------------------------------------------------
+     */
     'schedule' => [
         /**
          * Time-to-live (in minutes) for the schedule lock or cache.
@@ -59,13 +75,21 @@ return [
         'background' => (bool) env('FEED_SCHEDULE_RUN_BACKGROUND', true),
     ],
 
-    /** Console display options. */
+    /**
+     * --------------------------------------------------------------------------
+     * Console display options
+     * --------------------------------------------------------------------------
+     */
     'console' => [
         /** Show a progress bar when generating feeds in the console. */
         'progress_bar' => (bool) env('FEED_CONSOLE_PROGRESS_BAR_ENABLED', false),
     ],
 
     /**
+     * --------------------------------------------------------------------------
+     * Transformers List
+     * --------------------------------------------------------------------------
+     *
      * Transformers convert rich/complex values to simple scalar representations
      * suitable for feeds (XML/JSON). Transformers run in declaration order and
      * each transformer receives the value produced by the previous transformer.
@@ -82,6 +106,10 @@ return [
     ],
 
     /**
+     * --------------------------------------------------------------------------
+     * Converters rules
+     * --------------------------------------------------------------------------
+     *
      * Converters define low-level serialization settings for specific output
      * formats. You can tweak encoder flags and other options here.
      */
