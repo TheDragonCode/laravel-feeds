@@ -170,6 +170,10 @@ class XmlConverter extends Converter
     protected function setAttributes(DOMNode $element, array $attributes): void
     {
         foreach ($attributes as $key => $value) {
+            if ($this->isOptional($value)) {
+                continue;
+            }
+
             $element->setAttribute($key, (string) $this->transformValue($value));
         }
     }
@@ -228,6 +232,10 @@ class XmlConverter extends Converter
 
     protected function setItems(DOMNode $parent, string $key, mixed $value): void
     {
+        if ($this->isOptional($value)) {
+            return;
+        }
+
         $element = $this->createElement($key, is_array($value) ? '' : $value);
 
         if (is_array($value)) {
