@@ -75,6 +75,18 @@ return [
         'background' => (bool) env('FEED_SCHEDULE_RUN_BACKGROUND', true),
     ],
 
+    'queue' => [
+        'enabled' => (bool) env('FEED_QUEUE_ENABLED', false),
+
+        'connection' => env('FEED_QUEUE_CONNECTION', env('QUEUE_CONNECTION', 'database')),
+
+        'name' => env('FEED_QUEUE_NAME'),
+
+        'group' => env('FEED_QUEUE_GROUP'),
+
+        'unique_ttl' => (int) env('FEED_QUEUE_UNIQUE_TTL', 3600),
+    ],
+
     /**
      * --------------------------------------------------------------------------
      * Console display options

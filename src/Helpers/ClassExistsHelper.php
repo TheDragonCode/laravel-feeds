@@ -6,6 +6,7 @@ namespace DragonCode\LaravelFeed\Helpers;
 
 use function class_exists;
 
+// @codeCoverageIgnoreStart
 class ClassExistsHelper
 {
     public function exists(string $class): bool
@@ -13,3 +14,4 @@ class ClassExistsHelper
         return class_exists($class);
     }
 }
+// @codeCoverageIgnoreEnd

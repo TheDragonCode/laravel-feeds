@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Commands;
 
 use DragonCode\LaravelFeed\Exceptions\InvalidFeedArgumentException;
+use DragonCode\LaravelFeed\Jobs\FeedJob;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use DragonCode\LaravelFeed\Services\GeneratorService;
 use Illuminate\Console\Command;
@@ -25,7 +26,13 @@ class FeedGenerateCommand extends Command
     {
         foreach ($this->feedable($query) as $feed => $enabled) {
             if (! $enabled) {
-                $this->components->twoColumnDetail($feed, $this->messageYellow('SKIP'));
+                $this->components->twoColumnDetail($feed, $this->textYellow('SKIP'));
+
+                continue;
+            }
+
+            if ($this->hasQueue()) {
+                $this->performWithQueue($feed);
 
                 continue;
             }
@@ -34,6 +41,13 @@ class FeedGenerateCommand extends Command
                 ? $this->performWithProgressBar($generator, $feed)
                 : $this->performWithoutProgressBar($generator, $feed);
         }
+    }
+
+    protected function performWithQueue(string $feed): void
+    {
+        $this->components->twoColumnDetail($feed, $this->textGreen('QUEUED'));
+
+        FeedJob::dispatch(app($feed));
     }
 
     protected function performWithProgressBar(GeneratorService $generator, string $feed): void
@@ -65,7 +79,7 @@ class FeedGenerateCommand extends Command
         return [$feed->class => true];
     }
 
-    protected function messageYellow(string $message): string
+    protected function textYellow(string $message): string
     {
         if ($this->option('no-ansi')) {
             // @codeCoverageIgnoreStart
@@ -76,9 +90,25 @@ class FeedGenerateCommand extends Command
         return $this->yellow($message);
     }
 
+    protected function textGreen(string $message): string
+    {
+        if ($this->option('no-ansi')) {
+            // @codeCoverageIgnoreStart
+            return $message;
+            // @codeCoverageIgnoreEnd
+        }
+
+        return $this->green($message);
+    }
+
     protected function hasProgressBar(): bool
     {
-        return config()?->boolean('feeds.console.progress_bar');
+        return config()->boolean('feeds.console.progress_bar');
+    }
+
+    protected function hasQueue(): bool
+    {
+        return config()->boolean('feeds.queue.enabled');
     }
 
     protected function getArguments(): array
