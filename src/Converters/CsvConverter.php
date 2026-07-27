@@ -105,22 +105,22 @@ class CsvConverter extends Converter
 
     protected function encode(array $data): string
     {
-        $stream = fopen('php://temp', 'w+b');
+        $stream = $this->openStream();
 
         if ($stream === false) {
             throw new RuntimeException('Unable to create a temporary CSV stream.');
         }
 
         try {
-            if (fputcsv($stream, $data, $this->delimiter, $this->enclosure, $this->escape, '') === false) {
+            if ($this->writeRow($stream, $data) === false) {
                 throw new RuntimeException('Unable to encode the CSV row.');
             }
 
-            if (! rewind($stream)) {
+            if (! $this->rewindStream($stream)) {
                 throw new RuntimeException('Unable to rewind the temporary CSV stream.');
             }
 
-            $content = stream_get_contents($stream);
+            $content = $this->readStream($stream);
 
             if ($content === false) {
                 throw new RuntimeException('Unable to read the encoded CSV row.');
@@ -130,6 +130,26 @@ class CsvConverter extends Converter
         } finally {
             fclose($stream);
         }
+    }
+
+    protected function openStream(): mixed
+    {
+        return fopen('php://temp', 'w+b');
+    }
+
+    protected function writeRow(mixed $stream, array $data): false|int
+    {
+        return fputcsv($stream, $data, $this->delimiter, $this->enclosure, $this->escape, '');
+    }
+
+    protected function rewindStream(mixed $stream): bool
+    {
+        return rewind($stream);
+    }
+
+    protected function readStream(mixed $stream): false|string
+    {
+        return stream_get_contents($stream);
     }
 
     protected function order(array $data): array
