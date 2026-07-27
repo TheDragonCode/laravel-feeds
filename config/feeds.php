@@ -77,6 +77,34 @@ return [
 
     /**
      * --------------------------------------------------------------------------
+     * Queue options for feed generation
+     * --------------------------------------------------------------------------
+     *
+     * Queue mode lets the console command dispatch feed generation jobs instead
+     * of building feeds in the command process. It is disabled by default.
+     */
+    'queue' => [
+        /** Dispatch feed generation jobs to Laravel Queue. */
+        'enabled' => (bool) env('FEED_QUEUE_ENABLED', false),
+
+        /**
+         * The queue connection used for feed jobs.
+         * Falls back to QUEUE_CONNECTION and then to the database connection.
+         */
+        'connection' => env('FEED_QUEUE_CONNECTION', env('QUEUE_CONNECTION', 'database')),
+
+        /**
+         * The queue name used for feed jobs.
+         * A null value uses the connection's default queue.
+         */
+        'name' => env('FEED_QUEUE_NAME'),
+
+        /** Maximum lifetime of a feed job's uniqueness lock, in seconds. */
+        'unique_ttl' => (int) env('FEED_QUEUE_UNIQUE_TTL', 3600),
+    ],
+
+    /**
+     * --------------------------------------------------------------------------
      * Console display options
      * --------------------------------------------------------------------------
      */
