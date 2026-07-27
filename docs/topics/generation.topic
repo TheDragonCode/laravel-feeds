@@ -56,6 +56,49 @@
         </code-block>
     </chapter>
 
+    <chapter title="Queue" id="queue">
+        <p>
+            Feed generation runs in the console process by default. For feeds that take a long time or use a large
+            amount of memory, enable Laravel Queue mode in your environment:
+        </p>
+
+        <code-block lang="bash">
+            FEED_QUEUE_ENABLED=true
+            FEED_QUEUE_CONNECTION=redis
+            FEED_QUEUE_NAME=feeds
+            FEED_QUEUE_UNIQUE_TTL=3600
+        </code-block>
+
+        <p>
+            When queue mode is enabled, <code>%command-generate-short%</code> dispatches one job for every active feed
+            instead of generating the files directly. With an asynchronous connection, the command returns after the
+            jobs have been dispatched. Start a
+            <a href="https://laravel.com/docs/queues#running-the-queue-worker">queue worker</a>
+            for the selected connection and queue to process those jobs.
+        </p>
+
+        <list>
+            <li>
+                <code>FEED_QUEUE_CONNECTION</code> selects the queue connection. It falls back to
+                <code>QUEUE_CONNECTION</code> and then to <code>database</code>.
+            </li>
+            <li>
+                <code>FEED_QUEUE_NAME</code> selects a queue on that connection. Leave it unset to use the
+                connection's default queue.
+            </li>
+            <li>
+                <code>FEED_QUEUE_UNIQUE_TTL</code> sets the maximum lifetime of the uniqueness lock in seconds.
+                A second job for the same feed is not queued while that lock is active.
+            </li>
+        </list>
+
+        <note>
+            The <code>sync</code> connection executes each job immediately in the console process. Select an
+            asynchronous connection to move generation to a worker. Set <code>FEED_QUEUE_ENABLED=false</code> to
+            generate feeds directly without dispatching jobs.
+        </note>
+    </chapter>
+
     <chapter title="Schedule" id="schedule">
         <chapter title="Automatic" id="automatic">
             <p>

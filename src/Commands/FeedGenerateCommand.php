@@ -47,7 +47,7 @@ class FeedGenerateCommand extends Command
     {
         $this->components->twoColumnDetail($feed, $this->textGreen('QUEUED'));
 
-        FeedJob::dispatch(app($feed));
+        FeedJob::dispatch($feed);
     }
 
     protected function performWithProgressBar(GeneratorService $generator, string $feed): void

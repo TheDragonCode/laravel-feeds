@@ -13,6 +13,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
+use function app;
 use function config;
 
 final class FeedJob implements ShouldBeUnique, ShouldQueue
@@ -23,25 +24,31 @@ final class FeedJob implements ShouldBeUnique, ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public Feed $feed
+        public string $feedClass
     ) {
         $this->onConnection(config('feeds.queue.connection'));
         $this->onQueue(config('feeds.queue.name'));
-        $this->onGroup(config('feeds.queue.group'));
     }
 
     public function handle(GeneratorService $generator): void
     {
-        $generator->feed($this->feed);
+        $generator->feed(
+            $this->resolve()
+        );
     }
 
     public function uniqueId(): string
     {
-        return $this->feed->filename();
+        return $this->feedClass;
     }
 
     public function uniqueFor(): int
     {
         return config('feeds.queue.unique_ttl');
+    }
+
+    protected function resolve(): Feed
+    {
+        return app($this->feedClass);
     }
 }
