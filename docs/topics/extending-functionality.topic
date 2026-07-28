@@ -74,24 +74,38 @@
 
     <chapter title="Custom transformers" id="custom_transformers">
         <p>
-            A transformer converts a supported value before the converter serializes it. Register transformer class
-            names in <path>config/feeds.php</path>. Laravel resolves each class through the service container, so
-            constructor dependencies and custom container bindings are supported.
+            A transformer converts a supported value before the converter serializes it. Laravel resolves transformer
+            classes through the service container, so constructor dependencies and custom container bindings are
+            supported.
         </p>
 
         <code-block lang="php" src="advanced-extends-transformer.php" include-lines="5-" />
 
         <p>
-            Add the transformer to the configured list after the built-in transformers:
+            To apply the transformer to every feed, add it to the <code>transformers</code> list in
+            <path>config/feeds.php</path> after the built-in transformers:
         </p>
 
         <code-block lang="php" src="advanced-extends-transformer-config.php" />
 
         <p>
-            The configured transformers run in declaration order. Converter-specific transformers are appended after
-            the configured list. Each <code>allow()</code> call receives the current value, including changes made by
-            earlier transformers, and every matching transformer may update it. Duplicate entries are removed after
-            container resolution while the first occurrence keeps its position.
+            To apply the transformer to one feed only, leave it out of the global configuration and return its class
+            from the feed's <code>transformers()</code> method:
+        </p>
+
+        <code-block lang="php" src="advanced-extends-transformer-feed.php" include-lines="5-" />
+
+        <note>
+            This is useful when one feed needs a different date format. A local date transformer can convert the date
+            to the required string before the configured <code>DateTimeTransformer</code> checks it. Other configured
+            transformers remain active.
+        </note>
+
+        <p>
+            Local transformers run first in declaration order. The globally configured transformers run next, and
+            converter-specific transformers run last. Each <code>allow()</code> call receives the current value,
+            including changes made by earlier transformers, and every matching transformer may update it. Duplicate
+            entries are removed after container resolution while the first occurrence keeps its position.
         </p>
 
         <p>
