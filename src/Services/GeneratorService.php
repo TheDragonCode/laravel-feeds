@@ -243,7 +243,8 @@ class GeneratorService
     protected function converter(Feed $feed): Converter
     {
         return $this->converter->get(
-            $feed->format()
+            $feed->format(),
+            $feed->transformers()
         );
     }
 
