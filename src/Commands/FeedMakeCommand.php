@@ -17,7 +17,7 @@ use function app;
 use function vsprintf;
 
 #[AsCommand('make:feed', 'Create a new feed')]
-class FeedMakeCommand extends GeneratorCommand
+final class FeedMakeCommand extends GeneratorCommand
 {
     use InteractsWithName;
 

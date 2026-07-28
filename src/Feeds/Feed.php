@@ -20,6 +20,7 @@ use Illuminate\Support\Traits\Macroable;
 
 use function class_basename;
 use function get_debug_type;
+use function pathinfo;
 
 abstract class Feed
 {

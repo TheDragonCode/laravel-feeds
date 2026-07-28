@@ -18,7 +18,7 @@ use function config;
 use function is_numeric;
 
 #[AsCommand('feed:generate', 'Generate XML feeds')]
-class FeedGenerateCommand extends Command
+final class FeedGenerateCommand extends Command
 {
     use Colors;
 

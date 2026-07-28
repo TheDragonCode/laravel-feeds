@@ -5,3 +5,7 @@ declare(strict_types=1);
 arch()
     ->expect('DragonCode\LaravelFeed\Events')
     ->toHaveSuffix('Event');
+
+arch()
+    ->expect('DragonCode\LaravelFeed\Events')
+    ->toBeFinal();

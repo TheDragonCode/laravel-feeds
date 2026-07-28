@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use function class_exists;
 use function is_a;
 
-class ClassCast implements CastsAttributes
+final class ClassCast implements CastsAttributes
 {
     public function get(Model $model, string $key, mixed $value, array $attributes): string
     {
