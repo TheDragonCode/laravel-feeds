@@ -90,7 +90,7 @@ class YandexFeedInfo extends FeedInfo
         return $this;
     }
 
-    public function category(int|string $id, array|string $value, bool $replace = false): static
+    public function category(int|string $id, array|string $name, bool $replace = false): static
     {
         if ($replace) {
             // @codeCoverageIgnoreStart
@@ -98,15 +98,15 @@ class YandexFeedInfo extends FeedInfo
             // @codeCoverageIgnoreEnd
         }
 
-        if (is_array($value)) {
-            $this->categories[] = $value;
+        if (is_array($name)) {
+            $this->categories[] = $name;
 
             return $this;
         }
 
         $this->categories[] = [
             '@attributes' => ['id' => $id],
-            '@value'      => $value,
+            '@value'      => $name,
         ];
 
         return $this;

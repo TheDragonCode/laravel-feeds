@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Presets\Info\YandexFeedInfo;
 
-test('serializes string category values with the preset structure', function () {
-    $info = (new YandexFeedInfo)->category(10, 'Electronics');
+test('preserves the category name parameter for named arguments', function () {
+    $info = (new YandexFeedInfo)->category(id: 10, name: 'Electronics');
 
     expect($info->toArray()['categories']['@category'])->toBe([
         [
