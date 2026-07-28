@@ -98,18 +98,18 @@
             in that feed generation.
         </p>
 
-        <chapter title="Feed-local transformers" id="feed_local_transformers">
+        <chapter title="Prepending feed transformers" id="prepend_transformers">
             <p>
-                Override <code>transformers()</code> on a feed to apply transformers only to that feed. The method
-                returns transformer class names, and Laravel resolves them through the service container in the same
-                way as the global list.
+                Override <code>transformers()</code> on a feed to prepend transformers for that feed. The method returns
+                transformer class names, and Laravel resolves them through the service container in the same way as
+                the global list.
             </p>
 
             <p>
                 For example, define a date transformer with a feed-specific format:
             </p>
 
-            <code-block lang="php" src="advanced-extends-transformer-local.php" include-lines="5-" />
+            <code-block lang="php" src="advanced-extends-transformer-prepend.php" include-lines="5-" />
 
             <p>
                 Then return it from the feed:
@@ -118,18 +118,18 @@
             <code-block lang="php" src="advanced-extends-transformer-feed.php" include-lines="5-" />
 
             <p>
-                The local list does not replace the global list from <path>config/feeds.php</path>. Transformers run in
-                this order:
+                The prepended list does not replace the global list from <path>config/feeds.php</path>. Transformers run
+                in this order:
             </p>
 
             <list type="decimal">
-                <li>Feed-local transformers returned by <code>transformers()</code>.</li>
+                <li>Prepended transformers returned by <code>transformers()</code>.</li>
                 <li>Global transformers from <path>config/feeds.php</path>.</li>
                 <li>Converter-specific transformers required by the selected output format.</li>
             </list>
 
             <p>
-                A local transformer can therefore format a date first. The global date transformer receives the
+                A prepended transformer can therefore format a date first. The global date transformer receives the
                 resulting string and skips it, while other global transformers still process matching fields.
             </p>
         </chapter>

@@ -9,7 +9,7 @@ use DragonCode\LaravelFeed\Services\TransformerService;
 use DragonCode\LaravelFeed\Transformers\BoolTransformer;
 use DragonCode\LaravelFeed\Transformers\DateTimeTransformer;
 
-final class LocalDateTimeTransformer extends DateTimeTransformer
+final class PrependDateTimeTransformer extends DateTimeTransformer
 {
     protected function format(): string
     {
@@ -93,7 +93,7 @@ test('preserves info overrides during file-aware serialization', function () {
         ->toBe('{"name":"Laravel","overridden":"yes"},');
 });
 
-test('applies local feed transformers before global and converter transformers', function () {
+test('prepends feed transformers to the global and converter pipeline', function () {
     ConstructorConfiguredTransformer::$instances = 0;
 
     $item = mock(FeedItem::class);
@@ -110,8 +110,8 @@ test('applies local feed transformers before global and converter transformers',
         ])
     );
 
-    $converter->withLocalTransformers([
-        LocalDateTimeTransformer::class,
+    $converter->prependTransformers([
+        PrependDateTimeTransformer::class,
     ]);
 
     expect($converter->item($item, true))

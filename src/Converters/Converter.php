@@ -17,7 +17,7 @@ abstract class Converter
 
     protected array $transformers = [];
 
-    protected array $localTransformers = [];
+    protected array $prependTransformers = [];
 
     protected ?Closure $transformerPipeline = null;
 
@@ -42,11 +42,9 @@ abstract class Converter
         return PHP_EOL;
     }
 
-    public function withLocalTransformers(array $transformers): static
+    public function prependTransformers(array $transformers): static
     {
-        $this->localTransformers = $transformers;
-
-        $this->transformerPipeline = null;
+        $this->prependTransformers = $transformers;
 
         return $this;
     }
@@ -55,7 +53,7 @@ abstract class Converter
     {
         return ($this->transformerPipeline ??= $this->transformer->pipeline(
             $this->transformers,
-            $this->localTransformers
+            $this->prependTransformers
         ))($value);
     }
 }
