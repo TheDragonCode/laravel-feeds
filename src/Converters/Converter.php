@@ -11,13 +11,13 @@ use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Services\TransformerService;
 use Illuminate\Container\Attributes\Config;
 
+use function array_unshift;
+
 abstract class Converter
 {
     use InteractsWithOptional;
 
     protected array $transformers = [];
-
-    protected array $localTransformers = [];
 
     protected ?Closure $transformerPipeline = null;
 
@@ -44,18 +44,13 @@ abstract class Converter
 
     public function withLocalTransformers(array $transformers): static
     {
-        $this->localTransformers = $transformers;
-
-        $this->transformerPipeline = null;
+        array_unshift($this->transformers, ...$transformers);
 
         return $this;
     }
 
     protected function transformValue(mixed $value): bool|float|int|string|null
     {
-        return ($this->transformerPipeline ??= $this->transformer->pipeline(
-            $this->transformers,
-            $this->localTransformers
-        ))($value);
+        return ($this->transformerPipeline ??= $this->transformer->pipeline($this->transformers))($value);
     }
 }
