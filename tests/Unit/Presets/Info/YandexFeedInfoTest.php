@@ -4,6 +4,21 @@ declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Presets\Info\YandexFeedInfo;
 
+test('replaces existing currencies through currency', function () {
+    $info = (new YandexFeedInfo)
+        ->currency('USD', 1.0)
+        ->currency('EUR', 0.9, replace: true);
+
+    expect($info->toArray()['currencies']['@currency'])->toBe([
+        [
+            '@attributes' => [
+                'id'   => 'EUR',
+                'rate' => 0.9,
+            ],
+        ],
+    ]);
+});
+
 test('preserves the category name parameter for named arguments', function () {
     $info = (new YandexFeedInfo)->category(id: 10, name: 'Electronics');
 
@@ -11,6 +26,19 @@ test('preserves the category name parameter for named arguments', function () {
         [
             '@attributes' => ['id' => 10],
             '@value'      => 'Electronics',
+        ],
+    ]);
+});
+
+test('replaces existing categories through category', function () {
+    $info = (new YandexFeedInfo)
+        ->category(10, 'Old category')
+        ->category(20, 'New category', replace: true);
+
+    expect($info->toArray()['categories']['@category'])->toBe([
+        [
+            '@attributes' => ['id' => 20],
+            '@value'      => 'New category',
         ],
     ]);
 });
