@@ -11,8 +11,6 @@ use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Services\TransformerService;
 use Illuminate\Container\Attributes\Config;
 
-use function array_unshift;
-
 abstract class Converter
 {
     use InteractsWithOptional;
@@ -44,7 +42,7 @@ abstract class Converter
 
     public function withLocalTransformers(array $transformers): static
     {
-        array_unshift($this->transformers, ...$transformers);
+        $this->transformers = $transformers + $this->transformers;
 
         return $this;
     }

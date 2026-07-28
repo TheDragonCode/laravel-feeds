@@ -35,8 +35,8 @@ class TransformerService
 
     protected function transformers(array $transformers): array
     {
-        return (new Collection($this->configuredTransformers))
-            ->merge($transformers)
+        return (new Collection($transformers))
+            ->merge($this->configuredTransformers)
             ->map(fn (string $transformer): Transformer => $this->container->make($transformer))
             ->unique()
             ->all();
