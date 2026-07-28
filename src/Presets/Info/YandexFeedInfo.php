@@ -7,8 +7,10 @@ namespace DragonCode\LaravelFeed\Presets\Info;
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use Illuminate\Support\Str;
 
+use function blank;
 use function collect;
 use function config;
+use function is_array;
 
 class YandexFeedInfo extends FeedInfo
 {
@@ -88,7 +90,7 @@ class YandexFeedInfo extends FeedInfo
         return $this;
     }
 
-    public function category(int|string $id, string $name, bool $replace = false): static
+    public function category(int|string $id, array|string $value, bool $replace = false): static
     {
         if ($replace) {
             // @codeCoverageIgnoreStart
@@ -96,9 +98,15 @@ class YandexFeedInfo extends FeedInfo
             // @codeCoverageIgnoreEnd
         }
 
+        if (is_array($value)) {
+            $this->categories[] = $value;
+
+            return $this;
+        }
+
         $this->categories[] = [
             '@attributes' => ['id' => $id],
-            '@value'      => $name,
+            '@value'      => $value,
         ];
 
         return $this;
@@ -119,8 +127,8 @@ class YandexFeedInfo extends FeedInfo
     {
         $this->categories = [];
 
-        foreach ($categories as $id => $name) {
-            $this->category($id, $name);
+        foreach ($categories as $id => $value) {
+            $this->category($id, $value);
         }
 
         return $this;

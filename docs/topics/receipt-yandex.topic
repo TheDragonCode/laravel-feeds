@@ -26,6 +26,21 @@
         <code-block lang="php" src="receipt-yandex-feed.php" />
     </chapter>
 
+    <chapter title="Custom category structure" id="custom_category_structure">
+        <p>
+            By default, <code>category()</code> and <code>categories()</code> build each category from its ID and name.
+            Pass an array as the category value when additional properties or another structure are required.
+            The array is added to the feed unchanged:
+        </p>
+
+        <code-block lang="php" src="receipt-yandex-custom-categories.php" include-lines="5-" />
+
+        <note>
+            Custom category arrays are not validated or transformed. Build them with the supported
+            <a href="directives.topic">XML directives</a>.
+        </note>
+    </chapter>
+
     <chapter title="Activate" id="activate">
         <include from="snippet-generate.topic" element-id="check_operation" />
     </chapter>
