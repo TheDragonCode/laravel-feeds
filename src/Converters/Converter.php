@@ -17,6 +17,8 @@ abstract class Converter
 
     protected array $transformers = [];
 
+    protected array $localTransformers = [];
+
     protected ?Closure $transformerPipeline = null;
 
     abstract public function footer(Feed $feed): string;
@@ -42,13 +44,18 @@ abstract class Converter
 
     public function withLocalTransformers(array $transformers): static
     {
-        $this->transformers = $transformers + $this->transformers;
+        $this->localTransformers = $transformers;
+
+        $this->transformerPipeline = null;
 
         return $this;
     }
 
     protected function transformValue(mixed $value): bool|float|int|string|null
     {
-        return ($this->transformerPipeline ??= $this->transformer->pipeline($this->transformers))($value);
+        return ($this->transformerPipeline ??= $this->transformer->pipeline(
+            $this->transformers,
+            $this->localTransformers
+        ))($value);
     }
 }

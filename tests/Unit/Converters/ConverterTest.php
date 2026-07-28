@@ -93,16 +93,17 @@ test('preserves info overrides during file-aware serialization', function () {
         ->toBe('{"name":"Laravel","overridden":"yes"},');
 });
 
-test('applies local feed transformers before global transformers', function () {
+test('applies local feed transformers before global and converter transformers', function () {
+    ConstructorConfiguredTransformer::$instances = 0;
+
     $item = mock(FeedItem::class);
     $item->shouldReceive('toArray')->once()->andReturn([
         'published_at' => new DateTimeImmutable('2026-07-28T12:30:00+00:00'),
         'active'       => true,
+        'title'        => 'Laravel',
     ]);
 
-    $converter = new JsonConverter(
-        JSON_THROW_ON_ERROR,
-        false,
+    $converter = new ConstructorConfiguredJsonConverter(
         new TransformerService(app(), [
             DateTimeTransformer::class,
             BoolTransformer::class,
@@ -114,5 +115,7 @@ test('applies local feed transformers before global transformers', function () {
     ]);
 
     expect($converter->item($item, true))
-        ->toBe('{"published_at":"2026-07-28","active":"true"}');
+        ->toBe('{"published_at":"2026-07-28:custom","active":"true:custom","title":"Laravel:custom"}')
+        ->and(ConstructorConfiguredTransformer::$instances)
+        ->toBe(1);
 });
