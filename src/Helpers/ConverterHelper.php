@@ -21,6 +21,11 @@ class ConverterHelper
 
     public function get(FeedFormatEnum $format, array $transformers = []): Converter
     {
+        return $this->resolve($format)->withLocalTransformers($transformers);
+    }
+
+    protected function resolve(FeedFormatEnum $format): Converter
+    {
         return $this->container->make(
             match ($format) {
                 FeedFormatEnum::Xml       => XmlConverter::class,
@@ -29,6 +34,6 @@ class ConverterHelper
                 FeedFormatEnum::Csv       => CsvConverter::class,
                 FeedFormatEnum::Rss       => RssConverter::class,
             }
-        )->withLocalTransformers($transformers);
+        );
     }
 }
