@@ -15,7 +15,14 @@ test('preserves the category name parameter for named arguments', function () {
     ]);
 });
 
-test('passes a custom category array through unchanged', function () {
+test('keeps category compatible with string-only overrides', function () {
+    $parameter = (new ReflectionMethod(YandexFeedInfo::class, 'category'))
+        ->getParameters()[1];
+
+    expect((string) $parameter->getType())->toBe('string');
+});
+
+test('passes a raw category array through unchanged', function () {
     $category = [
         '@attributes' => [
             'id'       => 20,
@@ -25,12 +32,14 @@ test('passes a custom category array through unchanged', function () {
         'custom' => ['enabled' => true],
     ];
 
-    $info = (new YandexFeedInfo)->category('ignored', $category);
+    $info = (new YandexFeedInfo)
+        ->category(10, 'Old category')
+        ->rawCategory($category, replace: true);
 
     expect($info->toArray()['categories']['@category'])->toBe([$category]);
 });
 
-test('accepts default and custom structures in a category collection', function () {
+test('dispatches mixed category collections without widening legacy overrides', function () {
     $category = [
         '@attributes' => [
             'id'       => 20,
@@ -39,16 +48,30 @@ test('accepts default and custom structures in a category collection', function 
         '@value' => 'Smartphones',
     ];
 
-    $info = (new YandexFeedInfo)->categories([
+    $info = new class extends YandexFeedInfo {
+        public array $categoryCalls = [];
+
+        public function category(int|string $id, string $name, bool $replace = false): static
+        {
+            $this->categoryCalls[] = [$id, $name, $replace];
+
+            return parent::category($id, $name, $replace);
+        }
+    };
+
+    $info->categories([
         10       => 'Electronics',
         'custom' => $category,
     ]);
 
-    expect($info->toArray()['categories']['@category'])->toBe([
-        [
-            '@attributes' => ['id' => 10],
-            '@value'      => 'Electronics',
-        ],
-        $category,
-    ]);
+    expect($info->categoryCalls)
+        ->toBe([[10, 'Electronics', false]])
+        ->and($info->toArray()['categories']['@category'])
+        ->toBe([
+            [
+                '@attributes' => ['id' => 10],
+                '@value'      => 'Electronics',
+            ],
+            $category,
+        ]);
 });

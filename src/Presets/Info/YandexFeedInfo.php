@@ -90,7 +90,7 @@ class YandexFeedInfo extends FeedInfo
         return $this;
     }
 
-    public function category(int|string $id, array|string $name, bool $replace = false): static
+    public function category(int|string $id, string $name, bool $replace = false): static
     {
         if ($replace) {
             // @codeCoverageIgnoreStart
@@ -98,16 +98,21 @@ class YandexFeedInfo extends FeedInfo
             // @codeCoverageIgnoreEnd
         }
 
-        if (is_array($name)) {
-            $this->categories[] = $name;
-
-            return $this;
-        }
-
         $this->categories[] = [
             '@attributes' => ['id' => $id],
             '@value'      => $name,
         ];
+
+        return $this;
+    }
+
+    public function rawCategory(array $category, bool $replace = false): static
+    {
+        if ($replace) {
+            $this->categories = [];
+        }
+
+        $this->categories[] = $category;
 
         return $this;
     }
@@ -128,6 +133,12 @@ class YandexFeedInfo extends FeedInfo
         $this->categories = [];
 
         foreach ($categories as $id => $value) {
+            if (is_array($value)) {
+                $this->rawCategory($value);
+
+                continue;
+            }
+
             $this->category($id, $value);
         }
 

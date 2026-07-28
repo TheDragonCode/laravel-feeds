@@ -28,12 +28,17 @@
 
     <chapter title="Custom category structure" id="custom_category_structure">
         <p>
-            By default, <code>category()</code> and <code>categories()</code> build each category from its ID and name.
-            Pass an array as the category value when additional properties or another structure are required.
+            By default, <code>category()</code> builds a category from its ID and name.
+            Use <code>rawCategory()</code> when additional properties or another structure are required.
             The array is added to the feed unchanged:
         </p>
 
         <code-block lang="php" src="receipt-yandex-custom-categories.php" include-lines="5-" />
+
+        <p>
+            The <code>categories()</code> method accepts both forms. It sends string values to
+            <code>category()</code> and array values to <code>rawCategory()</code>.
+        </p>
 
         <note>
             Custom category arrays are not validated or transformed. Build them with the supported
