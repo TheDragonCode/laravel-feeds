@@ -20,6 +20,7 @@ use Illuminate\Support\Traits\Macroable;
 
 use function class_basename;
 use function get_debug_type;
+use function pathinfo;
 
 abstract class Feed
 {
@@ -41,6 +42,11 @@ abstract class Feed
     public function item(Model $model): FeedItem
     {
         return new FeedItem($model);
+    }
+
+    public function transformers(): array
+    {
+        return [];
     }
 
     public function chunkSize(): int

@@ -10,7 +10,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputOption;
 
 #[AsCommand('make:feed-info', 'Create a new feed info')]
-class FeedInfoMakeCommand extends GeneratorCommand
+final class FeedInfoMakeCommand extends GeneratorCommand
 {
     use InteractsWithName;
 

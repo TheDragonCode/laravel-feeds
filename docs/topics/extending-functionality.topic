@@ -88,15 +88,50 @@
         <code-block lang="php" src="advanced-extends-transformer-config.php" />
 
         <p>
-            The configured transformers run in declaration order. Converter-specific transformers are appended after
-            the configured list. Each <code>allow()</code> call receives the current value, including changes made by
-            earlier transformers, and every matching transformer may update it. Duplicate entries are removed after
-            container resolution while the first occurrence keeps its position.
+            The configured transformers run in declaration order. Each <code>allow()</code> call receives the current
+            value, including changes made by earlier transformers, and every matching transformer may update it.
+            Duplicate entries are removed after container resolution while the first occurrence keeps its position.
         </p>
 
         <p>
             A converter builds this ordered pipeline once and reuses the same transformer instances for every field
             in that feed generation.
         </p>
+
+        <chapter title="Prepending feed transformers" id="prepend_transformers">
+            <p>
+                Override <code>transformers()</code> on a feed to prepend transformers for that feed. The method returns
+                transformer class names, and Laravel resolves them through the service container in the same way as
+                the global list.
+            </p>
+
+            <p>
+                For example, define a date transformer with a feed-specific format:
+            </p>
+
+            <code-block lang="php" src="advanced-extends-transformer-prepend.php" include-lines="5-" />
+
+            <p>
+                Then return it from the feed:
+            </p>
+
+            <code-block lang="php" src="advanced-extends-transformer-feed.php" include-lines="5-" />
+
+            <p>
+                The prepended list does not replace the global list from <path>config/feeds.php</path>. Transformers run
+                in this order:
+            </p>
+
+            <list type="decimal">
+                <li>Prepended transformers returned by <code>transformers()</code>.</li>
+                <li>Global transformers from <path>config/feeds.php</path>.</li>
+                <li>Converter-specific transformers required by the selected output format.</li>
+            </list>
+
+            <p>
+                A prepended transformer can therefore format a date first. The global date transformer receives the
+                resulting string and skips it, while other global transformers still process matching fields.
+            </p>
+        </chapter>
     </chapter>
 </topic>

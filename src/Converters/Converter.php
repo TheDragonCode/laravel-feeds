@@ -17,6 +17,8 @@ abstract class Converter
 
     protected array $transformers = [];
 
+    protected array $prependTransformers = [];
+
     protected ?Closure $transformerPipeline = null;
 
     abstract public function footer(Feed $feed): string;
@@ -40,8 +42,18 @@ abstract class Converter
         return PHP_EOL;
     }
 
+    public function prependTransformers(array $transformers): static
+    {
+        $this->prependTransformers = $transformers;
+
+        return $this;
+    }
+
     protected function transformValue(mixed $value): bool|float|int|string|null
     {
-        return ($this->transformerPipeline ??= $this->transformer->pipeline($this->transformers))($value);
+        return ($this->transformerPipeline ??= $this->transformer->pipeline(
+            $this->transformers,
+            $this->prependTransformers
+        ))($value);
     }
 }

@@ -10,6 +10,7 @@ use DragonCode\LaravelFeed\Helpers\ConverterHelper;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use DragonCode\LaravelFeed\Services\FilesystemService;
 use DragonCode\LaravelFeed\Services\GeneratorService;
+use DragonCode\LaravelFeed\Transformers\DateTimeTransformer;
 use Illuminate\Filesystem\FilesystemAdapter;
 
 test('rejects publication that finishes without producing a generation result', function () {
@@ -20,6 +21,7 @@ test('rejects publication that finishes without producing a generation result', 
     $feed->shouldReceive('path')->once()->andReturn('feed.json');
     $feed->shouldReceive('storagePath')->once()->andReturn('feed.json');
     $feed->shouldReceive('format')->once()->andReturn(FeedFormatEnum::Json);
+    $feed->shouldReceive('transformers')->once()->andReturn([DateTimeTransformer::class]);
 
     $filesystem = mock(FilesystemService::class);
     $filesystem->shouldReceive('publishTo')
@@ -29,7 +31,10 @@ test('rejects publication that finishes without producing a generation result', 
     $converter = mock(Converter::class);
 
     $helper = mock(ConverterHelper::class);
-    $helper->shouldReceive('get')->once()->with(FeedFormatEnum::Json)->andReturn($converter);
+    $helper->shouldReceive('get')
+        ->once()
+        ->with(FeedFormatEnum::Json, [DateTimeTransformer::class])
+        ->andReturn($converter);
 
     $query = mock(FeedQuery::class);
     $query->shouldNotReceive('setLastActivity');

@@ -7,6 +7,31 @@ use DragonCode\LaravelFeed\Services\TransformerService;
 
 final class TransformerPipelineDependency {}
 
+final class TransformerPipelinePrepend implements Transformer
+{
+    public static int $instances = 0;
+
+    public static int $calls = 0;
+
+    public function __construct(
+        public TransformerPipelineDependency $dependency,
+    ) {
+        self::$instances++;
+    }
+
+    public function allow(mixed $value): bool
+    {
+        return is_string($value);
+    }
+
+    public function transform(mixed $value): string
+    {
+        self::$calls++;
+
+        return $value . ':prepend';
+    }
+}
+
 final class TransformerPipelineFirst implements Transformer
 {
     public static int $instances = 0;
@@ -58,10 +83,12 @@ final class TransformerPipelineSecond implements Transformer
 }
 
 beforeEach(function () {
-    TransformerPipelineFirst::$instances  = 0;
-    TransformerPipelineFirst::$calls      = 0;
-    TransformerPipelineSecond::$instances = 0;
-    TransformerPipelineSecond::$calls     = 0;
+    TransformerPipelinePrepend::$instances = 0;
+    TransformerPipelinePrepend::$calls     = 0;
+    TransformerPipelineFirst::$instances   = 0;
+    TransformerPipelineFirst::$calls       = 0;
+    TransformerPipelineSecond::$instances  = 0;
+    TransformerPipelineSecond::$calls      = 0;
 });
 
 test('resolves an ordered transformer pipeline once through the container', function () {
@@ -82,4 +109,29 @@ test('resolves an ordered transformer pipeline once through the container', func
         ->toBe(2)
         ->and(TransformerPipelineSecond::$calls)
         ->toBe(2);
+});
+
+test('runs prepended transformers before configured and converter transformers', function () {
+    app()->singleton(TransformerPipelineDependency::class);
+
+    $service  = new TransformerService(app(), [TransformerPipelineFirst::class]);
+    $pipeline = $service->pipeline(
+        [TransformerPipelineSecond::class],
+        [TransformerPipelinePrepend::class]
+    );
+
+    expect($pipeline('value'))
+        ->toBe('value:prepend:first:second')
+        ->and(TransformerPipelinePrepend::$instances)
+        ->toBe(1)
+        ->and(TransformerPipelineFirst::$instances)
+        ->toBe(1)
+        ->and(TransformerPipelineSecond::$instances)
+        ->toBe(1)
+        ->and(TransformerPipelinePrepend::$calls)
+        ->toBe(1)
+        ->and(TransformerPipelineFirst::$calls)
+        ->toBe(1)
+        ->and(TransformerPipelineSecond::$calls)
+        ->toBe(1);
 });

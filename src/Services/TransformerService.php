@@ -18,9 +18,9 @@ class TransformerService
         protected array $configuredTransformers,
     ) {}
 
-    public function pipeline(array $transformers = []): Closure
+    public function pipeline(array $transformers = [], array $prependTransformers = []): Closure
     {
-        $pipeline = $this->transformers($transformers);
+        $pipeline = $this->transformers($transformers, $prependTransformers);
 
         return static function (mixed $value) use ($pipeline): bool|float|int|string|null {
             foreach ($pipeline as $transformer) {
@@ -33,9 +33,10 @@ class TransformerService
         };
     }
 
-    protected function transformers(array $transformers): array
+    protected function transformers(array $transformers, array $prependTransformers): array
     {
-        return (new Collection($this->configuredTransformers))
+        return (new Collection($prependTransformers))
+            ->merge($this->configuredTransformers)
             ->merge($transformers)
             ->map(fn (string $transformer): Transformer => $this->container->make($transformer))
             ->unique()

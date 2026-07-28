@@ -19,7 +19,12 @@ class ConverterHelper
         protected Container $container,
     ) {}
 
-    public function get(FeedFormatEnum $format): Converter
+    public function get(FeedFormatEnum $format, array $transformers = []): Converter
+    {
+        return $this->resolve($format)->prependTransformers($transformers);
+    }
+
+    protected function resolve(FeedFormatEnum $format): Converter
     {
         return $this->container->make(
             match ($format) {

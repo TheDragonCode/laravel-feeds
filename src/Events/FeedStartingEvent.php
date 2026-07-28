@@ -6,7 +6,7 @@ namespace DragonCode\LaravelFeed\Events;
 
 use DragonCode\LaravelFeed\Feeds\Feed;
 
-class FeedStartingEvent
+final class FeedStartingEvent
 {
     /**
      * Create a new event instance.

@@ -8,7 +8,7 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 
 use function array_values;
 
-class FeedFinishedEvent
+final class FeedFinishedEvent
 {
     /**
      * Create a new event instance.

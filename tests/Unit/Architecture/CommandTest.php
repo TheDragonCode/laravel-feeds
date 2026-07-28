@@ -12,3 +12,6 @@ arch()->expect('DragonCode\LaravelFeed\Commands')
 
 arch()->expect('DragonCode\LaravelFeed\Commands')
     ->toBeUsedIn(['DragonCode\LaravelFeed']);
+
+arch()->expect('DragonCode\LaravelFeed\Commands')
+    ->toBeFinal();
