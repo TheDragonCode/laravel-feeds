@@ -7,8 +7,10 @@ namespace DragonCode\LaravelFeed\Presets\Info;
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 use Illuminate\Support\Str;
 
+use function blank;
 use function collect;
 use function config;
+use function is_array;
 
 class YandexFeedInfo extends FeedInfo
 {
@@ -104,6 +106,17 @@ class YandexFeedInfo extends FeedInfo
         return $this;
     }
 
+    public function rawCategory(array $category, bool $replace = false): static
+    {
+        if ($replace) {
+            $this->categories = [];
+        }
+
+        $this->categories[] = $category;
+
+        return $this;
+    }
+
     public function currencies(array $currencies): static
     {
         $this->currencies = [];
@@ -119,8 +132,14 @@ class YandexFeedInfo extends FeedInfo
     {
         $this->categories = [];
 
-        foreach ($categories as $id => $name) {
-            $this->category($id, $name);
+        foreach ($categories as $id => $value) {
+            if (is_array($value)) {
+                $this->rawCategory($value);
+
+                continue;
+            }
+
+            $this->category($id, $value);
         }
 
         return $this;
