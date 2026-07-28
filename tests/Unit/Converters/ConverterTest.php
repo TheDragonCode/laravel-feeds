@@ -6,6 +6,16 @@ use DragonCode\LaravelFeed\Contracts\Transformer;
 use DragonCode\LaravelFeed\Converters\JsonConverter;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Services\TransformerService;
+use DragonCode\LaravelFeed\Transformers\BoolTransformer;
+use DragonCode\LaravelFeed\Transformers\DateTimeTransformer;
+
+final class LocalDateTimeTransformer extends DateTimeTransformer
+{
+    protected function format(): string
+    {
+        return 'Y-m-d';
+    }
+}
 
 final class ConstructorConfiguredTransformer implements Transformer
 {
@@ -81,4 +91,28 @@ test('preserves info overrides during file-aware serialization', function () {
         ->toBe('{"name":"Laravel","overridden":"yes"},')
         ->and($converter->infoForFile(['name' => 'Laravel'], true, true))
         ->toBe('{"name":"Laravel","overridden":"yes"},');
+});
+
+test('applies local feed transformers before global transformers', function () {
+    $item = mock(FeedItem::class);
+    $item->shouldReceive('toArray')->once()->andReturn([
+        'published_at' => new DateTimeImmutable('2026-07-28T12:30:00+00:00'),
+        'active'       => true,
+    ]);
+
+    $converter = new JsonConverter(
+        JSON_THROW_ON_ERROR,
+        false,
+        new TransformerService(app(), [
+            DateTimeTransformer::class,
+            BoolTransformer::class,
+        ])
+    );
+
+    $converter->withLocalTransformers([
+        LocalDateTimeTransformer::class,
+    ]);
+
+    expect($converter->item($item, true))
+        ->toBe('{"published_at":"2026-07-28","active":"true"}');
 });

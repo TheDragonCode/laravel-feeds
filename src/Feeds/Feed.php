@@ -43,6 +43,11 @@ abstract class Feed
         return new FeedItem($model);
     }
 
+    public function transformers(): array
+    {
+        return [];
+    }
+
     public function chunkSize(): int
     {
         return 1000;
