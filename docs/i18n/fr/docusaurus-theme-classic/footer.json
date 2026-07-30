@@ -1,0 +1,38 @@
+{
+  "link.title.Community": {
+    "message": "Communauté",
+    "description": "Titre de la colonne de liens du pied de page ayant title=Community"
+  },
+  "link.title.Development": {
+    "message": "Développement",
+    "description": "Titre de la colonne de liens du pied de page ayant title=Development"
+  },
+  "link.title.Authors": {
+    "message": "Auteurs",
+    "description": "Titre de la colonne de liens du pied de page ayant title=Authors"
+  },
+  "link.item.label.Telegram": {
+    "message": "Telegram",
+    "description": "Libellé du lien de pied de page label=Telegram vers https://t.me/dragon_code_news"
+  },
+  "link.item.label.Boosty": {
+    "message": "Boosty",
+    "description": "Libellé du lien de pied de page label=Boosty vers https://boosty.to/dragon-code"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Libellé du lien de pied de page label=GitHub vers https://github.com/TheDragonCode/laravel-feeds"
+  },
+  "link.item.label.Issues": {
+    "message": "Tickets",
+    "description": "Libellé du lien de pied de page label=Issues vers https://github.com/TheDragonCode/laravel-feeds/issues"
+  },
+  "link.item.label.The Dragon Code": {
+    "message": "The Dragon Code",
+    "description": "Libellé du lien de pied de page label=The Dragon Code vers https://github.com/TheDragonCode"
+  },
+  "copyright": {
+    "message": "Copyright © 2026 The Dragon Code",
+    "description": "Mention de droits d’auteur du pied de page"
+  }
+}

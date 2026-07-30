@@ -1,0 +1,64 @@
+---
+title: "Location"
+description: "Configure storage disk and output filename for generated feeds"
+---
+
+[← Previous](./eloquent.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./presets.mdx)
+
+# Location
+
+By default, feeds are stored in `public` storage, and the file name will be automatically generated from the feed class name after `App\Feeds\` in `kebab-case` format. For example:
+
+```text
+# App\Feeds\UserFeed
+user-feed.xml
+
+# App\Feeds\Sitemaps\ProductFeed
+sitemaps-product-feed.xml
+```
+
+You can change these values by overriding the `$storage` property and the `filename` method:
+
+```php source="docs/snippets/advanced-feed-storage.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    protected string $storage = 's3';
+
+    public function filename(): string
+    {
+        return 'some/path/will/be/here.xml';
+    }
+}
+```
+
+## Supported disks {/* #supported_disks */}
+
+Feed generation supports Laravel disks that resolve to `Illuminate\Filesystem\FilesystemAdapter`. This includes the `local`, `s3`, `sftp`, and `ftp` drivers when their Flysystem adapters are installed and configured. Custom adapters are supported when they provide writable streams, file moves, directory management and listings, and deletion through Flysystem.
+
+:::warning
+Read-only disks and custom disks that implement only `Illuminate\Contracts\Filesystem\Filesystem` are not supported. An incompatible disk fails before the feed database query starts with an `UnsupportedStorageDiskException`.
+:::
+
+## Path contract {/* #path_contract */}
+
+- `storage()` returns the configured `FilesystemAdapter`.
+- `storagePath()` returns the disk-relative path used for storage operations, including an optional split-file suffix.
+- `path()` returns the path resolved by Laravel's adapter. It is an absolute filesystem path for a local disk and an adapter-resolved path for a remote disk.
+
+## Publication guarantees {/* #publication_guarantees */}
+
+Every feed part is completed before publication starts. Local disks publish staged files with filesystem moves under an exclusive application lock. If a move fails, Laravel Feeds attempts to restore every previous file from its staging backup.
+
+Remote disks receive complete staged files through Flysystem streams before published objects are changed. Publication then moves each staged object into place and attempts the same rollback on failure.
+
+:::warning
+Remote moves can be implemented as copy-and-delete operations and may be eventually consistent. Atomic replacement of one object or an entire split feed is therefore not guaranteed. The publication lock is local to the application host, so generators running on different hosts require an external distributed lock if they can publish the same feed concurrently.
+:::
+
+## See Also
+
+- [Generation & schedule](./generation.mdx)
+- [Elements](./elements.mdx)
+- [Events](./events.mdx)

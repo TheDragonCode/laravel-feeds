@@ -1,0 +1,29 @@
+---
+title: "Ereignisse"
+description: "Während der Feed-Generierung ausgelöste Ereignisse"
+---
+
+[← Zurück](./presets.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./extending-functionality.mdx)
+
+# Ereignisse
+
+Feeds lösen beim Ausführen des Befehls zwei Ereignisse aus:
+
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — Das `FeedStartingEvent` wird unmittelbar vor dem Erstellen der Entwurfsdatei ausgelöst.
+- **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — Das `FeedFinishedEvent` wird ausgelöst, nachdem jede erzeugte Datei erfolgreich veröffentlicht wurde. Bei einer fehlgeschlagenen Generierung wird dieses Ereignis nicht ausgelöst.
+
+## Vertrag des Abschlussereignisses {/* #finished_event_contract */}
+
+Das Abschlussereignis stellt folgende öffentliche Eigenschaften bereit:
+
+- `$feed` enthält die erzeugte Feed-Klasse.
+- `$paths` enthält alle veröffentlichten Dateipfade in Ausgabereihenfolge.
+- `$path` bleibt aus Gründen der Abwärtskompatibilität verfügbar und enthält den ersten veröffentlichten Pfad. Verwenden Sie `$paths`, wenn ein Feed auf mehrere Dateien aufgeteilt werden kann.
+
+`GeneratorService::feed()` gibt ein `GenerationResultData`-Objekt zurück. Dessen Eigenschaft `$paths` enthält dieselben geordneten Pfade. Die Eigenschaft `$records` ordnet jedem Pfad die Anzahl der in diese Datei geschriebenen Datensätze zu.
+
+## Siehe auch
+
+- [Generierung und Zeitplanung](./generation.mdx)
+- [Speicherort](./location.mdx)
+- [Funktionalität erweitern](./extending-functionality.mdx)

@@ -1,0 +1,64 @@
+---
+title: "存储位置"
+description: "配置生成 Feed 使用的存储磁盘和输出文件名"
+---
+
+[← 上一页](./eloquent.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./presets.mdx)
+
+# 存储位置
+
+默认情况下，Feed 存储在 `public` 存储中。文件名会根据 `App\Feeds\` 之后的 Feed 类名自动生成，并转换为 `kebab-case` 格式。例如：
+
+```text
+# App\Feeds\UserFeed
+user-feed.xml
+
+# App\Feeds\Sitemaps\ProductFeed
+sitemaps-product-feed.xml
+```
+
+可以通过覆盖 `$storage` 属性和 `filename` 方法更改这些值：
+
+```php source="docs/snippets/advanced-feed-storage.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    protected string $storage = 's3';
+
+    public function filename(): string
+    {
+        return 'some/path/will/be/here.xml';
+    }
+}
+```
+
+## 支持的磁盘 {/* #supported_disks */}
+
+Feed 生成支持能够解析为 `Illuminate\Filesystem\FilesystemAdapter` 的 Laravel 磁盘。安装并配置相应的 Flysystem 适配器后，支持 `local`、`s3`、`sftp` 和 `ftp` 驱动。自定义适配器需要通过 Flysystem 提供可写流、文件移动、目录管理与列表以及删除功能。
+
+:::warning
+不支持只读磁盘，也不支持仅实现 `Illuminate\Contracts\Filesystem\Filesystem` 的自定义磁盘。不兼容的磁盘会在 Feed 数据库查询开始前抛出 `UnsupportedStorageDiskException`。
+:::
+
+## 路径约定 {/* #path_contract */}
+
+- `storage()` 返回已配置的 `FilesystemAdapter`。
+- `storagePath()` 返回用于存储操作的磁盘相对路径，其中包括可选的拆分文件后缀。
+- `path()` 返回由 Laravel 适配器解析的路径。对于本地磁盘，它是绝对文件系统路径；对于远程磁盘，它是适配器解析后的路径。
+
+## 发布保证 {/* #publication_guarantees */}
+
+发布开始前，每个 Feed 分片都会完整生成。本地磁盘会在应用独占锁下通过文件系统移动来发布暂存文件。如果移动失败，Laravel Feeds 会尝试从暂存备份恢复所有旧文件。
+
+在更改已发布对象前，远程磁盘会通过 Flysystem 流接收完整的暂存文件。发布时再将每个暂存对象移动到目标位置，失败时也会尝试回滚。
+
+:::warning
+远程移动可能通过复制后删除实现，也可能仅保证最终一致性。因此，无法保证以原子方式替换单个对象或整个拆分 Feed。发布锁只在当前应用主机上有效。如果不同主机上的生成器可能并发发布同一个 Feed，则需要外部分布式锁。
+:::
+
+## 另请参阅
+
+- [生成与调度](./generation.mdx)
+- [元素](./elements.mdx)
+- [事件](./events.mdx)

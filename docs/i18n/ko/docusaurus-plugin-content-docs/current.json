@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "1.x",
+    "description": "현재 버전의 레이블"
+  },
+  "sidebar.docs.category.Getting Started": {
+    "message": "시작하기",
+    "description": "사이드바 'docs'의 'Getting Started' 카테고리 레이블"
+  },
+  "sidebar.docs.category.Digging Deeper": {
+    "message": "자세히 알아보기",
+    "description": "사이드바 'docs'의 'Digging Deeper' 카테고리 레이블"
+  },
+  "sidebar.docs.category.Recipes": {
+    "message": "레시피",
+    "description": "사이드바 'docs'의 'Recipes' 카테고리 레이블"
+  },
+  "sidebar.docs.category.Project": {
+    "message": "프로젝트",
+    "description": "사이드바 'docs'의 'Project' 카테고리 레이블"
+  }
+}

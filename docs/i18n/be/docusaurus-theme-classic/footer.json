@@ -1,0 +1,38 @@
+{
+  "link.title.Community": {
+    "message": "Супольнасць",
+    "description": "Загаловак слупка спасылак «Супольнасць» у ніжняй частцы старонкі"
+  },
+  "link.title.Development": {
+    "message": "Распрацоўка",
+    "description": "Загаловак слупка спасылак «Распрацоўка» ў ніжняй частцы старонкі"
+  },
+  "link.title.Authors": {
+    "message": "Аўтары",
+    "description": "Загаловак слупка спасылак «Аўтары» ў ніжняй частцы старонкі"
+  },
+  "link.item.label.Telegram": {
+    "message": "Telegram",
+    "description": "Пазнака спасылкі Telegram у ніжняй частцы старонкі, якая вядзе на https://t.me/dragon_code_news"
+  },
+  "link.item.label.Boosty": {
+    "message": "Boosty",
+    "description": "Пазнака спасылкі Boosty ў ніжняй частцы старонкі, якая вядзе на https://boosty.to/dragon-code"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Пазнака спасылкі GitHub у ніжняй частцы старонкі, якая вядзе на https://github.com/TheDragonCode/laravel-feeds"
+  },
+  "link.item.label.Issues": {
+    "message": "Звароты",
+    "description": "Пазнака спасылкі «Звароты» ў ніжняй частцы старонкі, якая вядзе на https://github.com/TheDragonCode/laravel-feeds/issues"
+  },
+  "link.item.label.The Dragon Code": {
+    "message": "The Dragon Code",
+    "description": "Пазнака спасылкі The Dragon Code ў ніжняй частцы старонкі, якая вядзе на https://github.com/TheDragonCode"
+  },
+  "copyright": {
+    "message": "Аўтарскія правы © 2026 The Dragon Code",
+    "description": "Паведамленне пра аўтарскія правы ў ніжняй частцы старонкі"
+  }
+}

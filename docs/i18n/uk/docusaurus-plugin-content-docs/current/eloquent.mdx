@@ -1,0 +1,103 @@
+---
+title: "Eloquent"
+description: "Налаштування моделей реєстрації фідів і розміру блока запитів фіду"
+---
+
+[← Попередня](./directives.mdx) · [Назад до README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступна →](./location.mdx)
+
+# Eloquent
+
+## Власна модель реєстрації фіду {/* #custom_feed_model */}
+
+Установіть `feeds.model` у модель застосунку, якщо записам реєстрації фіду потрібні додаткові стовпці, перетворення типів, зв’язки або методи. Власна модель має успадковувати `DragonCode\LaravelFeed\Models\Feed`.
+
+```php
+namespace App\Models;
+
+use DragonCode\LaravelFeed\Models\Feed as BaseFeed;
+
+class Feed extends BaseFeed
+{
+    protected $fillable = [
+        'class',
+        'title',
+        'expression',
+        'is_active',
+        'last_activity',
+        'is_foo',
+        'is_bar',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            ...parent::casts(),
+            'is_foo' => 'boolean',
+            'is_bar' => 'boolean',
+        ];
+    }
+}
+```
+
+Зареєструйте модель у `config/feeds.php`:
+
+```php
+'model' => App\Models\Feed::class,
+```
+
+Додайте власні стовпці до таблиці фідів у міграції застосунку. Усі атрибути, доступні для масового присвоєння, мають залишатися в `$fillable`.
+
+`FeedQuery` використовує налаштовану модель для створення, пошуку, отримання списку, оновлення, видалення та відновлення. Під час створення запису передавайте значення застосунку через `extra`. Вони застосовуються останніми й можуть перевизначити аргументи методу:
+
+```php
+$feed = app(FeedQuery::class)->create(
+    class: SomeFeed::class,
+    title: 'Some',
+    expression: '0 */12 * * *',
+    extra: [
+        'is_foo' => true,
+        'is_bar' => true,
+    ]
+);
+```
+
+Модель застосунку також може використовувати звичайний API Eloquent:
+
+```php
+use App\Models\Feed;
+
+$feed = Feed::create([
+    'class' => SomeFeed::class,
+    'title' => 'Some',
+    'expression' => '0 */12 * * *',
+    'is_active' => true,
+    'is_foo' => true,
+    'is_bar' => true,
+]);
+```
+
+:::note
+Налаштована модель визначається під час виконання. Статичний аналіз розглядає результат `FeedQuery::create()` як базову модель пакета. Якщо потрібне автодоповнення властивостей застосунку, використовуйте `App\Models\Feed::create()` або явний локальний тип.
+:::
+
+## Розмір блока {/* #chunk_size */}
+
+Запити до бази даних виконуються блоками, які типово містять `1000` елементів. Це значення можна змінити, перевизначивши метод `chunkSize`:
+
+```php source="docs/snippets/advanced-feed-chunk.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    public function chunkSize(): int
+    {
+        return 500;
+    }
+}
+```
+
+## Дивіться також
+
+- [Створення фідів](./create-feeds.mdx)
+- [Генерування й розклад](./generation.mdx)
+- [Розширення функціональності](./extending-functionality.mdx)

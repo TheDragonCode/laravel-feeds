@@ -39,7 +39,7 @@ php artisan vendor:publish --tag="feeds"
 >
 > Before running migrations, verify the database connection settings in [config/feeds.php](config/feeds.php).
 
-Now you can run migrations and proceed to [create feeds](https://feeds.dragon-code.pro/create-feeds.html).
+Now you can run migrations and proceed to [create feeds](https://feeds.dragon-code.pro/create-feeds/).
 
 ## Basic Usage
 
@@ -52,7 +52,7 @@ php artisan make:feed User -t
 As a result of executing the console command, the files `app/Feeds/UserFeed.php` and `app/Feeds/Items/UserFeedItem.php`
 will be created.
 
-Check the [operation/migration](https://feeds.dragon-code.pro/create-feeds.html) file that was created for you and run
+Check the [operation/migration](https://feeds.dragon-code.pro/create-feeds/) file that was created for you and run
 the console command:
 
 ```bash
@@ -71,7 +71,16 @@ php artisan feed:generate
 
 ## Documentation
 
-📚 You will find full documentation on the dedicated [documentation](https://feeds.dragon-code.pro) site.
+| Guide | Description |
+|-------|-------------|
+| [Getting Started](https://feeds.dragon-code.pro/) | Package overview and first steps |
+| [Installation](https://feeds.dragon-code.pro/installation/) | Installation, publishing, and migrations |
+| [Create Feeds](https://feeds.dragon-code.pro/create-feeds/) | Feed, item, and info classes |
+| [Generation](https://feeds.dragon-code.pro/generation/) | Commands, queues, and scheduling |
+| [Supported Formats](https://feeds.dragon-code.pro/supported-formats/) | XML, JSON, JSON Lines, CSV, and RSS |
+| [Recipes](https://feeds.dragon-code.pro/receipt-sitemap/) | Sitemap, Instagram, Yandex, and RSS examples |
+
+The [documentation site](https://feeds.dragon-code.pro) includes version and language selectors.
 
 ## License
 

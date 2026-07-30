@@ -1,0 +1,560 @@
+{
+  "theme.ErrorPageContent.title": {
+    "message": "페이지에 오류가 발생하였습니다.",
+    "description": "페이지 충돌 시 표시되는 대체 페이지 제목"
+  },
+  "theme.BackToTopButton.buttonAriaLabel": {
+    "message": "맨 위로 스크롤하기",
+    "description": "맨 위로 버튼의 ARIA 레이블"
+  },
+  "theme.blog.archive.title": {
+    "message": "게시물 목록",
+    "description": "블로그 보관 페이지의 페이지 및 히어로 제목"
+  },
+  "theme.blog.archive.description": {
+    "message": "게시물 목록",
+    "description": "블로그 보관 페이지의 페이지 및 히어로 설명"
+  },
+  "theme.blog.paginator.navAriaLabel": {
+    "message": "블로그 게시물 목록 탐색",
+    "description": "블로그 페이지 이동의 ARIA 레이블"
+  },
+  "theme.blog.paginator.newerEntries": {
+    "message": "이전 페이지",
+    "description": "최신 블로그 게시물 페이지(이전 페이지)로 이동하는 레이블"
+  },
+  "theme.blog.paginator.olderEntries": {
+    "message": "다음 페이지",
+    "description": "이전 블로그 게시물 페이지(다음 페이지)로 이동하는 레이블"
+  },
+  "theme.blog.post.paginator.navAriaLabel": {
+    "message": "블로그 게시물 탐색",
+    "description": "블로그 게시물 페이지 이동의 ARIA 레이블"
+  },
+  "theme.blog.post.paginator.newerPost": {
+    "message": "이전 게시물",
+    "description": "최신/이전 게시물로 이동하는 블로그 게시물 버튼 레이블"
+  },
+  "theme.blog.post.paginator.olderPost": {
+    "message": "다음 게시물",
+    "description": "이전/다음 게시물로 이동하는 블로그 게시물 버튼 레이블"
+  },
+  "theme.tags.tagsPageLink": {
+    "message": "모든 태그 보기",
+    "description": "태그 목록 페이지로 연결되는 링크의 레이블"
+  },
+  "theme.colorToggle.ariaLabel.mode.system": {
+    "message": "시스템 모드",
+    "description": "시스템 색상 모드의 이름"
+  },
+  "theme.colorToggle.ariaLabel.mode.light": {
+    "message": "밝은 모드",
+    "description": "밝은 색상 모드의 이름"
+  },
+  "theme.colorToggle.ariaLabel.mode.dark": {
+    "message": "어두운 모드",
+    "description": "어두운 색상 모드의 이름"
+  },
+  "theme.colorToggle.ariaLabel": {
+    "message": "어두운 모드와 밝은 모드 전환하기 (현재 {mode})",
+    "description": "색상 모드 전환 버튼의 ARIA 레이블"
+  },
+  "theme.docs.breadcrumbs.navAriaLabel": {
+    "message": "탐색 경로",
+    "description": "이동 경로의 ARIA 레이블"
+  },
+  "theme.docs.paginator.navAriaLabel": {
+    "message": "문서 페이지",
+    "description": "문서 페이지 이동의 ARIA 레이블"
+  },
+  "theme.docs.paginator.previous": {
+    "message": "이전",
+    "description": "이전 문서로 이동하는 레이블"
+  },
+  "theme.docs.paginator.next": {
+    "message": "다음",
+    "description": "다음 문서로 이동하는 레이블"
+  },
+  "theme.docs.tagDocListPageTitle.nDocsTagged": {
+    "message": "{count}개 문서가",
+    "description": "\"{count} docs tagged\"의 복수형 레이블. 언어가 지원하는 만큼 \"|\"로 구분된 복수형을 사용합니다(https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html 참고)"
+  },
+  "theme.docs.tagDocListPageTitle": {
+    "message": "{nDocsTagged} \"{tagName}\" 태그에 분류되었습니다",
+    "description": "문서 태그 페이지의 제목"
+  },
+  "theme.docs.versionBadge.label": {
+    "message": "버전: {versionLabel}"
+  },
+  "theme.docs.versions.unreleasedVersionLabel": {
+    "message": "{siteTitle} {versionLabel} 문서는 아직 정식 공개되지 않았습니다.",
+    "description": "사용자가 미출시 문서 버전을 보고 있음을 알리는 레이블"
+  },
+  "theme.docs.versions.unmaintainedVersionLabel": {
+    "message": "{siteTitle} {versionLabel} 문서는 더 이상 업데이트되지 않습니다.",
+    "description": "사용자가 더 이상 유지되지 않는 문서 버전을 보고 있음을 알리는 레이블"
+  },
+  "theme.docs.versions.latestVersionSuggestionLabel": {
+    "message": "최신 문서는 {latestVersionLink} ({versionLabel})을 확인하세요.",
+    "description": "최신 버전을 확인하도록 안내하는 레이블"
+  },
+  "theme.docs.versions.latestVersionLinkLabel": {
+    "message": "최신 버전",
+    "description": "최신 버전 안내 링크의 레이블"
+  },
+  "theme.common.editThisPage": {
+    "message": "페이지 편집",
+    "description": "현재 페이지 편집 링크의 레이블"
+  },
+  "theme.common.headingLinkTitle": {
+    "message": "{heading}에 대한 직접 링크",
+    "description": "제목으로 연결되는 링크의 제목"
+  },
+  "theme.lastUpdated.atDate": {
+    "message": " {date}에",
+    "description": "페이지가 마지막으로 업데이트된 날짜를 나타내는 문구"
+  },
+  "theme.lastUpdated.byUser": {
+    "message": " {user}가",
+    "description": "페이지를 마지막으로 업데이트한 사용자를 나타내는 문구"
+  },
+  "theme.lastUpdated.lastUpdatedAtBy": {
+    "message": "최종 수정: {atDate}{byUser}",
+    "description": "페이지의 마지막 업데이트 시점과 사용자를 표시하는 문장"
+  },
+  "theme.navbar.mobileVersionsDropdown.label": {
+    "message": "버전",
+    "description": "모바일 화면의 내비게이션 바 버전 드롭다운 레이블"
+  },
+  "theme.NotFound.title": {
+    "message": "페이지를 찾을 수 없습니다.",
+    "description": "404 페이지의 제목"
+  },
+  "theme.tags.tagsListLabel": {
+    "message": "태그:",
+    "description": "태그 목록 옆에 표시되는 레이블"
+  },
+  "theme.AnnouncementBar.closeButtonAriaLabel": {
+    "message": "닫기",
+    "description": "공지 표시줄 닫기 버튼의 ARIA 레이블"
+  },
+  "theme.admonition.caution": {
+    "message": "주의",
+    "description": "Caution 알림 상자(:::caution)의 기본 레이블"
+  },
+  "theme.admonition.danger": {
+    "message": "위험",
+    "description": "Danger 알림 상자(:::danger)의 기본 레이블"
+  },
+  "theme.admonition.info": {
+    "message": "정보",
+    "description": "Info 알림 상자(:::info)의 기본 레이블"
+  },
+  "theme.admonition.note": {
+    "message": "노트",
+    "description": "Note 알림 상자(:::note)의 기본 레이블"
+  },
+  "theme.admonition.tip": {
+    "message": "팁",
+    "description": "Tip 알림 상자(:::tip)의 기본 레이블"
+  },
+  "theme.admonition.warning": {
+    "message": "경고",
+    "description": "Warning 알림 상자(:::warning)의 기본 레이블"
+  },
+  "theme.blog.sidebar.navAriaLabel": {
+    "message": "최근 블로그 문서 둘러보기",
+    "description": "블로그 사이드바 최근 게시물의 ARIA 레이블"
+  },
+  "theme.DocSidebarItem.expandCategoryAriaLabel": {
+    "message": "사이드바 분류 '{label}' 펼치기",
+    "description": "사이드바 카테고리를 펼치는 ARIA 레이블"
+  },
+  "theme.DocSidebarItem.collapseCategoryAriaLabel": {
+    "message": "사이드바 분류 '{label}' 접기",
+    "description": "사이드바 카테고리를 접는 ARIA 레이블"
+  },
+  "theme.IconExternalLink.ariaLabel": {
+    "message": "(새 탭에서 열림)",
+    "description": "외부 링크 아이콘의 ARIA 레이블"
+  },
+  "theme.NavBar.navAriaLabel": {
+    "message": "메인",
+    "description": "기본 내비게이션의 ARIA 레이블"
+  },
+  "theme.navbar.mobileLanguageDropdown.label": {
+    "message": "언어",
+    "description": "모바일 언어 전환 드롭다운의 레이블"
+  },
+  "theme.NotFound.p1": {
+    "message": "원하는 페이지를 찾을 수 없습니다.",
+    "description": "404 페이지의 첫 번째 문단"
+  },
+  "theme.NotFound.p2": {
+    "message": "사이트 관리자에게 링크가 깨진 것을 알려주세요.",
+    "description": "404 페이지의 두 번째 문단"
+  },
+  "theme.TOCCollapsible.toggleButtonLabel": {
+    "message": "이 페이지에서",
+    "description": "접을 수 있는 목차 구성요소 버튼의 레이블"
+  },
+  "theme.blog.post.readMore": {
+    "message": "자세히 보기",
+    "description": "블로그 게시물 요약에서 전체 게시물로 연결하는 레이블"
+  },
+  "theme.blog.post.readMoreLabel": {
+    "message": "{title} 에 대해 더 읽어보기",
+    "description": "요약에서 전체 블로그 게시물로 연결되는 링크의 ARIA 레이블"
+  },
+  "theme.blog.post.readingTime.plurals": {
+    "message": "약 {readingTime}분",
+    "description": "\"{readingTime} min read\"의 복수형 레이블. 언어가 지원하는 만큼 \"|\"로 구분된 복수형을 사용합니다(https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html 참고)"
+  },
+  "theme.CodeBlock.copy": {
+    "message": "복사",
+    "description": "코드 블록 복사 버튼의 레이블"
+  },
+  "theme.CodeBlock.copied": {
+    "message": "복사했습니다",
+    "description": "코드 블록에서 복사 완료 버튼의 레이블"
+  },
+  "theme.CodeBlock.copyButtonAriaLabel": {
+    "message": "클립보드에 코드 복사",
+    "description": "코드 블록 복사 버튼의 ARIA 레이블"
+  },
+  "theme.CodeBlock.wordWrapToggle": {
+    "message": "줄 바꿈 전환",
+    "description": "코드 블록 줄 바꿈 전환 버튼의 title 속성"
+  },
+  "theme.docs.breadcrumbs.home": {
+    "message": "홈",
+    "description": "이동 경로에서 홈 페이지의 ARIA 레이블"
+  },
+  "theme.docs.sidebar.collapseButtonTitle": {
+    "message": "사이드바 숨기기",
+    "description": "문서 사이드바 접기 버튼의 title 속성"
+  },
+  "theme.docs.sidebar.collapseButtonAriaLabel": {
+    "message": "사이드바 숨기기",
+    "description": "문서 사이드바 접기 버튼의 title 속성"
+  },
+  "theme.docs.sidebar.navAriaLabel": {
+    "message": "문서 사이드바",
+    "description": "사이드바 내비게이션의 ARIA 레이블"
+  },
+  "theme.docs.sidebar.closeSidebarButtonAriaLabel": {
+    "message": "사이드바 닫기",
+    "description": "모바일 사이드바 닫기 버튼의 ARIA 레이블"
+  },
+  "theme.navbar.mobileSidebarSecondaryMenu.backButtonLabel": {
+    "message": "← 메인 메뉴로 돌아가기",
+    "description": "모바일 내비게이션 바 사이드바의 보조 메뉴에서 기본 메뉴로 돌아가는 버튼의 레이블(특히 문서 사이드바 표시에 사용)"
+  },
+  "theme.docs.sidebar.toggleSidebarButtonAriaLabel": {
+    "message": "사이드바 펼치거나 접기",
+    "description": "모바일 내비게이션 햄버거 메뉴 버튼의 ARIA 레이블"
+  },
+  "theme.navbar.mobileDropdown.collapseButton.expandAriaLabel": {
+    "message": "드롭다운 펼치기",
+    "description": "모바일 드롭다운 내비게이션 바 항목을 펼치는 버튼의 ARIA 레이블"
+  },
+  "theme.navbar.mobileDropdown.collapseButton.collapseAriaLabel": {
+    "message": "드롭다운 접기",
+    "description": "모바일 드롭다운 내비게이션 바 항목을 접는 버튼의 ARIA 레이블"
+  },
+  "theme.docs.sidebar.expandButtonTitle": {
+    "message": "사이드바 열기",
+    "description": "문서 사이드바 펼치기 버튼의 ARIA 레이블 및 title 속성"
+  },
+  "theme.docs.sidebar.expandButtonAriaLabel": {
+    "message": "사이드바 열기",
+    "description": "문서 사이드바 펼치기 버튼의 ARIA 레이블 및 title 속성"
+  },
+  "theme.SearchBar.seeAll": {
+    "message": "{count}개의 결과 확인하기"
+  },
+  "theme.SearchPage.documentsFound.plurals": {
+    "message": "{count}개의 문서를 찾았습니다.",
+    "description": "\"{count} documents found\"의 복수형 레이블. 언어가 지원하는 만큼 \"|\"로 구분된 복수형을 사용합니다(https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html 참고)"
+  },
+  "theme.SearchPage.existingResultsTitle": {
+    "message": "\"{query}\" 검색 결과",
+    "description": "비어 있지 않은 검색어의 검색 페이지 제목"
+  },
+  "theme.SearchPage.emptyResultsTitle": {
+    "message": "문서를 검색합니다.",
+    "description": "빈 검색어의 검색 페이지 제목"
+  },
+  "theme.SearchPage.inputPlaceholder": {
+    "message": "검색어를 입력하세요.",
+    "description": "검색 페이지 입력란의 자리표시자"
+  },
+  "theme.SearchPage.inputLabel": {
+    "message": "검색",
+    "description": "검색 페이지 입력란의 ARIA 레이블"
+  },
+  "theme.SearchPage.algoliaLabel": {
+    "message": "Algolia 제공",
+    "description": "Algolia 표시에 사용하는 설명 레이블"
+  },
+  "theme.SearchPage.noResultsText": {
+    "message": "검색 결과가 없습니다.",
+    "description": "검색 결과가 없을 때 표시되는 문단"
+  },
+  "theme.SearchPage.fetchingNewResults": {
+    "message": "새로운 검색 결과를 불러오는 중입니다.",
+    "description": "새 검색 결과를 가져올 때 표시되는 문단"
+  },
+  "theme.SearchBar.label": {
+    "message": "검색",
+    "description": "검색 버튼의 ARIA 레이블 및 자리표시자"
+  },
+  "theme.SearchModal.searchBox.resetButtonTitle": {
+    "message": "검색어 초기화",
+    "description": "검색창 초기화 버튼의 레이블 및 ARIA 레이블"
+  },
+  "theme.SearchModal.searchBox.cancelButtonText": {
+    "message": "취소",
+    "description": "검색창 취소 버튼의 레이블 및 ARIA 레이블"
+  },
+  "theme.SearchModal.searchBox.placeholderText": {
+    "message": "문서 검색",
+    "description": "기본 검색 입력란의 자리표시자 텍스트"
+  },
+  "theme.SearchModal.searchBox.placeholderTextAskAi": {
+    "message": "다른 질문하기...",
+    "description": "AI 질문 모드의 자리표시자 텍스트"
+  },
+  "theme.SearchModal.searchBox.placeholderTextAskAiStreaming": {
+    "message": "답변 중...",
+    "description": "AI가 답변을 스트리밍할 때 검색창에 표시되는 자리표시자 텍스트"
+  },
+  "theme.SearchModal.searchBox.enterKeyHint": {
+    "message": "검색",
+    "description": "검색창 Enter 키 텍스트 안내"
+  },
+  "theme.SearchModal.searchBox.enterKeyHintAskAi": {
+    "message": "입력",
+    "description": "AI 질문 검색창 Enter 키 텍스트 안내"
+  },
+  "theme.SearchModal.searchBox.searchInputLabel": {
+    "message": "검색",
+    "description": "검색 입력란의 ARIA 레이블"
+  },
+  "theme.SearchModal.searchBox.backToKeywordSearchButtonText": {
+    "message": "키워드 검색으로 돌아가기",
+    "description": "키워드 검색으로 돌아가기 버튼의 텍스트"
+  },
+  "theme.SearchModal.searchBox.backToKeywordSearchButtonAriaLabel": {
+    "message": "키워드 검색으로 돌아가기",
+    "description": "키워드 검색으로 돌아가기 버튼의 ARIA 레이블"
+  },
+  "theme.SearchModal.startScreen.recentSearchesTitle": {
+    "message": "최근",
+    "description": "최근 검색의 제목"
+  },
+  "theme.SearchModal.startScreen.noRecentSearchesText": {
+    "message": "최근 검색어 없음",
+    "description": "최근 검색이 없을 때 표시되는 텍스트"
+  },
+  "theme.SearchModal.startScreen.saveRecentSearchButtonTitle": {
+    "message": "이 검색어를 저장",
+    "description": "최근 검색 저장 버튼의 제목"
+  },
+  "theme.SearchModal.startScreen.removeRecentSearchButtonTitle": {
+    "message": "이 검색어를 최근 검색어에서 삭제",
+    "description": "최근 검색 삭제 버튼의 제목"
+  },
+  "theme.SearchModal.startScreen.favoriteSearchesTitle": {
+    "message": "즐겨찾기",
+    "description": "즐겨찾는 검색의 제목"
+  },
+  "theme.SearchModal.startScreen.removeFavoriteSearchButtonTitle": {
+    "message": "이 검색어를 즐겨찾기에서 삭제",
+    "description": "즐겨찾는 검색 삭제 버튼의 제목"
+  },
+  "theme.SearchModal.startScreen.recentConversationsTitle": {
+    "message": "최근 대화",
+    "description": "최근 대화의 제목"
+  },
+  "theme.SearchModal.startScreen.removeRecentConversationButtonTitle": {
+    "message": "이 대화를 기록에서 삭제",
+    "description": "최근 대화 삭제 버튼의 제목"
+  },
+  "theme.SearchModal.errorScreen.titleText": {
+    "message": "결과를 불러올 수 없음",
+    "description": "오류 화면의 제목"
+  },
+  "theme.SearchModal.errorScreen.helpText": {
+    "message": "인터넷 연결을 다시 확인하시기 바랍니다.",
+    "description": "오류 화면의 도움말 텍스트"
+  },
+  "theme.SearchModal.resultsScreen.askAiPlaceholder": {
+    "message": "AI에게 질문: ",
+    "description": "AI 질문 입력란의 자리표시자 텍스트"
+  },
+  "theme.SearchModal.askAiScreen.disclaimerText": {
+    "message": "답변은 AI가 생성하며 오류가 있을 수 있습니다. 응답을 확인해주세요.",
+    "description": "AI 답변의 면책 문구"
+  },
+  "theme.SearchModal.askAiScreen.relatedSourcesText": {
+    "message": "관련 출처",
+    "description": "관련 출처에 사용하는 텍스트"
+  },
+  "theme.SearchModal.askAiScreen.thinkingText": {
+    "message": "생각 중...",
+    "description": "AI가 생각 중일 때 표시되는 텍스트"
+  },
+  "theme.SearchModal.askAiScreen.copyButtonText": {
+    "message": "복사",
+    "description": "복사 버튼의 텍스트"
+  },
+  "theme.SearchModal.askAiScreen.copyButtonCopiedText": {
+    "message": "복사됨!",
+    "description": "복사 완료 후 복사 버튼에 표시되는 텍스트"
+  },
+  "theme.SearchModal.askAiScreen.copyButtonTitle": {
+    "message": "복사",
+    "description": "복사 버튼의 제목"
+  },
+  "theme.SearchModal.askAiScreen.likeButtonTitle": {
+    "message": "좋아요",
+    "description": "좋아요 버튼의 제목"
+  },
+  "theme.SearchModal.askAiScreen.dislikeButtonTitle": {
+    "message": "싫어요",
+    "description": "싫어요 버튼의 제목"
+  },
+  "theme.SearchModal.askAiScreen.thanksForFeedbackText": {
+    "message": "피드백 감사합니다!",
+    "description": "피드백 감사 텍스트"
+  },
+  "theme.SearchModal.askAiScreen.preToolCallText": {
+    "message": "검색 중...",
+    "description": "도구 호출 전에 표시되는 텍스트"
+  },
+  "theme.SearchModal.askAiScreen.duringToolCallText": {
+    "message": "검색 중: ",
+    "description": "도구 호출 중 표시되는 텍스트"
+  },
+  "theme.SearchModal.askAiScreen.afterToolCallText": {
+    "message": "검색 완료: ",
+    "description": "도구 호출 후 표시되는 텍스트"
+  },
+  "theme.SearchModal.footer.selectText": {
+    "message": "로 선택",
+    "description": "푸터의 선택 텍스트"
+  },
+  "theme.SearchModal.footer.submitQuestionText": {
+    "message": "질문 제출",
+    "description": "푸터의 질문 제출 텍스트"
+  },
+  "theme.SearchModal.footer.selectKeyAriaLabel": {
+    "message": "엔터 키",
+    "description": "푸터 선택 키의 ARIA 레이블"
+  },
+  "theme.SearchModal.footer.navigateText": {
+    "message": "로 이동",
+    "description": "푸터의 이동 텍스트"
+  },
+  "theme.SearchModal.footer.navigateUpKeyAriaLabel": {
+    "message": "화살표 위 키",
+    "description": "푸터 위로 이동 키의 ARIA 레이블"
+  },
+  "theme.SearchModal.footer.navigateDownKeyAriaLabel": {
+    "message": "화살표 아래 키",
+    "description": "푸터 아래로 이동 키의 ARIA 레이블"
+  },
+  "theme.SearchModal.footer.closeText": {
+    "message": "로 종료",
+    "description": "푸터의 닫기 텍스트"
+  },
+  "theme.SearchModal.footer.closeKeyAriaLabel": {
+    "message": "Esc 키",
+    "description": "푸터 닫기 키의 ARIA 레이블"
+  },
+  "theme.SearchModal.footer.searchByText": {
+    "message": "검색 제공",
+    "description": "푸터의 'Powered by' 텍스트"
+  },
+  "theme.SearchModal.footer.backToSearchText": {
+    "message": "검색으로 돌아가기",
+    "description": "푸터의 검색으로 돌아가기 텍스트"
+  },
+  "theme.SearchModal.noResultsScreen.noResultsText": {
+    "message": "검색 결과 없음",
+    "description": "결과가 없을 때 표시되는 텍스트"
+  },
+  "theme.SearchModal.noResultsScreen.suggestedQueryText": {
+    "message": "다른 추천 검색어",
+    "description": "추천 검색어의 텍스트"
+  },
+  "theme.SearchModal.noResultsScreen.reportMissingResultsText": {
+    "message": "검색 결과가 없는 것이 오류라고 생각되십니까?",
+    "description": "누락된 결과를 신고하는 텍스트"
+  },
+  "theme.SearchModal.noResultsScreen.reportMissingResultsLinkText": {
+    "message": "알려주시기 바랍니다.",
+    "description": "누락된 결과 신고 링크의 텍스트"
+  },
+  "theme.SearchModal.placeholder": {
+    "message": "문서 검색",
+    "description": "DocSearch 팝업 모달 입력란의 자리표시자"
+  },
+  "theme.blog.post.plurals": {
+    "message": "{count}개 게시물",
+    "description": "\"{count} posts\"의 복수형 레이블. 언어가 지원하는 만큼 \"|\"로 구분된 복수형을 사용합니다(https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html 참고)"
+  },
+  "theme.blog.tagTitle": {
+    "message": "\"{tagName}\" 태그로 연결된 {nPosts}개의 게시물이 있습니다.",
+    "description": "블로그 태그 페이지의 제목"
+  },
+  "theme.blog.author.pageTitle": {
+    "message": "{authorName} - {nPosts}",
+    "description": "블로그 작성자 페이지의 제목"
+  },
+  "theme.blog.authorsList.pageTitle": {
+    "message": "저자",
+    "description": "작성자 페이지의 제목"
+  },
+  "theme.blog.authorsList.viewAll": {
+    "message": "모든 저자 보기",
+    "description": "블로그 작성자 페이지로 연결되는 링크의 레이블"
+  },
+  "theme.blog.author.noPosts": {
+    "message": "작성자가 아직 게시글을 작성하지 않았습니다.",
+    "description": "블로그 게시물이 없는 작성자에게 표시되는 텍스트"
+  },
+  "theme.contentVisibility.unlistedBanner.title": {
+    "message": "색인되지 않은 문서",
+    "description": "목록에 없는 콘텐츠 배너의 제목"
+  },
+  "theme.contentVisibility.unlistedBanner.message": {
+    "message": "이 문서는 색인되지 않습니다. 검색 엔진이 이 문서를 색인하지 않으며, 주소를 알고 있는 사용자만 접근할 수 있습니다.",
+    "description": "목록에 없는 콘텐츠 배너의 메시지"
+  },
+  "theme.contentVisibility.draftBanner.title": {
+    "message": "작성 중인 페이지",
+    "description": "초안 콘텐츠 배너의 제목"
+  },
+  "theme.contentVisibility.draftBanner.message": {
+    "message": "이 페이지는 아직 작성 중입니다. 개발 환경에서만 보이며 프로덕션 빌드에서는 제외됩니다.",
+    "description": "초안 콘텐츠 배너의 메시지"
+  },
+  "theme.docs.DocCard.categoryDescription.plurals": {
+    "message": "{count} 항목",
+    "description": "생성된 색인의 카테고리 카드에서 해당 카테고리에 포함된 항목 수를 나타내는 기본 설명"
+  },
+  "theme.ErrorPageContent.tryAgain": {
+    "message": "다시 시도해 보세요",
+    "description": "React 오류 경계가 오류를 포착했을 때 렌더링을 다시 시도하는 버튼의 레이블"
+  },
+  "theme.common.skipToMainContent": {
+    "message": "본문으로 건너뛰기",
+    "description": "키보드 Tab/Enter 탐색으로 기본 콘텐츠에 빠르게 이동할 수 있게 하는 접근성용 콘텐츠 건너뛰기 레이블"
+  },
+  "theme.tags.tagsPageTitle": {
+    "message": "태그",
+    "description": "태그 목록 페이지의 제목"
+  }
+}

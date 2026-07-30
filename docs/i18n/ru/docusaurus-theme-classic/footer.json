@@ -1,0 +1,38 @@
+{
+  "link.title.Community": {
+    "message": "Сообщество",
+    "description": "Заголовок столбца ссылок «Сообщество» в нижней части страницы"
+  },
+  "link.title.Development": {
+    "message": "Разработка",
+    "description": "Заголовок столбца ссылок «Разработка» в нижней части страницы"
+  },
+  "link.title.Authors": {
+    "message": "Авторы",
+    "description": "Заголовок столбца ссылок «Авторы» в нижней части страницы"
+  },
+  "link.item.label.Telegram": {
+    "message": "Telegram",
+    "description": "Метка ссылки Telegram в нижней части страницы, ведущей на https://t.me/dragon_code_news"
+  },
+  "link.item.label.Boosty": {
+    "message": "Boosty",
+    "description": "Метка ссылки Boosty в нижней части страницы, ведущей на https://boosty.to/dragon-code"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Метка ссылки GitHub в нижней части страницы, ведущей на https://github.com/TheDragonCode/laravel-feeds"
+  },
+  "link.item.label.Issues": {
+    "message": "Задачи",
+    "description": "Метка ссылки «Задачи» в нижней части страницы, ведущей на https://github.com/TheDragonCode/laravel-feeds/issues"
+  },
+  "link.item.label.The Dragon Code": {
+    "message": "The Dragon Code",
+    "description": "Метка ссылки The Dragon Code в нижней части страницы, ведущей на https://github.com/TheDragonCode"
+  },
+  "copyright": {
+    "message": "Авторские права © 2026 The Dragon Code",
+    "description": "Сообщение об авторских правах в нижней части страницы"
+  }
+}

@@ -1,0 +1,103 @@
+---
+title: "Generierung und Zeitplanung"
+description: "Informationen zum Erzeugen von Feed-Dateien für die spätere Verteilung"
+---
+
+[← Zurück](./create-feeds.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./supported-formats.mdx)
+
+# Generierung und Zeitplanung
+
+Verwenden Sie den folgenden Konsolenbefehl, um alle aktiven Feeds zu erzeugen:
+
+```bash
+php artisan feed:generate
+```
+
+Daraufhin werden alle aktiven Feeds (`is_active = true`) aus der Tabelle `feeds` oder aus der in `config/feeds.php` angegebenen Tabelle ausgeführt.
+
+:::tip
+Beachten Sie, dass die Konsole beim Aufruf des Befehls ohne Parameter Links zu allen Feeds anzeigt, auch zu solchen, deren Eigenschaft `is_active` auf `false` gesetzt ist.
+
+Solche Feeds werden jedoch nicht ausgeführt, sondern mit dem Status `SKIP` gekennzeichnet.
+:::
+
+## Einzelner Feed {/* #single_feed */}
+
+:::warning
+Der angegebene Feed **wird ausgeführt**, selbst wenn er in der Datenbanktabelle `feeds` deaktiviert ist.
+:::
+
+Rufen Sie den Konsolenbefehl `feed:generate` mit der Feed-ID aus der Tabelle `feeds` als Parameter auf, um einen bestimmten Feed zu erzeugen:
+
+```bash
+php artisan feed:generate 123
+```
+
+## Queue {/* #queue */}
+
+Standardmäßig läuft die Feed-Generierung im Konsolenprozess. Aktivieren Sie für Feeds, die lange dauern oder viel Arbeitsspeicher benötigen, den Laravel-Queue-Modus in Ihrer Umgebung:
+
+```bash
+FEED_QUEUE_ENABLED=true
+FEED_QUEUE_CONNECTION=redis
+FEED_QUEUE_NAME=feeds
+FEED_QUEUE_UNIQUE_TTL=3600
+```
+
+Wenn der Queue-Modus aktiviert ist, stellt `feed:generate` für jeden aktiven Feed einen Job in die Warteschlange, anstatt die Dateien direkt zu erzeugen. Bei einer asynchronen Verbindung wird der Befehl beendet, nachdem die Jobs übermittelt wurden. Starten Sie für die ausgewählte Verbindung und Warteschlange einen [Queue-Worker](https://laravel.com/docs/queues#running-the-queue-worker), der diese Jobs verarbeitet.
+
+- `FEED_QUEUE_CONNECTION` wählt die Queue-Verbindung aus. Falls nicht gesetzt, wird zunächst `QUEUE_CONNECTION` und anschließend `database` verwendet.
+- `FEED_QUEUE_NAME` wählt eine Warteschlange dieser Verbindung aus. Lassen Sie die Variable ungesetzt, um die Standardwarteschlange der Verbindung zu verwenden.
+- `FEED_QUEUE_UNIQUE_TTL` legt die maximale Lebensdauer der Eindeutigkeitssperre in Sekunden fest. Solange diese Sperre aktiv ist, wird kein zweiter Job für denselben Feed eingereiht.
+
+:::note
+Die Verbindung `sync` führt jeden Job sofort im Konsolenprozess aus. Wählen Sie eine asynchrone Verbindung, um die Generierung an einen Worker zu übergeben. Setzen Sie `FEED_QUEUE_ENABLED=false`, um Feeds direkt und ohne Jobs zu erzeugen.
+:::
+
+## Zeitplan {/* #schedule */}
+
+### Automatisch {/* #automatic */}
+
+Verwenden Sie einen [Zeitplan](https://laravel.com/docs/scheduling#running-the-scheduler), um die Feed-Generierung zu automatisieren. Geben Sie dazu den Helper-Aufruf in der Datei `routes/console.php` an. Dies ist der Standardpfad, sofern Sie ihn nicht geändert haben:
+
+```php source="docs/snippets/schedule-setup.php" lines="5-"
+use DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper;
+use Illuminate\Support\Facades\Schedule;
+
+ScheduleFeedHelper::register();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+Damit können Sie Aufrufe aller aktiven Feeds nach dem Zeitplan registrieren, den Sie in der Datenbankspalte `expression` angegeben haben.
+
+### Manuell {/* #manual */}
+
+Sie können den Zeitplan auch direkt nach Ihren eigenen Regeln festlegen. In diesem Fall werden nur die von Ihnen angegebenen Feeds ausgeführt.
+
+```php source="docs/snippets/schedule-setup-manual.php" lines="5-"
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command(FeedGenerateCommand::class, [111])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->daily();
+
+Schedule::command(FeedGenerateCommand::class, [222])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->hourly();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+## Siehe auch
+
+- [Feeds erstellen](./create-feeds.mdx)
+- [Ereignisse](./events.mdx)
+- [Speicherort](./location.mdx)

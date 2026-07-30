@@ -1,0 +1,103 @@
+---
+title: "Eloquent"
+description: "Наладжванне мадэляў рэгістрацыі стужак і памеру блока запыту стужкі"
+---
+
+[← Папярэдняя](./directives.mdx) · [Назад да README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступная →](./location.mdx)
+
+# Eloquent
+
+## Карыстальніцкая мадэль рэгістрацыі стужкі {/* #custom_feed_model */}
+
+Задайце для `feeds.model` мадэль праграмы, калі запісам рэгістрацыі стужак патрэбныя дадатковыя слупкі, пераўтварэнні, сувязі або метады. Карыстальніцкая мадэль павінна пашыраць `DragonCode\LaravelFeed\Models\Feed`.
+
+```php
+namespace App\Models;
+
+use DragonCode\LaravelFeed\Models\Feed as BaseFeed;
+
+class Feed extends BaseFeed
+{
+    protected $fillable = [
+        'class',
+        'title',
+        'expression',
+        'is_active',
+        'last_activity',
+        'is_foo',
+        'is_bar',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            ...parent::casts(),
+            'is_foo' => 'boolean',
+            'is_bar' => 'boolean',
+        ];
+    }
+}
+```
+
+Зарэгіструйце мадэль у `config/feeds.php`:
+
+```php
+'model' => App\Models\Feed::class,
+```
+
+Дадайце карыстальніцкія слупкі ў табліцу стужак праз міграцыю праграмы. Пакіньце ў `$fillable` кожны атрыбут, дазволены для масавага прысваення.
+
+`FeedQuery` выкарыстоўвае наладжаную мадэль для стварэння, пошуку, атрымання спіса, абнаўлення, выдалення і аднаўлення. Пры стварэнні запісу перадавайце спецыфічныя для праграмы значэнні праз `extra`. Яны прымяняюцца апошнімі і могуць перавызначыць аргументы метаду:
+
+```php
+$feed = app(FeedQuery::class)->create(
+    class: SomeFeed::class,
+    title: 'Some',
+    expression: '0 */12 * * *',
+    extra: [
+        'is_foo' => true,
+        'is_bar' => true,
+    ]
+);
+```
+
+Мадэль праграмы таксама можа выкарыстоўваць звычайны API Eloquent:
+
+```php
+use App\Models\Feed;
+
+$feed = Feed::create([
+    'class' => SomeFeed::class,
+    'title' => 'Some',
+    'expression' => '0 */12 * * *',
+    'is_active' => true,
+    'is_foo' => true,
+    'is_bar' => true,
+]);
+```
+
+:::note
+Наладжаная мадэль вызначаецца падчас выканання. Статычны аналіз лічыць вынік `FeedQuery::create()` базавай мадэллю пакета. Калі для спецыфічных уласцівасцей праграмы патрэбна аўтадапаўненне, выкарыстоўвайце `App\Models\Feed::create()` або яўны лакальны тып.
+:::
+
+## Памер блока {/* #chunk_size */}
+
+Запыты да базы даных выкарыстоўваюць блокі, якія стандартна змяшчаюць `1000` элементаў. Памер можна змяніць, перавызначыўшы метад `chunkSize`:
+
+```php source="docs/snippets/advanced-feed-chunk.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    public function chunkSize(): int
+    {
+        return 500;
+    }
+}
+```
+
+## Глядзіце таксама
+
+- [Стварэнне стужак](./create-feeds.mdx)
+- [Генерацыя і расклад](./generation.mdx)
+- [Пашырэнне функцыянальнасці](./extending-functionality.mdx)

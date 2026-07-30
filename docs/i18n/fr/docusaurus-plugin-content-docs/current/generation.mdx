@@ -1,0 +1,103 @@
+---
+title: "Génération et planification"
+description: "Informations sur la génération de fichiers de flux destinés à une diffusion ultérieure"
+---
+
+[← Précédent](./create-feeds.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./supported-formats.mdx)
+
+# Génération et planification
+
+Pour générer tous les flux actifs, utilisez la commande suivante :
+
+```bash
+php artisan feed:generate
+```
+
+Tous les flux actifs (`is_active = true`) de la table `feeds`, ou de celle indiquée dans le fichier `config/feeds.php`, seront alors exécutés.
+
+:::tip
+Lorsque vous appelez la commande sans paramètre, la console affiche des liens vers tous les flux, y compris ceux dont la propriété `is_active` vaut `false`.
+
+Ces flux ne sont toutefois pas exécutés : ils sont marqués avec le statut `SKIP`.
+:::
+
+## Flux unique {/* #single_feed */}
+
+:::warning
+Le flux indiqué **sera exécuté**, même s’il est désactivé dans la table `feeds` de la base de données.
+:::
+
+Pour générer un flux particulier, appelez la commande `feed:generate` en lui passant comme paramètre l’identifiant du flux dans la table `feeds` :
+
+```bash
+php artisan feed:generate 123
+```
+
+## File d’attente {/* #queue */}
+
+Par défaut, la génération des flux s’exécute dans le processus de console. Pour les flux longs à générer ou gourmands en mémoire, activez le mode Laravel Queue dans votre environnement :
+
+```bash
+FEED_QUEUE_ENABLED=true
+FEED_QUEUE_CONNECTION=redis
+FEED_QUEUE_NAME=feeds
+FEED_QUEUE_UNIQUE_TTL=3600
+```
+
+Lorsque le mode file d’attente est activé, `feed:generate` envoie un job pour chaque flux actif au lieu de générer directement les fichiers. Avec une connexion asynchrone, la commande se termine après l’envoi des jobs. Démarrez un [worker de file d’attente](https://laravel.com/docs/queues#running-the-queue-worker) pour la connexion et la file sélectionnées afin de traiter ces jobs.
+
+- `FEED_QUEUE_CONNECTION` sélectionne la connexion de file d’attente. À défaut, `QUEUE_CONNECTION`, puis `database`, sont utilisés.
+- `FEED_QUEUE_NAME` sélectionne une file sur cette connexion. Laissez cette variable non définie pour utiliser la file par défaut de la connexion.
+- `FEED_QUEUE_UNIQUE_TTL` définit en secondes la durée de vie maximale du verrou d’unicité. Tant que ce verrou est actif, aucun second job n’est ajouté pour le même flux.
+
+:::note
+La connexion `sync` exécute immédiatement chaque job dans le processus de console. Sélectionnez une connexion asynchrone pour transférer la génération à un worker. Définissez `FEED_QUEUE_ENABLED=false` pour générer directement les flux sans envoyer de jobs.
+:::
+
+## Planification {/* #schedule */}
+
+### Automatique {/* #automatic */}
+
+Pour automatiser la génération des flux, utilisez une [planification](https://laravel.com/docs/scheduling#running-the-scheduler). Ajoutez pour cela l’appel du helper dans le fichier `routes/console.php`, qui est le chemin par défaut sauf si vous l’avez modifié :
+
+```php source="docs/snippets/schedule-setup.php" lines="5-"
+use DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper;
+use Illuminate\Support\Facades\Schedule;
+
+ScheduleFeedHelper::register();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+Vous pourrez ainsi enregistrer les appels de tous les flux actifs selon la planification indiquée dans la colonne `expression` de la base de données.
+
+### Manuelle {/* #manual */}
+
+Vous pouvez également définir directement la planification selon vos propres règles. Dans ce cas, seuls les flux indiqués seront exécutés.
+
+```php source="docs/snippets/schedule-setup-manual.php" lines="5-"
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command(FeedGenerateCommand::class, [111])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->daily();
+
+Schedule::command(FeedGenerateCommand::class, [222])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->hourly();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+## Voir aussi
+
+- [Créer des flux](./create-feeds.mdx)
+- [Événements](./events.mdx)
+- [Emplacement](./location.mdx)

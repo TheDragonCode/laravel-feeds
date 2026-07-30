@@ -125,6 +125,14 @@ Source: `docs/docs/`
 
 Localizations: `docs/i18n/<locale>/docusaurus-plugin-content-docs/current/`
 
+Generated examples: `docs/snippets/`
+
+Version manifests: `docs/versions.json` and `docs/versioned_sidebars/`
+
+Versioned sources: `docs/versioned_docs/version-<version>/`
+
+Versioned localizations: `docs/i18n/<locale>/docusaurus-plugin-content-docs/version-<version>/`
+
 Vendor: `Docusaurus` (https://docusaurus.io)
 
 SEO metadata and JSON-LD: `docs/docusaurus.config.ts`

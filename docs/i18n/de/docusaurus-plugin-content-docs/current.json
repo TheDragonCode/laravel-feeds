@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "1.x",
+    "description": "Label für die aktuelle Version"
+  },
+  "sidebar.docs.category.Getting Started": {
+    "message": "Erste Schritte",
+    "description": "Label der Kategorie „Erste Schritte“ in der Seitenleiste „docs“"
+  },
+  "sidebar.docs.category.Digging Deeper": {
+    "message": "Vertiefung",
+    "description": "Label der Kategorie „Vertiefung“ in der Seitenleiste „docs“"
+  },
+  "sidebar.docs.category.Recipes": {
+    "message": "Rezepte",
+    "description": "Label der Kategorie „Rezepte“ in der Seitenleiste „docs“"
+  },
+  "sidebar.docs.category.Project": {
+    "message": "Projekt",
+    "description": "Label der Kategorie „Projekt“ in der Seitenleiste „docs“"
+  }
+}

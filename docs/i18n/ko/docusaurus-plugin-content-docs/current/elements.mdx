@@ -1,0 +1,355 @@
+---
+title: "요소"
+description: "루트 요소, 정보 블록, 헤더/푸터 및 속성을 포함한 피드 구조 구성"
+---
+
+[← 이전](./supported-formats.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./directives.mdx)
+
+# 요소
+
+## 루트 요소 {/* #root_element */}
+
+**형식:** XML, RSS, JSON
+
+:::tip
+기본적으로 루트 요소의 이름은 피드 클래스의 기본 이름에서 파생됩니다.
+
+예를 들어 `App\Feeds\FooBarFeed` 클래스의 이름은 `foo_bar`입니다.
+:::
+
+루트 요소 및 해당 속성을 추가하려면 `root` 메서드를 재정의하십시오.
+
+```php source="docs/snippets/advanced-element-root.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\User;
+use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+use function now;
+
+class RootElementFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function root(): ElementData
+    {
+        return new ElementData(
+            name      : 'foo',
+            attributes: [
+                'count' => $this->builder()->count(),
+
+                'generated_at' => now(),
+            ],
+        );
+    }
+}
+```
+
+루트 요소 추가를 비활성화하려면 이름을 `null` 또는 `""`로 비워 두십시오.
+
+이 코드는 다음 결과를 생성합니다.
+
+```xml source="docs/snippets/advanced-element-root.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<foo count="2" generated_at="2025-09-04T04:08:12+00:00">
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</foo>
+```
+
+## 정보 {/* #information */}
+
+**형식:** XML, RSS, JSON, JSONL, CSV
+
+루트 요소가 있으면 그 시작 부분에 정보를 추가하고, 없으면 정보만 추가하려면 피드 클래스의 `info` 메서드를 재정의하고 `DragonCode\LaravelFeed\Feeds\Info\FeedInfo` 클래스를 확장하는 객체를 만드십시오.
+
+```php source="docs/snippets/advanced-element-info.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Info\InfoMethodFeedInfo;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Database\Eloquent\Builder;
+
+class InfoMethodFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function info(): FeedInfo
+    {
+        return new InfoMethodFeedInfo;
+    }
+}
+```
+
+```php source="docs/snippets/advanced-element-info-info.php" lines="5-"
+namespace App\Feeds\Info;
+
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+
+use function config;
+
+class InfoMethodFeedInfo extends FeedInfo
+{
+    public function toArray(): array
+    {
+        return [
+            'company' => config('app.name'),
+            'url'     => config('app.url'),
+        ];
+    }
+}
+```
+
+이 코드는 다음 결과를 생성합니다.
+
+```xml source="docs/snippets/advanced-element-info.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<info_method>
+
+<company>Laravel</company>
+<url>https://example.com</url>
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</info_method>
+```
+
+정보 블록을 기준으로 루트 요소가 출력되는 순서를 변경하려면 `root` 메서드의 `beforeInfo` 매개변수를 설정하십시오.
+
+```php source="docs/snippets/advanced-element-info-before-false.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Info\InfoMethodFeedInfo;
+use App\Models\User;
+use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Database\Eloquent\Builder;
+
+class InfoMethodBeforeFalseTest extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function root(): ElementData
+    {
+        return new ElementData(
+            name      : 'info_method',
+            beforeInfo: false
+        );
+    }
+
+    public function info(): FeedInfo
+    {
+        return new InfoMethodFeedInfo;
+    }
+}
+```
+
+이 코드는 다음 결과를 생성합니다.
+
+```xml source="docs/snippets/advanced-element-info-before-false.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<company>Laravel</company>
+<url>https://example.com</url>
+
+<info_method>
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</info_method>
+```
+
+## 헤더 및 푸터 {/* #header_and_footer */}
+
+**형식:** XML, RSS, JSON
+
+헤더와 푸터를 변경하려면 `header` 및 `footer` 메서드를 재정의하십시오.
+
+```php source="docs/snippets/advanced-element-header-footer.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class HeaderFooterFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function header(): string
+    {
+        return '<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">';
+    }
+
+    public function footer(): string
+    {
+        return "\n<g:footer>This is a custom footer element</g:footer>";
+    }
+}
+```
+
+이 코드는 다음 결과를 생성합니다.
+
+```xml source="docs/snippets/advanced-element-header-footer.xml"
+<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+<header_footer>
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</header_footer>
+
+<g:footer>This is a custom footer element</g:footer>
+```
+
+## 속성 {/* #attributes */}
+
+**형식:** XML, RSS
+
+```php source="docs/snippets/advanced-element-attribute.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\AttributeFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class AttributeFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new AttributeFeedItem($model);
+    }
+}
+```
+
+```php source="docs/snippets/advanced-element-attribute-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class AttributeFeedItem extends FeedItem
+{
+    public function attributes(): array
+    {
+        return [
+            'created_at' => $this->model->created_at,
+        ];
+    }
+}
+```
+
+이 코드는 다음 결과를 생성합니다.
+
+```xml source="docs/snippets/advanced-element-attribute.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<attribute>
+
+<user created_at="2025-09-04T04:08:12+00:00">
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user created_at="2025-09-04T04:08:12+00:00">
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</attribute>
+```
+
+## 파일 분할 {/* #split_files */}
+
+**형식:** XML, RSS, JSON, JSONL, CSV
+
+필요하면 파일에 출력되는 줄 수와 파일 수를 제한할 수 있습니다. `perFile` 및 `maxFiles` 함수를 사용하십시오.
+
+```php source="docs/snippets/advanced-element-split.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class AttributeFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function perFile(): int
+    {
+        return 100;
+    }
+
+    public function maxFiles(): int
+    {
+        return 10;
+    }
+}
+```
+
+두 메서드는 서로 독립적으로 작동합니다.
+
+분할할 때 파일 이름에 일련번호가 추가됩니다. 예:
+
+- `attribute-1.xml`
+- `attribute-2.xml`
+- `attribute-3.xml`
+
+## 관련 문서
+
+- [디렉티브](./directives.mdx)
+- [지원 형식](./supported-formats.mdx)
+- [저장 위치](./location.mdx)

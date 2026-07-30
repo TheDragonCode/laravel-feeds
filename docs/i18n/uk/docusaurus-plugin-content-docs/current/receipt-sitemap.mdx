@@ -1,0 +1,151 @@
+---
+title: "Карта сайту"
+description: "Покроковий посібник зі створення фіду карти сайту для товарів"
+---
+
+[← Попередня](./extending-functionality.mdx) · [Назад до README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступна →](./receipt-instagram.mdx)
+
+# Карта сайту
+
+У цьому прикладі показано, як створити фід карти сайту для товарів за допомогою Laravel Feeds. Ви виконаєте такі дії:
+
+- Згенеруєте потрібні класи.
+- Реалізуєте логіку фіду.
+- Надасте доступ до файлів через файлову систему.
+- За потреби додасте посилання на створену карту сайту з кореневого файлу `sitemap.xml`.
+
+## Створення файлів {/* #create_files */}
+
+Згенеруйте фід і клас його елемента такою консольною командою:
+
+```bash
+php artisan make:feed Sitemaps/Product
+```
+
+## Наповнення фіду {/* #filling_the_feed */}
+
+У згенерованому класі замініть `extends Feed` на `extends SitemapFeedPreset`:
+
+```php source="docs/snippets/receipt-sitemap-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds\Sitemaps;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\SitemapFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends SitemapFeedPreset
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->url($model->url)
+            ->modifiedAt($model->updated_at) // By default, $model->updated_at
+            ->priority(0.9); // By default, 0.9
+    }
+
+    public function filename(): string
+    {
+        return 'sitemaps/' . parent::filename();
+    }
+}
+```
+
+Доступні методи класу `FeedItem`:
+
+- `url` — потрібно вказати обов’язково
+- `modifiedAt` — типово `$model->updated_at`
+- `priority` — типово `0.9`
+
+## Активація {/* #activate */}
+
+Перевірте згенерований файл [операції або міграції](./create-feeds.mdx), а потім виконайте відповідну консольну команду:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Посилання {/* #links */}
+
+У файлі конфігурації [config/filesystems.php](https://github.com/laravel/laravel/blob/12.x/config/filesystems.php#L76-L78) додайте диск файлової системи, який указує на каталог із картами сайту:
+
+```php source="docs/snippets/receipt-sitemap-links.php" lines="5-"
+return [
+    'links' => [
+        public_path('storage')  => storage_path('app/public'),
+        public_path('sitemaps') => storage_path('app/public/sitemaps'),
+    ],
+];
+```
+
+Потім створіть публічне символічне посилання, щоб файли були доступні в браузері:
+
+```bash
+php artisan storage:link
+```
+
+## Генерування фіду {/* #generate_feed */}
+
+Згенеруйте фід такою консольною командою:
+
+```bash
+php artisan feed:generate
+```
+
+## Додавання посилання до кореневого sitemap.xml {/* #adding_a_link_to_the_general_sitemap_xml_file */}
+
+Якщо кореневий файл sitemap.xml посилається на інші карти сайту, додайте такий запис:
+
+```xml source="docs/snippets/receipt-sitemap-root.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <sitemap>
+        <loc>https://example.com/sitemaps/products.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>https://example.com/sitemaps/other-sitemaps.xml</loc>
+    </sitemap>
+</sitemapindex>
+```
+
+## Результат {/* #result */}
+
+Згенерований sitemap.xml для товарів матиме такий вигляд:
+
+```xml source="docs/snippets/receipt-sitemap-feed.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+
+<url>
+  <loc>https://example.com/products/ea-voluptatum-fuga-odio-expedita</loc>
+  <lastmod>2025-08-31T20:00:00+00:00</lastmod>
+  <priority>0.9</priority>
+</url>
+<url>
+  <loc>https://example.com/products/dolores-rerum-ut-consequatur-in</loc>
+  <lastmod>2025-08-30T19:00:00+00:00</lastmod>
+  <priority>0.9</priority>
+</url>
+
+</urlset>
+```
+
+## Дивіться також
+
+- [Шаблони](./presets.mdx)
+- [Приклад для Yandex](./receipt-yandex.mdx)
+- [Приклад для RSS Atom](./receipt-rss-atom.mdx)

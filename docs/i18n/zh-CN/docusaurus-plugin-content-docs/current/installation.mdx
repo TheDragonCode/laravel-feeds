@@ -1,0 +1,36 @@
+---
+title: "安装与设置"
+description: "安装和配置 Laravel Feeds 的说明"
+---
+
+[← 上一页](./introduction.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./create-feeds.mdx)
+
+# 安装与设置
+
+你可以通过 [Composer](https://getcomposer.org) 安装此软件包：
+
+```bash
+composer require dragon-code/laravel-feeds
+```
+
+你应使用以下命令发布[迁移](https://github.com/TheDragonCode/laravel-feeds/blob/main/database/migrations/2025_09_01_231655_create_feeds_table.php)和 [config/feeds.php](https://github.com/TheDragonCode/laravel-feeds/blob/main/config/feeds.php) 配置文件：
+
+```bash
+php artisan vendor:publish --tag="feeds"
+```
+
+:::warning
+**运行迁移之前**，请检查 `config/feeds.php` 文件中的数据库连接设置。
+:::
+
+现在可以运行迁移并继续[创建 Feed](./create-feeds.mdx)。
+
+```bash
+php artisan migrate
+```
+
+## 另请参阅
+
+- [创建 Feed](./create-feeds.mdx)
+- [生成与调度](./generation.mdx)
+- [支持的格式](./supported-formats.mdx)

@@ -28,6 +28,7 @@ When creating a new feed, follow these steps by analogy. Do not modify the actua
 
 ### Adding the feed to the documentation
 
-1. Add a new label in `docs/labels.list`. The key used in the `ref` parameter must follow the `format-*` pattern, where `*` is the feed format in camelCase (e.g., `jsonl`).
-2. Include this label in `docs/topics/supported-formats.topic`.
-3. Add the label to the `information` chapter in `docs/topics/elements.topic`.
+1. Add the format to `docs/docs/supported-formats.mdx`.
+2. Add its availability badge to the relevant sections in `docs/docs/elements.mdx`.
+3. Apply the same semantic changes, translated into the target language, to `supported-formats.mdx` and `elements.mdx` under `docs/i18n/<locale>/docusaurus-plugin-content-docs/current/` for `be`, `de`, `fr`, `ko`, `pt-BR`, `ru`, `uk`, and `zh-CN`.
+4. Run `npm --prefix docs run check:i18n`, `npm --prefix docs run typecheck`, and `npm --prefix docs run build`.

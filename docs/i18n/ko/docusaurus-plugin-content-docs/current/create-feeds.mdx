@@ -1,0 +1,189 @@
+---
+title: "피드 생성"
+description: "피드, 피드 항목 및 피드 정보 클래스를 생성하고 채우는 방법"
+---
+
+import ThemedImage from '@theme/ThemedImage';
+
+[← 이전](./installation.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./generation.mdx)
+
+# 피드 생성
+
+:::note
+필요한 클래스를 만드는 가장 편리한 방법은 [Laravel Idea](https://laravel-idea.com) 플러그인을 사용하는 것입니다. 이 플러그인은 [PhpStorm](https://www.jetbrains.com/phpstorm/)용입니다.
+
+<ThemedImage
+  alt="Laravel Idea"
+  sources={{
+    light: '/img/laravel-idea.png',
+    dark: '/img/laravel-idea_dark.png',
+  }}
+/>
+:::
+
+피드 클래스를 만들려면 `make:feed` 콘솔 명령을 사용하십시오.
+
+```bash
+php artisan make:feed <name>
+```
+
+이 명령은 피드 파일을 생성합니다. 예: `app/Feeds/UserFeed.php`.
+
+이 콘솔 명령은 피드 클래스와 함께 항목 및 정보 클래스도 만들 수 있습니다. `--item`과 `--info` 옵션을 사용하십시오.
+
+```bash
+# Create a feed class and info class
+php artisan make:feed <name> --info
+
+# Create a feed class and item class
+php artisan make:feed <name> --item
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> --item --info
+```
+
+단축 옵션도 사용할 수 있습니다.
+
+```bash
+# Create a feed class and item class
+php artisan make:feed <name> -t
+
+# Create a feed class and info class
+php artisan make:feed <name> -i
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> -it
+```
+
+:::note
+피드를 만들면 데이터베이스에 피드를 추가하기 위한 operation 또는 마이그레이션도 생성됩니다.
+
+프로젝트가 [**Laravel Deploy Operations**](https://deploy-operations.dragon-code.pro)를 사용하면 operation 클래스가 생성되고, 그렇지 않으면 마이그레이션 클래스가 생성됩니다.
+
+이는 데이터베이스에 피드 정보를 추가하고 관리하는 데 필요합니다.
+:::
+
+## 피드 채우기 {/* #fill_feeds */}
+
+### 피드 {/* #feed */}
+
+기본 피드 클래스를 채우십시오. 예:
+
+```php source="docs/snippets/create-feeds-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+#### 피드 항목 {/* #feed_item */}
+
+피드 항목 클래스를 채우십시오. 예:
+
+```php source="docs/snippets/generation-feed-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+##### 선택적 값 {/* #optional_values */}
+
+값을 사용할 수 없을 때 필드를 생략하려면 해당 값으로 `DragonCode\LaravelFeed\Data\OptionalData` 인스턴스를 반환하십시오.
+
+```php source="docs/snippets/optional-values.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Data\OptionalData;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'id'   => $this->model->id,
+            'name' => $this->model->name,
+
+            'cityId' => $this->model->city?->id ?? new OptionalData,
+
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at ?? new OptionalData,
+        ];
+    }
+}
+```
+
+선택적 필드는 일반 중첩 필드를 포함하여 JSON 및 JSON Lines 객체와 XML 및 RSS 요소에서 제거됩니다. CSV는 열 위치를 유지하고 빈 필드를 기록합니다.
+
+애플리케이션에서 [Spatie Laravel Data](https://spatie.be/docs/laravel-data/v4/as-a-data-transfer-object/optional-properties)를 사용한다면 대신 `Spatie\LaravelData\Optional`을 반환할 수 있습니다. 두 선택적 값 클래스는 모두 자동으로 처리됩니다.
+
+```php
+use Spatie\LaravelData\Optional;
+
+'updatedAt' => $this->model->updated_at ?? Optional::create(),
+```
+
+## 파일 형식 {/* #file_format */}
+
+:::tip
+사용 가능한 형식 목록은 [지원 형식](./supported-formats.mdx) 페이지에서 확인할 수 있습니다.
+:::
+
+피드는 여러 형식으로 생성할 수 있습니다. 피드 클래스는 의도된 형식으로만 올바르게 내보낼 수 있습니다. 이는 [디렉티브](./directives.mdx)와 기타 형식별 특성 때문입니다.
+
+필요한 형식을 적용하려면 피드 클래스의 `$format` 속성을 재정의하십시오.
+
+```php source="docs/snippets/create-feeds-feed-format.php" lines="5-"
+namespace App\Feeds;
+
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Json;
+
+    public function builder(): Builder
+    {
+        //
+    }
+}
+```
+
+## 관련 문서
+
+- [생성 및 스케줄](./generation.mdx)
+- [지원 형식](./supported-formats.mdx)
+- [프리셋](./presets.mdx)

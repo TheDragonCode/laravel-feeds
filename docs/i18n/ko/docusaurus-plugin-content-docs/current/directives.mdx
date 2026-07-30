@@ -1,0 +1,349 @@
+---
+title: "디렉티브"
+description: "피드 출력을 위한 기본 제공 XML 디렉티브"
+---
+
+[← 이전](./elements.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./eloquent.mdx)
+
+# 디렉티브
+
+**형식:** XML
+
+:::note[예약된 디렉티브]
+- [`@attributes`](#_attributes)
+- [`@value`](#_value)
+- [`@cdata`](#_cdata)
+- [`@mixed`](#_mixed)
+- [`@custom`](#_custom)
+
+디렉티브는 XML 형식으로 피드를 생성할 때만 사용할 수 있습니다.
+:::
+
+## @attributes {/* #_attributes */}
+
+속성 배열을 나타냅니다.
+
+`@attributes` 키를 사용하여 노드에 속성을 추가할 수 있습니다.
+
+```php source="docs/snippets/advanced-directive-attributes.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Info\AttributesDirectiveFeedInfo;
+use App\Feeds\Items\AttributesDirectiveFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class AttributesDirectiveFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function info(): FeedInfo
+    {
+        return new AttributesDirectiveFeedInfo;
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new AttributesDirectiveFeedItem($model);
+    }
+}
+```
+
+```php source="docs/snippets/advanced-directive-attributes-info.php" lines="5-"
+namespace App\Feeds\Info;
+
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+
+use function fake;
+
+class AttributesDirectiveFeedInfo extends FeedInfo
+{
+    public function toArray(): array
+    {
+        return [
+            'company' => [
+                '@attributes' => ['since' => fake()->year],
+            ],
+
+            'url' => config('app.url'),
+        ];
+    }
+}
+```
+
+```php source="docs/snippets/advanced-directive-attributes-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class AttributesDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->model->name,
+
+            'contact' => [
+                '@attributes' => [
+                    'email' => $this->model->email,
+                    'phone' => '555-000-' . $this->model->id,
+                ],
+            ],
+        ];
+    }
+}
+```
+
+이 코드는 다음 결과를 생성합니다.
+
+```xml source="docs/snippets/advanced-directive-attributes.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<attributes_directive>
+
+<company since="1994"/>
+<url>https://example.com</url>
+
+<user>
+  <name>User 1</name>
+  <contact email="user1@example.com" phone="555-000-1"/>
+</user>
+<user>
+  <name>User 2</name>
+  <contact email="user2@example.com" phone="555-000-2"/>
+</user>
+
+</attributes_directive>
+```
+
+## @value {/* #_value */}
+
+적용할 값을 “그대로” 지정합니다.
+
+:::tip
+`@value` 필드의 값은 문자열이어야 합니다.
+:::
+
+`@value` 키를 사용하여 노드에 값을 추가할 수 있습니다.
+
+```php source="docs/snippets/advanced-directive-value-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class ValueDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => [
+                '@value' => $this->model->name,
+            ],
+
+            'contact' => [
+                '@attributes' => ['type' => 'email'],
+                '@value'      => $this->model->email,
+            ],
+        ];
+    }
+}
+```
+
+이 코드는 다음 결과를 생성합니다.
+
+```xml source="docs/snippets/advanced-directive-value.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<value_directive>
+
+<user>
+  <name>User 1</name>
+  <contact type="email">user1@example.com</contact>
+</user>
+<user>
+  <name>User 2</name>
+  <contact type="email">user2@example.com</contact>
+</user>
+
+</value_directive>
+```
+
+## @cdata {/* #_cdata */}
+
+변환 없이 XML 마크업을 사용할 수 있습니다.
+
+:::tip
+노드 값을 CDATA 섹션으로 감쌀 수도 있습니다. 이를 통해 예약 문자를 사용할 수 있습니다.
+:::
+
+`@cdata` 키를 사용하여 노드에 CDATA를 추가할 수 있습니다.
+
+```php source="docs/snippets/advanced-directive-cdata.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+use function sprintf;
+
+class CdataDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => [
+                '@cdata' => sprintf('<h1>%s</h1>', $this->model->name),
+            ],
+
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+이 코드는 다음 결과를 생성합니다.
+
+```xml source="docs/snippets/advanced-directive-cdata.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<cdata_directive>
+
+<user>
+  <name><![CDATA[<h1>User 1</h1>]]></name>
+  <email>user1@example.com</email>
+</user>
+<user>
+  <name><![CDATA[<h1>User 2</h1>]]></name>
+  <email>user2@example.com</email>
+</user>
+
+</cdata_directive>
+```
+
+## @mixed {/* #_mixed */}
+
+문서 구조 안에서 XML 마크업을 직접 사용할 수 있습니다.
+
+XML 조각을 “그대로” 삽입하려면 `@mixed` 디렉티브를 사용하십시오.
+
+```php source="docs/snippets/advanced-directive-mixed.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class MixedDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->model->name,
+
+            '@mixed' => <<<XML
+                <some>
+                    <first>Foo</first>
+                    <second>{$this->model->email}</second>
+                </some>
+                XML,
+        ];
+    }
+}
+```
+
+이 코드는 다음 결과를 생성합니다.
+
+```xml source="docs/snippets/advanced-directive-mixed.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<mixed_directive>
+
+<user>
+  <name>User 1</name>
+  <some>
+    <first>Foo</first>
+    <second>user1@example.com</second>
+</some>
+</user>
+<user>
+  <name>User 2</name>
+  <some>
+    <first>Foo</first>
+    <second>user2@example.com</second>
+</some>
+</user>
+
+</mixed_directive>
+```
+
+## @custom {/* #_custom */}
+
+같은 키를 가진 요소 배열을 나열하는 방법을 설명합니다.
+
+경우에 따라 이름이 같은 요소 배열을 배치해야 합니다.
+
+이렇게 하려면 키 이름 앞에 `@` 기호를 추가하십시오.
+
+```php source="docs/snippets/advanced-directive-array.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+use function fake;
+
+class ArrayDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->model->name,
+
+            '@avatar' => [
+                fake()->imageUrl(),
+                fake()->imageUrl(),
+            ],
+
+            '@images' => [
+                [
+                    '@attributes' => ['name' => fake()->words(asText: true)],
+                    '@value'      => fake()->imageUrl(),
+                ],
+                [
+                    '@attributes' => ['name' => fake()->words(asText: true)],
+                    '@value'      => fake()->imageUrl(),
+                ],
+            ],
+        ];
+    }
+}
+```
+
+이 코드는 다음 결과를 생성합니다.
+
+```xml source="docs/snippets/advanced-directive-array.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<array_directive>
+
+<user>
+  <name>User 1</name>
+  <avatar>https://via.placeholder.com/640x480.png/00ffff?text=aut</avatar>
+  <avatar>https://via.placeholder.com/640x480.png/0022dd?text=et</avatar>
+  <images name="doloremque distinctio facere">https://via.placeholder.com/640x480.png/0099dd?text=ea</images>
+  <images name="fuga odio expedita">https://via.placeholder.com/640x480.png/00cc77?text=sint</images>
+</user>
+<user>
+  <name>User 2</name>
+  <avatar>https://via.placeholder.com/640x480.png/00ff99?text=est</avatar>
+  <avatar>https://via.placeholder.com/640x480.png/003300?text=non</avatar>
+  <images name="distinctio et aliquam">https://via.placeholder.com/640x480.png/0099aa?text=accusantium</images>
+  <images name="consequatur soluta nemo">https://via.placeholder.com/640x480.png/0099cc?text=ab</images>
+</user>
+
+</array_directive>
+```
+
+## 관련 문서
+
+- [요소](./elements.mdx)
+- [지원 형식](./supported-formats.mdx)
+- [Yandex 레시피](./receipt-yandex.mdx)

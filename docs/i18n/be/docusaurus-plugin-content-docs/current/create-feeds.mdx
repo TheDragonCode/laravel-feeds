@@ -1,0 +1,189 @@
+---
+title: "Стварэнне стужак"
+description: "Інструкцыі па стварэнні і запаўненні класаў стужкі, элемента стужкі і звестак пра стужку"
+---
+
+import ThemedImage from '@theme/ThemedImage';
+
+[← Папярэдняя](./installation.mdx) · [Назад да README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступная →](./generation.mdx)
+
+# Стварэнне стужак
+
+:::note
+Найзручней ствараць патрэбныя класы з дапамогай плагіна [Laravel Idea](https://laravel-idea.com) для [PhpStorm](https://www.jetbrains.com/phpstorm/).
+
+<ThemedImage
+  alt="Laravel Idea"
+  sources={{
+    light: '/img/laravel-idea.png',
+    dark: '/img/laravel-idea_dark.png',
+  }}
+/>
+:::
+
+Каб стварыць клас стужкі, выкарыстоўвайце кансольную каманду `make:feed`:
+
+```bash
+php artisan make:feed <name>
+```
+
+Каманда створыць файл стужкі, напрыклад `app/Feeds/UserFeed.php`.
+
+Гэта кансольная каманда таксама можа стварыць разам з класам стужкі класы элемента і звестак. Для гэтага выкарыстоўвайце параметры `--item` і `--info`.
+
+```bash
+# Create a feed class and info class
+php artisan make:feed <name> --info
+
+# Create a feed class and item class
+php artisan make:feed <name> --item
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> --item --info
+```
+
+Таксама даступныя скарочаныя параметры:
+
+```bash
+# Create a feed class and item class
+php artisan make:feed <name> -t
+
+# Create a feed class and info class
+php artisan make:feed <name> -i
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> -it
+```
+
+:::note
+Пры стварэнні стужкі таксама будзе створана аперацыя або міграцыя для яе дадання ў базу даных.
+
+Калі праект выкарыстоўвае [**Laravel Deploy Operations**](https://deploy-operations.dragon-code.pro), будзе створаны клас аперацыі. У іншым выпадку будзе створаны клас міграцыі.
+
+Гэта патрэбна для дадання звестак пра стужку ў базу даных і кіравання імі.
+:::
+
+## Запаўненне стужак {/* #fill_feeds */}
+
+### Стужка {/* #feed */}
+
+Запоўніце асноўны клас стужкі. Напрыклад:
+
+```php source="docs/snippets/create-feeds-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+#### Элемент стужкі {/* #feed_item */}
+
+Запоўніце клас элемента стужкі. Напрыклад:
+
+```php source="docs/snippets/generation-feed-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+##### Неабавязковыя значэнні {/* #optional_values */}
+
+Каб прапусціць поле, калі яго значэнне недаступнае, вярніце для яго асобнік `DragonCode\LaravelFeed\Data\OptionalData`:
+
+```php source="docs/snippets/optional-values.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Data\OptionalData;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'id'   => $this->model->id,
+            'name' => $this->model->name,
+
+            'cityId' => $this->model->city?->id ?? new OptionalData,
+
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at ?? new OptionalData,
+        ];
+    }
+}
+```
+
+Неабавязковыя палі выдаляюцца з аб'ектаў JSON і JSON Lines, а таксама з элементаў XML і RSS, у тым ліку са звычайных укладзеных палёў. CSV захоўвае пазіцыю слупка і запісвае пустое поле.
+
+Калі праграма выкарыстоўвае [Spatie Laravel Data](https://spatie.be/docs/laravel-data/v4/as-a-data-transfer-object/optional-properties), замест гэтага можна вярнуць `Spatie\LaravelData\Optional`. Абодва класы неабавязковых значэнняў апрацоўваюцца аўтаматычна.
+
+```php
+use Spatie\LaravelData\Optional;
+
+'updatedAt' => $this->model->updated_at ?? Optional::create(),
+```
+
+## Фармат файла {/* #file_format */}
+
+:::tip
+Спіс даступных фарматаў знаходзіцца на старонцы [падтрыманых фарматаў](./supported-formats.mdx).
+:::
+
+Стужкі можна генераваць у розных фарматах. Клас стужкі можна правільна экспартаваць толькі ў той фармат, для якога ён прызначаны. Гэта звязана з выкарыстаннем [дырэктыў](./directives.mdx) і іншымі асаблівасцямі фармату.
+
+Каб задаць патрэбны фармат, проста перавызначце ў класе стужкі ўласцівасць `$format`:
+
+```php source="docs/snippets/create-feeds-feed-format.php" lines="5-"
+namespace App\Feeds;
+
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Json;
+
+    public function builder(): Builder
+    {
+        //
+    }
+}
+```
+
+## Глядзіце таксама
+
+- [Генерацыя і расклад](./generation.mdx)
+- [Падтрыманыя фарматы](./supported-formats.mdx)
+- [Перадусталёўкі](./presets.mdx)

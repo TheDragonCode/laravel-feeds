@@ -1,0 +1,276 @@
+---
+title: "Étendre les fonctionnalités"
+description: "Étendre les flux avec des clauses conditionnelles, des macros et des transformateurs personnalisés."
+---
+
+[← Précédent](./events.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./receipt-sitemap.mdx)
+
+# Étendre les fonctionnalités
+
+## Clauses conditionnelles {/* #conditional_clauses */}
+
+:::note
+Les clauses conditionnelles sont disponibles pour les classes `Feed`, `FeedInfo` et `FeedItem`.
+:::
+
+Vous pouvez parfois vouloir appliquer certaines clauses à un flux en fonction d’une autre condition. Par exemple, une clause where ne doit s’appliquer que si une valeur d’entrée est présente ou si un autre attribut possède une valeur. La méthode `when` permet de le faire :
+
+```php source="docs/snippets/advanced-extends-conditional.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->when($model->category, function (ProductFeedItem $item) {
+                $item->title .= ' (first)';
+            });
+    }
+}
+```
+
+La méthode `when` n’exécute la closure fournie que lorsque le premier argument vaut `true`. S’il vaut `false`, la closure n’est pas exécutée. Dans l’exemple ci-dessus, la closure transmise à `when` n’est donc appelée que si le champ `category` existe sur le modèle et est évalué à `true`.
+
+Vous pouvez transmettre une autre closure comme troisième argument de `when`. Elle ne sera exécutée que si le premier argument est évalué à `false`. L’exemple suivant utilise cette fonctionnalité pour configurer le suffixe du titre du modèle :
+
+```php source="docs/snippets/advanced-extends-conditional-both.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->when(
+                value   : $model->category,
+                callback: function (ProductFeedItem $item) {
+                    $item->title .= ' (first)';
+                },
+                default : function (ProductFeedItem $item) {
+                    $item->title .= ' (second)';
+                },
+            );
+    }
+}
+```
+
+La méthode inverse `unless` est également disponible. Sa logique de traitement est exactement opposée.
+
+```php source="docs/snippets/advanced-extends-conditional-unless.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->unless(
+                value   : $model->category,
+                callback: function (ProductFeedItem $item) {
+                    $item->title .= ' (second)';
+                },
+                default : function (ProductFeedItem $item) {
+                    $item->title .= ' (first)';
+                },
+            );
+    }
+}
+```
+
+## Macroable {/* #macroable */}
+
+`Feed`, `FeedItem` et `FeedInfo` sont « macroable », ce qui permet de leur ajouter des méthodes à l’exécution. La méthode `macro` accepte une closure exécutée lors de l’appel de votre macro. Cette closure peut accéder aux autres méthodes du flux via `$this`, comme s’il s’agissait d’une véritable méthode des classes de flux.
+
+Le code suivant ajoute par exemple une méthode `customFilename` à la classe `Feed` :
+
+```php source="docs/snippets/advanced-extends-macro-feed.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        Feed::macro('customFilename', function (Feed $feed, string $name) {
+            $this->filename = $name;
+
+            return $this;
+        });
+    }
+}
+```
+
+Voici également des exemples pour `FeedInfo` et `FeedItem` :
+
+```php source="docs/snippets/advanced-extends-macro-info.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        FeedInfo::macro('titleWithPrefix', function () {
+            return sprintf('[%s]: %s', date('Y'), $this->title);
+        });
+    }
+}
+
+class ProductFeedInfo extends FeedInfo
+{
+    public function __construct(
+        protected string $title,
+    ) {}
+
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->titleWithPrefix(),
+        ];
+    }
+}
+```
+
+```php source="docs/snippets/advanced-extends-macro-item.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        FeedItem::macro('titleWithPrefix', function () {
+            return sprintf('[%s]: %s]', $this->model->getKey(), $this->model->title);
+        });
+    }
+}
+
+class ProductFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->titleWithPrefix(),
+        ];
+    }
+}
+```
+
+## Transformateurs personnalisés {/* #custom_transformers */}
+
+Un transformateur convertit une valeur prise en charge avant sa sérialisation par le convertisseur. Enregistrez les noms des classes de transformateur dans `config/feeds.php`. Laravel résout chaque classe via le conteneur de services, ce qui prend en charge les dépendances de constructeur et les liaisons personnalisées du conteneur.
+
+```php source="docs/snippets/advanced-extends-transformer.php" lines="5-"
+namespace App\Feeds\Transformers;
+
+use App\Services\PriceFormatter;
+use DragonCode\LaravelFeed\Contracts\Transformer;
+
+class PriceTransformer implements Transformer
+{
+    public function __construct(
+        protected PriceFormatter $formatter,
+    ) {}
+
+    public function allow(mixed $value): bool
+    {
+        return is_float($value);
+    }
+
+    public function transform(mixed $value): string
+    {
+        return $this->formatter->format($value);
+    }
+}
+```
+
+Ajoutez le transformateur à la liste configurée après les transformateurs intégrés :
+
+```php source="docs/snippets/advanced-extends-transformer-config.php"
+<?php
+
+declare(strict_types=1);
+
+use App\Feeds\Transformers\PriceTransformer;
+use DragonCode\LaravelFeed\Transformers;
+
+return [
+    'transformers' => [
+        Transformers\BoolTransformer::class,
+        Transformers\DateTimeTransformer::class,
+        Transformers\EnumTransformer::class,
+        PriceTransformer::class,
+    ],
+];
+```
+
+Les transformateurs configurés s’exécutent dans l’ordre de déclaration. Chaque appel à `allow()` reçoit la valeur actuelle, y compris les modifications apportées par les transformateurs précédents, et chaque transformateur correspondant peut la mettre à jour. Les doublons sont supprimés après la résolution du conteneur, tandis que la première occurrence conserve sa position.
+
+Un convertisseur construit cette chaîne ordonnée une seule fois et réutilise les mêmes instances de transformateur pour chaque champ de cette génération de flux.
+
+### Ajouter des transformateurs de flux en tête {/* #prepend_transformers */}
+
+Remplacez `transformers()` dans un flux pour ajouter ses transformateurs en tête. La méthode renvoie des noms de classes de transformateur que Laravel résout via le conteneur de services, comme pour la liste globale.
+
+Définissez par exemple un transformateur de date avec un format propre au flux :
+
+```php source="docs/snippets/advanced-extends-transformer-prepend.php" lines="5-"
+namespace App\Feeds\Transformers;
+
+use DragonCode\LaravelFeed\Transformers\DateTimeTransformer;
+
+class FeedDateTimeTransformer extends DateTimeTransformer
+{
+    protected function format(): string
+    {
+        return 'Y-m-d';
+    }
+}
+```
+
+Renvoyez-le ensuite depuis le flux :
+
+```php source="docs/snippets/advanced-extends-transformer-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Transformers\FeedDateTimeTransformer;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class ProductFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function transformers(): array
+    {
+        return [
+            FeedDateTimeTransformer::class,
+        ];
+    }
+}
+```
+
+La liste ajoutée en tête ne remplace pas la liste globale de `config/feeds.php`. Les transformateurs s’exécutent dans l’ordre suivant :
+
+1. Transformateurs ajoutés en tête et renvoyés par `transformers()`.
+2. Transformateurs globaux de `config/feeds.php`.
+3. Transformateurs propres au convertisseur et requis par le format de sortie sélectionné.
+
+Un transformateur ajouté en tête peut donc formater une date en premier. Le transformateur de date global reçoit la chaîne obtenue et l’ignore, tandis que les autres transformateurs globaux continuent de traiter les champs correspondants.
+
+## Voir aussi
+
+- [Créer des flux](./create-feeds.mdx)
+- [Eloquent](./eloquent.mdx)
+- [Directives](./directives.mdx)

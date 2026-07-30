@@ -1,0 +1,276 @@
+---
+title: "기능 확장"
+description: "조건부 절, 매크로 및 사용자 지정 트랜스포머로 피드 확장"
+---
+
+[← 이전](./events.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./receipt-sitemap.mdx)
+
+# 기능 확장
+
+## 조건부 절 {/* #conditional_clauses */}
+
+:::note
+조건부 절은 `Feed`, `FeedInfo`, `FeedItem` 클래스에서 사용할 수 있습니다.
+:::
+
+다른 조건에 따라 특정 피드 절을 적용해야 할 수 있습니다. 예를 들어 입력값이 있거나 다른 속성에 값이 있을 때만 where 문을 적용할 수 있습니다. `when` 메서드를 사용하십시오.
+
+```php source="docs/snippets/advanced-extends-conditional.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->when($model->category, function (ProductFeedItem $item) {
+                $item->title .= ' (first)';
+            });
+    }
+}
+```
+
+`when` 메서드는 첫 번째 인수가 `true`일 때만 전달된 클로저를 실행합니다. 첫 번째 인수가 `false`이면 클로저가 실행되지 않습니다. 따라서 위 예제에서 `when` 메서드에 전달된 클로저는 모델에 `category` 필드가 있고 그 값이 `true`로 평가될 때만 호출됩니다.
+
+`when` 메서드의 세 번째 인수로 다른 클로저를 전달할 수 있습니다. 이 클로저는 첫 번째 인수가 `false`로 평가될 때만 실행됩니다. 다음 예제에서는 이 기능으로 모델 제목 접미사를 구성합니다.
+
+```php source="docs/snippets/advanced-extends-conditional-both.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->when(
+                value   : $model->category,
+                callback: function (ProductFeedItem $item) {
+                    $item->title .= ' (first)';
+                },
+                default : function (ProductFeedItem $item) {
+                    $item->title .= ' (second)';
+                },
+            );
+    }
+}
+```
+
+반대 동작을 하는 `unless` 메서드도 사용할 수 있습니다. 이 경우 처리 로직은 정확히 반대입니다.
+
+```php source="docs/snippets/advanced-extends-conditional-unless.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->unless(
+                value   : $model->category,
+                callback: function (ProductFeedItem $item) {
+                    $item->title .= ' (second)';
+                },
+                default : function (ProductFeedItem $item) {
+                    $item->title .= ' (first)';
+                },
+            );
+    }
+}
+```
+
+## 매크로 기능 {/* #macroable */}
+
+`Feed`, `FeedItem`, `FeedInfo`는 매크로를 지원하므로 런타임에 메서드를 추가할 수 있습니다. `macro` 메서드는 매크로가 호출될 때 실행할 클로저를 받습니다. 매크로 클로저는 피드 클래스의 실제 메서드처럼 `$this`를 통해 피드의 다른 메서드에 접근할 수 있습니다.
+
+다음 코드는 `Feed` 클래스에 `customFilename` 메서드를 추가합니다.
+
+```php source="docs/snippets/advanced-extends-macro-feed.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        Feed::macro('customFilename', function (Feed $feed, string $name) {
+            $this->filename = $name;
+
+            return $this;
+        });
+    }
+}
+```
+
+다음은 `FeedInfo`와 `FeedItem`의 예제입니다.
+
+```php source="docs/snippets/advanced-extends-macro-info.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        FeedInfo::macro('titleWithPrefix', function () {
+            return sprintf('[%s]: %s', date('Y'), $this->title);
+        });
+    }
+}
+
+class ProductFeedInfo extends FeedInfo
+{
+    public function __construct(
+        protected string $title,
+    ) {}
+
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->titleWithPrefix(),
+        ];
+    }
+}
+```
+
+```php source="docs/snippets/advanced-extends-macro-item.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        FeedItem::macro('titleWithPrefix', function () {
+            return sprintf('[%s]: %s]', $this->model->getKey(), $this->model->title);
+        });
+    }
+}
+
+class ProductFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->titleWithPrefix(),
+        ];
+    }
+}
+```
+
+## 사용자 지정 트랜스포머 {/* #custom_transformers */}
+
+트랜스포머는 변환기가 지원되는 값을 직렬화하기 전에 값을 변환합니다. 트랜스포머 클래스 이름을 `config/feeds.php`에 등록하십시오. Laravel은 서비스 컨테이너를 통해 각 클래스를 해석하므로 생성자 의존성과 사용자 지정 컨테이너 바인딩이 지원됩니다.
+
+```php source="docs/snippets/advanced-extends-transformer.php" lines="5-"
+namespace App\Feeds\Transformers;
+
+use App\Services\PriceFormatter;
+use DragonCode\LaravelFeed\Contracts\Transformer;
+
+class PriceTransformer implements Transformer
+{
+    public function __construct(
+        protected PriceFormatter $formatter,
+    ) {}
+
+    public function allow(mixed $value): bool
+    {
+        return is_float($value);
+    }
+
+    public function transform(mixed $value): string
+    {
+        return $this->formatter->format($value);
+    }
+}
+```
+
+기본 제공 트랜스포머 뒤에 사용자 지정 트랜스포머를 구성 목록에 추가하십시오.
+
+```php source="docs/snippets/advanced-extends-transformer-config.php"
+<?php
+
+declare(strict_types=1);
+
+use App\Feeds\Transformers\PriceTransformer;
+use DragonCode\LaravelFeed\Transformers;
+
+return [
+    'transformers' => [
+        Transformers\BoolTransformer::class,
+        Transformers\DateTimeTransformer::class,
+        Transformers\EnumTransformer::class,
+        PriceTransformer::class,
+    ],
+];
+```
+
+구성된 트랜스포머는 선언 순서대로 실행됩니다. 각 `allow()` 호출은 앞선 트랜스포머가 변경한 값을 포함한 현재 값을 받으며, 조건에 맞는 모든 트랜스포머가 값을 업데이트할 수 있습니다. 중복 항목은 컨테이너 해석 후 제거되며 첫 번째 항목의 위치는 유지됩니다.
+
+변환기는 이 순서가 지정된 파이프라인을 한 번 구성하고 해당 피드 생성의 모든 필드에 같은 트랜스포머 인스턴스를 재사용합니다.
+
+### 피드 트랜스포머 앞에 추가 {/* #prepend_transformers */}
+
+해당 피드의 트랜스포머를 앞에 추가하려면 피드의 `transformers()`를 재정의하십시오. 이 메서드는 트랜스포머 클래스 이름을 반환하며 Laravel은 전역 목록과 같은 방식으로 서비스 컨테이너를 통해 이를 해석합니다.
+
+예를 들어 피드별 형식을 사용하는 날짜 트랜스포머를 정의합니다.
+
+```php source="docs/snippets/advanced-extends-transformer-prepend.php" lines="5-"
+namespace App\Feeds\Transformers;
+
+use DragonCode\LaravelFeed\Transformers\DateTimeTransformer;
+
+class FeedDateTimeTransformer extends DateTimeTransformer
+{
+    protected function format(): string
+    {
+        return 'Y-m-d';
+    }
+}
+```
+
+그런 다음 피드에서 반환합니다.
+
+```php source="docs/snippets/advanced-extends-transformer-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Transformers\FeedDateTimeTransformer;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class ProductFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function transformers(): array
+    {
+        return [
+            FeedDateTimeTransformer::class,
+        ];
+    }
+}
+```
+
+앞에 추가된 목록은 `config/feeds.php`의 전역 목록을 대체하지 않습니다. 트랜스포머는 다음 순서로 실행됩니다.
+
+1. `transformers()`가 반환한 앞쪽 트랜스포머.
+2. `config/feeds.php`의 전역 트랜스포머.
+3. 선택한 출력 형식에 필요한 변환기별 트랜스포머.
+
+따라서 앞에 추가된 트랜스포머가 날짜를 먼저 형식화할 수 있습니다. 전역 날짜 트랜스포머는 결과 문자열을 받아 건너뛰고, 다른 전역 트랜스포머는 조건에 맞는 필드를 계속 처리합니다.
+
+## 관련 문서
+
+- [피드 생성](./create-feeds.mdx)
+- [Eloquent](./eloquent.mdx)
+- [디렉티브](./directives.mdx)

@@ -1,0 +1,103 @@
+---
+title: "Eloquent"
+description: "Configurer les modèles d’enregistrement des flux et la taille des lots de requêtes."
+---
+
+[← Précédent](./directives.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./location.mdx)
+
+# Eloquent
+
+## Modèle d’enregistrement de flux personnalisé {/* #custom_feed_model */}
+
+Définissez `feeds.model` sur un modèle de l’application lorsque les enregistrements de flux nécessitent des colonnes, casts, relations ou méthodes supplémentaires. Le modèle personnalisé doit étendre `DragonCode\LaravelFeed\Models\Feed`.
+
+```php
+namespace App\Models;
+
+use DragonCode\LaravelFeed\Models\Feed as BaseFeed;
+
+class Feed extends BaseFeed
+{
+    protected $fillable = [
+        'class',
+        'title',
+        'expression',
+        'is_active',
+        'last_activity',
+        'is_foo',
+        'is_bar',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            ...parent::casts(),
+            'is_foo' => 'boolean',
+            'is_bar' => 'boolean',
+        ];
+    }
+}
+```
+
+Enregistrez le modèle dans `config/feeds.php` :
+
+```php
+'model' => App\Models\Feed::class,
+```
+
+Ajoutez les colonnes personnalisées à la table des flux dans une migration de l’application. Conservez dans `$fillable` chaque attribut autorisé pour l’assignation en masse.
+
+`FeedQuery` utilise le modèle configuré pour les opérations de création, de recherche, de liste, de mise à jour, de suppression et de restauration. Lors de la création d’un enregistrement, transmettez les valeurs propres à l’application via `extra`. Elles sont appliquées en dernier et peuvent remplacer les arguments de la méthode :
+
+```php
+$feed = app(FeedQuery::class)->create(
+    class: SomeFeed::class,
+    title: 'Some',
+    expression: '0 */12 * * *',
+    extra: [
+        'is_foo' => true,
+        'is_bar' => true,
+    ]
+);
+```
+
+Le modèle de l’application peut également utiliser l’API Eloquent habituelle :
+
+```php
+use App\Models\Feed;
+
+$feed = Feed::create([
+    'class' => SomeFeed::class,
+    'title' => 'Some',
+    'expression' => '0 */12 * * *',
+    'is_active' => true,
+    'is_foo' => true,
+    'is_bar' => true,
+]);
+```
+
+:::note
+Le modèle configuré est résolu à l’exécution. L’analyse statique considère le résultat de `FeedQuery::create()` comme le modèle de base du paquet. Utilisez `App\Models\Feed::create()` ou un type local explicite lorsque l’autocomplétion des propriétés propres à l’application est nécessaire.
+:::
+
+## Taille des lots {/* #chunk_size */}
+
+Les requêtes de base de données utilisent des lots de `1000` éléments par défaut. Vous pouvez modifier cette valeur en remplaçant la méthode `chunkSize` :
+
+```php source="docs/snippets/advanced-feed-chunk.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    public function chunkSize(): int
+    {
+        return 500;
+    }
+}
+```
+
+## Voir aussi
+
+- [Créer des flux](./create-feeds.mdx)
+- [Génération et planification](./generation.mdx)
+- [Étendre les fonctionnalités](./extending-functionality.mdx)

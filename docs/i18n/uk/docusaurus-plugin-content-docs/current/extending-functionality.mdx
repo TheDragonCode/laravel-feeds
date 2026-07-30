@@ -1,0 +1,276 @@
+---
+title: "Розширення функціональності"
+description: "Розширення фідів за допомогою умовних конструкцій, макросів і власних перетворювачів"
+---
+
+[← Попередня](./events.mdx) · [Назад до README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступна →](./receipt-sitemap.mdx)
+
+# Розширення функціональності
+
+## Умовні конструкції {/* #conditional_clauses */}
+
+:::note
+Умовні конструкції доступні для класів `Feed`, `FeedInfo` і `FeedItem`.
+:::
+
+Іноді певні конструкції потрібно застосовувати до фіду лише за іншої умови. Наприклад, умову where варто застосувати тільки тоді, коли задано вхідне значення або інший атрибут має значення. Для цього використовуйте метод `when`:
+
+```php source="docs/snippets/advanced-extends-conditional.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->when($model->category, function (ProductFeedItem $item) {
+                $item->title .= ' (first)';
+            });
+    }
+}
+```
+
+Метод `when` виконує передане замикання, лише коли перший аргумент дорівнює `true`. Якщо він дорівнює `false`, замикання не виконується. У наведеному прикладі замикання з методу `when` буде викликано, лише якщо поле `category` існує в моделі та обчислюється як `true`.
+
+Третім аргументом методу `when` можна передати інше замикання. Воно виконається, лише якщо перший аргумент обчислюється як `false`. У наступному прикладі ця можливість використовується для налаштування суфікса заголовка моделі:
+
+```php source="docs/snippets/advanced-extends-conditional-both.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->when(
+                value   : $model->category,
+                callback: function (ProductFeedItem $item) {
+                    $item->title .= ' (first)';
+                },
+                default : function (ProductFeedItem $item) {
+                    $item->title .= ' (second)';
+                },
+            );
+    }
+}
+```
+
+Також доступний зворотний метод `unless`. Його логіка обробки повністю протилежна.
+
+```php source="docs/snippets/advanced-extends-conditional-unless.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->unless(
+                value   : $model->category,
+                callback: function (ProductFeedItem $item) {
+                    $item->title .= ' (second)';
+                },
+                default : function (ProductFeedItem $item) {
+                    $item->title .= ' (first)';
+                },
+            );
+    }
+}
+```
+
+## Макроси {/* #macroable */}
+
+`Feed`, `FeedItem` і `FeedInfo` підтримують макроси, тому до них можна додавати методи під час виконання. Метод `macro` приймає замикання, яке виконується під час виклику макросу. Замикання макросу може звертатися до інших методів фіду через `$this`, наче це справжній метод класу фіду.
+
+Наприклад, цей код додає метод `customFilename` до класу `Feed`:
+
+```php source="docs/snippets/advanced-extends-macro-feed.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        Feed::macro('customFilename', function (Feed $feed, string $name) {
+            $this->filename = $name;
+
+            return $this;
+        });
+    }
+}
+```
+
+Нижче наведено приклади для `FeedInfo` і `FeedItem`:
+
+```php source="docs/snippets/advanced-extends-macro-info.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        FeedInfo::macro('titleWithPrefix', function () {
+            return sprintf('[%s]: %s', date('Y'), $this->title);
+        });
+    }
+}
+
+class ProductFeedInfo extends FeedInfo
+{
+    public function __construct(
+        protected string $title,
+    ) {}
+
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->titleWithPrefix(),
+        ];
+    }
+}
+```
+
+```php source="docs/snippets/advanced-extends-macro-item.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        FeedItem::macro('titleWithPrefix', function () {
+            return sprintf('[%s]: %s]', $this->model->getKey(), $this->model->title);
+        });
+    }
+}
+
+class ProductFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->titleWithPrefix(),
+        ];
+    }
+}
+```
+
+## Власні перетворювачі {/* #custom_transformers */}
+
+Перетворювач змінює підтримуване значення до того, як конвертер його серіалізує. Зареєструйте назви класів перетворювачів у `config/feeds.php`. Laravel визначає кожен клас через контейнер служб, тому підтримуються залежності конструктора та власні прив’язки контейнера.
+
+```php source="docs/snippets/advanced-extends-transformer.php" lines="5-"
+namespace App\Feeds\Transformers;
+
+use App\Services\PriceFormatter;
+use DragonCode\LaravelFeed\Contracts\Transformer;
+
+class PriceTransformer implements Transformer
+{
+    public function __construct(
+        protected PriceFormatter $formatter,
+    ) {}
+
+    public function allow(mixed $value): bool
+    {
+        return is_float($value);
+    }
+
+    public function transform(mixed $value): string
+    {
+        return $this->formatter->format($value);
+    }
+}
+```
+
+Додайте перетворювач до налаштованого списку після вбудованих перетворювачів:
+
+```php source="docs/snippets/advanced-extends-transformer-config.php"
+<?php
+
+declare(strict_types=1);
+
+use App\Feeds\Transformers\PriceTransformer;
+use DragonCode\LaravelFeed\Transformers;
+
+return [
+    'transformers' => [
+        Transformers\BoolTransformer::class,
+        Transformers\DateTimeTransformer::class,
+        Transformers\EnumTransformer::class,
+        PriceTransformer::class,
+    ],
+];
+```
+
+Налаштовані перетворювачі виконуються в порядку оголошення. Кожен виклик `allow()` отримує поточне значення з урахуванням змін попередніх перетворювачів, і кожен відповідний перетворювач може його оновити. Після визначення через контейнер дублікати видаляються, а перше входження зберігає свою позицію.
+
+Конвертер один раз будує цей упорядкований конвеєр і повторно використовує ті самі екземпляри перетворювачів для кожного поля під час генерування фіду.
+
+### Додавання перетворювачів фіду на початок {/* #prepend_transformers */}
+
+Перевизначте `transformers()` у фіді, щоб додати його перетворювачі на початок. Метод повертає назви класів перетворювачів, а Laravel визначає їх через контейнер служб так само, як елементи глобального списку.
+
+Наприклад, визначте перетворювач дати з форматом для конкретного фіду:
+
+```php source="docs/snippets/advanced-extends-transformer-prepend.php" lines="5-"
+namespace App\Feeds\Transformers;
+
+use DragonCode\LaravelFeed\Transformers\DateTimeTransformer;
+
+class FeedDateTimeTransformer extends DateTimeTransformer
+{
+    protected function format(): string
+    {
+        return 'Y-m-d';
+    }
+}
+```
+
+Потім поверніть його з фіду:
+
+```php source="docs/snippets/advanced-extends-transformer-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Transformers\FeedDateTimeTransformer;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class ProductFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function transformers(): array
+    {
+        return [
+            FeedDateTimeTransformer::class,
+        ];
+    }
+}
+```
+
+Доданий на початок список не замінює глобальний список із `config/feeds.php`. Перетворювачі виконуються в такому порядку:
+
+1. Перетворювачі, додані на початок і повернуті методом `transformers()`.
+2. Глобальні перетворювачі з `config/feeds.php`.
+3. Перетворювачі конвертера, потрібні для вибраного формату виведення.
+
+Отже, доданий на початок перетворювач може першим відформатувати дату. Глобальний перетворювач дати отримає готовий рядок і пропустить його, а інші глобальні перетворювачі й далі оброблятимуть відповідні поля.
+
+## Дивіться також
+
+- [Створення фідів](./create-feeds.mdx)
+- [Eloquent](./eloquent.mdx)
+- [Директиви](./directives.mdx)

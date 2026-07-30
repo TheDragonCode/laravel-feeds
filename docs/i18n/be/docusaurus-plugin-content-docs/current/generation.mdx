@@ -1,0 +1,103 @@
+---
+title: "Генерацыя і расклад"
+description: "Звесткі пра генерацыю файлаў стужак для далейшага распаўсюджвання"
+---
+
+[← Папярэдняя](./create-feeds.mdx) · [Назад да README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступная →](./supported-formats.mdx)
+
+# Генерацыя і расклад
+
+Каб згенераваць усе актыўныя стужкі, выкарыстоўвайце кансольную каманду:
+
+```bash
+php artisan feed:generate
+```
+
+У выніку будуць выкананы ўсе актыўныя стужкі (`is_active = true`) з табліцы `feeds` або з табліцы, указанай у файле `config/feeds.php`.
+
+:::tip
+Звярніце ўвагу: калі выклікаць каманду без параметра, кансоль пакажа спасылкі на ўсе стужкі, у тым ліку з уласцівасцю `is_active`, роўнай `false`.
+
+Але такія стужкі не будуць выкананы і атрымаюць стан `SKIP`.
+:::
+
+## Адна стужка {/* #single_feed */}
+
+:::warning
+Указаная стужка **будзе выканана**, нават калі яна адключана ў табліцы `feeds` базы даных.
+:::
+
+Каб згенераваць пэўную стужку, выклічце кансольную каманду `feed:generate` і перадайце ёй як параметр ідэнтыфікатар стужкі з табліцы `feeds`:
+
+```bash
+php artisan feed:generate 123
+```
+
+## Чарга {/* #queue */}
+
+Стандартна генерацыя стужкі выконваецца ў кансольным працэсе. Для стужак, якія патрабуюць шмат часу або памяці, уключыце рэжым Laravel Queue у сваім асяроддзі:
+
+```bash
+FEED_QUEUE_ENABLED=true
+FEED_QUEUE_CONNECTION=redis
+FEED_QUEUE_NAME=feeds
+FEED_QUEUE_UNIQUE_TTL=3600
+```
+
+Калі рэжым чаргі ўключаны, `feed:generate` адпраўляе па адной задачы для кожнай актыўнай стужкі замест непасрэднай генерацыі файлаў. Пры асінхронным падключэнні каманда завяршаецца пасля адпраўкі задач. Запусціце [апрацоўшчык чаргі](https://laravel.com/docs/queues#running-the-queue-worker) для выбраных падключэння і чаргі, каб апрацаваць гэтыя задачы.
+
+- `FEED_QUEUE_CONNECTION` выбірае падключэнне да чаргі. Калі значэнне не зададзена, выкарыстоўваецца `QUEUE_CONNECTION`, а затым `database`.
+- `FEED_QUEUE_NAME` выбірае чаргу ў гэтым падключэнні. Не задавайце значэнне, каб выкарыстоўваць стандартную чаргу падключэння.
+- `FEED_QUEUE_UNIQUE_TTL` задае максімальны час жыцця блакіроўкі ўнікальнасці ў секундах. Пакуль блакіроўка актыўная, другая задача для той жа стужкі не будзе пастаўлена ў чаргу.
+
+:::note
+Падключэнне `sync` адразу выконвае кожную задачу ў кансольным працэсе. Выберыце асінхроннае падключэнне, каб перанесці генерацыю ў апрацоўшчык. Задайце `FEED_QUEUE_ENABLED=false`, каб генераваць стужкі непасрэдна, без адпраўкі задач.
+:::
+
+## Расклад {/* #schedule */}
+
+### Аўтаматычны {/* #automatic */}
+
+Каб аўтаматызаваць генерацыю стужак, выкарыстоўвайце [планіроўшчык](https://laravel.com/docs/scheduling#running-the-scheduler). Для гэтага дадайце выклік дапаможнага класа ў файл `routes/console.php`, калі стандартны шлях не быў зменены:
+
+```php source="docs/snippets/schedule-setup.php" lines="5-"
+use DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper;
+use Illuminate\Support\Facades\Schedule;
+
+ScheduleFeedHelper::register();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+Так можна зарэгістраваць выклікі ўсіх актыўных стужак паводле раскладу, указанага ў слупку `expression` базы даных.
+
+### Ручны {/* #manual */}
+
+Расклад таксама можна задаць непасрэдна паводле ўласных правіл. У гэтым выпадку будуць выкананы толькі ўказаныя вамі стужкі.
+
+```php source="docs/snippets/schedule-setup-manual.php" lines="5-"
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command(FeedGenerateCommand::class, [111])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->daily();
+
+Schedule::command(FeedGenerateCommand::class, [222])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->hourly();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+## Глядзіце таксама
+
+- [Стварэнне стужак](./create-feeds.mdx)
+- [Падзеі](./events.mdx)
+- [Размяшчэнне](./location.mdx)

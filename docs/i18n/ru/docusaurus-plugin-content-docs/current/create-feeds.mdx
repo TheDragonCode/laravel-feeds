@@ -1,0 +1,189 @@
+---
+title: "Создание фидов"
+description: "Инструкции по созданию и заполнению классов фида, элемента фида и информации о фиде"
+---
+
+import ThemedImage from '@theme/ThemedImage';
+
+[← Предыдущая](./installation.mdx) · [Назад к README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Следующая →](./generation.mdx)
+
+# Создание фидов
+
+:::note
+Удобнее всего создавать необходимые классы с помощью плагина [Laravel Idea](https://laravel-idea.com) для [PhpStorm](https://www.jetbrains.com/phpstorm/).
+
+<ThemedImage
+  alt="Laravel Idea"
+  sources={{
+    light: '/img/laravel-idea.png',
+    dark: '/img/laravel-idea_dark.png',
+  }}
+/>
+:::
+
+Чтобы создать класс фида, используйте консольную команду `make:feed`:
+
+```bash
+php artisan make:feed <name>
+```
+
+Команда создаст файл фида, например `app/Feeds/UserFeed.php`.
+
+Эта консольная команда также может создать вместе с классом фида классы элемента и информации. Для этого используйте параметры `--item` и `--info`.
+
+```bash
+# Create a feed class and info class
+php artisan make:feed <name> --info
+
+# Create a feed class and item class
+php artisan make:feed <name> --item
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> --item --info
+```
+
+Также доступны короткие параметры:
+
+```bash
+# Create a feed class and item class
+php artisan make:feed <name> -t
+
+# Create a feed class and info class
+php artisan make:feed <name> -i
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> -it
+```
+
+:::note
+При создании фида также будет создана операция или миграция для его добавления в базу данных.
+
+Если проект использует [**Laravel Deploy Operations**](https://deploy-operations.dragon-code.pro), будет создан класс операции. В противном случае будет создан класс миграции.
+
+Это необходимо для добавления информации о фиде в базу данных и управления ею.
+:::
+
+## Заполнение фидов {/* #fill_feeds */}
+
+### Фид {/* #feed */}
+
+Заполните основной класс фида. Например:
+
+```php source="docs/snippets/create-feeds-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+#### Элемент фида {/* #feed_item */}
+
+Заполните класс элемента фида. Например:
+
+```php source="docs/snippets/generation-feed-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+##### Необязательные значения {/* #optional_values */}
+
+Чтобы пропустить поле, если его значение недоступно, верните для него экземпляр `DragonCode\LaravelFeed\Data\OptionalData`:
+
+```php source="docs/snippets/optional-values.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Data\OptionalData;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'id'   => $this->model->id,
+            'name' => $this->model->name,
+
+            'cityId' => $this->model->city?->id ?? new OptionalData,
+
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at ?? new OptionalData,
+        ];
+    }
+}
+```
+
+Необязательные поля удаляются из объектов JSON и JSON Lines, а также из элементов XML и RSS, включая обычные вложенные поля. CSV сохраняет позицию столбца и записывает пустое поле.
+
+Если приложение использует [Spatie Laravel Data](https://spatie.be/docs/laravel-data/v4/as-a-data-transfer-object/optional-properties), вместо этого можно вернуть `Spatie\LaravelData\Optional`. Оба класса необязательных значений обрабатываются автоматически.
+
+```php
+use Spatie\LaravelData\Optional;
+
+'updatedAt' => $this->model->updated_at ?? Optional::create(),
+```
+
+## Формат файла {/* #file_format */}
+
+:::tip
+Список доступных форматов находится на странице [поддерживаемых форматов](./supported-formats.mdx).
+:::
+
+Фиды можно генерировать в разных форматах. Класс фида можно корректно экспортировать только в формат, для которого он предназначен. Это связано с использованием [директив](./directives.mdx) и другими особенностями формата.
+
+Чтобы задать нужный формат, просто переопределите в классе фида свойство `$format`:
+
+```php source="docs/snippets/create-feeds-feed-format.php" lines="5-"
+namespace App\Feeds;
+
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Json;
+
+    public function builder(): Builder
+    {
+        //
+    }
+}
+```
+
+## Смотрите также
+
+- [Генерация и расписание](./generation.mdx)
+- [Поддерживаемые форматы](./supported-formats.mdx)
+- [Предустановки](./presets.mdx)

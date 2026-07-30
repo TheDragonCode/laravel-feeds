@@ -1,0 +1,151 @@
+---
+title: "站点地图"
+description: "创建产品站点地图 Feed 的分步指南"
+---
+
+[← 上一页](./extending-functionality.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./receipt-instagram.mdx)
+
+# 站点地图
+
+本示例说明如何使用 Laravel Feeds 创建产品站点地图 Feed。你将完成以下操作：
+
+- 生成所需的类。
+- 实现 Feed 逻辑。
+- 通过文件系统公开文件。
+- 可选：从根 `sitemap.xml` 文件引用生成的站点地图。
+
+## 创建文件 {/* #create_files */}
+
+使用以下控制台命令生成 Feed 及其项类：
+
+```bash
+php artisan make:feed Sitemaps/Product
+```
+
+## 填充 Feed {/* #filling_the_feed */}
+
+在生成的类中，将 `extends Feed` 替换为 `extends SitemapFeedPreset`：
+
+```php source="docs/snippets/receipt-sitemap-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds\Sitemaps;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\SitemapFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends SitemapFeedPreset
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->url($model->url)
+            ->modifiedAt($model->updated_at) // By default, $model->updated_at
+            ->priority(0.9); // By default, 0.9
+    }
+
+    public function filename(): string
+    {
+        return 'sitemaps/' . parent::filename();
+    }
+}
+```
+
+`FeedItem` 类的可用方法：
+
+- `url` - 必须指定
+- `modifiedAt` - 默认为 `$model->updated_at`
+- `priority` - 默认为 `0.9`
+
+## 启用 {/* #activate */}
+
+检查生成的[操作类或迁移](./create-feeds.mdx)文件，然后运行相应的控制台命令：
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## 链接 {/* #links */}
+
+在 [config/filesystems.php](https://github.com/laravel/laravel/blob/12.x/config/filesystems.php#L76-L78) 配置文件中添加一个文件系统磁盘，指向包含站点地图的目录：
+
+```php source="docs/snippets/receipt-sitemap-links.php" lines="5-"
+return [
+    'links' => [
+        public_path('storage')  => storage_path('app/public'),
+        public_path('sitemaps') => storage_path('app/public/sitemaps'),
+    ],
+];
+```
+
+然后创建公共符号链接，以便通过浏览器访问这些文件：
+
+```bash
+php artisan storage:link
+```
+
+## 生成 Feed {/* #generate_feed */}
+
+运行以下控制台命令生成 Feed：
+
+```bash
+php artisan feed:generate
+```
+
+## 添加到根 sitemap.xml 的链接 {/* #adding_a_link_to_the_general_sitemap_xml_file */}
+
+如果根 sitemap.xml 文件引用其他站点地图，请添加如下条目：
+
+```xml source="docs/snippets/receipt-sitemap-root.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <sitemap>
+        <loc>https://example.com/sitemaps/products.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>https://example.com/sitemaps/other-sitemaps.xml</loc>
+    </sitemap>
+</sitemapindex>
+```
+
+## 结果 {/* #result */}
+
+为产品生成的 sitemap.xml 如下所示：
+
+```xml source="docs/snippets/receipt-sitemap-feed.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+
+<url>
+  <loc>https://example.com/products/ea-voluptatum-fuga-odio-expedita</loc>
+  <lastmod>2025-08-31T20:00:00+00:00</lastmod>
+  <priority>0.9</priority>
+</url>
+<url>
+  <loc>https://example.com/products/dolores-rerum-ut-consequatur-in</loc>
+  <lastmod>2025-08-30T19:00:00+00:00</lastmod>
+  <priority>0.9</priority>
+</url>
+
+</urlset>
+```
+
+## 另请参阅
+
+- [预设](./presets.mdx)
+- [Yandex 示例](./receipt-yandex.mdx)
+- [RSS Atom 示例](./receipt-rss-atom.mdx)

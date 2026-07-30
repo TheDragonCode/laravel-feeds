@@ -1,0 +1,36 @@
+---
+title: "Instalação e configuração"
+description: "Informações sobre a instalação e configuração do Laravel Feeds"
+---
+
+[← Anterior](./introduction.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./create-feeds.mdx)
+
+# Instalação e configuração
+
+Você pode instalar o pacote usando o [Composer](https://getcomposer.org):
+
+```bash
+composer require dragon-code/laravel-feeds
+```
+
+Publique a [migração](https://github.com/TheDragonCode/laravel-feeds/blob/main/database/migrations/2025_09_01_231655_create_feeds_table.php) e o arquivo de configuração [config/feeds.php](https://github.com/TheDragonCode/laravel-feeds/blob/main/config/feeds.php) com:
+
+```bash
+php artisan vendor:publish --tag="feeds"
+```
+
+:::warning
+**Antes de executar as migrações**, verifique as configurações de conexão com o banco de dados no arquivo `config/feeds.php`.
+:::
+
+Agora você pode executar as migrações e seguir para a etapa de [criação dos feeds](./create-feeds.mdx).
+
+```bash
+php artisan migrate
+```
+
+## Veja também
+
+- [Criar feeds](./create-feeds.mdx)
+- [Geração e agendamento](./generation.mdx)
+- [Formatos compatíveis](./supported-formats.mdx)

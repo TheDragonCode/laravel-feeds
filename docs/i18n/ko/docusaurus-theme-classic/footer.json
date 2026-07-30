@@ -1,0 +1,38 @@
+{
+  "link.title.Community": {
+    "message": "커뮤니티",
+    "description": "푸터에서 title=Community인 링크 열의 제목"
+  },
+  "link.title.Development": {
+    "message": "개발",
+    "description": "푸터에서 title=Development인 링크 열의 제목"
+  },
+  "link.title.Authors": {
+    "message": "작성자",
+    "description": "푸터에서 title=Authors인 링크 열의 제목"
+  },
+  "link.item.label.Telegram": {
+    "message": "Telegram",
+    "description": "https://t.me/dragon_code_news 링크로 연결되는 label=Telegram 푸터 링크의 레이블"
+  },
+  "link.item.label.Boosty": {
+    "message": "Boosty",
+    "description": "https://boosty.to/dragon-code 링크로 연결되는 label=Boosty 푸터 링크의 레이블"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "https://github.com/TheDragonCode/laravel-feeds 링크로 연결되는 label=GitHub 푸터 링크의 레이블"
+  },
+  "link.item.label.Issues": {
+    "message": "이슈",
+    "description": "https://github.com/TheDragonCode/laravel-feeds/issues 링크로 연결되는 label=Issues 푸터 링크의 레이블"
+  },
+  "link.item.label.The Dragon Code": {
+    "message": "The Dragon Code",
+    "description": "https://github.com/TheDragonCode 링크로 연결되는 label=The Dragon Code 푸터 링크의 레이블"
+  },
+  "copyright": {
+    "message": "Copyright © 2026 The Dragon Code",
+    "description": "푸터 저작권 문구"
+  }
+}

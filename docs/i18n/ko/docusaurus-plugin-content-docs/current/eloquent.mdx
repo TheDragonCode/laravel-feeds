@@ -1,0 +1,103 @@
+---
+title: "Eloquent"
+description: "피드 등록 모델과 피드 쿼리 청크 크기 구성"
+---
+
+[← 이전](./directives.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./location.mdx)
+
+# Eloquent
+
+## 사용자 지정 피드 등록 모델 {/* #custom_feed_model */}
+
+피드 등록 레코드에 추가 열, 캐스트, 관계 또는 메서드가 필요하면 `feeds.model`을 애플리케이션 모델로 설정하십시오. 사용자 지정 모델은 `DragonCode\LaravelFeed\Models\Feed`를 확장해야 합니다.
+
+```php
+namespace App\Models;
+
+use DragonCode\LaravelFeed\Models\Feed as BaseFeed;
+
+class Feed extends BaseFeed
+{
+    protected $fillable = [
+        'class',
+        'title',
+        'expression',
+        'is_active',
+        'last_activity',
+        'is_foo',
+        'is_bar',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            ...parent::casts(),
+            'is_foo' => 'boolean',
+            'is_bar' => 'boolean',
+        ];
+    }
+}
+```
+
+`config/feeds.php`에 모델을 등록하십시오.
+
+```php
+'model' => App\Models\Feed::class,
+```
+
+애플리케이션 마이그레이션에서 feeds 테이블에 사용자 지정 열을 추가하십시오. 대량 할당을 허용하는 모든 속성을 `$fillable`에 유지하십시오.
+
+`FeedQuery`는 생성, 조회, 목록, 업데이트, 삭제 및 복원 작업에 구성된 모델을 사용합니다. 레코드를 생성할 때 애플리케이션별 값은 `extra`로 전달하십시오. 이 값은 마지막에 적용되며 메서드 인수를 재정의할 수 있습니다.
+
+```php
+$feed = app(FeedQuery::class)->create(
+    class: SomeFeed::class,
+    title: 'Some',
+    expression: '0 */12 * * *',
+    extra: [
+        'is_foo' => true,
+        'is_bar' => true,
+    ]
+);
+```
+
+애플리케이션 모델에서 일반 Eloquent API를 사용할 수도 있습니다.
+
+```php
+use App\Models\Feed;
+
+$feed = Feed::create([
+    'class' => SomeFeed::class,
+    'title' => 'Some',
+    'expression' => '0 */12 * * *',
+    'is_active' => true,
+    'is_foo' => true,
+    'is_bar' => true,
+]);
+```
+
+:::note
+구성된 모델은 런타임에 해석됩니다. 정적 분석은 `FeedQuery::create()`의 결과를 패키지 기본 모델로 인식합니다. 애플리케이션별 속성의 자동 완성이 필요하면 `App\Models\Feed::create()` 또는 명시적인 로컬 타입을 사용하십시오.
+:::
+
+## 청크 크기 {/* #chunk_size */}
+
+데이터베이스 쿼리는 기본적으로 `1000`개 항목 단위의 청크를 사용합니다. `chunkSize` 메서드를 재정의하여 변경할 수 있습니다.
+
+```php source="docs/snippets/advanced-feed-chunk.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    public function chunkSize(): int
+    {
+        return 500;
+    }
+}
+```
+
+## 관련 문서
+
+- [피드 생성](./create-feeds.mdx)
+- [생성 및 스케줄](./generation.mdx)
+- [기능 확장](./extending-functionality.mdx)

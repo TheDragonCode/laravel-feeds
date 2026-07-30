@@ -1,0 +1,38 @@
+{
+  "link.title.Community": {
+    "message": "Comunidade",
+    "description": "Título da coluna de links do rodapé com title=Community"
+  },
+  "link.title.Development": {
+    "message": "Desenvolvimento",
+    "description": "Título da coluna de links do rodapé com title=Development"
+  },
+  "link.title.Authors": {
+    "message": "Autores",
+    "description": "Título da coluna de links do rodapé com title=Authors"
+  },
+  "link.item.label.Telegram": {
+    "message": "Telegram",
+    "description": "Rótulo do link do rodapé com label=Telegram para https://t.me/dragon_code_news"
+  },
+  "link.item.label.Boosty": {
+    "message": "Boosty",
+    "description": "Rótulo do link do rodapé com label=Boosty para https://boosty.to/dragon-code"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Rótulo do link do rodapé com label=GitHub para https://github.com/TheDragonCode/laravel-feeds"
+  },
+  "link.item.label.Issues": {
+    "message": "Problemas",
+    "description": "Rótulo do link do rodapé com label=Issues para https://github.com/TheDragonCode/laravel-feeds/issues"
+  },
+  "link.item.label.The Dragon Code": {
+    "message": "The Dragon Code",
+    "description": "Rótulo do link do rodapé com label=The Dragon Code para https://github.com/TheDragonCode"
+  },
+  "copyright": {
+    "message": "Copyright © 2026 The Dragon Code",
+    "description": "Aviso de direitos autorais do rodapé"
+  }
+}

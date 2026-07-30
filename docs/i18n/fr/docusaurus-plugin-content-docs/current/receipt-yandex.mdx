@@ -1,0 +1,187 @@
+---
+title: "Yandex"
+description: "Recette de génération d’un flux pour Yandex"
+---
+
+[← Précédent](./receipt-instagram.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./receipt-rss-atom.mdx)
+
+# Yandex
+
+## Créer les fichiers {/* #create_files */}
+
+```bash
+php artisan make:feed Yandex
+```
+
+## Remplir le flux {/* #filling_the_feed */}
+
+Dans la classe générée, remplacez `extends Feed` par `extends YandexFeedPreset` :
+
+```php source="docs/snippets/receipt-yandex-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\YandexFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+use function config;
+
+class YandexFeed extends YandexFeedPreset
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function info(): FeedInfo
+    {
+        return parent::info()
+            ->name('My App')        // By default, config('app.name')
+            ->company('My Company')       // By default, config('app.name')
+            ->platform('My Platform')     // By default, config('app.name')
+            ->url(config('app.url')) // By default, config('app.url')
+            ->email(config('app.email', 'feeds@example.com'))
+            ->currencies(['RUR' => 1])   // By default, ['RUR' => 1]
+            ->categories([
+                1 => 'Foo',
+                2 => 'Bar',
+            ])
+            ->additional([
+                'foo' => 'bar',
+            ]);
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->attributeId($model->getKey()) // By default, $model->getKey()
+            ->attributeAvailable($model->quantity > 0) // By default, true
+            ->attributeType('vendor.model') // By default, 'vendor.model'
+            ->barcode($model->article)      // By default, null
+            ->url($model->url)
+            ->title($model->title)
+            ->description($model->description)
+            ->price($model->price)
+            ->currencyId('RUR')     // By default, 'RUR'
+            ->vendor($model->brand) // By default, null
+            ->images($model->images)
+            ->additional([
+                'foo' => 'bar',
+            ]);
+    }
+
+    public function filename(): string
+    {
+        return 'yandex.xml';
+    }
+}
+```
+
+## Structure de catégorie personnalisée {/* #custom_category_structure */}
+
+Par défaut, `category()` construit une catégorie à partir de son identifiant et de son nom. Utilisez `rawCategory()` lorsque des propriétés supplémentaires ou une autre structure sont nécessaires. Le tableau est ajouté au flux sans modification :
+
+```php source="docs/snippets/receipt-yandex-custom-categories.php" lines="5-"
+use DragonCode\LaravelFeed\Presets\Info\YandexFeedInfo;
+
+$info = (new YandexFeedInfo)
+    ->category(1, 'Electronics')
+    ->rawCategory([
+        '@attributes' => [
+            'id'       => 2,
+            'parentId' => 1,
+        ],
+        '@value' => 'Smartphones',
+    ]);
+```
+
+La méthode `categories()` accepte les deux formes. Elle envoie les chaînes à `category()` et les tableaux à `rawCategory()`.
+
+:::note
+Les tableaux de catégories personnalisés ne sont ni validés ni transformés. Construisez-les avec les [directives XML](./directives.mdx) prises en charge.
+:::
+
+## Activer {/* #activate */}
+
+Vérifiez le fichier d’[opération ou de migration](./create-feeds.mdx) généré, puis exécutez la commande appropriée :
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Générer le flux {/* #generate_feed */}
+
+Générez le flux avec la commande suivante :
+
+```bash
+php artisan feed:generate
+```
+
+## Résultat {/* #result */}
+
+```xml source="docs/snippets/receipt-yandex-feed.xml"
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2025-09-04T04:08:12+00:00">
+    <shop>
+<name>My App</name>
+<company>My Company</company>
+<platform>My Platform</platform>
+<url>https://example.com</url>
+<email>feeds@example.com</email>
+<currencies>
+  <currency id="RUR" rate="1"/>
+</currencies>
+<categories>
+  <category id="1">Foo</category>
+  <category id="2">Bar</category>
+</categories>
+<foo>bar</foo>
+
+<offers>
+
+<offer id="1" available="true" type="vendor.model">
+  <url>https://example.com/products/ea-voluptatum-fuga-odio-expedita</url>
+  <barcode>GD-PRDCT-1</barcode>
+  <name>Some 1</name>
+  <description>Some description 1</description>
+  <price>100</price>
+  <currencyId>RUR</currencyId>
+  <vendor>The Best</vendor>
+  <picture>https://via.placeholder.com/640x480.png/008877?text=repudiandae</picture>
+  <foo>bar</foo>
+</offer>
+<offer id="2" available="true" type="vendor.model">
+  <url>https://example.com/products/dolores-rerum-ut-consequatur-in</url>
+  <barcode>GD-PRDCT-2</barcode>
+  <name>Some 2</name>
+  <description>Some description 2</description>
+  <price>250</price>
+  <currencyId>RUR</currencyId>
+  <vendor>The Best</vendor>
+  <picture>https://via.placeholder.com/640x480.png/009966?text=beatae</picture>
+  <picture>https://via.placeholder.com/640x480.png/000011?text=deleniti</picture>
+  <picture>https://via.placeholder.com/640x480.png/009999?text=voluptates</picture>
+  <foo>bar</foo>
+</offer>
+
+</offers>
+</shop>
+</yml_catalog>
+```
+
+## Voir aussi
+
+- [Préréglages](./presets.mdx)
+- [Directives](./directives.mdx)
+- [Recette Sitemap](./receipt-sitemap.mdx)

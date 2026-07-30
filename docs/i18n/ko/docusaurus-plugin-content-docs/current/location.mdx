@@ -1,0 +1,64 @@
+---
+title: "저장 위치"
+description: "생성된 피드의 스토리지 디스크와 출력 파일 이름 구성"
+---
+
+[← 이전](./eloquent.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./presets.mdx)
+
+# 저장 위치
+
+기본적으로 피드는 `public` 스토리지에 저장됩니다. 파일 이름은 `App\Feeds\` 뒤의 피드 클래스 이름을 바탕으로 `kebab-case` 형식으로 자동 생성됩니다. 예:
+
+```text
+# App\Feeds\UserFeed
+user-feed.xml
+
+# App\Feeds\Sitemaps\ProductFeed
+sitemaps-product-feed.xml
+```
+
+`$storage` 속성과 `filename` 메서드를 재정의하여 이 값을 변경할 수 있습니다.
+
+```php source="docs/snippets/advanced-feed-storage.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    protected string $storage = 's3';
+
+    public function filename(): string
+    {
+        return 'some/path/will/be/here.xml';
+    }
+}
+```
+
+## 지원되는 디스크 {/* #supported_disks */}
+
+피드 생성은 `Illuminate\Filesystem\FilesystemAdapter`로 해석되는 Laravel 디스크를 지원합니다. Flysystem 어댑터가 설치되고 구성된 `local`, `s3`, `sftp`, `ftp` 드라이버가 이에 포함됩니다. 쓰기 가능한 스트림, 파일 이동, 디렉터리 관리 및 목록 조회, Flysystem을 통한 삭제를 제공하는 사용자 지정 어댑터도 지원됩니다.
+
+:::warning
+읽기 전용 디스크와 `Illuminate\Contracts\Filesystem\Filesystem`만 구현한 사용자 지정 디스크는 지원되지 않습니다. 호환되지 않는 디스크는 피드 데이터베이스 쿼리가 시작되기 전에 `UnsupportedStorageDiskException`으로 실패합니다.
+:::
+
+## 경로 계약 {/* #path_contract */}
+
+- `storage()`는 구성된 `FilesystemAdapter`를 반환합니다.
+- `storagePath()`는 선택적 분할 파일 접미사를 포함하여 스토리지 작업에 사용하는 디스크 상대 경로를 반환합니다.
+- `path()`는 Laravel 어댑터가 해석한 경로를 반환합니다. 로컬 디스크에서는 절대 파일 시스템 경로이며 원격 디스크에서는 어댑터가 해석한 경로입니다.
+
+## 게시 보장 {/* #publication_guarantees */}
+
+모든 피드 부분은 게시가 시작되기 전에 완성됩니다. 로컬 디스크는 독점 애플리케이션 잠금 아래에서 파일 시스템 이동을 사용해 스테이징된 파일을 게시합니다. 이동에 실패하면 Laravel Feeds는 스테이징 백업에서 이전 파일을 모두 복원하려고 시도합니다.
+
+원격 디스크는 게시된 객체가 변경되기 전에 Flysystem 스트림을 통해 완성된 스테이징 파일을 받습니다. 이후 게시 과정에서 각 스테이징 객체를 제 위치로 이동하며, 실패하면 동일한 롤백을 시도합니다.
+
+:::warning
+원격 이동은 복사 후 삭제 작업으로 구현될 수 있으며 최종 일관성만 보장될 수 있습니다. 따라서 단일 객체나 분할 피드 전체의 원자적 교체는 보장되지 않습니다. 게시 잠금은 애플리케이션 호스트에만 적용되므로 서로 다른 호스트의 생성기가 같은 피드를 동시에 게시할 수 있다면 외부 분산 잠금이 필요합니다.
+:::
+
+## 관련 문서
+
+- [생성 및 스케줄](./generation.mdx)
+- [요소](./elements.mdx)
+- [이벤트](./events.mdx)

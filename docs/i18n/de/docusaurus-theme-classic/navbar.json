@@ -1,0 +1,14 @@
+{
+  "title": {
+    "message": "Laravel Feeds",
+    "description": "Titel in der Navigationsleiste"
+  },
+  "logo.alt": {
+    "message": "Laravel Feeds",
+    "description": "Alternativtext des Logos in der Navigationsleiste"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Element der Navigationsleiste mit dem Label GitHub"
+  }
+}
