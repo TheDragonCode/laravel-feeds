@@ -17,6 +17,7 @@ consumers.
 > - Chunked queries to the database
 > - Draft mode during processing
 > - Easy property mapping
+> - Custom Eloquent models for feed registrations
 > - Generate feeds, sitemaps, and more
 
 ## Installation

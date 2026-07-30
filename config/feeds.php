@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DragonCode\LaravelFeed\Models\Feed;
 use DragonCode\LaravelFeed\Transformers;
 
 /**
@@ -14,6 +15,8 @@ use DragonCode\LaravelFeed\Transformers;
  * Adjust the options below according to your application needs.
  */
 return [
+    'model' => Feed::class,
+
     /**
      * --------------------------------------------------------------------------
      * Pretty-print the generated feed output
