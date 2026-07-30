@@ -21,50 +21,45 @@ test('creates the configured model with extra attributes', function () {
         title     : 'Some',
         expression: '0 */12 * * *',
         extra     : [
-            'class'                   => FullFeed::class,
-            'title'                   => 'Other',
-            'expression'              => '* * * * *',
-            'is_active'               => false,
-            'is_available_fulfilment' => true,
-            'is_available_omni'       => true,
-            'is_available_sfs'        => true,
+            'class'      => FullFeed::class,
+            'title'      => 'Other',
+            'expression' => '* * * * *',
+            'is_active'  => false,
+            'is_foo'     => true,
+            'is_bar'     => true,
         ]
     );
 
     expect($feed)
         ->toBeInstanceOf(Feed::class)
-        ->class->toBe(EmptyFeed::class)
-        ->title->toBe('Some')
-        ->expression->toBe('0 */12 * * *')
-        ->is_active->toBeTrue()
-        ->is_available_fulfilment->toBeTrue()
-        ->is_available_omni->toBeTrue()
-        ->is_available_sfs->toBeTrue();
+        ->class->toBe(FullFeed::class)
+        ->title->toBe('Other')
+        ->expression->toBe('* * * * *')
+        ->is_active->toBeFalse()
+        ->is_foo->toBeTrue()
+        ->is_bar->toBeTrue();
 
     assertDatabaseHas(Feed::class, [
-        'class'                   => EmptyFeed::class,
-        'is_available_fulfilment' => true,
-        'is_available_omni'       => true,
-        'is_available_sfs'        => true,
+        'class'  => FullFeed::class,
+        'is_foo' => true,
+        'is_bar' => true,
     ]);
 });
 
 test('supports direct creation through the custom model', function () {
     $feed = Feed::create([
-        'class'                   => FullFeed::class,
-        'title'                   => 'Some',
-        'expression'              => '0 */12 * * *',
-        'is_active'               => true,
-        'is_available_fulfilment' => true,
-        'is_available_omni'       => true,
-        'is_available_sfs'        => true,
+        'class'      => FullFeed::class,
+        'title'      => 'Some',
+        'expression' => '0 */12 * * *',
+        'is_active'  => true,
+        'is_foo'     => true,
+        'is_bar'     => true,
     ]);
 
     expect($feed)
         ->toBeInstanceOf(Feed::class)
-        ->is_available_fulfilment->toBeTrue()
-        ->is_available_omni->toBeTrue()
-        ->is_available_sfs->toBeTrue();
+        ->is_foo->toBeTrue()
+        ->is_bar->toBeTrue();
 });
 
 test('uses the configured model for every query operation', function () {

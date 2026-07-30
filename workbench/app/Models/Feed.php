@@ -14,18 +14,16 @@ class Feed extends BaseFeed
         'expression',
         'is_active',
         'last_activity',
-        'is_available_fulfilment',
-        'is_available_omni',
-        'is_available_sfs',
+        'is_foo',
+        'is_bar',
     ];
 
     protected function casts(): array
     {
         return [
             ...parent::casts(),
-            'is_available_fulfilment' => 'boolean',
-            'is_available_omni'       => 'boolean',
-            'is_available_sfs'        => 'boolean',
+            'is_foo' => 'boolean',
+            'is_bar' => 'boolean',
         ];
     }
 }

@@ -32,18 +32,16 @@
                     'expression',
                     'is_active',
                     'last_activity',
-                    'is_available_fulfilment',
-                    'is_available_omni',
-                    'is_available_sfs',
+                    'is_foo',
+                    'is_bar',
                 ];
 
                 protected function casts(): array
                 {
                     return [
                         ...parent::casts(),
-                        'is_available_fulfilment' =&gt; 'boolean',
-                        'is_available_omni' =&gt; 'boolean',
-                        'is_available_sfs' =&gt; 'boolean',
+                        'is_foo' =&gt; 'boolean',
+                        'is_bar' =&gt; 'boolean',
                     ];
                 }
             }
@@ -62,8 +60,8 @@
 
         <p>
             <code>FeedQuery</code> uses the configured model for create, find, list, update, delete, and restore
-            operations. Pass application-specific values through <code>extra</code> when creating a record. Explicit
-            method arguments take precedence over duplicate keys in <code>extra</code>:
+            operations. Pass application-specific values through <code>extra</code> when creating a record. These
+            values are applied last and can override the method arguments:
         </p>
 
         <code-block lang="php">
@@ -72,9 +70,8 @@
                 title: 'Some',
                 expression: '0 */12 * * *',
                 extra: [
-                    'is_available_fulfilment' =&gt; true,
-                    'is_available_omni' =&gt; true,
-                    'is_available_sfs' =&gt; true,
+                    'is_foo' =&gt; true,
+                    'is_bar' =&gt; true,
                 ]
             );
         </code-block>
@@ -89,9 +86,8 @@
                 'title' =&gt; 'Some',
                 'expression' =&gt; '0 */12 * * *',
                 'is_active' =&gt; true,
-                'is_available_fulfilment' =&gt; true,
-                'is_available_omni' =&gt; true,
-                'is_available_sfs' =&gt; true,
+                'is_foo' =&gt; true,
+                'is_bar' =&gt; true,
             ]);
         </code-block>
 

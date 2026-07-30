@@ -15,6 +15,14 @@ use DragonCode\LaravelFeed\Transformers;
  * Adjust the options below according to your application needs.
  */
 return [
+    /**
+     * --------------------------------------------------------------------------
+     * Feed model
+     * --------------------------------------------------------------------------
+     *
+     * Eloquent model used to store and query feed registrations.
+     * The configured model must extend the package Feed model.
+     */
     'model' => Feed::class,
 
     /**

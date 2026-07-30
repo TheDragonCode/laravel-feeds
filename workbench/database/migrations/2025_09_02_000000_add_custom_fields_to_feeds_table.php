@@ -11,9 +11,8 @@ return new class extends Migration {
     public function up(): void
     {
         $this->schema()->table($this->table(), function (Blueprint $table) {
-            $table->boolean('is_available_fulfilment')->default(false);
-            $table->boolean('is_available_omni')->default(false);
-            $table->boolean('is_available_sfs')->default(false);
+            $table->boolean('is_foo')->default(false);
+            $table->boolean('is_bar')->default(false);
         });
     }
 
@@ -21,9 +20,8 @@ return new class extends Migration {
     {
         $this->schema()->table($this->table(), function (Blueprint $table) {
             $table->dropColumn([
-                'is_available_fulfilment',
-                'is_available_omni',
-                'is_available_sfs',
+                'is_foo',
+                'is_bar',
             ]);
         });
     }
