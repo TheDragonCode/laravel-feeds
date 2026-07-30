@@ -1,0 +1,36 @@
+---
+title: "Усталяванне і наладжванне"
+description: "Звесткі пра ўсталяванне і наладжванне Laravel Feeds"
+---
+
+[← Папярэдняя](./introduction.mdx) · [Назад да README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступная →](./create-feeds.mdx)
+
+# Усталяванне і наладжванне
+
+Пакет можна ўсталяваць праз [Composer](https://getcomposer.org):
+
+```bash
+composer require dragon-code/laravel-feeds
+```
+
+Апублікуйце [міграцыю](https://github.com/TheDragonCode/laravel-feeds/blob/main/database/migrations/2025_09_01_231655_create_feeds_table.php) і файл канфігурацыі [config/feeds.php](https://github.com/TheDragonCode/laravel-feeds/blob/main/config/feeds.php) наступнай камандай:
+
+```bash
+php artisan vendor:publish --tag="feeds"
+```
+
+:::warning
+**Перад запускам міграцый** праверце налады падключэння да базы даных у файле `config/feeds.php`.
+:::
+
+Цяпер можна запусціць міграцыі і перайсці да [стварэння стужак](./create-feeds.mdx).
+
+```bash
+php artisan migrate
+```
+
+## Глядзіце таксама
+
+- [Стварэнне стужак](./create-feeds.mdx)
+- [Генерацыя і расклад](./generation.mdx)
+- [Падтрыманыя фарматы](./supported-formats.mdx)

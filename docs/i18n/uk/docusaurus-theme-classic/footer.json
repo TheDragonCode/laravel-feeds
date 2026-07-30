@@ -1,0 +1,38 @@
+{
+  "link.title.Community": {
+    "message": "Спільнота",
+    "description": "Заголовок стовпця посилань із title=Community у нижньому колонтитулі"
+  },
+  "link.title.Development": {
+    "message": "Розробка",
+    "description": "Заголовок стовпця посилань із title=Development у нижньому колонтитулі"
+  },
+  "link.title.Authors": {
+    "message": "Автори",
+    "description": "Заголовок стовпця посилань із title=Authors у нижньому колонтитулі"
+  },
+  "link.item.label.Telegram": {
+    "message": "Telegram",
+    "description": "Позначка посилання з label=Telegram на https://t.me/dragon_code_news у нижньому колонтитулі"
+  },
+  "link.item.label.Boosty": {
+    "message": "Boosty",
+    "description": "Позначка посилання з label=Boosty на https://boosty.to/dragon-code у нижньому колонтитулі"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Позначка посилання з label=GitHub на https://github.com/TheDragonCode/laravel-feeds у нижньому колонтитулі"
+  },
+  "link.item.label.Issues": {
+    "message": "Проблеми",
+    "description": "Позначка посилання з label=Issues на https://github.com/TheDragonCode/laravel-feeds/issues у нижньому колонтитулі"
+  },
+  "link.item.label.The Dragon Code": {
+    "message": "The Dragon Code",
+    "description": "Позначка посилання з label=The Dragon Code на https://github.com/TheDragonCode у нижньому колонтитулі"
+  },
+  "copyright": {
+    "message": "Copyright © 2026 The Dragon Code",
+    "description": "Повідомлення про авторське право в нижньому колонтитулі"
+  }
+}

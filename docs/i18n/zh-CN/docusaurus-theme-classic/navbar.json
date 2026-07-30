@@ -1,0 +1,14 @@
+{
+  "title": {
+    "message": "Laravel Feeds",
+    "description": "导航栏中的标题"
+  },
+  "logo.alt": {
+    "message": "Laravel Feeds",
+    "description": "导航栏徽标的替代文本"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "标签为 GitHub 的导航栏项目"
+  }
+}

@@ -1,0 +1,187 @@
+---
+title: "Yandex"
+description: "Yandex용 피드 생성 레시피"
+---
+
+[← 이전](./receipt-instagram.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./receipt-rss-atom.mdx)
+
+# Yandex
+
+## 파일 생성 {/* #create_files */}
+
+```bash
+php artisan make:feed Yandex
+```
+
+## 피드 채우기 {/* #filling_the_feed */}
+
+생성된 클래스에서 `extends Feed`를 `extends YandexFeedPreset`으로 바꾸십시오.
+
+```php source="docs/snippets/receipt-yandex-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\YandexFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+use function config;
+
+class YandexFeed extends YandexFeedPreset
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function info(): FeedInfo
+    {
+        return parent::info()
+            ->name('My App')        // By default, config('app.name')
+            ->company('My Company')       // By default, config('app.name')
+            ->platform('My Platform')     // By default, config('app.name')
+            ->url(config('app.url')) // By default, config('app.url')
+            ->email(config('app.email', 'feeds@example.com'))
+            ->currencies(['RUR' => 1])   // By default, ['RUR' => 1]
+            ->categories([
+                1 => 'Foo',
+                2 => 'Bar',
+            ])
+            ->additional([
+                'foo' => 'bar',
+            ]);
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->attributeId($model->getKey()) // By default, $model->getKey()
+            ->attributeAvailable($model->quantity > 0) // By default, true
+            ->attributeType('vendor.model') // By default, 'vendor.model'
+            ->barcode($model->article)      // By default, null
+            ->url($model->url)
+            ->title($model->title)
+            ->description($model->description)
+            ->price($model->price)
+            ->currencyId('RUR')     // By default, 'RUR'
+            ->vendor($model->brand) // By default, null
+            ->images($model->images)
+            ->additional([
+                'foo' => 'bar',
+            ]);
+    }
+
+    public function filename(): string
+    {
+        return 'yandex.xml';
+    }
+}
+```
+
+## 사용자 지정 카테고리 구조 {/* #custom_category_structure */}
+
+기본적으로 `category()`는 ID와 이름으로 카테고리를 만듭니다. 추가 속성이나 다른 구조가 필요하면 `rawCategory()`를 사용하십시오. 배열은 변경 없이 피드에 추가됩니다.
+
+```php source="docs/snippets/receipt-yandex-custom-categories.php" lines="5-"
+use DragonCode\LaravelFeed\Presets\Info\YandexFeedInfo;
+
+$info = (new YandexFeedInfo)
+    ->category(1, 'Electronics')
+    ->rawCategory([
+        '@attributes' => [
+            'id'       => 2,
+            'parentId' => 1,
+        ],
+        '@value' => 'Smartphones',
+    ]);
+```
+
+`categories()` 메서드는 두 형식을 모두 받습니다. 문자열 값은 `category()`로, 배열 값은 `rawCategory()`로 전달합니다.
+
+:::note
+사용자 지정 카테고리 배열은 검증되거나 변환되지 않습니다. 지원되는 [XML 디렉티브](./directives.mdx)를 사용하여 구성하십시오.
+:::
+
+## 활성화 {/* #activate */}
+
+생성된 [operation 또는 마이그레이션](./create-feeds.mdx) 파일을 검토한 다음 적절한 콘솔 명령을 실행하십시오.
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## 피드 생성 {/* #generate_feed */}
+
+다음 콘솔 명령을 실행하여 피드를 생성하십시오.
+
+```bash
+php artisan feed:generate
+```
+
+## 결과 {/* #result */}
+
+```xml source="docs/snippets/receipt-yandex-feed.xml"
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2025-09-04T04:08:12+00:00">
+    <shop>
+<name>My App</name>
+<company>My Company</company>
+<platform>My Platform</platform>
+<url>https://example.com</url>
+<email>feeds@example.com</email>
+<currencies>
+  <currency id="RUR" rate="1"/>
+</currencies>
+<categories>
+  <category id="1">Foo</category>
+  <category id="2">Bar</category>
+</categories>
+<foo>bar</foo>
+
+<offers>
+
+<offer id="1" available="true" type="vendor.model">
+  <url>https://example.com/products/ea-voluptatum-fuga-odio-expedita</url>
+  <barcode>GD-PRDCT-1</barcode>
+  <name>Some 1</name>
+  <description>Some description 1</description>
+  <price>100</price>
+  <currencyId>RUR</currencyId>
+  <vendor>The Best</vendor>
+  <picture>https://via.placeholder.com/640x480.png/008877?text=repudiandae</picture>
+  <foo>bar</foo>
+</offer>
+<offer id="2" available="true" type="vendor.model">
+  <url>https://example.com/products/dolores-rerum-ut-consequatur-in</url>
+  <barcode>GD-PRDCT-2</barcode>
+  <name>Some 2</name>
+  <description>Some description 2</description>
+  <price>250</price>
+  <currencyId>RUR</currencyId>
+  <vendor>The Best</vendor>
+  <picture>https://via.placeholder.com/640x480.png/009966?text=beatae</picture>
+  <picture>https://via.placeholder.com/640x480.png/000011?text=deleniti</picture>
+  <picture>https://via.placeholder.com/640x480.png/009999?text=voluptates</picture>
+  <foo>bar</foo>
+</offer>
+
+</offers>
+</shop>
+</yml_catalog>
+```
+
+## 관련 문서
+
+- [프리셋](./presets.mdx)
+- [디렉티브](./directives.mdx)
+- [사이트맵 레시피](./receipt-sitemap.mdx)

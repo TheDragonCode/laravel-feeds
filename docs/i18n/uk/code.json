@@ -1,0 +1,560 @@
+{
+  "theme.ErrorPageContent.title": {
+    "message": "На сторінці стався збій.",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.BackToTopButton.buttonAriaLabel": {
+    "message": "Прокрутити до початку",
+    "description": "Опис мітки доступності"
+  },
+  "theme.blog.archive.title": {
+    "message": "Архів",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.blog.archive.description": {
+    "message": "Архів",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.blog.paginator.navAriaLabel": {
+    "message": "Навігація по сторінці списку блогів",
+    "description": "Опис мітки доступності"
+  },
+  "theme.blog.paginator.newerEntries": {
+    "message": "Наступні записи",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.blog.paginator.olderEntries": {
+    "message": "Попередні записи",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.blog.post.paginator.navAriaLabel": {
+    "message": "Навігація по сторінці посту блогу",
+    "description": "Опис мітки доступності"
+  },
+  "theme.blog.post.paginator.newerPost": {
+    "message": "Наступний пост",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.blog.post.paginator.olderPost": {
+    "message": "Попередній пост",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.tags.tagsPageLink": {
+    "message": "Переглянути всі теги",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.colorToggle.ariaLabel.mode.system": {
+    "message": "Автоматичний режим",
+    "description": "Опис мітки доступності"
+  },
+  "theme.colorToggle.ariaLabel.mode.light": {
+    "message": "Світлий режим",
+    "description": "Опис мітки доступності"
+  },
+  "theme.colorToggle.ariaLabel.mode.dark": {
+    "message": "Темний режим",
+    "description": "Опис мітки доступності"
+  },
+  "theme.colorToggle.ariaLabel": {
+    "message": "Перемикання між темним та світлим режимом (зараз використовується {mode})",
+    "description": "Опис мітки доступності"
+  },
+  "theme.docs.breadcrumbs.navAriaLabel": {
+    "message": "Навігаційний ланцюжок поточної сторінки",
+    "description": "Опис мітки доступності"
+  },
+  "theme.docs.paginator.navAriaLabel": {
+    "message": "сторінка документації",
+    "description": "Опис мітки доступності"
+  },
+  "theme.docs.paginator.previous": {
+    "message": "Попередня сторінка",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.docs.paginator.next": {
+    "message": "Наступна сторінка",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.docs.tagDocListPageTitle.nDocsTagged": {
+    "message": "Одна сторінка|{count} сторінки|{count} сторінок",
+    "description": "Опис заголовка інтерфейсу; збережені маркери: {count} https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html"
+  },
+  "theme.docs.tagDocListPageTitle": {
+    "message": "{nDocsTagged} з тегом \"{tagName}\"",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.docs.versions.unreleasedVersionLabel": {
+    "message": "Це документація для майбутньої версії {siteTitle} {versionLabel}.",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.docs.versions.unmaintainedVersionLabel": {
+    "message": "Це документація {siteTitle} для версії {versionLabel}, яка вже не підтримується.",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.docs.versions.latestVersionSuggestionLabel": {
+    "message": "Актуальна документація знаходиться на сторінці {latestVersionLink} ({versionLabel}).",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.docs.versions.latestVersionLinkLabel": {
+    "message": "остання версія",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.docs.versionBadge.label": {
+    "message": "Версія: {versionLabel}"
+  },
+  "theme.common.editThisPage": {
+    "message": "Відредагувати цю сторінку",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.common.headingLinkTitle": {
+    "message": "Пряме посилання на {heading}",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.lastUpdated.atDate": {
+    "message": " {date}",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.lastUpdated.byUser": {
+    "message": " від {user}",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.lastUpdated.lastUpdatedAtBy": {
+    "message": "Останнє оновлення{atDate}{byUser}",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.NotFound.title": {
+    "message": "Сторінку не знайдено",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.navbar.mobileVersionsDropdown.label": {
+    "message": "Версії",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.tags.tagsListLabel": {
+    "message": "Теги:",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.admonition.caution": {
+    "message": "обережно",
+    "description": "Опис тексту інтерфейсу Docusaurus; збережені маркери: :::caution"
+  },
+  "theme.admonition.danger": {
+    "message": "небезпека",
+    "description": "Опис тексту інтерфейсу Docusaurus; збережені маркери: :::danger"
+  },
+  "theme.admonition.info": {
+    "message": "інформація",
+    "description": "Опис тексту інтерфейсу Docusaurus; збережені маркери: :::info"
+  },
+  "theme.admonition.note": {
+    "message": "примітка",
+    "description": "Опис тексту інтерфейсу Docusaurus; збережені маркери: :::note"
+  },
+  "theme.admonition.tip": {
+    "message": "порада",
+    "description": "Опис тексту інтерфейсу Docusaurus; збережені маркери: :::tip"
+  },
+  "theme.admonition.warning": {
+    "message": "попередження",
+    "description": "Опис тексту інтерфейсу Docusaurus; збережені маркери: :::warning"
+  },
+  "theme.AnnouncementBar.closeButtonAriaLabel": {
+    "message": "Закрити",
+    "description": "Опис мітки доступності"
+  },
+  "theme.blog.sidebar.navAriaLabel": {
+    "message": "Навігація за останніми постами у блозі",
+    "description": "Опис мітки доступності"
+  },
+  "theme.DocSidebarItem.expandCategoryAriaLabel": {
+    "message": "Розгорнути категорію в сайдбарі '{label}'",
+    "description": "Опис мітки доступності"
+  },
+  "theme.DocSidebarItem.collapseCategoryAriaLabel": {
+    "message": "Згорнути категорію в сайдбарі '{label}'",
+    "description": "Опис мітки доступності"
+  },
+  "theme.IconExternalLink.ariaLabel": {
+    "message": "(відкривається в новій вкладці)",
+    "description": "Опис мітки доступності"
+  },
+  "theme.NavBar.navAriaLabel": {
+    "message": "Головна",
+    "description": "Опис мітки доступності"
+  },
+  "theme.NotFound.p1": {
+    "message": "На жаль, ми не змогли знайти сторінку, яку ви запитували.",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.NotFound.p2": {
+    "message": "Будь ласка, зверніться до власника сайту, з якого ви перейшли на це посилання, щоб повідомити, що посилання не працює.",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.navbar.mobileLanguageDropdown.label": {
+    "message": "Мови",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.TOCCollapsible.toggleButtonLabel": {
+    "message": "Зміст цієї сторінки",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.blog.post.readMore": {
+    "message": "Читати далі",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.blog.post.readMoreLabel": {
+    "message": "Докладніше про {title}",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.blog.post.readingTime.plurals": {
+    "message": "{readingTime} хв. читання|{readingTime} хв. читання|{readingTime} хв. читання",
+    "description": "Опис тексту інтерфейсу Docusaurus; збережені маркери: {readingTime} https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html"
+  },
+  "theme.CodeBlock.copy": {
+    "message": "Копіювати",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.CodeBlock.copied": {
+    "message": "Скопійовано",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.CodeBlock.copyButtonAriaLabel": {
+    "message": "Копіювати в буфер обміну",
+    "description": "Опис мітки доступності"
+  },
+  "theme.CodeBlock.wordWrapToggle": {
+    "message": "Перемикання обведення слів",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.docs.breadcrumbs.home": {
+    "message": "Головна сторінка",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.docs.sidebar.collapseButtonTitle": {
+    "message": "Згорнути сайдбар",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.docs.sidebar.collapseButtonAriaLabel": {
+    "message": "Згорнути сайдбар",
+    "description": "Опис мітки доступності"
+  },
+  "theme.docs.sidebar.navAriaLabel": {
+    "message": "Сайдбар документації",
+    "description": "Опис мітки доступності"
+  },
+  "theme.docs.sidebar.closeSidebarButtonAriaLabel": {
+    "message": "Закрити сайдбар",
+    "description": "Опис мітки доступності"
+  },
+  "theme.navbar.mobileSidebarSecondaryMenu.backButtonLabel": {
+    "message": "← Перейти до головного меню",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.docs.sidebar.toggleSidebarButtonAriaLabel": {
+    "message": "Перемкнути сайдбар",
+    "description": "Опис мітки доступності"
+  },
+  "theme.navbar.mobileDropdown.collapseButton.expandAriaLabel": {
+    "message": "Розгорнути випадаючий список",
+    "description": "Опис мітки доступності"
+  },
+  "theme.navbar.mobileDropdown.collapseButton.collapseAriaLabel": {
+    "message": "Згорнути випадаючий список",
+    "description": "Опис мітки доступності"
+  },
+  "theme.docs.sidebar.expandButtonTitle": {
+    "message": "Розгорнути сайдбар",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.docs.sidebar.expandButtonAriaLabel": {
+    "message": "Розгорнути сайдбар",
+    "description": "Опис мітки доступності"
+  },
+  "theme.SearchBar.seeAll": {
+    "message": "Переглянути всі результати ({count})"
+  },
+  "theme.SearchPage.documentsFound.plurals": {
+    "message": "{count} документ|{count} документи|{count} документів",
+    "description": "Опис тексту інтерфейсу Docusaurus; збережені маркери: {count} https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html"
+  },
+  "theme.SearchPage.existingResultsTitle": {
+    "message": "Результати пошуку за запитом \"{query}\"",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchPage.emptyResultsTitle": {
+    "message": "Пошук по сайту",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchPage.inputPlaceholder": {
+    "message": "Введіть ваш пошук тут",
+    "description": "Опис тексту-заповнювача"
+  },
+  "theme.SearchPage.inputLabel": {
+    "message": "Пошук",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.SearchPage.algoliaLabel": {
+    "message": "Працює на Algolia",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.SearchPage.noResultsText": {
+    "message": "Не знайдено результатів",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchPage.fetchingNewResults": {
+    "message": "Завантаження нових результатів пошуку...",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.SearchBar.label": {
+    "message": "Пошук",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.SearchModal.searchBox.resetButtonTitle": {
+    "message": "Очистити запит",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchModal.searchBox.cancelButtonText": {
+    "message": "Скасувати",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.searchBox.placeholderText": {
+    "message": "Пошук у документації",
+    "description": "Опис тексту-заповнювача"
+  },
+  "theme.SearchModal.searchBox.placeholderTextAskAi": {
+    "message": "Поставте інше запитання…",
+    "description": "Опис тексту-заповнювача"
+  },
+  "theme.SearchModal.searchBox.placeholderTextAskAiStreaming": {
+    "message": "Формується відповідь…",
+    "description": "Опис тексту-заповнювача"
+  },
+  "theme.SearchModal.searchBox.enterKeyHint": {
+    "message": "пошук",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.SearchModal.searchBox.enterKeyHintAskAi": {
+    "message": "введення",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.SearchModal.searchBox.searchInputLabel": {
+    "message": "Пошук",
+    "description": "Опис мітки інтерфейсу"
+  },
+  "theme.SearchModal.searchBox.backToKeywordSearchButtonText": {
+    "message": "Повернутися до пошуку за ключовими словами",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.searchBox.backToKeywordSearchButtonAriaLabel": {
+    "message": "Повернутися до пошуку за ключовими словами",
+    "description": "Опис мітки доступності"
+  },
+  "theme.SearchModal.startScreen.recentSearchesTitle": {
+    "message": "Останні",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchModal.startScreen.noRecentSearchesText": {
+    "message": "Немає останніх пошуків",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.startScreen.saveRecentSearchButtonTitle": {
+    "message": "Зберегти цей пошук",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchModal.startScreen.removeRecentSearchButtonTitle": {
+    "message": "Видалити цей пошук з історії",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchModal.startScreen.favoriteSearchesTitle": {
+    "message": "Обране",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchModal.startScreen.removeFavoriteSearchButtonTitle": {
+    "message": "Видалити цей пошук з обраного",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchModal.startScreen.recentConversationsTitle": {
+    "message": "Нещодавні розмови",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchModal.startScreen.removeRecentConversationButtonTitle": {
+    "message": "Видалити цю розмову з історії",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchModal.errorScreen.titleText": {
+    "message": "Не вдалося отримати результати",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchModal.errorScreen.helpText": {
+    "message": "Перевірте підключення до мережі.",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.resultsScreen.askAiPlaceholder": {
+    "message": "Запитати ШІ: ",
+    "description": "Опис тексту-заповнювача"
+  },
+  "theme.SearchModal.askAiScreen.disclaimerText": {
+    "message": "Відповіді створює ШІ, який може помилятися. Перевіряйте відповіді.",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.askAiScreen.relatedSourcesText": {
+    "message": "Пов’язані джерела",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.askAiScreen.thinkingText": {
+    "message": "Обмірковування…",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.askAiScreen.copyButtonText": {
+    "message": "Копіювати",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.askAiScreen.copyButtonCopiedText": {
+    "message": "Скопійовано!",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.askAiScreen.copyButtonTitle": {
+    "message": "Копіювати",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchModal.askAiScreen.likeButtonTitle": {
+    "message": "Подобається",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchModal.askAiScreen.dislikeButtonTitle": {
+    "message": "Не подобається",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.SearchModal.askAiScreen.thanksForFeedbackText": {
+    "message": "Дякуємо за відгук!",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.askAiScreen.preToolCallText": {
+    "message": "Пошук…",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.askAiScreen.duringToolCallText": {
+    "message": "Пошук для ",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.askAiScreen.afterToolCallText": {
+    "message": "Знайдено для",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.footer.selectText": {
+    "message": "обрати",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.footer.submitQuestionText": {
+    "message": "Надіслати запитання",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.footer.selectKeyAriaLabel": {
+    "message": "Клавіша Enter",
+    "description": "Опис мітки доступності"
+  },
+  "theme.SearchModal.footer.navigateText": {
+    "message": "до навігації",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.footer.navigateUpKeyAriaLabel": {
+    "message": "Стрілка вгору",
+    "description": "Опис мітки доступності"
+  },
+  "theme.SearchModal.footer.navigateDownKeyAriaLabel": {
+    "message": "Стрілка вниз",
+    "description": "Опис мітки доступності"
+  },
+  "theme.SearchModal.footer.closeText": {
+    "message": "закрити",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.footer.closeKeyAriaLabel": {
+    "message": "Клавіша Escape",
+    "description": "Опис мітки доступності"
+  },
+  "theme.SearchModal.footer.searchByText": {
+    "message": "Пошук за допомогою",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.footer.backToSearchText": {
+    "message": "Повернутися до пошуку",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.noResultsScreen.noResultsText": {
+    "message": "Немає результатів для",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.noResultsScreen.suggestedQueryText": {
+    "message": "Спробуйте пошукати",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.noResultsScreen.reportMissingResultsText": {
+    "message": "Чи вважаєте ви, що цей запит має повернути результати?",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.noResultsScreen.reportMissingResultsLinkText": {
+    "message": "Дайте нам знати.",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.SearchModal.placeholder": {
+    "message": "Пошук документів",
+    "description": "Опис тексту-заповнювача"
+  },
+  "theme.blog.post.plurals": {
+    "message": "{count} запис|{count} записи|{count} записів",
+    "description": "Опис тексту інтерфейсу Docusaurus; збережені маркери: {count} https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html"
+  },
+  "theme.blog.tagTitle": {
+    "message": "{nPosts} з тегом \"{tagName}\"",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.blog.author.pageTitle": {
+    "message": "{authorName} - {nPosts}",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.blog.authorsList.pageTitle": {
+    "message": "Автори",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.blog.authorsList.viewAll": {
+    "message": "Переглянути всіх авторів",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.blog.author.noPosts": {
+    "message": "Цей автор ще не написав жодної публікації.",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.contentVisibility.unlistedBanner.title": {
+    "message": "Непублічна сторінка",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.contentVisibility.unlistedBanner.message": {
+    "message": "Ця сторінка є непублічною. Пошукові системи її не індексуватимуть, і доступ до неї матимуть лише користувачі з прямим посиланням.",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.contentVisibility.draftBanner.title": {
+    "message": "Чернетка",
+    "description": "Опис заголовка інтерфейсу"
+  },
+  "theme.contentVisibility.draftBanner.message": {
+    "message": "Це чернетка. Ця сторінка видима лише в режимі розробки й буде виключена з фінальної збірки.",
+    "description": "Опис повідомлення інтерфейсу"
+  },
+  "theme.docs.DocCard.categoryDescription.plurals": {
+    "message": "{count} елемент|{count} елементи|{count} елементів",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.ErrorPageContent.tryAgain": {
+    "message": "Спробуйте ще раз",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.common.skipToMainContent": {
+    "message": "Перейти до основного вмісту",
+    "description": "Опис тексту інтерфейсу Docusaurus"
+  },
+  "theme.tags.tagsPageTitle": {
+    "message": "Теги",
+    "description": "Опис заголовка інтерфейсу"
+  }
+}

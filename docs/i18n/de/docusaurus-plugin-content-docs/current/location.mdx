@@ -1,0 +1,64 @@
+---
+title: "Speicherort"
+description: "Speicherdatenträger und Ausgabedateiname für erzeugte Feeds konfigurieren"
+---
+
+[← Zurück](./eloquent.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./presets.mdx)
+
+# Speicherort
+
+Standardmäßig werden Feeds im Speicher `public` abgelegt. Der Dateiname wird automatisch aus dem Namen der Feed-Klasse nach `App\Feeds\` im Format `kebab-case` erzeugt. Beispiel:
+
+```text
+# App\Feeds\UserFeed
+user-feed.xml
+
+# App\Feeds\Sitemaps\ProductFeed
+sitemaps-product-feed.xml
+```
+
+Sie können diese Werte ändern, indem Sie die Eigenschaft `$storage` und die Methode `filename` überschreiben:
+
+```php source="docs/snippets/advanced-feed-storage.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    protected string $storage = 's3';
+
+    public function filename(): string
+    {
+        return 'some/path/will/be/here.xml';
+    }
+}
+```
+
+## Unterstützte Datenträger {/* #supported_disks */}
+
+Die Feed-Generierung unterstützt Laravel-Datenträger, die zu `Illuminate\Filesystem\FilesystemAdapter` aufgelöst werden. Dazu gehören die Treiber `local`, `s3`, `sftp` und `ftp`, wenn ihre Flysystem-Adapter installiert und konfiguriert sind. Benutzerdefinierte Adapter werden unterstützt, wenn sie beschreibbare Streams, Dateiverschiebungen, Verzeichnisverwaltung und -auflistung sowie Löschvorgänge über Flysystem bereitstellen.
+
+:::warning
+Schreibgeschützte Datenträger und benutzerdefinierte Datenträger, die nur `Illuminate\Contracts\Filesystem\Filesystem` implementieren, werden nicht unterstützt. Ein inkompatibler Datenträger schlägt vor dem Start der Datenbankabfrage des Feeds mit einer `UnsupportedStorageDiskException` fehl.
+:::
+
+## Pfadvertrag {/* #path_contract */}
+
+- `storage()` gibt den konfigurierten `FilesystemAdapter` zurück.
+- `storagePath()` gibt den datenträgerrelativen Pfad für Speichervorgänge zurück, einschließlich eines optionalen Suffixes für aufgeteilte Dateien.
+- `path()` gibt den vom Laravel-Adapter aufgelösten Pfad zurück. Bei einem lokalen Datenträger ist dies ein absoluter Dateisystempfad, bei einem entfernten Datenträger ein vom Adapter aufgelöster Pfad.
+
+## Veröffentlichungsgarantien {/* #publication_guarantees */}
+
+Jeder Feed-Teil wird vollständig fertiggestellt, bevor die Veröffentlichung beginnt. Lokale Datenträger veröffentlichen bereitgestellte Dateien durch Dateisystemverschiebungen unter einer exklusiven Anwendungssperre. Schlägt eine Verschiebung fehl, versucht Laravel Feeds, jede vorherige Datei aus ihrer Staging-Sicherung wiederherzustellen.
+
+Entfernte Datenträger erhalten vollständige Staging-Dateien über Flysystem-Streams, bevor veröffentlichte Objekte geändert werden. Anschließend verschiebt die Veröffentlichung jedes Staging-Objekt an seinen Zielort und versucht bei einem Fehler dieselbe Wiederherstellung.
+
+:::warning
+Entfernte Verschiebungen können als Kopier- und Löschvorgänge umgesetzt werden und eventuell konsistent sein. Daher ist der atomare Austausch eines einzelnen Objekts oder eines vollständig aufgeteilten Feeds nicht garantiert. Die Veröffentlichungssperre gilt nur lokal auf dem Anwendungshost. Generatoren auf verschiedenen Hosts benötigen eine externe verteilte Sperre, wenn sie denselben Feed gleichzeitig veröffentlichen können.
+:::
+
+## Siehe auch
+
+- [Generierung und Zeitplanung](./generation.mdx)
+- [Elemente](./elements.mdx)
+- [Ereignisse](./events.mdx)

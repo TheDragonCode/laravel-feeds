@@ -1,0 +1,349 @@
+---
+title: "指令"
+description: "用于 Feed 输出的内置 XML 指令"
+---
+
+[← 上一页](./elements.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./eloquent.mdx)
+
+# 指令
+
+**格式：** XML
+
+:::note[保留指令]
+- [`@attributes`](#_attributes)
+- [`@value`](#_value)
+- [`@cdata`](#_cdata)
+- [`@mixed`](#_mixed)
+- [`@custom`](#_custom)
+
+只有生成 XML 格式的 Feed 时才能使用这些指令。
+:::
+
+## @attributes {/* #_attributes */}
+
+表示属性数组。
+
+可以使用名为 `@attributes` 的键为节点添加属性：
+
+```php source="docs/snippets/advanced-directive-attributes.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Info\AttributesDirectiveFeedInfo;
+use App\Feeds\Items\AttributesDirectiveFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class AttributesDirectiveFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function info(): FeedInfo
+    {
+        return new AttributesDirectiveFeedInfo;
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new AttributesDirectiveFeedItem($model);
+    }
+}
+```
+
+```php source="docs/snippets/advanced-directive-attributes-info.php" lines="5-"
+namespace App\Feeds\Info;
+
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+
+use function fake;
+
+class AttributesDirectiveFeedInfo extends FeedInfo
+{
+    public function toArray(): array
+    {
+        return [
+            'company' => [
+                '@attributes' => ['since' => fake()->year],
+            ],
+
+            'url' => config('app.url'),
+        ];
+    }
+}
+```
+
+```php source="docs/snippets/advanced-directive-attributes-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class AttributesDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->model->name,
+
+            'contact' => [
+                '@attributes' => [
+                    'email' => $this->model->email,
+                    'phone' => '555-000-' . $this->model->id,
+                ],
+            ],
+        ];
+    }
+}
+```
+
+该代码会生成：
+
+```xml source="docs/snippets/advanced-directive-attributes.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<attributes_directive>
+
+<company since="1994"/>
+<url>https://example.com</url>
+
+<user>
+  <name>User 1</name>
+  <contact email="user1@example.com" phone="555-000-1"/>
+</user>
+<user>
+  <name>User 2</name>
+  <contact email="user2@example.com" phone="555-000-2"/>
+</user>
+
+</attributes_directive>
+```
+
+## @value {/* #_value */}
+
+表示直接使用指定值。
+
+:::tip
+`@value` 字段的值必须是字符串。
+:::
+
+可以使用名为 `@value` 的键为节点添加值：
+
+```php source="docs/snippets/advanced-directive-value-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class ValueDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => [
+                '@value' => $this->model->name,
+            ],
+
+            'contact' => [
+                '@attributes' => ['type' => 'email'],
+                '@value'      => $this->model->email,
+            ],
+        ];
+    }
+}
+```
+
+该代码会生成：
+
+```xml source="docs/snippets/advanced-directive-value.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<value_directive>
+
+<user>
+  <name>User 1</name>
+  <contact type="email">user1@example.com</contact>
+</user>
+<user>
+  <name>User 2</name>
+  <contact type="email">user2@example.com</contact>
+</user>
+
+</value_directive>
+```
+
+## @cdata {/* #_cdata */}
+
+允许使用未经转换的 XML 标记。
+
+:::tip
+也可以将节点值包装在 CDATA 段中，从而使用保留字符。
+:::
+
+可以使用名为 `@cdata` 的键为节点添加 CDATA：
+
+```php source="docs/snippets/advanced-directive-cdata.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+use function sprintf;
+
+class CdataDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => [
+                '@cdata' => sprintf('<h1>%s</h1>', $this->model->name),
+            ],
+
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+该代码会生成：
+
+```xml source="docs/snippets/advanced-directive-cdata.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<cdata_directive>
+
+<user>
+  <name><![CDATA[<h1>User 1</h1>]]></name>
+  <email>user1@example.com</email>
+</user>
+<user>
+  <name><![CDATA[<h1>User 2</h1>]]></name>
+  <email>user2@example.com</email>
+</user>
+
+</cdata_directive>
+```
+
+## @mixed {/* #_mixed */}
+
+允许在文档结构中直接使用 XML 标记。
+
+要原样插入 XML 片段，请使用 `@mixed` 指令：
+
+```php source="docs/snippets/advanced-directive-mixed.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class MixedDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->model->name,
+
+            '@mixed' => <<<XML
+                <some>
+                    <first>Foo</first>
+                    <second>{$this->model->email}</second>
+                </some>
+                XML,
+        ];
+    }
+}
+```
+
+该代码会生成：
+
+```xml source="docs/snippets/advanced-directive-mixed.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<mixed_directive>
+
+<user>
+  <name>User 1</name>
+  <some>
+    <first>Foo</first>
+    <second>user1@example.com</second>
+</some>
+</user>
+<user>
+  <name>User 2</name>
+  <some>
+    <first>Foo</first>
+    <second>user2@example.com</second>
+</some>
+</user>
+
+</mixed_directive>
+```
+
+## @custom {/* #_custom */}
+
+用于列出具有相同键的元素数组。
+
+有时需要放置一组名称相同的元素。
+
+为此，请在键名开头添加 `@` 符号：
+
+```php source="docs/snippets/advanced-directive-array.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+use function fake;
+
+class ArrayDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->model->name,
+
+            '@avatar' => [
+                fake()->imageUrl(),
+                fake()->imageUrl(),
+            ],
+
+            '@images' => [
+                [
+                    '@attributes' => ['name' => fake()->words(asText: true)],
+                    '@value'      => fake()->imageUrl(),
+                ],
+                [
+                    '@attributes' => ['name' => fake()->words(asText: true)],
+                    '@value'      => fake()->imageUrl(),
+                ],
+            ],
+        ];
+    }
+}
+```
+
+该代码会生成：
+
+```xml source="docs/snippets/advanced-directive-array.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<array_directive>
+
+<user>
+  <name>User 1</name>
+  <avatar>https://via.placeholder.com/640x480.png/00ffff?text=aut</avatar>
+  <avatar>https://via.placeholder.com/640x480.png/0022dd?text=et</avatar>
+  <images name="doloremque distinctio facere">https://via.placeholder.com/640x480.png/0099dd?text=ea</images>
+  <images name="fuga odio expedita">https://via.placeholder.com/640x480.png/00cc77?text=sint</images>
+</user>
+<user>
+  <name>User 2</name>
+  <avatar>https://via.placeholder.com/640x480.png/00ff99?text=est</avatar>
+  <avatar>https://via.placeholder.com/640x480.png/003300?text=non</avatar>
+  <images name="distinctio et aliquam">https://via.placeholder.com/640x480.png/0099aa?text=accusantium</images>
+  <images name="consequatur soluta nemo">https://via.placeholder.com/640x480.png/0099cc?text=ab</images>
+</user>
+
+</array_directive>
+```
+
+## 另请参阅
+
+- [元素](./elements.mdx)
+- [支持的格式](./supported-formats.mdx)
+- [Yandex 示例](./receipt-yandex.mdx)

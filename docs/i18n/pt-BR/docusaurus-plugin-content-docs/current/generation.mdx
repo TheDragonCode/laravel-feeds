@@ -1,0 +1,103 @@
+---
+title: "Geração e agendamento"
+description: "Informações sobre a geração de arquivos de feed para distribuição posterior"
+---
+
+[← Anterior](./create-feeds.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./supported-formats.mdx)
+
+# Geração e agendamento
+
+Para gerar todos os feeds ativos, use o comando:
+
+```bash
+php artisan feed:generate
+```
+
+Como resultado, todos os feeds ativos (`is_active = true`) da tabela `feeds`, ou da tabela definida em `config/feeds.php`, serão executados.
+
+:::tip
+Ao chamar o comando sem parâmetro, o console exibirá links para todos os feeds, inclusive aqueles cuja propriedade `is_active` está definida como `false`.
+
+No entanto, esses feeds não serão executados: eles serão marcados com o status `SKIP`.
+:::
+
+## Feed individual {/* #single_feed */}
+
+:::warning
+O feed informado **será executado** mesmo que esteja desativado na tabela `feeds` do banco de dados.
+:::
+
+Para gerar um feed específico, chame o comando `feed:generate` e passe como parâmetro o ID do feed na tabela `feeds`:
+
+```bash
+php artisan feed:generate 123
+```
+
+## Fila {/* #queue */}
+
+Por padrão, a geração dos feeds é executada no processo do console. Para feeds demorados ou que usam muita memória, ative o modo de fila do Laravel no ambiente:
+
+```bash
+FEED_QUEUE_ENABLED=true
+FEED_QUEUE_CONNECTION=redis
+FEED_QUEUE_NAME=feeds
+FEED_QUEUE_UNIQUE_TTL=3600
+```
+
+Quando o modo de fila está ativado, `feed:generate` despacha um job para cada feed ativo em vez de gerar os arquivos diretamente. Com uma conexão assíncrona, o comando termina depois que os jobs são despachados. Inicie um [worker da fila](https://laravel.com/docs/queues#running-the-queue-worker) para a conexão e a fila selecionadas a fim de processar esses jobs.
+
+- `FEED_QUEUE_CONNECTION` seleciona a conexão da fila. Na ausência dela, são usadas `QUEUE_CONNECTION` e depois `database`.
+- `FEED_QUEUE_NAME` seleciona uma fila nessa conexão. Deixe a variável sem valor para usar a fila padrão da conexão.
+- `FEED_QUEUE_UNIQUE_TTL` define em segundos o tempo de vida máximo do bloqueio de exclusividade. Um segundo job para o mesmo feed não entra na fila enquanto o bloqueio estiver ativo.
+
+:::note
+A conexão `sync` executa cada job imediatamente no processo do console. Selecione uma conexão assíncrona para transferir a geração para um worker. Defina `FEED_QUEUE_ENABLED=false` para gerar os feeds diretamente, sem despachar jobs.
+:::
+
+## Agendamento {/* #schedule */}
+
+### Automático {/* #automatic */}
+
+Para automatizar a geração dos feeds, use um [agendamento](https://laravel.com/docs/scheduling#running-the-scheduler). Para isso, adicione a chamada do helper ao arquivo `routes/console.php`, que é o caminho padrão, a menos que você o tenha alterado:
+
+```php source="docs/snippets/schedule-setup.php" lines="5-"
+use DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper;
+use Illuminate\Support\Facades\Schedule;
+
+ScheduleFeedHelper::register();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+Isso permite registrar chamadas para todos os feeds ativos conforme o agendamento definido na coluna `expression` do banco de dados.
+
+### Manual {/* #manual */}
+
+Você também pode definir o agendamento diretamente segundo suas próprias regras. Nesse caso, somente os feeds informados serão executados.
+
+```php source="docs/snippets/schedule-setup-manual.php" lines="5-"
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command(FeedGenerateCommand::class, [111])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->daily();
+
+Schedule::command(FeedGenerateCommand::class, [222])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->hourly();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+## Veja também
+
+- [Criar feeds](./create-feeds.mdx)
+- [Eventos](./events.mdx)
+- [Armazenamento](./location.mdx)

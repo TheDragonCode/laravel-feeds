@@ -1,0 +1,36 @@
+---
+title: "설치 및 설정"
+description: "Laravel Feeds 설치 및 구성 안내"
+---
+
+[← 이전](./introduction.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./create-feeds.mdx)
+
+# 설치 및 설정
+
+[Composer](https://getcomposer.org)를 사용하여 패키지를 설치할 수 있습니다.
+
+```bash
+composer require dragon-code/laravel-feeds
+```
+
+다음 명령으로 [마이그레이션](https://github.com/TheDragonCode/laravel-feeds/blob/main/database/migrations/2025_09_01_231655_create_feeds_table.php)과 [config/feeds.php](https://github.com/TheDragonCode/laravel-feeds/blob/main/config/feeds.php) 구성 파일을 게시해야 합니다.
+
+```bash
+php artisan vendor:publish --tag="feeds"
+```
+
+:::warning
+**마이그레이션을 실행하기 전에** `config/feeds.php` 파일의 데이터베이스 연결 설정을 확인하십시오.
+:::
+
+이제 마이그레이션을 실행하고 [피드를 생성](./create-feeds.mdx)할 수 있습니다.
+
+```bash
+php artisan migrate
+```
+
+## 관련 문서
+
+- [피드 생성](./create-feeds.mdx)
+- [생성 및 스케줄](./generation.mdx)
+- [지원 형식](./supported-formats.mdx)

@@ -1,0 +1,29 @@
+---
+title: "이벤트"
+description: "피드 생성 중 전달되는 이벤트"
+---
+
+[← 이전](./presets.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./extending-functionality.mdx)
+
+# 이벤트
+
+피드는 명령을 실행할 때 두 가지 이벤트를 전달합니다.
+
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — `FeedStartingEvent`는 초안 파일을 만들기 직전에 전달됩니다.
+- **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — `FeedFinishedEvent`는 생성된 모든 파일이 성공적으로 게시된 후 전달됩니다. 생성에 실패하면 이 이벤트가 전달되지 않습니다.
+
+## 완료 이벤트 계약 {/* #finished_event_contract */}
+
+완료 이벤트는 다음 public 속성을 제공합니다.
+
+- `$feed`에는 생성된 피드 클래스가 들어 있습니다.
+- `$paths`에는 게시된 모든 파일 경로가 출력 순서대로 들어 있습니다.
+- `$path`는 하위 호환성을 위해 유지되며 첫 번째 게시 경로를 담습니다. 피드가 여러 파일로 분할될 수 있으면 `$paths`를 사용하십시오.
+
+`GeneratorService::feed()`는 `GenerationResultData` 객체를 반환합니다. `$paths` 속성에는 같은 순서의 경로가 들어 있고, `$records` 속성은 각 경로를 해당 파일에 기록된 레코드 수와 연결합니다.
+
+## 관련 문서
+
+- [생성 및 스케줄](./generation.mdx)
+- [저장 위치](./location.mdx)
+- [기능 확장](./extending-functionality.mdx)

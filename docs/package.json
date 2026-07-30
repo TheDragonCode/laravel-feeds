@@ -1,0 +1,68 @@
+{
+    "name": "laravel-feeds-docs",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "docusaurus": "docusaurus",
+        "start": "docusaurus start",
+        "build": "npm run check:i18n && npm run check:snippets && npm run typecheck && npm run build:llms && docusaurus build",
+        "serve": "docusaurus serve",
+        "clear": "docusaurus clear",
+        "typecheck": "tsc --noEmit",
+        "write-translations": "docusaurus write-translations",
+        "docs:version": "node scripts/version-docs.mjs",
+        "translate": "npm run translate:be && npm run translate:de && npm run translate:fr && npm run translate:ko && npm run translate:pt-BR && npm run translate:ru && npm run translate:uk && npm run translate:zh-CN",
+        "translate:be": "docusaurus write-translations --locale be",
+        "translate:de": "docusaurus write-translations --locale de",
+        "translate:fr": "docusaurus write-translations --locale fr",
+        "translate:ko": "docusaurus write-translations --locale ko",
+        "translate:pt-BR": "docusaurus write-translations --locale pt-BR",
+        "translate:ru": "docusaurus write-translations --locale ru",
+        "translate:uk": "docusaurus write-translations --locale uk",
+        "translate:zh-CN": "docusaurus write-translations --locale zh-CN",
+        "check:i18n": "node scripts/check-i18n.mjs",
+        "check:snippets": "node scripts/check-snippets.mjs",
+        "build:llms": "node scripts/build-llms.mjs"
+    },
+    "dependencies": {
+        "@docusaurus/core": "3.10.2",
+        "@docusaurus/faster": "3.10.2",
+        "@docusaurus/plugin-client-redirects": "3.10.2",
+        "@docusaurus/preset-classic": "3.10.2",
+        "@mdx-js/react": "^3.1.1",
+        "clsx": "^2.1.1",
+        "prism-react-renderer": "^2.4.1",
+        "react": "^19.2.7",
+        "react-dom": "^19.2.7"
+    },
+    "devDependencies": {
+        "@docusaurus/module-type-aliases": "3.10.2",
+        "@docusaurus/tsconfig": "3.10.2",
+        "@docusaurus/types": "3.10.2",
+        "@types/react": "^19.2.17",
+        "typescript": "~6.0.3"
+    },
+    "overrides": {
+        "serialize-javascript": "7.0.7",
+        "uuid": "11.1.1"
+    },
+    "browserslist": {
+        "production": [
+            ">0.5%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 3 chrome version",
+            "last 3 firefox version",
+            "last 5 safari version"
+        ]
+    },
+    "engines": {
+        "node": ">=20.0"
+    },
+    "allowScripts": {
+        "@swc/core@1.15.47": true,
+        "core-js": false
+    }
+}

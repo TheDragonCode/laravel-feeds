@@ -1,0 +1,355 @@
+---
+title: "Элементы"
+description: "Наладжванне структуры стужкі: каранёвы элемент, інфармацыйны блок, загаловак, ніжняя частка і атрыбуты"
+---
+
+[← Папярэдняя](./supported-formats.mdx) · [Назад да README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступная →](./directives.mdx)
+
+# Элементы
+
+## Каранёвы элемент {/* #root_element */}
+
+**Фарматы:** XML, RSS, JSON
+
+:::tip
+Стандартна імя каранёвага элемента фарміруецца з базавага імя класа стужкі.
+
+Напрыклад, для класа `App\Feeds\FooBarFeed` імя будзе `foo_bar`.
+:::
+
+Каб дадаць каранёвы элемент і/або яго атрыбуты, перавызначце метад `root`:
+
+```php source="docs/snippets/advanced-element-root.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\User;
+use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+use function now;
+
+class RootElementFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function root(): ElementData
+    {
+        return new ElementData(
+            name      : 'foo',
+            attributes: [
+                'count' => $this->builder()->count(),
+
+                'generated_at' => now(),
+            ],
+        );
+    }
+}
+```
+
+Каб адключыць даданне каранёвага элемента, укажыце пустое імя: `null` або `""`.
+
+Гэты код дасць наступны вынік:
+
+```xml source="docs/snippets/advanced-element-root.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<foo count="2" generated_at="2025-09-04T04:08:12+00:00">
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</foo>
+```
+
+## Звесткі {/* #information */}
+
+**Фарматы:** XML, RSS, JSON, JSONL, CSV
+
+Каб дадаць звесткі ў пачатак каранёвага элемента, калі ён ёсць, або без яго, перавызначце метад `info` у класе стужкі і стварыце аб'ект, які пашырае клас `DragonCode\LaravelFeed\Feeds\Info\FeedInfo`:
+
+```php source="docs/snippets/advanced-element-info.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Info\InfoMethodFeedInfo;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Database\Eloquent\Builder;
+
+class InfoMethodFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function info(): FeedInfo
+    {
+        return new InfoMethodFeedInfo;
+    }
+}
+```
+
+```php source="docs/snippets/advanced-element-info-info.php" lines="5-"
+namespace App\Feeds\Info;
+
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+
+use function config;
+
+class InfoMethodFeedInfo extends FeedInfo
+{
+    public function toArray(): array
+    {
+        return [
+            'company' => config('app.name'),
+            'url'     => config('app.url'),
+        ];
+    }
+}
+```
+
+Гэты код дасць наступны вынік:
+
+```xml source="docs/snippets/advanced-element-info.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<info_method>
+
+<company>Laravel</company>
+<url>https://example.com</url>
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</info_method>
+```
+
+Калі трэба змяніць парадак вываду каранёвага элемента адносна інфармацыйнага блока, задайце параметр `beforeInfo` у метадзе `root`:
+
+```php source="docs/snippets/advanced-element-info-before-false.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Info\InfoMethodFeedInfo;
+use App\Models\User;
+use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Database\Eloquent\Builder;
+
+class InfoMethodBeforeFalseTest extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function root(): ElementData
+    {
+        return new ElementData(
+            name      : 'info_method',
+            beforeInfo: false
+        );
+    }
+
+    public function info(): FeedInfo
+    {
+        return new InfoMethodFeedInfo;
+    }
+}
+```
+
+Гэты код дасць наступны вынік:
+
+```xml source="docs/snippets/advanced-element-info-before-false.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<company>Laravel</company>
+<url>https://example.com</url>
+
+<info_method>
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</info_method>
+```
+
+## Загаловак і ніжняя частка {/* #header_and_footer */}
+
+**Фарматы:** XML, RSS, JSON
+
+Каб змяніць загаловак і ніжнюю частку, перавызначце метады `header` і `footer`:
+
+```php source="docs/snippets/advanced-element-header-footer.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class HeaderFooterFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function header(): string
+    {
+        return '<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">';
+    }
+
+    public function footer(): string
+    {
+        return "\n<g:footer>This is a custom footer element</g:footer>";
+    }
+}
+```
+
+Гэты код дасць наступны вынік:
+
+```xml source="docs/snippets/advanced-element-header-footer.xml"
+<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+<header_footer>
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</header_footer>
+
+<g:footer>This is a custom footer element</g:footer>
+```
+
+## Атрыбуты {/* #attributes */}
+
+**Фарматы:** XML, RSS
+
+```php source="docs/snippets/advanced-element-attribute.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\AttributeFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class AttributeFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new AttributeFeedItem($model);
+    }
+}
+```
+
+```php source="docs/snippets/advanced-element-attribute-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class AttributeFeedItem extends FeedItem
+{
+    public function attributes(): array
+    {
+        return [
+            'created_at' => $this->model->created_at,
+        ];
+    }
+}
+```
+
+Гэты код дасць наступны вынік:
+
+```xml source="docs/snippets/advanced-element-attribute.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<attribute>
+
+<user created_at="2025-09-04T04:08:12+00:00">
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user created_at="2025-09-04T04:08:12+00:00">
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</attribute>
+```
+
+## Падзел файлаў {/* #split_files */}
+
+**Фарматы:** XML, RSS, JSON, JSONL, CSV
+
+Пры неабходнасці можна абмежаваць колькасць радкоў у файле, а таксама колькасць саміх файлаў. Для гэтага выкарыстоўвайце функцыі `perFile` і `maxFiles`.
+
+```php source="docs/snippets/advanced-element-split.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class AttributeFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function perFile(): int
+    {
+        return 100;
+    }
+
+    public function maxFiles(): int
+    {
+        return 10;
+    }
+}
+```
+
+Метады працуюць незалежна адзін ад аднаго.
+
+Пры падзеле да імёнаў файлаў дадаецца паслядоўны нумар. Напрыклад:
+
+- `attribute-1.xml`
+- `attribute-2.xml`
+- `attribute-3.xml`
+
+## Глядзіце таксама
+
+- [Дырэктывы](./directives.mdx)
+- [Падтрыманыя фарматы](./supported-formats.mdx)
+- [Размяшчэнне](./location.mdx)

@@ -6,6 +6,8 @@
 
 _site/
 build/
+.docusaurus/
+.cache-loader/
 node_modules/
 tmp/
 vendor/
@@ -23,6 +25,5 @@ vendor/
 *.orig
 
 composer.lock
-package-lock.json
 
 playground/

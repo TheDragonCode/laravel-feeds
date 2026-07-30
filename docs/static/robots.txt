@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://feeds.dragon-code.pro/sitemap.xml
+Sitemap: https://feeds.dragon-code.pro/be/sitemap.xml
+Sitemap: https://feeds.dragon-code.pro/de/sitemap.xml
+Sitemap: https://feeds.dragon-code.pro/fr/sitemap.xml
+Sitemap: https://feeds.dragon-code.pro/ko/sitemap.xml
+Sitemap: https://feeds.dragon-code.pro/pt-BR/sitemap.xml
+Sitemap: https://feeds.dragon-code.pro/ru/sitemap.xml
+Sitemap: https://feeds.dragon-code.pro/uk/sitemap.xml
+Sitemap: https://feeds.dragon-code.pro/zh-CN/sitemap.xml

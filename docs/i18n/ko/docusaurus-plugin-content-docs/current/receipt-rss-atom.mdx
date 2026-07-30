@@ -1,0 +1,113 @@
+---
+title: "RSS Atom"
+description: "RSS Atom용 피드 생성 레시피"
+---
+
+[← 이전](./receipt-yandex.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./contributions.mdx)
+
+# RSS Atom
+
+## 파일 생성 {/* #create_files */}
+
+```bash
+php artisan make:feed Rss
+```
+
+## 피드 채우기 {/* #filling_the_feed */}
+
+생성된 클래스에서 `extends Feed`를 `extends RssFeedPreset`으로 바꾸십시오.
+
+```php source="docs/snippets/receipt-rss-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\News;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\RssFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class RssFeed extends RssFeedPreset
+{
+    public function builder(): Builder
+    {
+        return News::query()->take(2);
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->guid($model->id) // By default, $model->getKey()
+            ->title($model->title)
+            ->description($model->content)
+            ->category($model->category)
+            ->url($model->url)
+            ->publishedAt($model->updated_at) // By default, $model->created_at ?? Carbon::now()
+            ->additional(['foo' => 'bar']); // By default, []
+    }
+
+    public function filename(): string
+    {
+        return 'rss.xml';
+    }
+}
+```
+
+## 활성화 {/* #activate */}
+
+생성된 [operation 또는 마이그레이션](./create-feeds.mdx) 파일을 검토한 다음 적절한 콘솔 명령을 실행하십시오.
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## 피드 생성 {/* #generate_feed */}
+
+다음 콘솔 명령을 실행하여 피드를 생성하십시오.
+
+```bash
+php artisan feed:generate
+```
+
+## 결과 {/* #result */}
+
+```xml source="docs/snippets/receipt-rss-feed.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+
+<item>
+  <title>Some 1</title>
+  <link>https://example.com/news/some-1</link>
+  <guid>1</guid>
+  <description><![CDATA[Some content 1]]></description>
+  <category>Some category 1</category>
+  <pubDate>Wed, 03 Sep 2025 22:35:34 +0000</pubDate>
+  <foo>bar</foo>
+</item>
+<item>
+  <title>Some 2</title>
+  <link>https://example.com/news/some-2</link>
+  <guid>2</guid>
+  <description><![CDATA[Some content 2]]></description>
+  <category>Some category 2</category>
+  <pubDate>Thu, 04 Sep 2025 02:44:27 +0000</pubDate>
+  <foo>bar</foo>
+</item>
+
+</channel>
+</rss>
+```
+
+## 관련 문서
+
+- [프리셋](./presets.mdx)
+- [사이트맵 레시피](./receipt-sitemap.mdx)
+- [Instagram 레시피](./receipt-instagram.mdx)

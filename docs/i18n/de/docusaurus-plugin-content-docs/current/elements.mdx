@@ -1,0 +1,355 @@
+---
+title: "Elemente"
+description: "Feed-Struktur konfigurieren: Wurzelelement, Informationsblock, Kopf- und Fußzeilen sowie Attribute"
+---
+
+[← Zurück](./supported-formats.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./directives.mdx)
+
+# Elemente
+
+## Wurzelelement {/* #root_element */}
+
+**Formate:** XML, RSS, JSON
+
+:::tip
+Standardmäßig wird der Name des Wurzelelements aus dem Basisnamen der Feed-Klasse abgeleitet.
+
+Für die Klasse `App\Feeds\FooBarFeed` lautet der Name beispielsweise `foo_bar`.
+:::
+
+Überschreiben Sie die Methode `root`, um ein Wurzelelement und/oder dessen Attribute hinzuzufügen:
+
+```php source="docs/snippets/advanced-element-root.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\User;
+use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+use function now;
+
+class RootElementFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function root(): ElementData
+    {
+        return new ElementData(
+            name      : 'foo',
+            attributes: [
+                'count' => $this->builder()->count(),
+
+                'generated_at' => now(),
+            ],
+        );
+    }
+}
+```
+
+Geben Sie als Namen `null` oder `""` an, um das Wurzelelement zu deaktivieren.
+
+Dieser Code erzeugt folgendes Ergebnis:
+
+```xml source="docs/snippets/advanced-element-root.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<foo count="2" generated_at="2025-09-04T04:08:12+00:00">
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</foo>
+```
+
+## Informationen {/* #information */}
+
+**Formate:** XML, RSS, JSON, JSONL, CSV
+
+Überschreiben Sie die Methode `info` in der Feed-Klasse und erstellen Sie ein Objekt, das die Klasse `DragonCode\LaravelFeed\Feeds\Info\FeedInfo` erweitert, um Informationen am Anfang des Wurzelelements oder ohne Wurzelelement einzufügen:
+
+```php source="docs/snippets/advanced-element-info.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Info\InfoMethodFeedInfo;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Database\Eloquent\Builder;
+
+class InfoMethodFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function info(): FeedInfo
+    {
+        return new InfoMethodFeedInfo;
+    }
+}
+```
+
+```php source="docs/snippets/advanced-element-info-info.php" lines="5-"
+namespace App\Feeds\Info;
+
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+
+use function config;
+
+class InfoMethodFeedInfo extends FeedInfo
+{
+    public function toArray(): array
+    {
+        return [
+            'company' => config('app.name'),
+            'url'     => config('app.url'),
+        ];
+    }
+}
+```
+
+Dieser Code erzeugt folgendes Ergebnis:
+
+```xml source="docs/snippets/advanced-element-info.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<info_method>
+
+<company>Laravel</company>
+<url>https://example.com</url>
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</info_method>
+```
+
+Setzen Sie den Parameter `beforeInfo` in der Methode `root`, wenn Sie die Ausgabereihenfolge von Wurzelelement und Informationsblock ändern müssen:
+
+```php source="docs/snippets/advanced-element-info-before-false.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Info\InfoMethodFeedInfo;
+use App\Models\User;
+use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Database\Eloquent\Builder;
+
+class InfoMethodBeforeFalseTest extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function root(): ElementData
+    {
+        return new ElementData(
+            name      : 'info_method',
+            beforeInfo: false
+        );
+    }
+
+    public function info(): FeedInfo
+    {
+        return new InfoMethodFeedInfo;
+    }
+}
+```
+
+Dieser Code erzeugt folgendes Ergebnis:
+
+```xml source="docs/snippets/advanced-element-info-before-false.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<company>Laravel</company>
+<url>https://example.com</url>
+
+<info_method>
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</info_method>
+```
+
+## Kopf- und Fußzeile {/* #header_and_footer */}
+
+**Formate:** XML, RSS, JSON
+
+Überschreiben Sie die Methoden `header` und `footer`, um die Kopf- und Fußzeile zu ändern:
+
+```php source="docs/snippets/advanced-element-header-footer.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class HeaderFooterFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function header(): string
+    {
+        return '<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">';
+    }
+
+    public function footer(): string
+    {
+        return "\n<g:footer>This is a custom footer element</g:footer>";
+    }
+}
+```
+
+Dieser Code erzeugt folgendes Ergebnis:
+
+```xml source="docs/snippets/advanced-element-header-footer.xml"
+<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+<header_footer>
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</header_footer>
+
+<g:footer>This is a custom footer element</g:footer>
+```
+
+## Attribute {/* #attributes */}
+
+**Formate:** XML, RSS
+
+```php source="docs/snippets/advanced-element-attribute.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\AttributeFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class AttributeFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new AttributeFeedItem($model);
+    }
+}
+```
+
+```php source="docs/snippets/advanced-element-attribute-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class AttributeFeedItem extends FeedItem
+{
+    public function attributes(): array
+    {
+        return [
+            'created_at' => $this->model->created_at,
+        ];
+    }
+}
+```
+
+Dieser Code erzeugt folgendes Ergebnis:
+
+```xml source="docs/snippets/advanced-element-attribute.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<attribute>
+
+<user created_at="2025-09-04T04:08:12+00:00">
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user created_at="2025-09-04T04:08:12+00:00">
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</attribute>
+```
+
+## Dateien aufteilen {/* #split_files */}
+
+**Formate:** XML, RSS, JSON, JSONL, CSV
+
+Bei Bedarf können Sie sowohl die Anzahl der pro Datei ausgegebenen Zeilen als auch die Anzahl der Dateien begrenzen. Verwenden Sie dazu die Funktionen `perFile` und `maxFiles`.
+
+```php source="docs/snippets/advanced-element-split.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class AttributeFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function perFile(): int
+    {
+        return 100;
+    }
+
+    public function maxFiles(): int
+    {
+        return 10;
+    }
+}
+```
+
+Die Methoden arbeiten unabhängig voneinander.
+
+Beim Aufteilen wird den Dateinamen eine fortlaufende Nummer hinzugefügt. Beispiel:
+
+- `attribute-1.xml`
+- `attribute-2.xml`
+- `attribute-3.xml`
+
+## Siehe auch
+
+- [Direktiven](./directives.mdx)
+- [Unterstützte Formate](./supported-formats.mdx)
+- [Speicherort](./location.mdx)

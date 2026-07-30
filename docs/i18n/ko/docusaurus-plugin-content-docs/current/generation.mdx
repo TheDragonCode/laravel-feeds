@@ -1,0 +1,103 @@
+---
+title: "생성 및 스케줄"
+description: "나중에 배포할 피드 파일을 생성하는 방법"
+---
+
+[← 이전](./create-feeds.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./supported-formats.mdx)
+
+# 생성 및 스케줄
+
+활성화된 모든 피드를 생성하려면 다음 콘솔 명령을 사용하십시오.
+
+```bash
+php artisan feed:generate
+```
+
+그 결과 `feeds` 테이블 또는 `config/feeds.php` 파일에서 지정한 테이블의 모든 활성 피드(`is_active = true`)가 실행됩니다.
+
+:::tip
+매개변수 없이 명령을 호출하면 `is_active` 속성이 `false`인 피드를 포함한 모든 피드의 링크가 콘솔에 표시됩니다.
+
+단, 이러한 피드는 실행되지 않고 `SKIP` 상태로 표시됩니다.
+:::
+
+## 단일 피드 {/* #single_feed */}
+
+:::warning
+지정한 피드는 데이터베이스의 `feeds` 테이블에서 비활성화되어 있어도 **실행됩니다**.
+:::
+
+특정 피드를 생성하려면 `feeds` 테이블의 피드 ID를 매개변수로 전달하여 `feed:generate` 콘솔 명령을 호출하십시오.
+
+```bash
+php artisan feed:generate 123
+```
+
+## 큐 {/* #queue */}
+
+기본적으로 피드 생성은 콘솔 프로세스에서 실행됩니다. 실행 시간이 길거나 메모리를 많이 사용하는 피드는 환경에서 Laravel Queue 모드를 활성화하십시오.
+
+```bash
+FEED_QUEUE_ENABLED=true
+FEED_QUEUE_CONNECTION=redis
+FEED_QUEUE_NAME=feeds
+FEED_QUEUE_UNIQUE_TTL=3600
+```
+
+큐 모드가 활성화되면 `feed:generate`는 파일을 직접 생성하지 않고 활성 피드마다 하나의 작업을 전달합니다. 비동기 연결에서는 작업 전달이 끝나면 명령이 반환됩니다. 작업을 처리하려면 선택한 연결과 큐에 대한 [큐 워커](https://laravel.com/docs/queues#running-the-queue-worker)를 시작하십시오.
+
+- `FEED_QUEUE_CONNECTION`은 큐 연결을 선택합니다. 설정되지 않으면 `QUEUE_CONNECTION`, 그다음 `database`를 사용합니다.
+- `FEED_QUEUE_NAME`은 해당 연결의 큐를 선택합니다. 연결의 기본 큐를 사용하려면 설정하지 마십시오.
+- `FEED_QUEUE_UNIQUE_TTL`은 고유성 잠금의 최대 수명을 초 단위로 설정합니다. 이 잠금이 활성화된 동안에는 같은 피드의 두 번째 작업이 큐에 추가되지 않습니다.
+
+:::note
+`sync` 연결은 각 작업을 콘솔 프로세스에서 즉시 실행합니다. 생성을 워커로 옮기려면 비동기 연결을 선택하십시오. 작업을 전달하지 않고 피드를 직접 생성하려면 `FEED_QUEUE_ENABLED=false`로 설정하십시오.
+:::
+
+## 스케줄 {/* #schedule */}
+
+### 자동 {/* #automatic */}
+
+피드 생성을 자동화하려면 [스케줄](https://laravel.com/docs/scheduling#running-the-scheduler)을 사용하십시오. 변경하지 않았다면 기본 경로인 `routes/console.php` 파일에 헬퍼 호출을 지정합니다.
+
+```php source="docs/snippets/schedule-setup.php" lines="5-"
+use DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper;
+use Illuminate\Support\Facades\Schedule;
+
+ScheduleFeedHelper::register();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+이렇게 하면 데이터베이스의 `expression` 열에 지정한 스케줄에 따라 모든 활성 피드 호출을 등록할 수 있습니다.
+
+### 수동 {/* #manual */}
+
+자체 규칙에 따라 스케줄을 직접 지정할 수도 있습니다. 이 경우 지정한 피드만 실행됩니다.
+
+```php source="docs/snippets/schedule-setup-manual.php" lines="5-"
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command(FeedGenerateCommand::class, [111])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->daily();
+
+Schedule::command(FeedGenerateCommand::class, [222])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->hourly();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+## 관련 문서
+
+- [피드 생성](./create-feeds.mdx)
+- [이벤트](./events.mdx)
+- [저장 위치](./location.mdx)

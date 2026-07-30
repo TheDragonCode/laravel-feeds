@@ -1,0 +1,38 @@
+{
+  "link.title.Community": {
+    "message": "社区",
+    "description": "页脚中 title=Community 的链接列标题"
+  },
+  "link.title.Development": {
+    "message": "开发",
+    "description": "页脚中 title=Development 的链接列标题"
+  },
+  "link.title.Authors": {
+    "message": "作者",
+    "description": "页脚中 title=Authors 的链接列标题"
+  },
+  "link.item.label.Telegram": {
+    "message": "Telegram",
+    "description": "页脚中 label=Telegram 且指向 https://t.me/dragon_code_news 的链接标签"
+  },
+  "link.item.label.Boosty": {
+    "message": "Boosty",
+    "description": "页脚中 label=Boosty 且指向 https://boosty.to/dragon-code 的链接标签"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "页脚中 label=GitHub 且指向 https://github.com/TheDragonCode/laravel-feeds 的链接标签"
+  },
+  "link.item.label.Issues": {
+    "message": "问题",
+    "description": "页脚中 label=Issues 且指向 https://github.com/TheDragonCode/laravel-feeds/issues 的链接标签"
+  },
+  "link.item.label.The Dragon Code": {
+    "message": "The Dragon Code",
+    "description": "页脚中 label=The Dragon Code 且指向 https://github.com/TheDragonCode 的链接标签"
+  },
+  "copyright": {
+    "message": "Copyright © 2026 The Dragon Code",
+    "description": "页脚版权信息"
+  }
+}

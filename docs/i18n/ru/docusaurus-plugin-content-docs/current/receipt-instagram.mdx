@@ -1,0 +1,168 @@
+---
+title: "Instagram"
+description: "Рецепт генерации фида для Instagram"
+---
+
+[← Предыдущая](./receipt-sitemap.mdx) · [Назад к README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Следующая →](./receipt-yandex.mdx)
+
+# Instagram
+
+## Создание файлов {/* #create_files */}
+
+```bash
+php artisan make:feed Instagram
+```
+
+## Заполнение фида {/* #filling_the_feed */}
+
+В сгенерированном классе замените `extends Feed` на `extends InstagramFeedPreset`:
+
+```php source="docs/snippets/receipt-instagram-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\InstagramFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class InstagramFeed extends InstagramFeedPreset
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->title($model->title)
+            ->description($model->description)
+            ->brand($model->brand) // By default, null
+            ->url($model->url)
+            ->price(price: $model->price, salePrice: $model->price) // By default, salePrice = price
+            ->image($model->images[0])
+            ->images($model->images) // By default, null
+            ->availability($model->quantity > 0 ? 'in stock' : 'out of stock') // By default, 'in stock'
+            ->status($model->quantity > 0 ? 'active' : 'inactive') // By default, 'active'
+            ->condition('new')      // By default, 'new'
+            ->group(12345)          // By default, null
+            ->googleCategory(123)   // By default, null
+            ->facebookCategory(456) // By default, null
+            ->additional([
+                'g:foo' => 'Some foo',
+                'g:bar' => 'Some bar',
+
+                'g:baz' => [
+                    '@attributes' => ['qwe' => 'rty'],
+                    '@value'      => 'Some baz',
+                ],
+
+                '@g:arrayable' => [
+                    'a',
+                    'b',
+                    'c',
+                ],
+            ]);
+    }
+
+    public function filename(): string
+    {
+        return 'instagram.xml';
+    }
+}
+```
+
+## Активация {/* #activate */}
+
+Проверьте сгенерированный файл [операции или миграции](./create-feeds.mdx), затем выполните подходящую консольную команду:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Генерация фида {/* #generate_feed */}
+
+Сгенерируйте фид следующей консольной командой:
+
+```bash
+php artisan feed:generate
+```
+
+## Результат {/* #result */}
+
+```xml source="docs/snippets/receipt-instagram-feed.xml"
+<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+<channel>
+    <title>Laravel</title>
+    <link>https://example.com</link>
+<offers>
+
+<item>
+  <g:id>1</g:id>
+  <g:title><![CDATA[Some 1]]></g:title>
+  <g:description><![CDATA[Some description 1]]></g:description>
+  <g:link>https://example.com/products/ea-voluptatum-fuga-odio-expedita</g:link>
+  <g:image_link>https://via.placeholder.com/640x480.png/008877?text=repudiandae</g:image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/008877?text=repudiandae</g:additional_image_link>
+  <g:brand>The Best</g:brand>
+  <g:condition>new</g:condition>
+  <g:availability>in stock</g:availability>
+  <g:price>100</g:price>
+  <g:sale_price>100</g:sale_price>
+  <g:item_group_id>12345</g:item_group_id>
+  <g:status>active</g:status>
+  <g:google_product_category>123</g:google_product_category>
+  <g:fb_product_category>456</g:fb_product_category>
+  <g:foo>Some foo</g:foo>
+  <g:bar>Some bar</g:bar>
+  <g:baz qwe="rty">Some baz</g:baz>
+  <g:arrayable>a</g:arrayable>
+  <g:arrayable>b</g:arrayable>
+  <g:arrayable>c</g:arrayable>
+</item>
+<item>
+  <g:id>2</g:id>
+  <g:title><![CDATA[Some 2]]></g:title>
+  <g:description><![CDATA[Some description 2]]></g:description>
+  <g:link>https://example.com/products/dolores-rerum-ut-consequatur-in</g:link>
+  <g:image_link>https://via.placeholder.com/640x480.png/009966?text=beatae</g:image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/009966?text=beatae</g:additional_image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/000011?text=deleniti</g:additional_image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/009999?text=voluptates</g:additional_image_link>
+  <g:brand>The Best</g:brand>
+  <g:condition>new</g:condition>
+  <g:availability>in stock</g:availability>
+  <g:price>250</g:price>
+  <g:sale_price>250</g:sale_price>
+  <g:item_group_id>12345</g:item_group_id>
+  <g:status>active</g:status>
+  <g:google_product_category>123</g:google_product_category>
+  <g:fb_product_category>456</g:fb_product_category>
+  <g:foo>Some foo</g:foo>
+  <g:bar>Some bar</g:bar>
+  <g:baz qwe="rty">Some baz</g:baz>
+  <g:arrayable>a</g:arrayable>
+  <g:arrayable>b</g:arrayable>
+  <g:arrayable>c</g:arrayable>
+</item>
+
+</offers>
+
+</channel>
+</rss>
+```
+
+## Смотрите также
+
+- [Предустановки](./presets.mdx)
+- [Рецепт для Yandex](./receipt-yandex.mdx)
+- [Рецепт для RSS Atom](./receipt-rss-atom.mdx)

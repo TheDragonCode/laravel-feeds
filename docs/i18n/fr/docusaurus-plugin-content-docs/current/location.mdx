@@ -1,0 +1,64 @@
+---
+title: "Emplacement"
+description: "Configurer le disque de stockage et le nom des fichiers de sortie des flux générés"
+---
+
+[← Précédent](./eloquent.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./presets.mdx)
+
+# Emplacement
+
+Par défaut, les flux sont enregistrés dans le stockage `public`. Le nom du fichier est généré automatiquement à partir du nom de la classe du flux après `App\Feeds\`, au format `kebab-case`. Exemple :
+
+```text
+# App\Feeds\UserFeed
+user-feed.xml
+
+# App\Feeds\Sitemaps\ProductFeed
+sitemaps-product-feed.xml
+```
+
+Vous pouvez modifier ces valeurs en remplaçant la propriété `$storage` et la méthode `filename` :
+
+```php source="docs/snippets/advanced-feed-storage.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    protected string $storage = 's3';
+
+    public function filename(): string
+    {
+        return 'some/path/will/be/here.xml';
+    }
+}
+```
+
+## Disques pris en charge {/* #supported_disks */}
+
+La génération des flux prend en charge les disques Laravel résolus en `Illuminate\Filesystem\FilesystemAdapter`. Cela comprend les pilotes `local`, `s3`, `sftp` et `ftp` lorsque leurs adaptateurs Flysystem sont installés et configurés. Les adaptateurs personnalisés sont pris en charge s’ils fournissent des flux accessibles en écriture, le déplacement de fichiers, la gestion et l’énumération des répertoires ainsi que la suppression via Flysystem.
+
+:::warning
+Les disques en lecture seule et les disques personnalisés qui implémentent uniquement `Illuminate\Contracts\Filesystem\Filesystem` ne sont pas pris en charge. Un disque incompatible échoue avec une `UnsupportedStorageDiskException` avant le démarrage de la requête de base de données du flux.
+:::
+
+## Contrat des chemins {/* #path_contract */}
+
+- `storage()` renvoie le `FilesystemAdapter` configuré.
+- `storagePath()` renvoie le chemin relatif au disque utilisé pour les opérations de stockage, y compris un suffixe facultatif pour les fichiers répartis.
+- `path()` renvoie le chemin résolu par l’adaptateur Laravel. Il s’agit d’un chemin absolu du système de fichiers pour un disque local et d’un chemin résolu par l’adaptateur pour un disque distant.
+
+## Garanties de publication {/* #publication_guarantees */}
+
+Chaque partie du flux est terminée avant le début de la publication. Les disques locaux publient les fichiers préparés au moyen de déplacements dans le système de fichiers, sous un verrou applicatif exclusif. Si un déplacement échoue, Laravel Feeds tente de restaurer chaque fichier précédent depuis sa sauvegarde de préparation.
+
+Les disques distants reçoivent les fichiers préparés complets via des flux Flysystem avant toute modification des objets publiés. La publication déplace ensuite chaque objet préparé vers sa destination et tente la même restauration en cas d’échec.
+
+:::warning
+Les déplacements distants peuvent être réalisés sous forme d’opérations de copie et de suppression, avec une cohérence éventuelle. Le remplacement atomique d’un objet ou d’un flux réparti complet n’est donc pas garanti. Le verrou de publication est local à l’hôte de l’application. Des générateurs exécutés sur des hôtes différents nécessitent donc un verrou distribué externe s’ils peuvent publier simultanément le même flux.
+:::
+
+## Voir aussi
+
+- [Génération et planification](./generation.mdx)
+- [Éléments](./elements.mdx)
+- [Événements](./events.mdx)

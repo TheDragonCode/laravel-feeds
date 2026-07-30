@@ -1,0 +1,189 @@
+---
+title: "Create feeds"
+description: "Instructions for creating and populating the feed, feed item, and feed info classes"
+---
+
+import ThemedImage from '@theme/ThemedImage';
+
+[← Previous](./installation.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./generation.mdx)
+
+# Create feeds
+
+:::note
+The most convenient way to create the necessary classes is to use the [Laravel Idea](https://laravel-idea.com) plugin for [PhpStorm](https://www.jetbrains.com/phpstorm/).
+
+<ThemedImage
+  alt="Laravel Idea"
+  sources={{
+    light: '/img/laravel-idea.png',
+    dark: '/img/laravel-idea_dark.png',
+  }}
+/>
+:::
+
+To create a feed class, use the `make:feed` console command:
+
+```bash
+php artisan make:feed <name>
+```
+
+This will create a feed file. For example, `app/Feeds/UserFeed.php`.
+
+This console command can also create the item and info classes along with the feed class. To do this, use the `--item` and `--info` options.
+
+```bash
+# Create a feed class and info class
+php artisan make:feed <name> --info
+
+# Create a feed class and item class
+php artisan make:feed <name> --item
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> --item --info
+```
+
+Shortcuts are also available:
+
+```bash
+# Create a feed class and item class
+php artisan make:feed <name> -t
+
+# Create a feed class and info class
+php artisan make:feed <name> -i
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> -it
+```
+
+:::note
+When creating a feed, an operation or a migration will also be created to add it to the database.
+
+If the project uses [**Laravel Deploy Operations**](https://deploy-operations.dragon-code.pro), then an operation class will be created; otherwise, a migration class will be created.
+
+This is required to add and manage feed information in the database.
+:::
+
+## Populating feeds {/* #fill_feeds */}
+
+### Feed {/* #feed */}
+
+Populate the main feed class. For example:
+
+```php source="docs/snippets/create-feeds-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+#### Feed item {/* #feed_item */}
+
+Populate the feed item class. For example:
+
+```php source="docs/snippets/generation-feed-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+##### Optional values {/* #optional_values */}
+
+To omit a field when its value is unavailable, return an instance of `DragonCode\LaravelFeed\Data\OptionalData` as its value:
+
+```php source="docs/snippets/optional-values.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Data\OptionalData;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'id'   => $this->model->id,
+            'name' => $this->model->name,
+
+            'cityId' => $this->model->city?->id ?? new OptionalData,
+
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at ?? new OptionalData,
+        ];
+    }
+}
+```
+
+Optional fields are removed from JSON and JSON Lines objects and from XML and RSS elements, including regular nested fields. CSV keeps the column position and writes an empty field.
+
+If your application uses [Spatie Laravel Data](https://spatie.be/docs/laravel-data/v4/as-a-data-transfer-object/optional-properties), you can return `Spatie\LaravelData\Optional` instead. Both optional value classes are handled automatically.
+
+```php
+use Spatie\LaravelData\Optional;
+
+'updatedAt' => $this->model->updated_at ?? Optional::create(),
+```
+
+## File format {/* #file_format */}
+
+:::tip
+You can find the list of available formats on the [supported formats](./supported-formats.mdx) page.
+:::
+
+You can generate feeds in different formats. A feed class can be correctly exported only to the format for which it is intended. This is due to the use of [directives](./directives.mdx) and other format specifics.
+
+To apply the required format, simply override the `$format` property in the feed class:
+
+```php source="docs/snippets/create-feeds-feed-format.php" lines="5-"
+namespace App\Feeds;
+
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Json;
+
+    public function builder(): Builder
+    {
+        //
+    }
+}
+```
+
+## See Also
+
+- [Generation & schedule](./generation.mdx)
+- [Supported formats](./supported-formats.mdx)
+- [Presets](./presets.mdx)

@@ -1,0 +1,103 @@
+---
+title: "Eloquent"
+description: "Registrierungsmodelle für Feeds und Chunk-Größe der Feed-Abfrage konfigurieren."
+---
+
+[← Zurück](./directives.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./location.mdx)
+
+# Eloquent
+
+## Benutzerdefiniertes Registrierungsmodell für Feeds {/* #custom_feed_model */}
+
+Setzen Sie `feeds.model` auf ein Anwendungsmodell, wenn die Registrierungsdatensätze für Feeds zusätzliche Spalten, Casts, Beziehungen oder Methoden benötigen. Das benutzerdefinierte Modell muss `DragonCode\LaravelFeed\Models\Feed` erweitern.
+
+```php
+namespace App\Models;
+
+use DragonCode\LaravelFeed\Models\Feed as BaseFeed;
+
+class Feed extends BaseFeed
+{
+    protected $fillable = [
+        'class',
+        'title',
+        'expression',
+        'is_active',
+        'last_activity',
+        'is_foo',
+        'is_bar',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            ...parent::casts(),
+            'is_foo' => 'boolean',
+            'is_bar' => 'boolean',
+        ];
+    }
+}
+```
+
+Registrieren Sie das Modell in `config/feeds.php`:
+
+```php
+'model' => App\Models\Feed::class,
+```
+
+Fügen Sie die benutzerdefinierten Spalten in einer Anwendungsmigration zur Tabelle feeds hinzu. Nehmen Sie jedes für die Massenzuweisung zugelassene Attribut in `$fillable` auf.
+
+`FeedQuery` verwendet das konfigurierte Modell zum Erstellen, Suchen, Auflisten, Aktualisieren, Löschen und Wiederherstellen. Übergeben Sie anwendungsspezifische Werte beim Erstellen eines Datensatzes über `extra`. Diese Werte werden zuletzt angewendet und können die Methodenargumente überschreiben:
+
+```php
+$feed = app(FeedQuery::class)->create(
+    class: SomeFeed::class,
+    title: 'Some',
+    expression: '0 */12 * * *',
+    extra: [
+        'is_foo' => true,
+        'is_bar' => true,
+    ]
+);
+```
+
+Das Anwendungsmodell kann auch die reguläre Eloquent-API verwenden:
+
+```php
+use App\Models\Feed;
+
+$feed = Feed::create([
+    'class' => SomeFeed::class,
+    'title' => 'Some',
+    'expression' => '0 */12 * * *',
+    'is_active' => true,
+    'is_foo' => true,
+    'is_bar' => true,
+]);
+```
+
+:::note
+Das konfigurierte Modell wird zur Laufzeit aufgelöst. Die statische Analyse erkennt das Ergebnis von `FeedQuery::create()` als Basismodell des Pakets. Verwenden Sie `App\Models\Feed::create()` oder einen expliziten lokalen Typ, wenn die Autovervollständigung für anwendungsspezifische Eigenschaften benötigt wird.
+:::
+
+## Chunk-Größe {/* #chunk_size */}
+
+Datenbankabfragen verwenden Chunks mit standardmäßig `1000` Elementen. Sie können diesen Wert ändern, indem Sie die Methode `chunkSize` überschreiben:
+
+```php source="docs/snippets/advanced-feed-chunk.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    public function chunkSize(): int
+    {
+        return 500;
+    }
+}
+```
+
+## Siehe auch
+
+- [Feeds erstellen](./create-feeds.mdx)
+- [Generierung und Zeitplanung](./generation.mdx)
+- [Funktionalität erweitern](./extending-functionality.mdx)

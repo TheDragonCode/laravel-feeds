@@ -1,0 +1,103 @@
+---
+title: "Генерация и расписание"
+description: "Сведения о генерации файлов фидов для дальнейшего распространения"
+---
+
+[← Предыдущая](./create-feeds.mdx) · [Назад к README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Следующая →](./supported-formats.mdx)
+
+# Генерация и расписание
+
+Чтобы сгенерировать все активные фиды, используйте консольную команду:
+
+```bash
+php artisan feed:generate
+```
+
+В результате будут выполнены все активные фиды (`is_active = true`) из таблицы `feeds` или из таблицы, указанной в файле `config/feeds.php`.
+
+:::tip
+Обратите внимание: если вызвать команду без параметра, консоль покажет ссылки на все фиды, в том числе со свойством `is_active`, равным `false`.
+
+Но такие фиды не будут выполнены и получат статус `SKIP`.
+:::
+
+## Один фид {/* #single_feed */}
+
+:::warning
+Указанный фид **будет выполнен**, даже если он отключён в таблице `feeds` базы данных.
+:::
+
+Чтобы сгенерировать определённый фид, вызовите консольную команду `feed:generate` и передайте ей идентификатор фида из таблицы `feeds`:
+
+```bash
+php artisan feed:generate 123
+```
+
+## Очередь {/* #queue */}
+
+По умолчанию генерация фида выполняется в консольном процессе. Для фидов, требующих много времени или памяти, включите режим Laravel Queue в своём окружении:
+
+```bash
+FEED_QUEUE_ENABLED=true
+FEED_QUEUE_CONNECTION=redis
+FEED_QUEUE_NAME=feeds
+FEED_QUEUE_UNIQUE_TTL=3600
+```
+
+Когда режим очереди включён, `feed:generate` отправляет по одной задаче для каждого активного фида вместо непосредственной генерации файлов. При асинхронном подключении команда завершается после отправки задач. Запустите [обработчик очереди](https://laravel.com/docs/queues#running-the-queue-worker) для выбранных подключения и очереди, чтобы обработать эти задачи.
+
+- `FEED_QUEUE_CONNECTION` выбирает подключение к очереди. Если значение не задано, используется `QUEUE_CONNECTION`, а затем `database`.
+- `FEED_QUEUE_NAME` выбирает очередь в этом подключении. Не задавайте значение, чтобы использовать очередь подключения по умолчанию.
+- `FEED_QUEUE_UNIQUE_TTL` задаёт максимальное время жизни блокировки уникальности в секундах. Пока блокировка активна, вторая задача для того же фида не будет поставлена в очередь.
+
+:::note
+Подключение `sync` сразу выполняет каждую задачу в консольном процессе. Выберите асинхронное подключение, чтобы перенести генерацию в обработчик. Задайте `FEED_QUEUE_ENABLED=false`, чтобы генерировать фиды напрямую, без отправки задач.
+:::
+
+## Расписание {/* #schedule */}
+
+### Автоматическое {/* #automatic */}
+
+Чтобы автоматизировать генерацию фидов, используйте [планировщик](https://laravel.com/docs/scheduling#running-the-scheduler). Для этого добавьте вызов вспомогательного класса в файл `routes/console.php`, если стандартный путь не был изменён:
+
+```php source="docs/snippets/schedule-setup.php" lines="5-"
+use DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper;
+use Illuminate\Support\Facades\Schedule;
+
+ScheduleFeedHelper::register();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+Так можно зарегистрировать вызовы всех активных фидов по расписанию, указанному в столбце `expression` базы данных.
+
+### Ручное {/* #manual */}
+
+Расписание также можно задать напрямую по собственным правилам. В этом случае будут выполнены только указанные вами фиды.
+
+```php source="docs/snippets/schedule-setup-manual.php" lines="5-"
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command(FeedGenerateCommand::class, [111])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->daily();
+
+Schedule::command(FeedGenerateCommand::class, [222])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->hourly();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+## Смотрите также
+
+- [Создание фидов](./create-feeds.mdx)
+- [События](./events.mdx)
+- [Расположение](./location.mdx)

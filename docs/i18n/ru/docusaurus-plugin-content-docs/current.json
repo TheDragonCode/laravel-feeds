@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "1.x",
+    "description": "Метка текущей версии"
+  },
+  "sidebar.docs.category.Getting Started": {
+    "message": "Начало работы",
+    "description": "Метка категории «Начало работы» на боковой панели «docs»"
+  },
+  "sidebar.docs.category.Digging Deeper": {
+    "message": "Подробное руководство",
+    "description": "Метка категории «Подробное руководство» на боковой панели «docs»"
+  },
+  "sidebar.docs.category.Recipes": {
+    "message": "Рецепты",
+    "description": "Метка категории «Рецепты» на боковой панели «docs»"
+  },
+  "sidebar.docs.category.Project": {
+    "message": "Проект",
+    "description": "Метка категории «Проект» на боковой панели «docs»"
+  }
+}

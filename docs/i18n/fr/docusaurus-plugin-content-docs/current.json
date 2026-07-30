@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "1.x",
+    "description": "Libellé de la version actuelle"
+  },
+  "sidebar.docs.category.Getting Started": {
+    "message": "Bien démarrer",
+    "description": "Libellé de la catégorie « Bien démarrer » dans la barre latérale « docs »"
+  },
+  "sidebar.docs.category.Digging Deeper": {
+    "message": "Approfondir",
+    "description": "Libellé de la catégorie « Approfondir » dans la barre latérale « docs »"
+  },
+  "sidebar.docs.category.Recipes": {
+    "message": "Recettes",
+    "description": "Libellé de la catégorie « Recettes » dans la barre latérale « docs »"
+  },
+  "sidebar.docs.category.Project": {
+    "message": "Projet",
+    "description": "Libellé de la catégorie « Projet » dans la barre latérale « docs »"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "title": {
+    "message": "Laravel Feeds",
+    "description": "Заголовок на панелі навігації"
+  },
+  "logo.alt": {
+    "message": "Laravel Feeds",
+    "description": "Альтернативний текст логотипа на панелі навігації"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Елемент панелі навігації з позначкою GitHub"
+  }
+}

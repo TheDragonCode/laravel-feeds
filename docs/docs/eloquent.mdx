@@ -1,0 +1,103 @@
+---
+title: "Eloquent"
+description: "Configure feed registration models and feed query chunk size."
+---
+
+[← Previous](./directives.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./location.mdx)
+
+# Eloquent
+
+## Custom feed registration model {/* #custom_feed_model */}
+
+Set `feeds.model` to an application model when feed registration records need additional columns, casts, relationships, or methods. The custom model must extend `DragonCode\LaravelFeed\Models\Feed`.
+
+```php
+namespace App\Models;
+
+use DragonCode\LaravelFeed\Models\Feed as BaseFeed;
+
+class Feed extends BaseFeed
+{
+    protected $fillable = [
+        'class',
+        'title',
+        'expression',
+        'is_active',
+        'last_activity',
+        'is_foo',
+        'is_bar',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            ...parent::casts(),
+            'is_foo' => 'boolean',
+            'is_bar' => 'boolean',
+        ];
+    }
+}
+```
+
+Register the model in `config/feeds.php`:
+
+```php
+'model' => App\Models\Feed::class,
+```
+
+Add the custom columns to the feeds table in an application migration. Keep every attribute accepted by mass assignment in `$fillable`.
+
+`FeedQuery` uses the configured model for create, find, list, update, delete, and restore operations. Pass application-specific values through `extra` when creating a record. These values are applied last and can override the method arguments:
+
+```php
+$feed = app(FeedQuery::class)->create(
+    class: SomeFeed::class,
+    title: 'Some',
+    expression: '0 */12 * * *',
+    extra: [
+        'is_foo' => true,
+        'is_bar' => true,
+    ]
+);
+```
+
+The application model can also use the regular Eloquent API:
+
+```php
+use App\Models\Feed;
+
+$feed = Feed::create([
+    'class' => SomeFeed::class,
+    'title' => 'Some',
+    'expression' => '0 */12 * * *',
+    'is_active' => true,
+    'is_foo' => true,
+    'is_bar' => true,
+]);
+```
+
+:::note
+The configured model is resolved at runtime. Static analysis sees the result of `FeedQuery::create()` as the package base model. Use `App\Models\Feed::create()` or an explicit local type when autocomplete for application-specific properties is required.
+:::
+
+## Chunk size {/* #chunk_size */}
+
+Database queries use chunks, which are `1000` items by default. You can change this by overriding the `chunkSize` method:
+
+```php source="docs/snippets/advanced-feed-chunk.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    public function chunkSize(): int
+    {
+        return 500;
+    }
+}
+```
+
+## See Also
+
+- [Create feeds](./create-feeds.mdx)
+- [Generation & schedule](./generation.mdx)
+- [Extending functionality](./extending-functionality.mdx)

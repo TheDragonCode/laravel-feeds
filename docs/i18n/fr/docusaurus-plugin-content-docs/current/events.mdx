@@ -1,0 +1,29 @@
+---
+title: "Événements"
+description: "Événements émis pendant la génération des flux"
+---
+
+[← Précédent](./presets.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./extending-functionality.mdx)
+
+# Événements
+
+Les flux émettent deux événements lors de l’exécution de la commande :
+
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — `FeedStartingEvent` est émis juste avant la création du fichier provisoire.
+- **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — `FeedFinishedEvent` est émis lorsque tous les fichiers générés ont été publiés avec succès. Une génération échouée n’émet pas cet événement.
+
+## Contrat de l’événement de fin {/* #finished_event_contract */}
+
+L’événement de fin expose les propriétés publiques suivantes :
+
+- `$feed` contient la classe du flux généré.
+- `$paths` contient tous les chemins des fichiers publiés, dans l’ordre de sortie.
+- `$path` reste disponible pour assurer la rétrocompatibilité et contient le premier chemin publié. Utilisez `$paths` lorsqu’un flux peut être réparti entre plusieurs fichiers.
+
+`GeneratorService::feed()` renvoie un objet `GenerationResultData`. Sa propriété `$paths` contient les mêmes chemins ordonnés, tandis que sa propriété `$records` associe chaque chemin au nombre d’enregistrements écrits dans ce fichier.
+
+## Voir aussi
+
+- [Génération et planification](./generation.mdx)
+- [Emplacement](./location.mdx)
+- [Étendre les fonctionnalités](./extending-functionality.mdx)

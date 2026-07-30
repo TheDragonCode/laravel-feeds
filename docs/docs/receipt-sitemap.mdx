@@ -1,0 +1,151 @@
+---
+title: "Sitemap"
+description: "Step-by-step guide to creating a product sitemap feed"
+---
+
+[← Previous](./extending-functionality.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./receipt-instagram.mdx)
+
+# Sitemap
+
+This recipe walks you through creating a product sitemap feed using Laravel Feeds. You will:
+
+- Generate the necessary classes.
+- Implement the feed logic.
+- Expose the files via the file system.
+- Optionally reference the generated sitemap from a root `sitemap.xml` file.
+
+## Create the files {/* #create_files */}
+
+Generate the feed and its item class using the following console command:
+
+```bash
+php artisan make:feed Sitemaps/Product
+```
+
+## Populate the feed {/* #filling_the_feed */}
+
+Replace `extends Feed` with `extends SitemapFeedPreset` in the generated class:
+
+```php source="docs/snippets/receipt-sitemap-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds\Sitemaps;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\SitemapFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends SitemapFeedPreset
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->url($model->url)
+            ->modifiedAt($model->updated_at) // By default, $model->updated_at
+            ->priority(0.9); // By default, 0.9
+    }
+
+    public function filename(): string
+    {
+        return 'sitemaps/' . parent::filename();
+    }
+}
+```
+
+Available methods of the `FeedItem` class:
+
+- `url` - It is required to indicate
+- `modifiedAt` - by default, `$model->updated_at`
+- `priority` - by default, `0.9`
+
+## Activate {/* #activate */}
+
+Review the generated [operation or migration](./create-feeds.mdx) file, then run the appropriate console command:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Links {/* #links */}
+
+Add a file system disk that points to the directory containing your sitemaps in the [config/filesystems.php](https://github.com/laravel/laravel/blob/12.x/config/filesystems.php#L76-L78) configuration file:
+
+```php source="docs/snippets/receipt-sitemap-links.php" lines="5-"
+return [
+    'links' => [
+        public_path('storage')  => storage_path('app/public'),
+        public_path('sitemaps') => storage_path('app/public/sitemaps'),
+    ],
+];
+```
+
+Then create the public symlink so the files are accessible in a browser:
+
+```bash
+php artisan storage:link
+```
+
+## Generate feed {/* #generate_feed */}
+
+Generate the feed by running the following console command:
+
+```bash
+php artisan feed:generate
+```
+
+## Add a link to the root sitemap.xml {/* #adding_a_link_to_the_general_sitemap_xml_file */}
+
+If you maintain a root sitemap.xml file that references other sitemaps, add an entry like this:
+
+```xml source="docs/snippets/receipt-sitemap-root.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <sitemap>
+        <loc>https://example.com/sitemaps/products.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>https://example.com/sitemaps/other-sitemaps.xml</loc>
+    </sitemap>
+</sitemapindex>
+```
+
+## Result {/* #result */}
+
+The generated sitemap.xml for your products will look like this:
+
+```xml source="docs/snippets/receipt-sitemap-feed.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+
+<url>
+  <loc>https://example.com/products/ea-voluptatum-fuga-odio-expedita</loc>
+  <lastmod>2025-08-31T20:00:00+00:00</lastmod>
+  <priority>0.9</priority>
+</url>
+<url>
+  <loc>https://example.com/products/dolores-rerum-ut-consequatur-in</loc>
+  <lastmod>2025-08-30T19:00:00+00:00</lastmod>
+  <priority>0.9</priority>
+</url>
+
+</urlset>
+```
+
+## See Also
+
+- [Presets](./presets.mdx)
+- [Yandex recipe](./receipt-yandex.mdx)
+- [RSS Atom recipe](./receipt-rss-atom.mdx)

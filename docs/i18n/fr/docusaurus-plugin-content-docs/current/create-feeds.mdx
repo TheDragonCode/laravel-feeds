@@ -1,0 +1,189 @@
+---
+title: "Créer des flux"
+description: "Instructions pour créer et remplir les classes du flux, de ses éléments et de ses informations"
+---
+
+import ThemedImage from '@theme/ThemedImage';
+
+[← Précédent](./installation.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./generation.mdx)
+
+# Créer des flux
+
+:::note
+Le moyen le plus pratique de créer les classes nécessaires consiste à utiliser le plugin [Laravel Idea](https://laravel-idea.com) pour [PhpStorm](https://www.jetbrains.com/phpstorm/).
+
+<ThemedImage
+  alt="Laravel Idea"
+  sources={{
+    light: '/img/laravel-idea.png',
+    dark: '/img/laravel-idea_dark.png',
+  }}
+/>
+:::
+
+Pour créer une classe de flux, utilisez la commande `make:feed` :
+
+```bash
+php artisan make:feed <name>
+```
+
+Cette commande crée un fichier de flux, par exemple `app/Feeds/UserFeed.php`.
+
+Cette commande peut également créer les classes d’élément et d’informations avec la classe du flux. Utilisez pour cela les options `--item` et `--info`.
+
+```bash
+# Create a feed class and info class
+php artisan make:feed <name> --info
+
+# Create a feed class and item class
+php artisan make:feed <name> --item
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> --item --info
+```
+
+Des options courtes sont également disponibles :
+
+```bash
+# Create a feed class and item class
+php artisan make:feed <name> -t
+
+# Create a feed class and info class
+php artisan make:feed <name> -i
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> -it
+```
+
+:::note
+Lors de la création d’un flux, une opération ou une migration est également créée afin de l’ajouter à la base de données.
+
+Si le projet utilise [**Laravel Deploy Operations**](https://deploy-operations.dragon-code.pro), une classe d’opération est créée. Dans le cas contraire, une classe de migration est créée.
+
+Cette étape est nécessaire pour ajouter et gérer les informations du flux dans la base de données.
+:::
+
+## Remplir les flux {/* #fill_feeds */}
+
+### Feed {/* #feed */}
+
+Remplissez la classe principale du flux. Exemple :
+
+```php source="docs/snippets/create-feeds-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+#### Élément du flux {/* #feed_item */}
+
+Remplissez la classe de l’élément du flux. Exemple :
+
+```php source="docs/snippets/generation-feed-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+##### Valeurs facultatives {/* #optional_values */}
+
+Pour omettre un champ lorsque sa valeur n’est pas disponible, renvoyez une instance de `DragonCode\LaravelFeed\Data\OptionalData` comme valeur :
+
+```php source="docs/snippets/optional-values.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Data\OptionalData;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'id'   => $this->model->id,
+            'name' => $this->model->name,
+
+            'cityId' => $this->model->city?->id ?? new OptionalData,
+
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at ?? new OptionalData,
+        ];
+    }
+}
+```
+
+Les champs facultatifs sont supprimés des objets JSON et JSON Lines ainsi que des éléments XML et RSS, y compris les champs imbriqués ordinaires. Le format CSV conserve la position de la colonne et écrit un champ vide.
+
+Si votre application utilise [Spatie Laravel Data](https://spatie.be/docs/laravel-data/v4/as-a-data-transfer-object/optional-properties), vous pouvez renvoyer `Spatie\LaravelData\Optional` à la place. Les deux classes de valeur facultative sont prises en charge automatiquement.
+
+```php
+use Spatie\LaravelData\Optional;
+
+'updatedAt' => $this->model->updated_at ?? Optional::create(),
+```
+
+## Format de fichier {/* #file_format */}
+
+:::tip
+La liste des formats disponibles figure sur la page [Formats pris en charge](./supported-formats.mdx).
+:::
+
+Vous pouvez générer des flux dans différents formats. Une classe de flux ne peut être exportée correctement que dans le format auquel elle est destinée, en raison des [directives](./directives.mdx) et des autres particularités propres à chaque format.
+
+Pour appliquer le format requis, remplacez simplement la propriété `$format` dans la classe du flux :
+
+```php source="docs/snippets/create-feeds-feed-format.php" lines="5-"
+namespace App\Feeds;
+
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Json;
+
+    public function builder(): Builder
+    {
+        //
+    }
+}
+```
+
+## Voir aussi
+
+- [Génération et planification](./generation.mdx)
+- [Formats pris en charge](./supported-formats.mdx)
+- [Préréglages](./presets.mdx)

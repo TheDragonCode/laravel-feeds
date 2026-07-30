@@ -6,173 +6,67 @@ on:
             - main
     workflow_dispatch:
 
-permissions: {}
+concurrency:
+    group: pages
+    cancel-in-progress: false
 
-env:
-    ALGOLIA_ARTIFACT: algolia-indexes-LARAVEL-FEEDS.zip
-    ALGOLIA_INDEX_NAME: laravel-feeds
-    ARTIFACT_DOCS: webHelpLARAVEL-FEEDS2-all.zip
-    ARTIFACT_INDEXES: search-indexes
-    CONFIG_JSON_PRODUCT: LARAVEL-FEEDS
-    CONFIG_JSON_VERSION: main
-    INSTANCE: docs/laravel-feeds
-    DOMAIN_NAME: feeds.dragon-code.pro
-    BUILDER_VERSION: 2025.04.8412
+permissions: {}
 
 jobs:
     build:
-        name: Build application
+        name: Build Docusaurus
         permissions:
             contents: read
+            pages: write
         runs-on: ubuntu-latest
+        timeout-minutes: 10
+        defaults:
+            run:
+                working-directory: docs
 
         steps:
-            -   uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+            -   name: Checkout code
+                uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
                 with:
-                    fetch-depth: 0
+                    persist-credentials: false
+
+            -   name: Setup Node.js
+                uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+                with:
+                    node-version-file: docs/.node-version
+                    cache: npm
+                    cache-dependency-path: docs/package-lock.json
+
+            -   name: Setup GitHub Pages
+                uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
+
+            -   name: Install dependencies
+                run: npm ci
+
+            -   name: Type check
+                run: npm run typecheck
 
             -   name: Build documentation
-                uses: JetBrains/writerside-github-action@738910d7cf197d67188300d0e0f84b2e708db3cf
-                with:
-                    instance: ${{ env.INSTANCE }}
-                    artifact: ${{ env.ARTIFACT_DOCS }}
-                    docker-version: ${{ env.BUILDER_VERSION }}
+                run: npm run build
 
-            -   name: Upload artifacts
-                uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+            -   name: Upload GitHub Pages artifact
+                uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
                 with:
-                    name: docs
-                    path: |
-                        artifacts/${{ env.ARTIFACT_DOCS }}
-                        artifacts/report.json
-                    retention-days: 7
+                    path: docs/build
 
-            -   name: Upload search indexes
-                uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-                with:
-                    name: ${{ env.ARTIFACT_INDEXES }}
-                    path: artifacts/${{ env.ALGOLIA_ARTIFACT }}
-                    retention-days: 7
-
-    test:
+    deploy:
+        name: Deploy to GitHub Pages
         needs: build
-        name: Testing
-        permissions:
-            contents: read
-        runs-on: ubuntu-latest
-
-        steps:
-            -   name: Download docs artifact
-                uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
-                with:
-                    name: docs
-                    path: artifacts
-
-            -   name: Test documentation
-                uses: JetBrains/writerside-checker-action@79ff89902dcd3d5c5a3f26a79bc35830377f38c5
-                with:
-                    instance: ${{ env.INSTANCE }}
-
-    robots:
-        needs: build
-        name: Generate robots.txt
-        permissions: {}
-        runs-on: ubuntu-latest
-
-        steps:
-            -   name: Create robots.txt
-                run: |
-                    touch robots.txt
-                    echo "User-Agent: *" >> robots.txt
-                    echo "Disallow: " >> robots.txt
-                    echo "Host: https://${{ env.DOMAIN_NAME }}" >> robots.txt
-                    echo "Sitemap: https://${{ env.DOMAIN_NAME }}/sitemap.xml" >> robots.txt
-
-            -   name: Upload artifacts
-                uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-                with:
-                    name: robots
-                    path: robots.txt
-                    retention-days: 7
-
-    deploy-pages:
-        environment:
-            name: deploy
-            url: ${{ steps.deployment.outputs.page_url }}
-
-        needs:
-            - test
-            - robots
-
-        name: Deploy to pages
         permissions:
             id-token: write
             pages: write
         runs-on: ubuntu-latest
+        timeout-minutes: 10
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
 
         steps:
-            -   name: Download docs artifact
-                uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
-                with:
-                    name: docs
-
-            -   name: Download robots artifact
-                uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
-                with:
-                    name: robots
-
-            -   name: Unzip artifact
-                run: unzip -O UTF-8 -qq '${{ env.ARTIFACT_DOCS }}' -d dir
-
-            -   name: Move robots
-                run: |
-                    sudo mv robots.txt dir/robots.txt
-
-            -   name: Setup Pages
-                uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
-
-            -   name: Upload artifact
-                uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
-                with:
-                    path: dir
-
-            -   name: Deploy to GitHub Pages
+            -   name: Deploy documentation
                 id: deployment
                 uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128
-
-    deploy-indexes:
-        environment: deploy
-
-        needs:
-            - test
-        
-        name: Deploy to Algolia
-        permissions: {}
-        runs-on: ubuntu-latest
-        timeout-minutes: 3
-
-        container:
-            image: registry.jetbrains.team/p/writerside/builder/algolia-publisher:2.0.32-3@sha256:fae5a7ab5f11f23b5c08014e507d11149a4e6844c7e3acd1957671428709ae9b
-
-        steps:
-            -   name: Download search artifact
-                uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
-                with:
-                    name: ${{ env.ARTIFACT_INDEXES }}
-
-            -   name: Unzip artifact
-                run: unzip -O UTF-8 -qq '${{ env.ALGOLIA_ARTIFACT }}' -d ${{ env.ARTIFACT_INDEXES }}
-
-            -   name: Deploy to Algolia
-                env:
-                    ALGOLIA_APP_NAME: ${{ secrets.ALGOLIA_APPLICATION_ID }}
-                    ALGOLIA_KEY: ${{ secrets.ALGOLIA_KEY }}
-                run: |
-                    env algolia-key="$ALGOLIA_KEY" java -jar /opt/builder/help-publication-agent.jar \
-                    update-index \
-                    --application-name "$ALGOLIA_APP_NAME" \
-                    --index-name '${{ env.ALGOLIA_INDEX_NAME }}' \
-                    --product '${{ env.CONFIG_JSON_PRODUCT }}' \
-                    --version '${{ env.CONFIG_JSON_VERSION }}' \
-                    --index-directory ${{ env.ARTIFACT_INDEXES }}/ \
-                    2>&1 | tee algolia-update-index-log.txt

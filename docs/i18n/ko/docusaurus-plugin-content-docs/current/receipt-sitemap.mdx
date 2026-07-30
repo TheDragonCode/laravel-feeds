@@ -1,0 +1,151 @@
+---
+title: "사이트맵"
+description: "제품 사이트맵 피드를 만드는 단계별 가이드"
+---
+
+[← 이전](./extending-functionality.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./receipt-instagram.mdx)
+
+# 사이트맵
+
+이 레시피에서는 Laravel Feeds로 제품 사이트맵 피드를 만드는 과정을 설명합니다. 다음 작업을 수행합니다.
+
+- 필요한 클래스를 생성합니다.
+- 피드 로직을 구현합니다.
+- 파일 시스템을 통해 파일을 공개합니다.
+- 필요하면 루트 `sitemap.xml` 파일에서 생성된 사이트맵을 참조합니다.
+
+## 파일 생성 {/* #create_files */}
+
+다음 콘솔 명령으로 피드와 항목 클래스를 생성하십시오.
+
+```bash
+php artisan make:feed Sitemaps/Product
+```
+
+## 피드 채우기 {/* #filling_the_feed */}
+
+생성된 클래스에서 `extends Feed`를 `extends SitemapFeedPreset`으로 바꾸십시오.
+
+```php source="docs/snippets/receipt-sitemap-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds\Sitemaps;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\SitemapFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends SitemapFeedPreset
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->url($model->url)
+            ->modifiedAt($model->updated_at) // By default, $model->updated_at
+            ->priority(0.9); // By default, 0.9
+    }
+
+    public function filename(): string
+    {
+        return 'sitemaps/' . parent::filename();
+    }
+}
+```
+
+`FeedItem` 클래스에서 사용할 수 있는 메서드:
+
+- `url` - 필수로 지정해야 합니다.
+- `modifiedAt` - 기본값은 `$model->updated_at`입니다.
+- `priority` - 기본값은 `0.9`입니다.
+
+## 활성화 {/* #activate */}
+
+생성된 [operation 또는 마이그레이션](./create-feeds.mdx) 파일을 검토한 다음 적절한 콘솔 명령을 실행하십시오.
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## 링크 {/* #links */}
+
+[config/filesystems.php](https://github.com/laravel/laravel/blob/12.x/config/filesystems.php#L76-L78) 구성 파일에 사이트맵이 있는 디렉터리를 가리키는 파일 시스템 디스크를 추가하십시오.
+
+```php source="docs/snippets/receipt-sitemap-links.php" lines="5-"
+return [
+    'links' => [
+        public_path('storage')  => storage_path('app/public'),
+        public_path('sitemaps') => storage_path('app/public/sitemaps'),
+    ],
+];
+```
+
+그런 다음 브라우저에서 파일에 접근할 수 있도록 공개 심볼릭 링크를 만드십시오.
+
+```bash
+php artisan storage:link
+```
+
+## 피드 생성 {/* #generate_feed */}
+
+다음 콘솔 명령을 실행하여 피드를 생성하십시오.
+
+```bash
+php artisan feed:generate
+```
+
+## 루트 sitemap.xml에 링크 추가 {/* #adding_a_link_to_the_general_sitemap_xml_file */}
+
+다른 사이트맵을 참조하는 루트 sitemap.xml 파일을 관리한다면 다음과 같은 항목을 추가하십시오.
+
+```xml source="docs/snippets/receipt-sitemap-root.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <sitemap>
+        <loc>https://example.com/sitemaps/products.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>https://example.com/sitemaps/other-sitemaps.xml</loc>
+    </sitemap>
+</sitemapindex>
+```
+
+## 결과 {/* #result */}
+
+제품용으로 생성된 sitemap.xml은 다음과 같습니다.
+
+```xml source="docs/snippets/receipt-sitemap-feed.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+
+<url>
+  <loc>https://example.com/products/ea-voluptatum-fuga-odio-expedita</loc>
+  <lastmod>2025-08-31T20:00:00+00:00</lastmod>
+  <priority>0.9</priority>
+</url>
+<url>
+  <loc>https://example.com/products/dolores-rerum-ut-consequatur-in</loc>
+  <lastmod>2025-08-30T19:00:00+00:00</lastmod>
+  <priority>0.9</priority>
+</url>
+
+</urlset>
+```
+
+## 관련 문서
+
+- [프리셋](./presets.mdx)
+- [Yandex 레시피](./receipt-yandex.mdx)
+- [RSS Atom 레시피](./receipt-rss-atom.mdx)

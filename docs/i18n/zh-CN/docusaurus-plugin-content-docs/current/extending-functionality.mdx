@@ -1,0 +1,276 @@
+---
+title: "扩展功能"
+description: "使用条件子句、宏和自定义转换器扩展 Feed"
+---
+
+[← 上一页](./events.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./receipt-sitemap.mdx)
+
+# 扩展功能
+
+## 条件子句 {/* #conditional_clauses */}
+
+:::note
+`Feed`、`FeedInfo` 和 `FeedItem` 类均可使用条件子句。
+:::
+
+有时需要根据另一个条件决定是否向 Feed 应用某些子句。例如，只有给定输入值存在或另一个属性有值时，才应用 where 语句。可以使用 `when` 方法实现：
+
+```php source="docs/snippets/advanced-extends-conditional.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->when($model->category, function (ProductFeedItem $item) {
+                $item->title .= ' (first)';
+            });
+    }
+}
+```
+
+`when` 方法只在第一个参数为 `true` 时执行给定闭包。如果第一个参数为 `false`，闭包不会执行。因此在上面的示例中，只有模型存在 `category` 字段且其计算结果为 `true` 时，传给 `when` 方法的闭包才会运行。
+
+可以将另一个闭包作为 `when` 方法的第三个参数。只有第一个参数的计算结果为 `false` 时，该闭包才会执行。以下示例用它配置模型标题后缀：
+
+```php source="docs/snippets/advanced-extends-conditional-both.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->when(
+                value   : $model->category,
+                callback: function (ProductFeedItem $item) {
+                    $item->title .= ' (first)';
+                },
+                default : function (ProductFeedItem $item) {
+                    $item->title .= ' (second)';
+                },
+            );
+    }
+}
+```
+
+还可以使用反向方法 `unless`，它的处理逻辑正好相反。
+
+```php source="docs/snippets/advanced-extends-conditional-unless.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->unless(
+                value   : $model->category,
+                callback: function (ProductFeedItem $item) {
+                    $item->title .= ' (second)';
+                },
+                default : function (ProductFeedItem $item) {
+                    $item->title .= ' (first)';
+                },
+            );
+    }
+}
+```
+
+## 宏功能 {/* #macroable */}
+
+`Feed`、`FeedItem` 和 `FeedInfo` 支持宏，因此可以在运行时为它们添加方法。`macro` 方法接收一个闭包，调用宏时会执行该闭包。宏闭包可以通过 `$this` 访问 Feed 的其他方法，就像它是 Feed 类的真实方法一样。
+
+例如，以下代码为 `Feed` 类添加 `customFilename` 方法：
+
+```php source="docs/snippets/advanced-extends-macro-feed.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        Feed::macro('customFilename', function (Feed $feed, string $name) {
+            $this->filename = $name;
+
+            return $this;
+        });
+    }
+}
+```
+
+以下是 `FeedInfo` 和 `FeedItem` 的示例：
+
+```php source="docs/snippets/advanced-extends-macro-info.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        FeedInfo::macro('titleWithPrefix', function () {
+            return sprintf('[%s]: %s', date('Y'), $this->title);
+        });
+    }
+}
+
+class ProductFeedInfo extends FeedInfo
+{
+    public function __construct(
+        protected string $title,
+    ) {}
+
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->titleWithPrefix(),
+        ];
+    }
+}
+```
+
+```php source="docs/snippets/advanced-extends-macro-item.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        FeedItem::macro('titleWithPrefix', function () {
+            return sprintf('[%s]: %s]', $this->model->getKey(), $this->model->title);
+        });
+    }
+}
+
+class ProductFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->titleWithPrefix(),
+        ];
+    }
+}
+```
+
+## 自定义转换器 {/* #custom_transformers */}
+
+转换器会在转换程序序列化受支持的值之前对其进行转换。在 `config/feeds.php` 中注册转换器类名。Laravel 通过服务容器解析每个类，因此支持构造函数依赖和自定义容器绑定。
+
+```php source="docs/snippets/advanced-extends-transformer.php" lines="5-"
+namespace App\Feeds\Transformers;
+
+use App\Services\PriceFormatter;
+use DragonCode\LaravelFeed\Contracts\Transformer;
+
+class PriceTransformer implements Transformer
+{
+    public function __construct(
+        protected PriceFormatter $formatter,
+    ) {}
+
+    public function allow(mixed $value): bool
+    {
+        return is_float($value);
+    }
+
+    public function transform(mixed $value): string
+    {
+        return $this->formatter->format($value);
+    }
+}
+```
+
+将转换器添加到配置列表中的内置转换器之后：
+
+```php source="docs/snippets/advanced-extends-transformer-config.php"
+<?php
+
+declare(strict_types=1);
+
+use App\Feeds\Transformers\PriceTransformer;
+use DragonCode\LaravelFeed\Transformers;
+
+return [
+    'transformers' => [
+        Transformers\BoolTransformer::class,
+        Transformers\DateTimeTransformer::class,
+        Transformers\EnumTransformer::class,
+        PriceTransformer::class,
+    ],
+];
+```
+
+已配置的转换器按声明顺序运行。每次调用 `allow()` 都会接收当前值，包括之前转换器所做的更改；每个匹配的转换器都可以更新该值。容器解析完成后会移除重复项，并保留首次出现的位置。
+
+转换程序只构建一次这个有序管道，并在该次 Feed 生成过程中对每个字段复用相同的转换器实例。
+
+### 前置 Feed 转换器 {/* #prepend_transformers */}
+
+覆盖 Feed 的 `transformers()` 方法可以为该 Feed 前置转换器。该方法返回转换器类名，Laravel 会像处理全局列表一样通过服务容器解析它们。
+
+例如，定义一个使用 Feed 专用格式的日期转换器：
+
+```php source="docs/snippets/advanced-extends-transformer-prepend.php" lines="5-"
+namespace App\Feeds\Transformers;
+
+use DragonCode\LaravelFeed\Transformers\DateTimeTransformer;
+
+class FeedDateTimeTransformer extends DateTimeTransformer
+{
+    protected function format(): string
+    {
+        return 'Y-m-d';
+    }
+}
+```
+
+然后从 Feed 中返回该转换器：
+
+```php source="docs/snippets/advanced-extends-transformer-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Transformers\FeedDateTimeTransformer;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class ProductFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function transformers(): array
+    {
+        return [
+            FeedDateTimeTransformer::class,
+        ];
+    }
+}
+```
+
+前置列表不会替换 `config/feeds.php` 中的全局列表。转换器按以下顺序运行：
+
+1. `transformers()` 返回的前置转换器。
+2. `config/feeds.php` 中的全局转换器。
+3. 所选输出格式所需的转换程序专用转换器。
+
+因此，前置转换器可以先格式化日期。全局日期转换器收到生成的字符串后会跳过它，而其他全局转换器仍会处理匹配的字段。
+
+## 另请参阅
+
+- [创建 Feed](./create-feeds.mdx)
+- [Eloquent](./eloquent.mdx)
+- [指令](./directives.mdx)

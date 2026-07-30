@@ -1,0 +1,560 @@
+{
+  "theme.ErrorPageContent.title": {
+    "message": "Cette page a planté.",
+    "description": "Titre de la page de secours affichée après un plantage"
+  },
+  "theme.BackToTopButton.buttonAriaLabel": {
+    "message": "Retour au début de la page",
+    "description": "Libellé ARIA du bouton de retour en haut de la page"
+  },
+  "theme.blog.archive.title": {
+    "message": "Archive",
+    "description": "Titre de la page et du bloc principal des archives du blog"
+  },
+  "theme.blog.archive.description": {
+    "message": "Archive",
+    "description": "Description de la page et du bloc principal des archives du blog"
+  },
+  "theme.blog.paginator.navAriaLabel": {
+    "message": "Pagination de la liste des articles du blog",
+    "description": "Libellé ARIA de la pagination du blog"
+  },
+  "theme.blog.paginator.newerEntries": {
+    "message": "Nouvelles entrées",
+    "description": "Libellé permettant d’accéder aux articles plus récents du blog (page précédente)"
+  },
+  "theme.blog.paginator.olderEntries": {
+    "message": "Anciennes entrées",
+    "description": "Libellé permettant d’accéder aux articles plus anciens du blog (page suivante)"
+  },
+  "theme.blog.post.paginator.navAriaLabel": {
+    "message": "Pagination des articles du blog",
+    "description": "Libellé ARIA de la pagination des articles du blog"
+  },
+  "theme.blog.post.paginator.newerPost": {
+    "message": "Article plus récent",
+    "description": "Libellé du bouton permettant d’accéder à l’article plus récent ou précédent"
+  },
+  "theme.blog.post.paginator.olderPost": {
+    "message": "Article plus ancien",
+    "description": "Libellé du bouton permettant d’accéder à l’article plus ancien ou suivant"
+  },
+  "theme.tags.tagsPageLink": {
+    "message": "Voir tous les tags",
+    "description": "Libellé du lien vers la page de liste des tags"
+  },
+  "theme.colorToggle.ariaLabel.mode.system": {
+    "message": "mode système",
+    "description": "Nom du mode de couleur système"
+  },
+  "theme.colorToggle.ariaLabel.mode.light": {
+    "message": "mode clair",
+    "description": "Nom du mode de couleur clair"
+  },
+  "theme.colorToggle.ariaLabel.mode.dark": {
+    "message": "mode sombre",
+    "description": "Nom du mode de couleur sombre"
+  },
+  "theme.colorToggle.ariaLabel": {
+    "message": "Basculer entre le mode sombre et clair (actuellement {mode})",
+    "description": "Libellé ARIA du sélecteur de mode de couleur"
+  },
+  "theme.docs.breadcrumbs.navAriaLabel": {
+    "message": "Fil d'Ariane",
+    "description": "Libellé ARIA du fil d’Ariane"
+  },
+  "theme.docs.paginator.navAriaLabel": {
+    "message": "Pages de documentation",
+    "description": "Libellé ARIA de la pagination de la documentation"
+  },
+  "theme.docs.paginator.previous": {
+    "message": "Précédent",
+    "description": "Libellé permettant d’accéder au document précédent"
+  },
+  "theme.docs.paginator.next": {
+    "message": "Suivant",
+    "description": "Libellé permettant d’accéder au document suivant"
+  },
+  "theme.docs.tagDocListPageTitle.nDocsTagged": {
+    "message": "Un document tagué|{count} documents tagués",
+    "description": "Libellé « {count} documents tagués » avec les formes plurielles séparées par « | ». Utilisez autant de formes que la langue en prend en charge (voir https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.docs.tagDocListPageTitle": {
+    "message": "{nDocsTagged} avec \"{tagName}\"",
+    "description": "Titre de la page associée à un tag de documentation"
+  },
+  "theme.docs.versionBadge.label": {
+    "message": "Version: {versionLabel}"
+  },
+  "theme.docs.versions.unreleasedVersionLabel": {
+    "message": "Ceci est la documentation de la prochaine version {versionLabel} de {siteTitle}.",
+    "description": "Libellé indiquant que la version de la documentation consultée n’est pas publiée"
+  },
+  "theme.docs.versions.unmaintainedVersionLabel": {
+    "message": "Ceci est la documentation de {siteTitle} {versionLabel}, qui n'est plus activement maintenue.",
+    "description": "Libellé indiquant que la version de la documentation consultée n’est plus maintenue"
+  },
+  "theme.docs.versions.latestVersionSuggestionLabel": {
+    "message": "Pour une documentation à jour, consultez la {latestVersionLink} ({versionLabel}).",
+    "description": "Libellé invitant à consulter la dernière version"
+  },
+  "theme.docs.versions.latestVersionLinkLabel": {
+    "message": "dernière version",
+    "description": "Libellé du lien vers la dernière version"
+  },
+  "theme.common.editThisPage": {
+    "message": "Éditer cette page",
+    "description": "Libellé du lien permettant de modifier la page actuelle"
+  },
+  "theme.common.headingLinkTitle": {
+    "message": "Lien direct vers {heading}",
+    "description": "Titre du lien vers un en-tête"
+  },
+  "theme.lastUpdated.atDate": {
+    "message": " le {date}",
+    "description": "Mots indiquant la date de la dernière mise à jour de la page"
+  },
+  "theme.lastUpdated.byUser": {
+    "message": " par {user}",
+    "description": "Mots indiquant l’auteur de la dernière mise à jour de la page"
+  },
+  "theme.lastUpdated.lastUpdatedAtBy": {
+    "message": "Dernière mise à jour{atDate}{byUser}",
+    "description": "Phrase indiquant la date et l’auteur de la dernière mise à jour de la page"
+  },
+  "theme.navbar.mobileVersionsDropdown.label": {
+    "message": "Versions",
+    "description": "Libellé de la liste déroulante des versions dans la barre de navigation mobile"
+  },
+  "theme.NotFound.title": {
+    "message": "Page introuvable",
+    "description": "Titre de la page 404"
+  },
+  "theme.tags.tagsListLabel": {
+    "message": "Tags :",
+    "description": "Libellé affiché à côté d’une liste de tags"
+  },
+  "theme.admonition.caution": {
+    "message": "attention",
+    "description": "Libellé par défaut du bloc Caution (:::caution)"
+  },
+  "theme.admonition.danger": {
+    "message": "danger",
+    "description": "Libellé par défaut du bloc Danger (:::danger)"
+  },
+  "theme.admonition.info": {
+    "message": "info",
+    "description": "Libellé par défaut du bloc Info (:::info)"
+  },
+  "theme.admonition.note": {
+    "message": "remarque",
+    "description": "Libellé par défaut du bloc Note (:::note)"
+  },
+  "theme.admonition.tip": {
+    "message": "astuce",
+    "description": "Libellé par défaut du bloc Tip (:::tip)"
+  },
+  "theme.admonition.warning": {
+    "message": "attention",
+    "description": "Libellé par défaut du bloc Warning (:::warning)"
+  },
+  "theme.AnnouncementBar.closeButtonAriaLabel": {
+    "message": "Fermer",
+    "description": "Libellé ARIA du bouton de fermeture de la barre d’annonce"
+  },
+  "theme.blog.sidebar.navAriaLabel": {
+    "message": "Navigation des articles récents du blog",
+    "description": "Libellé ARIA des articles récents dans la barre latérale du blog"
+  },
+  "theme.DocSidebarItem.expandCategoryAriaLabel": {
+    "message": "Développer la catégorie '{label}' de la barre latérale",
+    "description": "Libellé ARIA permettant de développer la catégorie de la barre latérale"
+  },
+  "theme.DocSidebarItem.collapseCategoryAriaLabel": {
+    "message": "Réduire la catégorie '{label}' de la barre latérale",
+    "description": "Libellé ARIA permettant de réduire la catégorie de la barre latérale"
+  },
+  "theme.IconExternalLink.ariaLabel": {
+    "message": "(s’ouvre dans un nouvel onglet)",
+    "description": "Libellé ARIA de l’icône de lien externe"
+  },
+  "theme.NavBar.navAriaLabel": {
+    "message": "Navigation principale",
+    "description": "Libellé ARIA de la navigation principale"
+  },
+  "theme.navbar.mobileLanguageDropdown.label": {
+    "message": "Langues",
+    "description": "Libellé de la liste déroulante de sélection de langue sur mobile"
+  },
+  "theme.NotFound.p1": {
+    "message": "Nous n'avons pas trouvé ce que vous recherchez.",
+    "description": "Premier paragraphe de la page 404"
+  },
+  "theme.NotFound.p2": {
+    "message": "Veuillez contacter le propriétaire du site contenant le lien d’origine et lui signaler que ce lien ne fonctionne plus.",
+    "description": "Deuxième paragraphe de la page 404"
+  },
+  "theme.TOCCollapsible.toggleButtonLabel": {
+    "message": "Sur cette page",
+    "description": "Libellé du bouton de la table des matières réductible"
+  },
+  "theme.blog.post.readMore": {
+    "message": "Lire la suite",
+    "description": "Libellé du lien entre un extrait et l’article complet du blog"
+  },
+  "theme.blog.post.readMoreLabel": {
+    "message": "En savoir plus sur {title}",
+    "description": "Libellé ARIA du lien entre un extrait et l’article complet du blog"
+  },
+  "theme.blog.post.readingTime.plurals": {
+    "message": "Une minute de lecture|{readingTime} minutes de lecture",
+    "description": "Libellé « {readingTime} min de lecture » avec les formes plurielles séparées par « | ». Utilisez autant de formes que la langue en prend en charge (voir https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.CodeBlock.copy": {
+    "message": "Copier",
+    "description": "Libellé du bouton de copie dans les blocs de code"
+  },
+  "theme.CodeBlock.copied": {
+    "message": "Copié",
+    "description": "Libellé du bouton après la copie dans les blocs de code"
+  },
+  "theme.CodeBlock.copyButtonAriaLabel": {
+    "message": "Copier le code",
+    "description": "Libellé ARIA du bouton de copie des blocs de code"
+  },
+  "theme.CodeBlock.wordWrapToggle": {
+    "message": "Activer/désactiver le retour à la ligne",
+    "description": "Attribut title du bouton de retour à la ligne dans les blocs de code"
+  },
+  "theme.docs.breadcrumbs.home": {
+    "message": "Page d'accueil",
+    "description": "Libellé ARIA de la page d’accueil dans le fil d’Ariane"
+  },
+  "theme.docs.sidebar.collapseButtonTitle": {
+    "message": "Réduire le menu latéral",
+    "description": "Attribut title du bouton de réduction de la barre latérale de la documentation"
+  },
+  "theme.docs.sidebar.collapseButtonAriaLabel": {
+    "message": "Réduire le menu latéral",
+    "description": "Attribut title du bouton de réduction de la barre latérale de la documentation"
+  },
+  "theme.docs.sidebar.navAriaLabel": {
+    "message": "Barre latérale de la documentation",
+    "description": "Libellé ARIA de la navigation dans la barre latérale"
+  },
+  "theme.docs.sidebar.closeSidebarButtonAriaLabel": {
+    "message": "Fermer la barre de navigation",
+    "description": "Libellé ARIA du bouton de fermeture de la barre latérale mobile"
+  },
+  "theme.docs.sidebar.toggleSidebarButtonAriaLabel": {
+    "message": "Ouvrir/fermer la barre de navigation",
+    "description": "Libellé ARIA du bouton de menu de la navigation mobile"
+  },
+  "theme.navbar.mobileSidebarSecondaryMenu.backButtonLabel": {
+    "message": "← Retour au menu principal",
+    "description": "Libellé du bouton de retour au menu principal dans le menu secondaire de la barre de navigation mobile, notamment utilisé pour la barre latérale de la documentation"
+  },
+  "theme.navbar.mobileDropdown.collapseButton.expandAriaLabel": {
+    "message": "Développer la liste déroulante",
+    "description": "Libellé ARIA du bouton permettant de développer un élément déroulant de la barre de navigation mobile"
+  },
+  "theme.navbar.mobileDropdown.collapseButton.collapseAriaLabel": {
+    "message": "Réduire la liste déroulante",
+    "description": "Libellé ARIA du bouton permettant de réduire un élément déroulant de la barre de navigation mobile"
+  },
+  "theme.docs.sidebar.expandButtonTitle": {
+    "message": "Déplier le menu latéral",
+    "description": "Libellé ARIA et attribut title du bouton de développement de la barre latérale de la documentation"
+  },
+  "theme.docs.sidebar.expandButtonAriaLabel": {
+    "message": "Déplier le menu latéral",
+    "description": "Libellé ARIA et attribut title du bouton de développement de la barre latérale de la documentation"
+  },
+  "theme.SearchBar.seeAll": {
+    "message": "Voir les {count} résultats"
+  },
+  "theme.SearchPage.documentsFound.plurals": {
+    "message": "Un document trouvé|{count} documents trouvés",
+    "description": "Libellé pluralisé pour « {count} documents trouvés ». Utilisez autant de formes plurielles (séparées par « | ») que la langue en prend en charge (voir https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.SearchPage.existingResultsTitle": {
+    "message": "Résultats de recherche pour « {query} »",
+    "description": "Titre de la page de recherche lorsque la requête n’est pas vide"
+  },
+  "theme.SearchPage.emptyResultsTitle": {
+    "message": "Rechercher dans la documentation",
+    "description": "Titre de la page de recherche lorsque la requête est vide"
+  },
+  "theme.SearchPage.inputPlaceholder": {
+    "message": "Saisissez votre recherche ici",
+    "description": "Texte indicatif du champ de la page de recherche"
+  },
+  "theme.SearchPage.inputLabel": {
+    "message": "Rechercher",
+    "description": "Libellé ARIA du champ de la page de recherche"
+  },
+  "theme.SearchPage.algoliaLabel": {
+    "message": "Propulsé par Algolia",
+    "description": "Libellé descriptif de la mention d’Algolia"
+  },
+  "theme.SearchPage.noResultsText": {
+    "message": "Aucun résultat trouvé",
+    "description": "Paragraphe affiché lorsque la recherche ne renvoie aucun résultat"
+  },
+  "theme.SearchPage.fetchingNewResults": {
+    "message": "Chargement de nouveaux résultats...",
+    "description": "Paragraphe affiché pendant le chargement de nouveaux résultats"
+  },
+  "theme.SearchBar.label": {
+    "message": "Rechercher",
+    "description": "Libellé ARIA et texte indicatif du bouton de recherche"
+  },
+  "theme.SearchModal.searchBox.resetButtonTitle": {
+    "message": "Effacer la requête",
+    "description": "Libellé et libellé ARIA du bouton de réinitialisation du champ de recherche"
+  },
+  "theme.SearchModal.searchBox.cancelButtonText": {
+    "message": "Annuler",
+    "description": "Libellé et libellé ARIA du bouton d’annulation de la recherche"
+  },
+  "theme.SearchModal.searchBox.placeholderText": {
+    "message": "Rechercher dans la documentation",
+    "description": "Texte indicatif du champ de recherche principal"
+  },
+  "theme.SearchModal.searchBox.placeholderTextAskAi": {
+    "message": "Poser une autre question...",
+    "description": "Texte indicatif en mode question à l’IA"
+  },
+  "theme.SearchModal.searchBox.placeholderTextAskAiStreaming": {
+    "message": "Réponse en cours...",
+    "description": "Texte indicatif du champ de recherche pendant la transmission d’une réponse par l’IA"
+  },
+  "theme.SearchModal.searchBox.enterKeyHint": {
+    "message": "rechercher",
+    "description": "Indication de la touche Entrée du champ de recherche"
+  },
+  "theme.SearchModal.searchBox.enterKeyHintAskAi": {
+    "message": "envoyer",
+    "description": "Indication de la touche Entrée du champ de question à l’IA"
+  },
+  "theme.SearchModal.searchBox.searchInputLabel": {
+    "message": "Rechercher",
+    "description": "Libellé ARIA du champ de recherche"
+  },
+  "theme.SearchModal.searchBox.backToKeywordSearchButtonText": {
+    "message": "Retour à la recherche par mots-clés",
+    "description": "Texte du bouton de retour à la recherche par mots-clés"
+  },
+  "theme.SearchModal.searchBox.backToKeywordSearchButtonAriaLabel": {
+    "message": "Retour à la recherche par mots-clés",
+    "description": "Libellé ARIA du bouton de retour à la recherche par mots-clés"
+  },
+  "theme.SearchModal.startScreen.recentSearchesTitle": {
+    "message": "Recherches récentes",
+    "description": "Titre des recherches récentes"
+  },
+  "theme.SearchModal.startScreen.noRecentSearchesText": {
+    "message": "Aucune recherche récente",
+    "description": "Texte affiché en l’absence de recherches récentes"
+  },
+  "theme.SearchModal.startScreen.saveRecentSearchButtonTitle": {
+    "message": "Enregistrer cette recherche",
+    "description": "Titre du bouton d’enregistrement d’une recherche récente"
+  },
+  "theme.SearchModal.startScreen.removeRecentSearchButtonTitle": {
+    "message": "Supprimer cette recherche de l’historique",
+    "description": "Titre du bouton de suppression d’une recherche de l’historique"
+  },
+  "theme.SearchModal.startScreen.favoriteSearchesTitle": {
+    "message": "Favoris",
+    "description": "Titre des recherches favorites"
+  },
+  "theme.SearchModal.startScreen.removeFavoriteSearchButtonTitle": {
+    "message": "Supprimer cette recherche des favoris",
+    "description": "Titre du bouton de suppression d’une recherche des favoris"
+  },
+  "theme.SearchModal.startScreen.recentConversationsTitle": {
+    "message": "Conversations récentes",
+    "description": "Titre des conversations récentes"
+  },
+  "theme.SearchModal.startScreen.removeRecentConversationButtonTitle": {
+    "message": "Supprimer cette conversation de l’historique",
+    "description": "Titre du bouton de suppression d’une conversation de l’historique"
+  },
+  "theme.SearchModal.errorScreen.titleText": {
+    "message": "Impossible de charger les résultats",
+    "description": "Titre de l’écran d’erreur"
+  },
+  "theme.SearchModal.errorScreen.helpText": {
+    "message": "Vérifiez votre connexion réseau.",
+    "description": "Texte d’aide de l’écran d’erreur"
+  },
+  "theme.SearchModal.resultsScreen.askAiPlaceholder": {
+    "message": "Demander à l’IA : ",
+    "description": "Texte indicatif du champ de question à l’IA"
+  },
+  "theme.SearchModal.askAiScreen.disclaimerText": {
+    "message": "Les réponses sont générées par l’IA et peuvent contenir des erreurs. Veuillez les vérifier.",
+    "description": "Avertissement relatif aux réponses de l’IA"
+  },
+  "theme.SearchModal.askAiScreen.relatedSourcesText": {
+    "message": "Sources associées",
+    "description": "Texte des sources associées"
+  },
+  "theme.SearchModal.askAiScreen.thinkingText": {
+    "message": "Réflexion en cours...",
+    "description": "Texte affiché pendant la réflexion de l’IA"
+  },
+  "theme.SearchModal.askAiScreen.copyButtonText": {
+    "message": "Copier",
+    "description": "Texte du bouton de copie"
+  },
+  "theme.SearchModal.askAiScreen.copyButtonCopiedText": {
+    "message": "Copié !",
+    "description": "Texte du bouton de copie après la copie"
+  },
+  "theme.SearchModal.askAiScreen.copyButtonTitle": {
+    "message": "Copier",
+    "description": "Titre du bouton de copie"
+  },
+  "theme.SearchModal.askAiScreen.likeButtonTitle": {
+    "message": "J’aime",
+    "description": "Titre du bouton « J’aime »"
+  },
+  "theme.SearchModal.askAiScreen.dislikeButtonTitle": {
+    "message": "Je n’aime pas",
+    "description": "Titre du bouton « Je n’aime pas »"
+  },
+  "theme.SearchModal.askAiScreen.thanksForFeedbackText": {
+    "message": "Merci pour votre avis !",
+    "description": "Texte de remerciement pour l’avis"
+  },
+  "theme.SearchModal.askAiScreen.preToolCallText": {
+    "message": "Recherche en cours...",
+    "description": "Texte affiché avant l’appel de l’outil"
+  },
+  "theme.SearchModal.askAiScreen.duringToolCallText": {
+    "message": "Recherche de ",
+    "description": "Texte affiché pendant l’appel de l’outil"
+  },
+  "theme.SearchModal.askAiScreen.afterToolCallText": {
+    "message": "Recherche effectuée pour ",
+    "description": "Texte affiché après l’appel de l’outil"
+  },
+  "theme.SearchModal.footer.selectText": {
+    "message": "sélectionner",
+    "description": "Texte de sélection dans le pied de page"
+  },
+  "theme.SearchModal.footer.submitQuestionText": {
+    "message": "envoyer la question",
+    "description": "Texte d’envoi d’une question dans le pied de page"
+  },
+  "theme.SearchModal.footer.selectKeyAriaLabel": {
+    "message": "Touche Entrée",
+    "description": "Libellé ARIA de la touche de sélection dans le pied de page"
+  },
+  "theme.SearchModal.footer.navigateText": {
+    "message": "naviguer",
+    "description": "Texte de navigation dans le pied de page"
+  },
+  "theme.SearchModal.footer.navigateUpKeyAriaLabel": {
+    "message": "Flèche vers le haut",
+    "description": "Libellé ARIA de la touche de navigation vers le haut"
+  },
+  "theme.SearchModal.footer.navigateDownKeyAriaLabel": {
+    "message": "Flèche vers le bas",
+    "description": "Libellé ARIA de la touche de navigation vers le bas"
+  },
+  "theme.SearchModal.footer.closeText": {
+    "message": "fermer",
+    "description": "Texte de fermeture dans le pied de page"
+  },
+  "theme.SearchModal.footer.closeKeyAriaLabel": {
+    "message": "Touche Échap",
+    "description": "Libellé ARIA de la touche de fermeture"
+  },
+  "theme.SearchModal.footer.searchByText": {
+    "message": "Propulsé par",
+    "description": "Texte « Propulsé par » dans le pied de page"
+  },
+  "theme.SearchModal.footer.backToSearchText": {
+    "message": "Retour à la recherche",
+    "description": "Texte de retour à la recherche dans le pied de page"
+  },
+  "theme.SearchModal.noResultsScreen.noResultsText": {
+    "message": "Aucun résultat pour",
+    "description": "Texte affiché lorsqu’il n’y a aucun résultat"
+  },
+  "theme.SearchModal.noResultsScreen.suggestedQueryText": {
+    "message": "Essayez de rechercher",
+    "description": "Texte de la requête suggérée"
+  },
+  "theme.SearchModal.noResultsScreen.reportMissingResultsText": {
+    "message": "Cette requête devrait-elle renvoyer des résultats ?",
+    "description": "Texte permettant de signaler des résultats manquants"
+  },
+  "theme.SearchModal.noResultsScreen.reportMissingResultsLinkText": {
+    "message": "Signalez-le-nous.",
+    "description": "Texte du lien permettant de signaler des résultats manquants"
+  },
+  "theme.SearchModal.placeholder": {
+    "message": "Rechercher dans la documentation",
+    "description": "Texte indicatif du champ de la fenêtre contextuelle DocSearch"
+  },
+  "theme.blog.post.plurals": {
+    "message": "Un article|{count} articles",
+    "description": "Libellé « {count} articles » avec les formes plurielles séparées par « | ». Utilisez autant de formes que la langue en prend en charge (voir https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.blog.tagTitle": {
+    "message": "{nPosts} avec le tag « {tagName} »",
+    "description": "Titre de la page associée à un tag du blog"
+  },
+  "theme.blog.author.pageTitle": {
+    "message": "{authorName} - {nPosts}",
+    "description": "Titre de la page d’un auteur du blog"
+  },
+  "theme.blog.authorsList.pageTitle": {
+    "message": "Auteurs",
+    "description": "Titre de la page des auteurs"
+  },
+  "theme.blog.authorsList.viewAll": {
+    "message": "Voir tous les auteurs",
+    "description": "Libellé du lien vers la page des auteurs du blog"
+  },
+  "theme.blog.author.noPosts": {
+    "message": "Cet auteur n’a encore publié aucun article.",
+    "description": "Texte affiché pour les auteurs sans article de blog"
+  },
+  "theme.contentVisibility.unlistedBanner.title": {
+    "message": "Page non répertoriée",
+    "description": "Titre de la bannière de contenu non répertorié"
+  },
+  "theme.contentVisibility.unlistedBanner.message": {
+    "message": "Cette page n'est pas répertoriée. Les moteurs de recherche ne l'indexeront pas, et seuls les utilisateurs ayant un lien direct peuvent y accéder.",
+    "description": "Message de la bannière de contenu non répertorié"
+  },
+  "theme.contentVisibility.draftBanner.title": {
+    "message": "Brouillon",
+    "description": "Titre de la bannière de brouillon"
+  },
+  "theme.contentVisibility.draftBanner.message": {
+    "message": "Cette page est un brouillon. Elle est visible uniquement dans l’environnement de développement et exclue de la version de production.",
+    "description": "Message de la bannière de brouillon"
+  },
+  "theme.docs.DocCard.categoryDescription.plurals": {
+    "message": "1 élément|{count} éléments",
+    "description": "Description par défaut d’une carte de catégorie dans l’index généré, indiquant son nombre d’éléments"
+  },
+  "theme.ErrorPageContent.tryAgain": {
+    "message": "Réessayer",
+    "description": "Libellé du bouton permettant de relancer le rendu après la capture d’une erreur par la limite d’erreur React"
+  },
+  "theme.common.skipToMainContent": {
+    "message": "Aller au contenu principal",
+    "description": "Libellé d’accès rapide au contenu principal avec les touches Tab/Entrée pour l’accessibilité"
+  },
+  "theme.tags.tagsPageTitle": {
+    "message": "Tags",
+    "description": "Titre de la page de liste des tags"
+  }
+}

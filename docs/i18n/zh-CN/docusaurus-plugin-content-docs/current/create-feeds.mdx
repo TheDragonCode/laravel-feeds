@@ -1,0 +1,189 @@
+---
+title: "创建 Feed"
+description: "创建并填充 Feed、Feed 项和 Feed 信息类的说明"
+---
+
+import ThemedImage from '@theme/ThemedImage';
+
+[← 上一页](./installation.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./generation.mdx)
+
+# 创建 Feed
+
+:::note
+创建所需类最方便的方法是使用 [Laravel Idea](https://laravel-idea.com) 插件，并在 [PhpStorm](https://www.jetbrains.com/phpstorm/) 中运行。
+
+<ThemedImage
+  alt="Laravel Idea"
+  sources={{
+    light: '/img/laravel-idea.png',
+    dark: '/img/laravel-idea_dark.png',
+  }}
+/>
+:::
+
+要创建 Feed 类，请使用 `make:feed` 控制台命令：
+
+```bash
+php artisan make:feed <name>
+```
+
+该命令会创建 Feed 文件，例如 `app/Feeds/UserFeed.php`。
+
+该控制台命令还可以在创建 Feed 类的同时创建项类和信息类。使用 `--item` 和 `--info` 选项即可。
+
+```bash
+# Create a feed class and info class
+php artisan make:feed <name> --info
+
+# Create a feed class and item class
+php artisan make:feed <name> --item
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> --item --info
+```
+
+也可以使用短选项：
+
+```bash
+# Create a feed class and item class
+php artisan make:feed <name> -t
+
+# Create a feed class and info class
+php artisan make:feed <name> -i
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> -it
+```
+
+:::note
+创建 Feed 时，还会创建一个操作类或迁移，以便将它添加到数据库。
+
+如果项目使用 [**Laravel Deploy Operations**](https://deploy-operations.dragon-code.pro)，则会创建操作类；否则会创建迁移类。
+
+这是在数据库中添加和管理 Feed 信息所必需的。
+:::
+
+## 填充 Feed {/* #fill_feeds */}
+
+### Feed {/* #feed */}
+
+填充主 Feed 类。例如：
+
+```php source="docs/snippets/create-feeds-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+#### Feed 项 {/* #feed_item */}
+
+填充 Feed 项类。例如：
+
+```php source="docs/snippets/generation-feed-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+##### 可选值 {/* #optional_values */}
+
+当值不可用时，如需省略字段，请将 `DragonCode\LaravelFeed\Data\OptionalData` 实例作为该字段的值返回：
+
+```php source="docs/snippets/optional-values.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Data\OptionalData;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'id'   => $this->model->id,
+            'name' => $this->model->name,
+
+            'cityId' => $this->model->city?->id ?? new OptionalData,
+
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at ?? new OptionalData,
+        ];
+    }
+}
+```
+
+可选字段会从 JSON 和 JSON Lines 对象以及 XML 和 RSS 元素中移除，普通嵌套字段也会被移除。CSV 会保留列位置并写入空字段。
+
+如果应用使用 [Spatie Laravel Data](https://spatie.be/docs/laravel-data/v4/as-a-data-transfer-object/optional-properties)，也可以返回 `Spatie\LaravelData\Optional`。这两种可选值类都会被自动处理。
+
+```php
+use Spatie\LaravelData\Optional;
+
+'updatedAt' => $this->model->updated_at ?? Optional::create(),
+```
+
+## 文件格式 {/* #file_format */}
+
+:::tip
+可在[支持的格式](./supported-formats.mdx)页面查看可用格式列表。
+:::
+
+可以生成不同格式的 Feed。Feed 类只能正确导出为其目标格式，这是由[指令](./directives.mdx)和其他格式特性决定的。
+
+要应用所需格式，只需在 Feed 类中覆盖 `$format` 属性：
+
+```php source="docs/snippets/create-feeds-feed-format.php" lines="5-"
+namespace App\Feeds;
+
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Json;
+
+    public function builder(): Builder
+    {
+        //
+    }
+}
+```
+
+## 另请参阅
+
+- [生成与调度](./generation.mdx)
+- [支持的格式](./supported-formats.mdx)
+- [预设](./presets.mdx)

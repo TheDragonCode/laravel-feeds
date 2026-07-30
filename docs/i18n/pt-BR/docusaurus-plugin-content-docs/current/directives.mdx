@@ -1,0 +1,349 @@
+---
+title: "Diretivas"
+description: "Diretivas XML integradas para a saída dos feeds"
+---
+
+[← Anterior](./elements.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./eloquent.mdx)
+
+# Diretivas
+
+**Formatos:** XML
+
+:::note[Diretivas reservadas]
+- [`@attributes`](#_attributes)
+- [`@value`](#_value)
+- [`@cdata`](#_cdata)
+- [`@mixed`](#_mixed)
+- [`@custom`](#_custom)
+
+As diretivas só estão disponíveis durante a geração de feeds no formato XML.
+:::
+
+## @attributes {/* #_attributes */}
+
+Indica um array de atributos.
+
+Você pode usar uma chave chamada `@attributes` para adicionar atributos a um nó:
+
+```php source="docs/snippets/advanced-directive-attributes.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Info\AttributesDirectiveFeedInfo;
+use App\Feeds\Items\AttributesDirectiveFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class AttributesDirectiveFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function info(): FeedInfo
+    {
+        return new AttributesDirectiveFeedInfo;
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new AttributesDirectiveFeedItem($model);
+    }
+}
+```
+
+```php source="docs/snippets/advanced-directive-attributes-info.php" lines="5-"
+namespace App\Feeds\Info;
+
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+
+use function fake;
+
+class AttributesDirectiveFeedInfo extends FeedInfo
+{
+    public function toArray(): array
+    {
+        return [
+            'company' => [
+                '@attributes' => ['since' => fake()->year],
+            ],
+
+            'url' => config('app.url'),
+        ];
+    }
+}
+```
+
+```php source="docs/snippets/advanced-directive-attributes-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class AttributesDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->model->name,
+
+            'contact' => [
+                '@attributes' => [
+                    'email' => $this->model->email,
+                    'phone' => '555-000-' . $this->model->id,
+                ],
+            ],
+        ];
+    }
+}
+```
+
+Esse código produzirá o seguinte resultado:
+
+```xml source="docs/snippets/advanced-directive-attributes.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<attributes_directive>
+
+<company since="1994"/>
+<url>https://example.com</url>
+
+<user>
+  <name>User 1</name>
+  <contact email="user1@example.com" phone="555-000-1"/>
+</user>
+<user>
+  <name>User 2</name>
+  <contact email="user2@example.com" phone="555-000-2"/>
+</user>
+
+</attributes_directive>
+```
+
+## @value {/* #_value */}
+
+Indica o valor aplicável “como está”.
+
+:::tip
+O valor do campo `@value` deve ser uma string.
+:::
+
+Você pode usar uma chave chamada `@value` para adicionar um valor a um nó:
+
+```php source="docs/snippets/advanced-directive-value-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class ValueDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => [
+                '@value' => $this->model->name,
+            ],
+
+            'contact' => [
+                '@attributes' => ['type' => 'email'],
+                '@value'      => $this->model->email,
+            ],
+        ];
+    }
+}
+```
+
+Esse código produzirá o seguinte resultado:
+
+```xml source="docs/snippets/advanced-directive-value.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<value_directive>
+
+<user>
+  <name>User 1</name>
+  <contact type="email">user1@example.com</contact>
+</user>
+<user>
+  <name>User 2</name>
+  <contact type="email">user2@example.com</contact>
+</user>
+
+</value_directive>
+```
+
+## @cdata {/* #_cdata */}
+
+Permite usar marcação XML sem transformação.
+
+:::tip
+Também é possível envolver o valor de um nó em uma seção CDATA. Isso permite usar caracteres reservados.
+:::
+
+Você pode usar uma chave chamada `@cdata` para adicionar CDATA a um nó:
+
+```php source="docs/snippets/advanced-directive-cdata.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+use function sprintf;
+
+class CdataDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => [
+                '@cdata' => sprintf('<h1>%s</h1>', $this->model->name),
+            ],
+
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+Esse código produzirá o seguinte resultado:
+
+```xml source="docs/snippets/advanced-directive-cdata.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<cdata_directive>
+
+<user>
+  <name><![CDATA[<h1>User 1</h1>]]></name>
+  <email>user1@example.com</email>
+</user>
+<user>
+  <name><![CDATA[<h1>User 2</h1>]]></name>
+  <email>user2@example.com</email>
+</user>
+
+</cdata_directive>
+```
+
+## @mixed {/* #_mixed */}
+
+Permite usar marcação XML diretamente na estrutura do documento.
+
+Para inserir fragmentos XML “como estão”, use a diretiva `@mixed`:
+
+```php source="docs/snippets/advanced-directive-mixed.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class MixedDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->model->name,
+
+            '@mixed' => <<<XML
+                <some>
+                    <first>Foo</first>
+                    <second>{$this->model->email}</second>
+                </some>
+                XML,
+        ];
+    }
+}
+```
+
+Esse código produzirá o seguinte resultado:
+
+```xml source="docs/snippets/advanced-directive-mixed.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<mixed_directive>
+
+<user>
+  <name>User 1</name>
+  <some>
+    <first>Foo</first>
+    <second>user1@example.com</second>
+</some>
+</user>
+<user>
+  <name>User 2</name>
+  <some>
+    <first>Foo</first>
+    <second>user2@example.com</second>
+</some>
+</user>
+
+</mixed_directive>
+```
+
+## @custom {/* #_custom */}
+
+Permite listar um array de elementos com as mesmas chaves.
+
+Em alguns casos, você precisa inserir um array de elementos com os mesmos nomes.
+
+Para isso, adicione o símbolo `@` ao início do nome da chave:
+
+```php source="docs/snippets/advanced-directive-array.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+use function fake;
+
+class ArrayDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->model->name,
+
+            '@avatar' => [
+                fake()->imageUrl(),
+                fake()->imageUrl(),
+            ],
+
+            '@images' => [
+                [
+                    '@attributes' => ['name' => fake()->words(asText: true)],
+                    '@value'      => fake()->imageUrl(),
+                ],
+                [
+                    '@attributes' => ['name' => fake()->words(asText: true)],
+                    '@value'      => fake()->imageUrl(),
+                ],
+            ],
+        ];
+    }
+}
+```
+
+Esse código produzirá o seguinte resultado:
+
+```xml source="docs/snippets/advanced-directive-array.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<array_directive>
+
+<user>
+  <name>User 1</name>
+  <avatar>https://via.placeholder.com/640x480.png/00ffff?text=aut</avatar>
+  <avatar>https://via.placeholder.com/640x480.png/0022dd?text=et</avatar>
+  <images name="doloremque distinctio facere">https://via.placeholder.com/640x480.png/0099dd?text=ea</images>
+  <images name="fuga odio expedita">https://via.placeholder.com/640x480.png/00cc77?text=sint</images>
+</user>
+<user>
+  <name>User 2</name>
+  <avatar>https://via.placeholder.com/640x480.png/00ff99?text=est</avatar>
+  <avatar>https://via.placeholder.com/640x480.png/003300?text=non</avatar>
+  <images name="distinctio et aliquam">https://via.placeholder.com/640x480.png/0099aa?text=accusantium</images>
+  <images name="consequatur soluta nemo">https://via.placeholder.com/640x480.png/0099cc?text=ab</images>
+</user>
+
+</array_directive>
+```
+
+## Veja também
+
+- [Elementos](./elements.mdx)
+- [Formatos compatíveis](./supported-formats.mdx)
+- [Receita do Yandex](./receipt-yandex.mdx)

@@ -1,0 +1,560 @@
+{
+  "theme.ErrorPageContent.title": {
+    "message": "На гэтай старонцы адбыўся збой.",
+    "description": "Загаловак рэзервовай старонкі, якая паказваецца пасля збою"
+  },
+  "theme.BackToTopButton.buttonAriaLabel": {
+    "message": "Пракруціць да пачатку",
+    "description": "ARIA-пазнака кнопкі вяртання ў пачатак старонкі"
+  },
+  "theme.blog.paginator.navAriaLabel": {
+    "message": "Навігацыя па спісе допісаў блога",
+    "description": "ARIA-пазнака пастаронкавай навігацыі блога"
+  },
+  "theme.blog.paginator.newerEntries": {
+    "message": "Навейшыя допісы",
+    "description": "Пазнака пераходу да навейшых допісаў блога (папярэдняя старонка)"
+  },
+  "theme.blog.paginator.olderEntries": {
+    "message": "Старэйшыя допісы",
+    "description": "Пазнака пераходу да старэйшых допісаў блога (наступная старонка)"
+  },
+  "theme.blog.archive.title": {
+    "message": "Архіў",
+    "description": "Загаловак старонкі і галоўнага блока архіва блога"
+  },
+  "theme.blog.archive.description": {
+    "message": "Архіў",
+    "description": "Апісанне старонкі і галоўнага блока архіва блога"
+  },
+  "theme.blog.post.paginator.navAriaLabel": {
+    "message": "Навігацыя па старонках допісаў блога",
+    "description": "ARIA-пазнака пастаронкавай навігацыі допісаў блога"
+  },
+  "theme.blog.post.paginator.newerPost": {
+    "message": "Навейшы допіс",
+    "description": "Пазнака кнопкі пераходу да навейшага або папярэдняга допісу блога"
+  },
+  "theme.blog.post.paginator.olderPost": {
+    "message": "Старэйшы допіс",
+    "description": "Пазнака кнопкі пераходу да старэйшага або наступнага допісу блога"
+  },
+  "theme.tags.tagsPageLink": {
+    "message": "Праглядзець усе тэгі",
+    "description": "Пазнака спасылкі на старонку са спісам тэгаў"
+  },
+  "theme.colorToggle.ariaLabel.mode.system": {
+    "message": "сістэмны рэжым",
+    "description": "Назва сістэмнага каляровага рэжыму"
+  },
+  "theme.colorToggle.ariaLabel.mode.light": {
+    "message": "светлы рэжым",
+    "description": "Назва светлага каляровага рэжыму"
+  },
+  "theme.colorToggle.ariaLabel.mode.dark": {
+    "message": "цёмны рэжым",
+    "description": "Назва цёмнага каляровага рэжыму"
+  },
+  "theme.colorToggle.ariaLabel": {
+    "message": "Пераключыць цёмны і светлы рэжымы (цяпер {mode})",
+    "description": "ARIA-пазнака пераключальніка каляровага рэжыму"
+  },
+  "theme.docs.breadcrumbs.navAriaLabel": {
+    "message": "Навігацыйны ланцужок",
+    "description": "ARIA-пазнака навігацыйнага ланцужка"
+  },
+  "theme.docs.paginator.navAriaLabel": {
+    "message": "Старонкі дакументацыі",
+    "description": "ARIA-пазнака пастаронкавай навігацыі дакументацыі"
+  },
+  "theme.docs.paginator.previous": {
+    "message": "Папярэдняя",
+    "description": "Пазнака пераходу да папярэдняй старонкі дакументацыі"
+  },
+  "theme.docs.paginator.next": {
+    "message": "Наступная",
+    "description": "Пазнака пераходу да наступнай старонкі дакументацыі"
+  },
+  "theme.docs.tagDocListPageTitle.nDocsTagged": {
+    "message": "Адзін дакумент з тэгам|{count} дакументы з тэгам|{count} дакументаў з тэгам",
+    "description": "Пазнака з формамі множнага ліку для «{count} дакументаў з тэгам». Выкарыстоўвайце столькі формаў множнага ліку (падзеленых знакам «|»), колькі падтрымлівае мова (гл. https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.docs.tagDocListPageTitle": {
+    "message": "{nDocsTagged} «{tagName}»",
+    "description": "Загаловак старонкі для тэга дакументацыі"
+  },
+  "theme.docs.versionBadge.label": {
+    "message": "Версія: {versionLabel}"
+  },
+  "theme.docs.versions.unreleasedVersionLabel": {
+    "message": "Гэта неапублікаваная дакументацыя для версіі {siteTitle} {versionLabel}.",
+    "description": "Пазнака, якая паведамляе карыстальніку, што ён праглядае неапублікаваную версію дакументацыі"
+  },
+  "theme.docs.versions.unmaintainedVersionLabel": {
+    "message": "Гэта дакументацыя для {siteTitle} {versionLabel}, якая больш актыўна не падтрымліваецца.",
+    "description": "Пазнака, якая паведамляе карыстальніку, што ён праглядае версію дакументацыі без падтрымкі"
+  },
+  "theme.docs.versions.latestVersionSuggestionLabel": {
+    "message": "Актуальную дакументацыю глядзіце ў раздзеле {latestVersionLink} ({versionLabel}).",
+    "description": "Пазнака, якая прапануе карыстальніку праверыць апошнюю версію"
+  },
+  "theme.docs.versions.latestVersionLinkLabel": {
+    "message": "апошняя версія",
+    "description": "Пазнака спасылкі ў прапанове перайсці да апошняй версіі"
+  },
+  "theme.common.editThisPage": {
+    "message": "Рэдагаваць старонку",
+    "description": "Пазнака спасылкі для рэдагавання бягучай старонкі"
+  },
+  "theme.common.headingLinkTitle": {
+    "message": "Прамая спасылка на {heading}",
+    "description": "Загаловак спасылкі на раздзел"
+  },
+  "theme.lastUpdated.atDate": {
+    "message": " ад {date}",
+    "description": "Словы, якія паказваюць дату апошняга абнаўлення старонкі"
+  },
+  "theme.lastUpdated.byUser": {
+    "message": " карыстальнікам {user}",
+    "description": "Словы, якія паказваюць аўтара апошняга абнаўлення старонкі"
+  },
+  "theme.lastUpdated.lastUpdatedAtBy": {
+    "message": "Апошняе абнаўленне{atDate}{byUser}",
+    "description": "Сказ пра дату і аўтара апошняга абнаўлення старонкі"
+  },
+  "theme.NotFound.title": {
+    "message": "Старонка не знойдзена",
+    "description": "Загаловак старонкі 404"
+  },
+  "theme.navbar.mobileVersionsDropdown.label": {
+    "message": "Версіі",
+    "description": "Пазнака выпаднога спіса версій на мабільнай панэлі навігацыі"
+  },
+  "theme.tags.tagsListLabel": {
+    "message": "Тэгі:",
+    "description": "Пазнака побач са спісам тэгаў"
+  },
+  "theme.admonition.caution": {
+    "message": "асцярожна",
+    "description": "Стандартная пазнака заўвагі «Асцярожна» (:::caution)"
+  },
+  "theme.admonition.danger": {
+    "message": "небяспека",
+    "description": "Стандартная пазнака заўвагі «Небяспека» (:::danger)"
+  },
+  "theme.admonition.info": {
+    "message": "інфармацыя",
+    "description": "Стандартная пазнака інфармацыйнай заўвагі (:::info)"
+  },
+  "theme.admonition.note": {
+    "message": "нататка",
+    "description": "Стандартная пазнака нататкі (:::note)"
+  },
+  "theme.admonition.tip": {
+    "message": "парада",
+    "description": "Стандартная пазнака парады (:::tip)"
+  },
+  "theme.admonition.warning": {
+    "message": "папярэджанне",
+    "description": "Стандартная пазнака папярэджання (:::warning)"
+  },
+  "theme.AnnouncementBar.closeButtonAriaLabel": {
+    "message": "Закрыць",
+    "description": "ARIA-пазнака кнопкі закрыцця панэлі аб'яў"
+  },
+  "theme.blog.sidebar.navAriaLabel": {
+    "message": "Навігацыя па апошніх допісах блога",
+    "description": "ARIA-пазнака апошніх допісаў на бакавой панэлі блога"
+  },
+  "theme.DocSidebarItem.expandCategoryAriaLabel": {
+    "message": "Разгарнуць катэгорыю бакавой панэлі «{label}»",
+    "description": "ARIA-пазнака разгортвання катэгорыі бакавой панэлі"
+  },
+  "theme.DocSidebarItem.collapseCategoryAriaLabel": {
+    "message": "Згарнуць катэгорыю бакавой панэлі «{label}»",
+    "description": "ARIA-пазнака згортвання катэгорыі бакавой панэлі"
+  },
+  "theme.IconExternalLink.ariaLabel": {
+    "message": "(адкрываецца ў новай укладцы)",
+    "description": "ARIA-пазнака значка знешняй спасылкі"
+  },
+  "theme.NavBar.navAriaLabel": {
+    "message": "Галоўная",
+    "description": "ARIA-пазнака галоўнай навігацыі"
+  },
+  "theme.NotFound.p1": {
+    "message": "Не ўдалося знайсці тое, што вы шукалі.",
+    "description": "Першы абзац старонкі 404"
+  },
+  "theme.NotFound.p2": {
+    "message": "Звяжыцеся з уладальнікам сайта, які спасылаецца на зыходны URL, і паведаміце яму, што спасылка не працуе.",
+    "description": "Другі абзац старонкі 404"
+  },
+  "theme.navbar.mobileLanguageDropdown.label": {
+    "message": "Мовы",
+    "description": "Пазнака выпаднога спіса выбару мовы на мабільнай прыладзе"
+  },
+  "theme.TOCCollapsible.toggleButtonLabel": {
+    "message": "На гэтай старонцы",
+    "description": "Пазнака кнопкі ў згортваным кампаненце зместу"
+  },
+  "theme.blog.post.readMore": {
+    "message": "Чытаць далей",
+    "description": "Пазнака спасылкі з урыўка допісу на поўны тэкст"
+  },
+  "theme.blog.post.readMoreLabel": {
+    "message": "Чытаць далей пра {title}",
+    "description": "ARIA-пазнака спасылкі з урыўка на поўны тэкст допісу"
+  },
+  "theme.blog.post.readingTime.plurals": {
+    "message": "{readingTime} хвіліна чытання|{readingTime} хвіліны чытання|{readingTime} хвілін чытання",
+    "description": "Пазнака «{readingTime} хвілін чытання» з формамі множнага ліку. Выкарыстоўвайце столькі формаў, падзеленых сімвалам «|», колькі падтрымлівае мова (гл. https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.CodeBlock.copy": {
+    "message": "Капіяваць",
+    "description": "Пазнака кнопкі капіявання ў блоках кода"
+  },
+  "theme.CodeBlock.copied": {
+    "message": "Скапіявана",
+    "description": "Пазнака кнопкі пасля капіявання ў блоках кода"
+  },
+  "theme.CodeBlock.copyButtonAriaLabel": {
+    "message": "Капіяваць код у буфер абмену",
+    "description": "ARIA-пазнака кнопкі капіявання блока кода"
+  },
+  "theme.CodeBlock.wordWrapToggle": {
+    "message": "Пераключыць перанос радкоў",
+    "description": "Атрыбут title кнопкі пераключэння пераносу радкоў у блоку кода"
+  },
+  "theme.docs.breadcrumbs.home": {
+    "message": "Галоўная старонка",
+    "description": "ARIA-пазнака галоўнай старонкі ў хлебных крошках"
+  },
+  "theme.docs.sidebar.navAriaLabel": {
+    "message": "Бакавое меню дакументацыі",
+    "description": "ARIA-пазнака навігацыі ў бакавой панэлі"
+  },
+  "theme.docs.sidebar.collapseButtonTitle": {
+    "message": "Згарнуць бакавую панэль",
+    "description": "Атрыбут title кнопкі згортвання бакавой панэлі дакументацыі"
+  },
+  "theme.docs.sidebar.collapseButtonAriaLabel": {
+    "message": "Згарнуць бакавую панэль",
+    "description": "Атрыбут title кнопкі згортвання бакавой панэлі дакументацыі"
+  },
+  "theme.docs.sidebar.closeSidebarButtonAriaLabel": {
+    "message": "Закрыць панэль навігацыі",
+    "description": "ARIA-пазнака кнопкі закрыцця мабільнай бакавой панэлі"
+  },
+  "theme.navbar.mobileSidebarSecondaryMenu.backButtonLabel": {
+    "message": "← Назад у галоўнае меню",
+    "description": "Пазнака кнопкі вяртання ў галоўнае меню з дадатковага меню мабільнай бакавой панэлі навігацыі, якое выкарыстоўваецца, у прыватнасці, для паказу бакавой панэлі дакументацыі"
+  },
+  "theme.docs.sidebar.toggleSidebarButtonAriaLabel": {
+    "message": "Пераключыць панэль навігацыі",
+    "description": "ARIA-пазнака кнопкі мабільнага меню навігацыі"
+  },
+  "theme.navbar.mobileDropdown.collapseButton.expandAriaLabel": {
+    "message": "Разгарнуць выпадны спіс",
+    "description": "ARIA-пазнака кнопкі разгортвання выпаднога элемента мабільнай панэлі навігацыі"
+  },
+  "theme.navbar.mobileDropdown.collapseButton.collapseAriaLabel": {
+    "message": "Згарнуць выпадны спіс",
+    "description": "ARIA-пазнака кнопкі згортвання выпаднога элемента мабільнай панэлі навігацыі"
+  },
+  "theme.docs.sidebar.expandButtonTitle": {
+    "message": "Разгарнуць бакавую панэль",
+    "description": "ARIA-пазнака і атрыбут title кнопкі разгортвання бакавой панэлі дакументацыі"
+  },
+  "theme.docs.sidebar.expandButtonAriaLabel": {
+    "message": "Разгарнуць бакавую панэль",
+    "description": "ARIA-пазнака і атрыбут title кнопкі разгортвання бакавой панэлі дакументацыі"
+  },
+  "theme.SearchBar.seeAll": {
+    "message": "Паказаць усе вынікі: {count}"
+  },
+  "theme.SearchPage.documentsFound.plurals": {
+    "message": "Знойдзены {count} дакумент|Знойдзены {count} дакументы|Знойдзена {count} дакументаў",
+    "description": "Пазнака «Знойдзена {count} дакументаў» з формамі множнага ліку. Выкарыстоўвайце столькі формаў, падзеленых сімвалам «|», колькі падтрымлівае мова (гл. https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.SearchPage.existingResultsTitle": {
+    "message": "Вынікі пошуку для «{query}»",
+    "description": "Загаловак старонкі пошуку для непустога запыту"
+  },
+  "theme.SearchPage.emptyResultsTitle": {
+    "message": "Пошук у дакументацыі",
+    "description": "Загаловак старонкі пошуку для пустога запыту"
+  },
+  "theme.SearchPage.inputPlaceholder": {
+    "message": "Увядзіце пошукавы запыт",
+    "description": "Запаўняльнік поля ўводу на старонцы пошуку"
+  },
+  "theme.SearchPage.inputLabel": {
+    "message": "Пошук",
+    "description": "ARIA-пазнака поля ўводу на старонцы пошуку"
+  },
+  "theme.SearchPage.algoliaLabel": {
+    "message": "Працуе на Algolia",
+    "description": "Апісальная пазнака згадкі Algolia"
+  },
+  "theme.SearchPage.noResultsText": {
+    "message": "Нічога не знойдзена",
+    "description": "Тэкст для пустога выніку пошуку"
+  },
+  "theme.SearchPage.fetchingNewResults": {
+    "message": "Атрыманне новых вынікаў...",
+    "description": "Тэкст падчас атрымання новых вынікаў пошуку"
+  },
+  "theme.SearchBar.label": {
+    "message": "Пошук",
+    "description": "ARIA-пазнака і запаўняльнік кнопкі пошуку"
+  },
+  "theme.SearchModal.searchBox.resetButtonTitle": {
+    "message": "Ачысціць запыт",
+    "description": "Пазнака і ARIA-пазнака кнопкі скіду поля пошуку"
+  },
+  "theme.SearchModal.searchBox.cancelButtonText": {
+    "message": "Скасаваць",
+    "description": "Пазнака і ARIA-пазнака кнопкі скасавання ў полі пошуку"
+  },
+  "theme.SearchModal.searchBox.placeholderText": {
+    "message": "Пошук у дакументацыі",
+    "description": "Тэкст-запаўняльнік галоўнага поля пошуку"
+  },
+  "theme.SearchModal.searchBox.placeholderTextAskAi": {
+    "message": "Задайце іншае пытанне...",
+    "description": "Тэкст-запаўняльнік у рэжыме пытання да ШІ"
+  },
+  "theme.SearchModal.searchBox.placeholderTextAskAiStreaming": {
+    "message": "Фарміруецца адказ...",
+    "description": "Тэкст-запаўняльнік поля пошуку падчас патокавай перадачы адказу ШІ"
+  },
+  "theme.SearchModal.searchBox.enterKeyHint": {
+    "message": "знайсці",
+    "description": "Тэкставая падказка для клавішы Enter у полі пошуку"
+  },
+  "theme.SearchModal.searchBox.enterKeyHintAskAi": {
+    "message": "адправіць",
+    "description": "Тэкставая падказка для клавішы Enter у полі пытання да ШІ"
+  },
+  "theme.SearchModal.searchBox.searchInputLabel": {
+    "message": "Пошук",
+    "description": "ARIA-пазнака поля пошуку"
+  },
+  "theme.SearchModal.searchBox.backToKeywordSearchButtonText": {
+    "message": "Назад да пошуку па ключавых словах",
+    "description": "Тэкст кнопкі вяртання да пошуку па ключавых словах"
+  },
+  "theme.SearchModal.searchBox.backToKeywordSearchButtonAriaLabel": {
+    "message": "Назад да пошуку па ключавых словах",
+    "description": "ARIA-пазнака кнопкі вяртання да пошуку па ключавых словах"
+  },
+  "theme.SearchModal.startScreen.recentSearchesTitle": {
+    "message": "Нядаўнія",
+    "description": "Загаловак нядаўніх пошукавых запытаў"
+  },
+  "theme.SearchModal.startScreen.noRecentSearchesText": {
+    "message": "Нядаўніх запытаў няма",
+    "description": "Тэкст пры адсутнасці нядаўніх пошукавых запытаў"
+  },
+  "theme.SearchModal.startScreen.saveRecentSearchButtonTitle": {
+    "message": "Захаваць гэты запыт",
+    "description": "Загаловак кнопкі захавання нядаўняга пошукавага запыту"
+  },
+  "theme.SearchModal.startScreen.removeRecentSearchButtonTitle": {
+    "message": "Выдаліць гэты запыт з гісторыі",
+    "description": "Загаловак кнопкі выдалення нядаўняга пошукавага запыту"
+  },
+  "theme.SearchModal.startScreen.favoriteSearchesTitle": {
+    "message": "Абраныя",
+    "description": "Загаловак абраных пошукавых запытаў"
+  },
+  "theme.SearchModal.startScreen.removeFavoriteSearchButtonTitle": {
+    "message": "Выдаліць гэты запыт з абраных",
+    "description": "Загаловак кнопкі выдалення пошукавага запыту з абраных"
+  },
+  "theme.SearchModal.startScreen.recentConversationsTitle": {
+    "message": "Нядаўнія размовы",
+    "description": "Загаловак нядаўніх размоў"
+  },
+  "theme.SearchModal.startScreen.removeRecentConversationButtonTitle": {
+    "message": "Выдаліць гэтую размову з гісторыі",
+    "description": "Загаловак кнопкі выдалення нядаўняй размовы"
+  },
+  "theme.SearchModal.errorScreen.titleText": {
+    "message": "Не ўдалося атрымаць вынікі",
+    "description": "Загаловак экрана памылкі"
+  },
+  "theme.SearchModal.errorScreen.helpText": {
+    "message": "Праверце падключэнне да сеткі.",
+    "description": "Дапаможны тэкст экрана памылкі"
+  },
+  "theme.SearchModal.resultsScreen.askAiPlaceholder": {
+    "message": "Спытаць ШІ: ",
+    "description": "Тэкст-запаўняльнік поля пытання да ШІ"
+  },
+  "theme.SearchModal.askAiScreen.disclaimerText": {
+    "message": "Адказы стварае ШІ, які можа памыляцца. Правярайце іх.",
+    "description": "Тэкст папярэджання для адказаў ШІ"
+  },
+  "theme.SearchModal.askAiScreen.relatedSourcesText": {
+    "message": "Звязаныя крыніцы",
+    "description": "Тэкст для звязаных крыніц"
+  },
+  "theme.SearchModal.askAiScreen.thinkingText": {
+    "message": "Апрацоўка...",
+    "description": "Тэкст падчас апрацоўкі запыту ШІ"
+  },
+  "theme.SearchModal.askAiScreen.copyButtonText": {
+    "message": "Капіяваць",
+    "description": "Тэкст кнопкі капіявання"
+  },
+  "theme.SearchModal.askAiScreen.copyButtonCopiedText": {
+    "message": "Скапіявана!",
+    "description": "Тэкст кнопкі пасля капіявання"
+  },
+  "theme.SearchModal.askAiScreen.copyButtonTitle": {
+    "message": "Капіяваць",
+    "description": "Загаловак кнопкі капіявання"
+  },
+  "theme.SearchModal.askAiScreen.likeButtonTitle": {
+    "message": "Падабаецца",
+    "description": "Загаловак кнопкі станоўчай ацэнкі"
+  },
+  "theme.SearchModal.askAiScreen.dislikeButtonTitle": {
+    "message": "Не падабаецца",
+    "description": "Загаловак кнопкі адмоўнай ацэнкі"
+  },
+  "theme.SearchModal.askAiScreen.thanksForFeedbackText": {
+    "message": "Дзякуй за водгук!",
+    "description": "Тэкст падзякі за водгук"
+  },
+  "theme.SearchModal.askAiScreen.preToolCallText": {
+    "message": "Пошук...",
+    "description": "Тэкст перад выклікам інструмента"
+  },
+  "theme.SearchModal.askAiScreen.duringToolCallText": {
+    "message": "Пошук: ",
+    "description": "Тэкст падчас выкліку інструмента"
+  },
+  "theme.SearchModal.askAiScreen.afterToolCallText": {
+    "message": "Выкананы пошук:",
+    "description": "Тэкст пасля выкліку інструмента"
+  },
+  "theme.SearchModal.footer.selectText": {
+    "message": "Выбраць",
+    "description": "Тэкст выбару ў ніжняй частцы акна"
+  },
+  "theme.SearchModal.footer.submitQuestionText": {
+    "message": "Адправіць пытанне",
+    "description": "Тэкст адпраўкі пытання ў ніжняй частцы акна"
+  },
+  "theme.SearchModal.footer.selectKeyAriaLabel": {
+    "message": "Клавіша Enter",
+    "description": "ARIA-пазнака клавішы выбару ў ніжняй частцы акна"
+  },
+  "theme.SearchModal.footer.navigateText": {
+    "message": "Навігацыя",
+    "description": "Тэкст навігацыі ў ніжняй частцы акна"
+  },
+  "theme.SearchModal.footer.navigateUpKeyAriaLabel": {
+    "message": "Стрэлка ўверх",
+    "description": "ARIA-пазнака клавішы пераходу ўверх у ніжняй частцы акна"
+  },
+  "theme.SearchModal.footer.navigateDownKeyAriaLabel": {
+    "message": "Стрэлка ўніз",
+    "description": "ARIA-пазнака клавішы пераходу ўніз у ніжняй частцы акна"
+  },
+  "theme.SearchModal.footer.closeText": {
+    "message": "Закрыць",
+    "description": "Тэкст закрыцця ў ніжняй частцы акна"
+  },
+  "theme.SearchModal.footer.closeKeyAriaLabel": {
+    "message": "Клавіша Escape",
+    "description": "ARIA-пазнака клавішы закрыцця ў ніжняй частцы акна"
+  },
+  "theme.SearchModal.footer.searchByText": {
+    "message": "Працуе на",
+    "description": "Тэкст «Працуе на» ў ніжняй частцы акна"
+  },
+  "theme.SearchModal.footer.backToSearchText": {
+    "message": "Назад да пошуку",
+    "description": "Тэкст вяртання да пошуку ў ніжняй частцы акна"
+  },
+  "theme.SearchModal.noResultsScreen.noResultsText": {
+    "message": "Нічога не знойдзена для",
+    "description": "Тэкст пры адсутнасці вынікаў"
+  },
+  "theme.SearchModal.noResultsScreen.suggestedQueryText": {
+    "message": "Паспрабуйце знайсці",
+    "description": "Тэкст прапанаванага запыту"
+  },
+  "theme.SearchModal.noResultsScreen.reportMissingResultsText": {
+    "message": "Лічыце, што гэты запыт павінен даць вынікі?",
+    "description": "Тэкст для паведамлення пра адсутныя вынікі"
+  },
+  "theme.SearchModal.noResultsScreen.reportMissingResultsLinkText": {
+    "message": "Паведаміце нам.",
+    "description": "Тэкст спасылкі для паведамлення пра адсутныя вынікі"
+  },
+  "theme.SearchModal.placeholder": {
+    "message": "Пошук у дакументацыі",
+    "description": "Запаўняльнік поля ўводу ва ўсплывальным акне DocSearch"
+  },
+  "theme.blog.post.plurals": {
+    "message": "{count} допіс|{count} допісы|{count} допісаў",
+    "description": "Пазнака «{count} допісаў» з формамі множнага ліку. Выкарыстоўвайце столькі формаў, падзеленых сімвалам «|», колькі падтрымлівае мова (гл. https://www.unicode.org/cldr/cldr-aux/charts/34/supplemental/language_plural_rules.html)"
+  },
+  "theme.blog.tagTitle": {
+    "message": "{nPosts} з тэгам «{tagName}»",
+    "description": "Загаловак старонкі тэга блога"
+  },
+  "theme.blog.author.pageTitle": {
+    "message": "{authorName} - {nPosts}",
+    "description": "Загаловак старонкі аўтара блога"
+  },
+  "theme.blog.authorsList.pageTitle": {
+    "message": "Аўтары",
+    "description": "Загаловак старонкі аўтараў"
+  },
+  "theme.blog.authorsList.viewAll": {
+    "message": "Паказаць усіх аўтараў",
+    "description": "Пазнака спасылкі на старонку аўтараў блога"
+  },
+  "theme.blog.author.noPosts": {
+    "message": "Гэты аўтар пакуль не напісаў ніводнага допісу.",
+    "description": "Тэкст для аўтараў без допісаў у блогу"
+  },
+  "theme.contentVisibility.unlistedBanner.title": {
+    "message": "Схаваная старонка",
+    "description": "Загаловак банера схаванага змесціва"
+  },
+  "theme.contentVisibility.unlistedBanner.message": {
+    "message": "Гэта старонка не паказваецца ў спісах. Пошукавыя сістэмы не будуць яе індэксаваць, а доступ атрымаюць толькі карыстальнікі з прамой спасылкай.",
+    "description": "Паведамленне банера схаванага змесціва"
+  },
+  "theme.contentVisibility.draftBanner.title": {
+    "message": "Чарнавік старонкі",
+    "description": "Загаловак банера чарнавіка"
+  },
+  "theme.contentVisibility.draftBanner.message": {
+    "message": "Гэта старонка — чарнавік. Яна будзе бачная толькі ў асяроддзі распрацоўкі і не ўвойдзе ў вытворчую зборку.",
+    "description": "Паведамленне банера чарнавіка"
+  },
+  "theme.docs.DocCard.categoryDescription.plurals": {
+    "message": "{count} элемент|{count} элементы|{count} элементаў",
+    "description": "Стандартнае апісанне колькасці элементаў у картцы катэгорыі згенераванага індэкса"
+  },
+  "theme.ErrorPageContent.tryAgain": {
+    "message": "Паспрабаваць яшчэ раз",
+    "description": "Пазнака кнопкі паўторнага рэндэрынгу пасля перахопу памылкі мяжой памылак React"
+  },
+  "theme.common.skipToMainContent": {
+    "message": "Перайсці да асноўнага змесціва",
+    "description": "Пазнака хуткага пераходу да асноўнага змесціва з дапамогай клавіш Tab і Enter для паляпшэння даступнасці"
+  },
+  "theme.tags.tagsPageTitle": {
+    "message": "Тэгі",
+    "description": "Загаловак старонкі са спісам тэгаў"
+  }
+}

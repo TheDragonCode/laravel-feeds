@@ -1,0 +1,103 @@
+---
+title: "生成与调度"
+description: "生成 Feed 文件以供后续分发的说明"
+---
+
+[← 上一页](./create-feeds.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./supported-formats.mdx)
+
+# 生成与调度
+
+要生成所有已启用的 Feed，请使用控制台命令：
+
+```bash
+php artisan feed:generate
+```
+
+执行后，`feeds` 表中所有已启用的 Feed（`is_active = true`）都会运行。也可以使用 `config/feeds.php` 文件中指定的表。
+
+:::tip
+不带参数调用命令时，控制台会显示所有 Feed 的链接，包括 `is_active` 属性设为 `false` 的 Feed。
+
+但这些 Feed 不会运行，而会被标记为 `SKIP` 状态。
+:::
+
+## 单个 Feed {/* #single_feed */}
+
+:::warning
+即使指定的 Feed 在数据库的 `feeds` 表中已禁用，它也**仍会运行**。
+:::
+
+要生成指定 Feed，请调用 `feed:generate` 控制台命令，并将 `feeds` 表中的 Feed ID 作为参数传入：
+
+```bash
+php artisan feed:generate 123
+```
+
+## 队列 {/* #queue */}
+
+默认情况下，Feed 生成任务在控制台进程中运行。对于耗时较长或占用大量内存的 Feed，请在环境中启用 Laravel Queue 模式：
+
+```bash
+FEED_QUEUE_ENABLED=true
+FEED_QUEUE_CONNECTION=redis
+FEED_QUEUE_NAME=feeds
+FEED_QUEUE_UNIQUE_TTL=3600
+```
+
+启用队列模式后，`feed:generate` 会为每个已启用的 Feed 分派一个任务，而不是直接生成文件。使用异步连接时，任务分派完成后命令便会返回。请为所选连接和队列启动[队列工作进程](https://laravel.com/docs/queues#running-the-queue-worker)来处理这些任务。
+
+- `FEED_QUEUE_CONNECTION` 选择队列连接。未设置时依次回退到 `QUEUE_CONNECTION` 和 `database`。
+- `FEED_QUEUE_NAME` 选择该连接上的队列。留空时使用连接的默认队列。
+- `FEED_QUEUE_UNIQUE_TTL` 设置唯一性锁的最长有效时间，单位为秒。该锁有效期间，同一 Feed 的第二个任务不会进入队列。
+
+:::note
+`sync` 连接会在控制台进程中立即执行每个任务。选择异步连接可将生成任务交给工作进程。设置 `FEED_QUEUE_ENABLED=false` 可直接生成 Feed，而不分派任务。
+:::
+
+## 调度 {/* #schedule */}
+
+### 自动调度 {/* #automatic */}
+
+要自动生成 Feed，请使用[任务调度](https://laravel.com/docs/scheduling#running-the-scheduler)。在 `routes/console.php` 文件中调用辅助类即可；除非已更改配置，否则这是默认路径：
+
+```php source="docs/snippets/schedule-setup.php" lines="5-"
+use DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper;
+use Illuminate\Support\Facades\Schedule;
+
+ScheduleFeedHelper::register();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+这样会根据数据库 `expression` 列中指定的计划，为所有已启用的 Feed 注册调用。
+
+### 手动调度 {/* #manual */}
+
+也可以按自定义规则直接指定计划。此时只会运行指定的 Feed。
+
+```php source="docs/snippets/schedule-setup-manual.php" lines="5-"
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command(FeedGenerateCommand::class, [111])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->daily();
+
+Schedule::command(FeedGenerateCommand::class, [222])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->hourly();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+## 另请参阅
+
+- [创建 Feed](./create-feeds.mdx)
+- [事件](./events.mdx)
+- [存储位置](./location.mdx)

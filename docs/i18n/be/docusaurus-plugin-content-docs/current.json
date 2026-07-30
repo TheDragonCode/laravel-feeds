@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "1.x",
+    "description": "Пазнака бягучай версіі"
+  },
+  "sidebar.docs.category.Getting Started": {
+    "message": "Пачатак працы",
+    "description": "Пазнака катэгорыі «Пачатак працы» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.Digging Deeper": {
+    "message": "Паглыбленае вывучэнне",
+    "description": "Пазнака катэгорыі «Паглыбленае вывучэнне» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.Recipes": {
+    "message": "Рэцэпты",
+    "description": "Пазнака катэгорыі «Рэцэпты» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.Project": {
+    "message": "Праект",
+    "description": "Пазнака катэгорыі «Праект» на бакавой панэлі «docs»"
+  }
+}

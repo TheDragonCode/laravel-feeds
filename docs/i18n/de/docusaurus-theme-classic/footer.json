@@ -1,0 +1,38 @@
+{
+  "link.title.Community": {
+    "message": "Gemeinschaft",
+    "description": "Titel der Linkspalte mit title=Community in der Fußzeile"
+  },
+  "link.title.Development": {
+    "message": "Entwicklung",
+    "description": "Titel der Linkspalte mit title=Development in der Fußzeile"
+  },
+  "link.title.Authors": {
+    "message": "Autoren",
+    "description": "Titel der Linkspalte mit title=Authors in der Fußzeile"
+  },
+  "link.item.label.Telegram": {
+    "message": "Telegram",
+    "description": "Label des Fußzeilenlinks mit label=Telegram zum Ziel https://t.me/dragon_code_news"
+  },
+  "link.item.label.Boosty": {
+    "message": "Boosty",
+    "description": "Label des Fußzeilenlinks mit label=Boosty zum Ziel https://boosty.to/dragon-code"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Label des Fußzeilenlinks mit label=GitHub zum Ziel https://github.com/TheDragonCode/laravel-feeds"
+  },
+  "link.item.label.Issues": {
+    "message": "Issues",
+    "description": "Label des Fußzeilenlinks mit label=Issues zum Ziel https://github.com/TheDragonCode/laravel-feeds/issues"
+  },
+  "link.item.label.The Dragon Code": {
+    "message": "The Dragon Code",
+    "description": "Label des Fußzeilenlinks mit label=The Dragon Code zum Ziel https://github.com/TheDragonCode"
+  },
+  "copyright": {
+    "message": "Copyright © 2026 The Dragon Code",
+    "description": "Urheberrechtshinweis in der Fußzeile"
+  }
+}
