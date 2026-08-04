@@ -1,7 +1,5 @@
 * text=auto eol=lf
 
-.ai/ export-ignore
-
 docs/ export-ignore
 dev/ export-ignore
 
@@ -20,6 +18,8 @@ pint.json export-ignore
 phpunit.xml export-ignore
 testbench.yaml export-ignore
 
+.ai/ export-ignore
 .agents/ export-ignore
 .ai-factory/ export-ignore
 .ai-factory.json export-ignore
+AGENTS.md export-ignore
