@@ -32,8 +32,8 @@ final class FeedGenerateCommand extends Command
     use Colors;
 
     private const AGENT_JSON_FLAGS = JSON_THROW_ON_ERROR
-    | JSON_UNESCAPED_SLASHES
-    | JSON_INVALID_UTF8_SUBSTITUTE;
+        | JSON_UNESCAPED_SLASHES
+        | JSON_INVALID_UTF8_SUBSTITUTE;
 
     public function handle(GeneratorService $generator, FeedQuery $query, AgentDetectorService $agentDetector): int
     {
