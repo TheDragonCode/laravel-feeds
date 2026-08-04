@@ -9,10 +9,12 @@ use Workbench\App\Feeds\SitemapFeed;
 use function Pest\Laravel\artisan;
 
 test('generate', function () {
+    disableFeeds([SitemapFeed::class]);
+
     $source = findFeed(SitemapFeed::class);
 
     $command = artisan(FeedGenerateCommand::class, [
-        'feed' => $source->id,
+        'feed' => (string) $source->id,
     ]);
 
     getAllFeeds()->each(

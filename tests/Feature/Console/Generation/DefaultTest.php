@@ -14,6 +14,8 @@ test('generate', function () {
         fn (Feed $feed) => $command->expectsOutputToContain($feed->class)
     );
 
+    $command->doesntExpectOutputToContain('"tool":"feed:generate"');
+
     $command->assertSuccessful()->run();
 
     getAllFeeds()->each(
