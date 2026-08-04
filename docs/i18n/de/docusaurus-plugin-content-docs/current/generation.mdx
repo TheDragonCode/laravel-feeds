@@ -33,6 +33,49 @@ Rufen Sie den Konsolenbefehl `feed:generate` mit der Feed-ID aus der Tabelle `fe
 php artisan feed:generate 123
 ```
 
+## Ausgabe für KI-Agenten {/* #ai_agent_output */}
+
+Wenn `feed:generate` innerhalb eines von [Laravel Agent Detector](https://github.com/laravel/agent-detector) erkannten KI-Coding-Agenten ausgeführt wird, gibt der Befehl automatisch ein einzelnes JSON-Objekt anstelle von Fortschrittsanzeigen und formatierten Statuszeilen aus. Es ist keine Befehlsoption erforderlich. Außerhalb eines erkannten Agenten bleibt die reguläre Konsolenausgabe unverändert.
+
+Bei der direkten Generierung enthält jeder erzeugte Feed alle veröffentlichten Dateien und die jeweilige Anzahl der Datensätze:
+
+```json
+{
+  "tool": "feed:generate",
+  "result": "success",
+  "feeds": [
+    {
+      "class": "App\\Feeds\\SitemapFeed",
+      "status": "generated",
+      "files": [
+        {
+          "path": "/var/www/html/storage/app/public/sitemap.xml",
+          "records": 1250
+        }
+      ]
+    },
+    {
+      "class": "App\\Feeds\\DisabledFeed",
+      "status": "skipped"
+    }
+  ]
+}
+```
+
+Der Befehl gibt kompaktes JSON in einer einzigen Zeile aus. Das Beispiel ist nur zur besseren Lesbarkeit formatiert.
+
+| Status | Bedeutung | Zusätzliche Felder |
+| --- | --- | --- |
+| `generated` | Die Feed-Dateien wurden direkt erzeugt. | `files` mit `path` und `records` für jede Datei |
+| `queued` | Der Queue-Modus ist aktiviert und der Feed-Job wurde für den Agenten synchron ausgeführt. | Keine |
+| `skipped` | Der Feed ist inaktiv und der Befehl wurde ohne Feed-ID ausgeführt. | Keine |
+
+:::note
+Im Queue-Modus führt der agentenspezifische Pfad jeden aktivierten Job synchron aus, bevor er das JSON-Ergebnis zurückgibt. Der reguläre, für Menschen formatierte Pfad übermittelt Jobs weiterhin über die konfigurierte Queue-Verbindung.
+:::
+
+Diese JSON-Hülle wird nur bei erfolgreichen Ausführungen verwendet. Wenn die Generierung eine Ausnahme auslöst, behandelt Laravel den Befehlsfehler wie gewohnt und gibt keine JSON-Fehlerhülle aus.
+
 ## Queue {/* #queue */}
 
 Standardmäßig läuft die Feed-Generierung im Konsolenprozess. Aktivieren Sie für Feeds, die lange dauern oder viel Arbeitsspeicher benötigen, den Laravel-Queue-Modus in Ihrer Umgebung:

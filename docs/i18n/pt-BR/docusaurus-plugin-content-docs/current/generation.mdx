@@ -33,6 +33,49 @@ Para gerar um feed específico, chame o comando `feed:generate` e passe como par
 php artisan feed:generate 123
 ```
 
+## Saída para agentes de IA {/* #ai_agent_output */}
+
+Quando `feed:generate` é executado dentro de um agente de codificação com IA reconhecido pelo [Laravel Agent Detector](https://github.com/laravel/agent-detector), o comando grava automaticamente um único objeto JSON em vez de barras de progresso e linhas de status formatadas. Nenhuma opção de comando é necessária. Fora de um agente reconhecido, a saída normal do console permanece inalterada.
+
+Na geração direta, cada feed gerado inclui todos os arquivos publicados e suas quantidades de registros:
+
+```json
+{
+  "tool": "feed:generate",
+  "result": "success",
+  "feeds": [
+    {
+      "class": "App\\Feeds\\SitemapFeed",
+      "status": "generated",
+      "files": [
+        {
+          "path": "/var/www/html/storage/app/public/sitemap.xml",
+          "records": 1250
+        }
+      ]
+    },
+    {
+      "class": "App\\Feeds\\DisabledFeed",
+      "status": "skipped"
+    }
+  ]
+}
+```
+
+O comando emite um JSON compacto em uma única linha. O exemplo está formatado apenas para facilitar a leitura.
+
+| Status | Significado | Campos adicionais |
+| --- | --- | --- |
+| `generated` | Os arquivos do feed foram gerados diretamente. | `files`, com `path` e `records` para cada arquivo |
+| `queued` | O modo de fila está ativado e o job do feed foi executado de forma síncrona para o agente. | Nenhum |
+| `skipped` | O feed está inativo e o comando foi executado sem o ID de um feed. | Nenhum |
+
+:::note
+No modo de fila, o caminho específico do agente executa cada job ativo de forma síncrona antes de retornar o resultado JSON. O caminho normal, formatado para pessoas, continua despachando os jobs pela conexão de fila configurada.
+:::
+
+Esse envelope JSON só é usado em execuções bem-sucedidas. Se a geração lançar uma exceção, o Laravel tratará o erro do comando normalmente e não emitirá um envelope de erro JSON.
+
 ## Fila {/* #queue */}
 
 Por padrão, a geração dos feeds é executada no processo do console. Para feeds demorados ou que usam muita memória, ative o modo de fila do Laravel no ambiente:

@@ -33,6 +33,49 @@ php artisan feed:generate
 php artisan feed:generate 123
 ```
 
+## AI 代理输出 {/* #ai_agent_output */}
+
+当 `feed:generate` 在 [Laravel Agent Detector](https://github.com/laravel/agent-detector) 识别到的 AI 编码代理中运行时，命令会自动输出单个 JSON 对象，而不是进度条和格式化状态行。不需要额外的命令选项。在未识别为代理的环境中，常规控制台输出保持不变。
+
+直接生成时，每个已生成的 Feed 都会包含所有已发布文件及其记录数：
+
+```json
+{
+  "tool": "feed:generate",
+  "result": "success",
+  "feeds": [
+    {
+      "class": "App\\Feeds\\SitemapFeed",
+      "status": "generated",
+      "files": [
+        {
+          "path": "/var/www/html/storage/app/public/sitemap.xml",
+          "records": 1250
+        }
+      ]
+    },
+    {
+      "class": "App\\Feeds\\DisabledFeed",
+      "status": "skipped"
+    }
+  ]
+}
+```
+
+命令实际会在一行中输出紧凑的 JSON。上面的示例仅为便于阅读而进行了格式化。
+
+| 状态 | 含义 | 附加字段 |
+| --- | --- | --- |
+| `generated` | 直接生成了 Feed 文件。 | `files`，其中包含每个文件的 `path` 和 `records` |
+| `queued` | 已启用队列模式，并为代理同步执行了 Feed 任务。 | 无 |
+| `skipped` | Feed 未启用，并且命令运行时未传入 Feed ID。 | 无 |
+
+:::note
+在队列模式下，代理专用执行路径会先同步运行每个已启用的任务，再返回 JSON 结果。面向人工阅读的常规执行路径仍会通过配置的队列连接分派任务。
+:::
+
+此 JSON 封装仅用于成功执行。如果生成过程抛出异常，Laravel 会照常处理命令错误，并且不会输出 JSON 错误封装。
+
 ## 队列 {/* #queue */}
 
 默认情况下，Feed 生成任务在控制台进程中运行。对于耗时较长或占用大量内存的 Feed，请在环境中启用 Laravel Queue 模式：
