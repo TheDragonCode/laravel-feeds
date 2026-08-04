@@ -32,35 +32,31 @@ final class FeedGenerateCommand extends Command
     use Colors;
 
     private const AGENT_JSON_FLAGS = JSON_THROW_ON_ERROR
-        | JSON_UNESCAPED_SLASHES
-        | JSON_INVALID_UTF8_SUBSTITUTE;
+    | JSON_UNESCAPED_SLASHES
+    | JSON_INVALID_UTF8_SUBSTITUTE;
 
-    public function handle(
-        GeneratorService $generator,
-        FeedQuery $query,
-        AgentDetectorService $agentDetector,
-    ): int {
+    public function handle(GeneratorService $generator, FeedQuery $query, AgentDetectorService $agentDetector): int
+    {
         $feedId        = $this->feedId();
         $feeds         = $this->selectedFeeds($query, $feedId);
         $isTargetedRun = $feedId !== null;
         $usesQueue     = $this->usesQueue();
 
-        if ($agentDetector->isAgent()) {
-            $this->runForAgent($generator, $feeds, $isTargetedRun, $usesQueue);
-        } else {
-            $this->runForConsole(
-                $generator,
-                $feeds,
-                $isTargetedRun,
-                $usesQueue,
-                $this->usesProgressBar()
-            );
-        }
+        $agentDetector->isAgent()
+            ? $this->runForAgent($generator, $feeds, $isTargetedRun, $usesQueue)
+            : $this->runForConsole($generator, $feeds, $isTargetedRun, $usesQueue, $this->usesProgressBar());
 
         return self::SUCCESS;
     }
 
-    private function runForConsole(
+    protected function getArguments(): array
+    {
+        return [
+            ['feed', InputArgument::OPTIONAL, 'The Feed ID for generation (from the database)'],
+        ];
+    }
+
+    protected function runForConsole(
         GeneratorService $generator,
         Collection $feeds,
         bool $isTargetedRun,
@@ -84,7 +80,7 @@ final class FeedGenerateCommand extends Command
         }
     }
 
-    private function runForAgent(
+    protected function runForAgent(
         GeneratorService $generator,
         Collection $feeds,
         bool $isTargetedRun,
@@ -99,7 +95,7 @@ final class FeedGenerateCommand extends Command
         $this->writeAgentOutput($results);
     }
 
-    private function runFeedForAgent(
+    protected function runFeedForAgent(
         GeneratorService $generator,
         Feed $feed,
         bool $isTargetedRun,
@@ -124,7 +120,7 @@ final class FeedGenerateCommand extends Command
         return $this->generatedAgentResult($feed->class, $generator->feed(app($feed->class)));
     }
 
-    private function writeAgentOutput(array $feeds): void
+    protected function writeAgentOutput(array $feeds): void
     {
         $this->output->writeln(json_encode([
             'tool'   => 'feed:generate',
@@ -133,7 +129,7 @@ final class FeedGenerateCommand extends Command
         ], self::AGENT_JSON_FLAGS), OutputInterface::OUTPUT_RAW);
     }
 
-    private function generatedAgentResult(string $feed, GenerationResultData $result): array
+    protected function generatedAgentResult(string $feed, GenerationResultData $result): array
     {
         $files = [];
 
@@ -151,19 +147,19 @@ final class FeedGenerateCommand extends Command
         ];
     }
 
-    private function showSkippedFeed(string $feed): void
+    protected function showSkippedFeed(string $feed): void
     {
         $this->components->twoColumnDetail($feed, $this->textYellow('SKIP'));
     }
 
-    private function dispatchFeed(string $feed): void
+    protected function dispatchFeed(string $feed): void
     {
         $this->components->twoColumnDetail($feed, $this->textGreen('QUEUED'));
 
         FeedJob::dispatch($feed);
     }
 
-    private function generateFeed(GeneratorService $generator, string $feed, bool $usesProgressBar): void
+    protected function generateFeed(GeneratorService $generator, string $feed, bool $usesProgressBar): void
     {
         if ($usesProgressBar) {
             $this->components->info($feed);
@@ -176,7 +172,7 @@ final class FeedGenerateCommand extends Command
         $this->components->task($feed, fn () => $generator->feed(app($feed)));
     }
 
-    private function selectedFeeds(FeedQuery $query, ?int $feedId): Collection
+    protected function selectedFeeds(FeedQuery $query, ?int $feedId): Collection
     {
         if ($feedId === null) {
             return $query->all()->get();
@@ -185,7 +181,7 @@ final class FeedGenerateCommand extends Command
         return new Collection([$query->find($feedId)]);
     }
 
-    private function feedId(): ?int
+    protected function feedId(): ?int
     {
         $value = $this->argument('feed');
 
@@ -216,7 +212,7 @@ final class FeedGenerateCommand extends Command
         return $id;
     }
 
-    private function textYellow(string $message): string
+    protected function textYellow(string $message): string
     {
         if ($this->option('no-ansi')) {
             // @codeCoverageIgnoreStart
@@ -227,7 +223,7 @@ final class FeedGenerateCommand extends Command
         return $this->yellow($message);
     }
 
-    private function textGreen(string $message): string
+    protected function textGreen(string $message): string
     {
         if ($this->option('no-ansi')) {
             // @codeCoverageIgnoreStart
@@ -238,20 +234,13 @@ final class FeedGenerateCommand extends Command
         return $this->green($message);
     }
 
-    private function usesProgressBar(): bool
+    protected function usesProgressBar(): bool
     {
         return config()->boolean('feeds.console.progress_bar');
     }
 
-    private function usesQueue(): bool
+    protected function usesQueue(): bool
     {
         return config()->boolean('feeds.queue.enabled');
-    }
-
-    protected function getArguments(): array
-    {
-        return [
-            ['feed', InputArgument::OPTIONAL, 'The Feed ID for generation (from the database)'],
-        ];
     }
 }
