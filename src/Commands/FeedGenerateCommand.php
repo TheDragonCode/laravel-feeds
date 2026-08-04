@@ -4,27 +4,42 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Commands;
 
+use DragonCode\LaravelFeed\Data\GenerationResultData;
 use DragonCode\LaravelFeed\Exceptions\InvalidFeedArgumentException;
 use DragonCode\LaravelFeed\Jobs\FeedJob;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
+use DragonCode\LaravelFeed\Services\AgentDetectorService;
 use DragonCode\LaravelFeed\Services\GeneratorService;
 use Illuminate\Console\Command;
 use Laravel\Prompts\Concerns\Colors;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Output\OutputInterface;
 
 use function app;
 use function config;
 use function is_numeric;
+use function json_encode;
 
 #[AsCommand('feed:generate', 'Generate XML feeds')]
 final class FeedGenerateCommand extends Command
 {
     use Colors;
 
-    public function handle(GeneratorService $generator, FeedQuery $query): void
-    {
-        foreach ($this->feedable($query) as $feed => $enabled) {
+    public function handle(
+        GeneratorService $generator,
+        FeedQuery $query,
+        AgentDetectorService $agentDetector,
+    ): void {
+        $feeds = $this->feedable($query);
+
+        if ($agentDetector->isAgent()) {
+            $this->performForAgent($generator, $feeds);
+
+            return;
+        }
+
+        foreach ($feeds as $feed => $enabled) {
             if (! $enabled) {
                 $this->components->twoColumnDetail($feed, $this->textYellow('SKIP'));
 
@@ -41,6 +56,59 @@ final class FeedGenerateCommand extends Command
                 ? $this->performWithProgressBar($generator, $feed)
                 : $this->performWithoutProgressBar($generator, $feed);
         }
+    }
+
+    protected function performForAgent(GeneratorService $generator, array $feeds): void
+    {
+        $results = [];
+
+        foreach ($feeds as $feed => $enabled) {
+            if (! $enabled) {
+                $results[] = [
+                    'class'  => $feed,
+                    'status' => 'skipped',
+                ];
+
+                continue;
+            }
+
+            if ($this->hasQueue()) {
+                FeedJob::dispatchSync($feed);
+
+                $results[] = [
+                    'class'  => $feed,
+                    'status' => 'queued',
+                ];
+
+                continue;
+            }
+
+            $results[] = $this->generatedFeed($feed, $generator->feed(app($feed)));
+        }
+
+        $this->output->writeln(json_encode([
+            'tool'   => 'feed:generate',
+            'result' => 'success',
+            'feeds'  => $results,
+        ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE), OutputInterface::OUTPUT_RAW);
+    }
+
+    protected function generatedFeed(string $feed, GenerationResultData $result): array
+    {
+        $files = [];
+
+        foreach ($result->records as $path => $records) {
+            $files[] = [
+                'path'    => $path,
+                'records' => $records,
+            ];
+        }
+
+        return [
+            'class'  => $feed,
+            'status' => 'generated',
+            'files'  => $files,
+        ];
     }
 
     protected function performWithQueue(string $feed): void

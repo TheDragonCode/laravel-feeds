@@ -20,6 +20,7 @@ pest()
     ->beforeEach(function () {
         setDefaultDateTime();
 
+        mockAgent();
         mockOperations();
         mockPaths();
 
