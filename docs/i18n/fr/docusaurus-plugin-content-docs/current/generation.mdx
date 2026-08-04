@@ -33,6 +33,49 @@ Pour générer un flux particulier, appelez la commande `feed:generate` en lui p
 php artisan feed:generate 123
 ```
 
+## Sortie pour les agents d’IA {/* #ai_agent_output */}
+
+Lorsque `feed:generate` s’exécute dans un agent de codage IA reconnu par [Laravel Agent Detector](https://github.com/laravel/agent-detector), la commande écrit automatiquement un seul objet JSON au lieu des barres de progression et des lignes d’état formatées. Aucune option de commande n’est requise. En dehors d’un agent reconnu, la sortie habituelle de la console reste inchangée.
+
+Lors d’une génération directe, chaque flux généré contient tous les fichiers publiés et leur nombre d’enregistrements :
+
+```json
+{
+  "tool": "feed:generate",
+  "result": "success",
+  "feeds": [
+    {
+      "class": "App\\Feeds\\SitemapFeed",
+      "status": "generated",
+      "files": [
+        {
+          "path": "/var/www/html/storage/app/public/sitemap.xml",
+          "records": 1250
+        }
+      ]
+    },
+    {
+      "class": "App\\Feeds\\DisabledFeed",
+      "status": "skipped"
+    }
+  ]
+}
+```
+
+La commande émet un JSON compact sur une seule ligne. L’exemple est mis en forme uniquement pour faciliter la lecture.
+
+| Statut | Signification | Champs supplémentaires |
+| --- | --- | --- |
+| `generated` | Les fichiers du flux ont été générés directement. | `files`, avec `path` et `records` pour chaque fichier |
+| `queued` | Le mode file d’attente est activé et le job du flux a été exécuté de manière synchrone pour l’agent. | Aucun |
+| `skipped` | Le flux est inactif et la commande a été exécutée sans identifiant de flux. | Aucun |
+
+:::note
+En mode file d’attente, le chemin propre à l’agent exécute chaque job actif de manière synchrone avant de renvoyer le résultat JSON. Le chemin habituel, formaté pour les humains, continue d’envoyer les jobs via la connexion de file d’attente configurée.
+:::
+
+Cette enveloppe JSON est utilisée uniquement pour les exécutions réussies. Si la génération lève une exception, Laravel traite normalement l’erreur de la commande et n’émet aucune enveloppe d’erreur JSON.
+
 ## File d’attente {/* #queue */}
 
 Par défaut, la génération des flux s’exécute dans le processus de console. Pour les flux longs à générer ou gourmands en mémoire, activez le mode Laravel Queue dans votre environnement :

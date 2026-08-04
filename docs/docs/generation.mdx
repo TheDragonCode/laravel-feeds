@@ -33,6 +33,49 @@ To generate a specific feed, call the `feed:generate` console command, passing t
 php artisan feed:generate 123
 ```
 
+## AI agent output {/* #ai_agent_output */}
+
+When `feed:generate` runs inside an AI coding agent recognized by [Laravel Agent Detector](https://github.com/laravel/agent-detector), it automatically writes a single JSON object instead of progress bars and formatted status lines. No command option is required. Outside a recognized agent, the regular console output remains unchanged.
+
+For direct generation, each generated feed includes every published file and its record count:
+
+```json
+{
+  "tool": "feed:generate",
+  "result": "success",
+  "feeds": [
+    {
+      "class": "App\\Feeds\\SitemapFeed",
+      "status": "generated",
+      "files": [
+        {
+          "path": "/var/www/html/storage/app/public/sitemap.xml",
+          "records": 1250
+        }
+      ]
+    },
+    {
+      "class": "App\\Feeds\\DisabledFeed",
+      "status": "skipped"
+    }
+  ]
+}
+```
+
+The command emits compact JSON on one line. The example is formatted only for readability.
+
+| Status | Meaning | Additional fields |
+| --- | --- | --- |
+| `generated` | The feed files were generated directly. | `files`, containing `path` and `records` for each file |
+| `queued` | Queue mode is enabled and the feed job was dispatched synchronously for the agent. | None |
+| `skipped` | The feed is inactive and the command was run without a feed ID. | None |
+
+:::note
+In queue mode, the agent-aware path runs each enabled job synchronously before returning the JSON result. The regular human-oriented path continues to dispatch jobs through the configured queue connection.
+:::
+
+Only successful runs use this JSON envelope. If generation throws an exception, Laravel handles the command error normally and no JSON error envelope is emitted.
+
 ## Queue {/* #queue */}
 
 Feed generation runs in the console process by default. For feeds that take a long time or use a large amount of memory, enable Laravel Queue mode in your environment:
