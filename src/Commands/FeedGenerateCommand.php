@@ -73,7 +73,7 @@ final class FeedGenerateCommand extends Command
             }
 
             if ($this->hasQueue()) {
-                FeedJob::dispatch($feed);
+                FeedJob::dispatchSync($feed);
 
                 $results[] = [
                     'class'  => $feed,

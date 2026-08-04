@@ -6,7 +6,7 @@ use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use DragonCode\LaravelFeed\Jobs\FeedJob;
 use DragonCode\LaravelFeed\Models\Feed;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Bus;
 use Symfony\Component\Console\Command\Command;
 use Workbench\App\Feeds\SitemapFeed;
 use Workbench\App\Feeds\YandexFeed;
@@ -57,7 +57,7 @@ test('returns queued and skipped feeds to an AI agent', function () {
         'feeds.queue.name'       => 'feeds',
     ]);
 
-    Queue::fake()->serializeAndRestore();
+    Bus::fake()->serializeAndRestore();
 
     $status = Artisan::call(FeedGenerateCommand::class);
     $output = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
@@ -78,5 +78,5 @@ test('returns queued and skipped feeds to an AI agent', function () {
                 ->all(),
         ]);
 
-    Queue::assertPushed(FeedJob::class, $feeds->where('is_active', true)->count());
+    Bus::assertDispatchedSync(FeedJob::class, $feeds->where('is_active', true)->count());
 });
