@@ -14,3 +14,21 @@ test('incorrect', function (mixed $id) {
 })
     ->throws(InvalidFeedArgumentException::class, 'Feed ID must be of type integer, [string] given.')
     ->with('generation invalid');
+
+test('rejects ambiguous numeric feed IDs', function () {
+    foreach ([
+        0,
+        1.0,
+        '0',
+        '-1',
+        '1.9',
+        '1e2',
+        '+1',
+        ' 1 ',
+        '9999999999999999999999999999999999999999',
+    ] as $id) {
+        expect(fn () => artisan(FeedGenerateCommand::class, [
+            'feed' => $id,
+        ])->run())->toThrow(InvalidFeedArgumentException::class);
+    }
+});
