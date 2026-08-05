@@ -22,12 +22,6 @@ npm run build
 
 The production build contains every configured locale.
 
-## Search indexing
-
-The site uses the existing Algolia DocSearch application configured in `docusaurus.config.ts`. The crawler configuration is managed outside this repository; the deployment workflow does not publish a search index.
-
-After deploying a structural or content change, update the crawler to the official [Docusaurus v2 and v3 template](https://docsearch.algolia.com/docs/templates/#docusaurus-v2--v3-template) and trigger a new crawl from the Algolia dashboard. Search results are not reliable until that crawl finishes.
-
 ## Content layout
 
 - `docs/` contains the current English source pages.

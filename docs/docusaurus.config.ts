@@ -266,12 +266,6 @@ const config: Config = {
             ],
             copyright: `Copyright © ${new Date().getFullYear()} The Dragon Code`,
         },
-        algolia: {
-            appId: "HIITWOZYBN",
-            apiKey: "be22e8bf7afc7bcd53f07ce638374654",
-            indexName: "laravel-feeds",
-            contextualSearch: true,
-        },
         prism: {
             theme: prismThemes.github,
             darkTheme: prismThemes.dracula,
