@@ -13,7 +13,7 @@ keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 
 Feeds lösen beim Ausführen des Befehls zwei Ereignisse aus:
 
-- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — Das `FeedStartingEvent` wird unmittelbar vor dem Erstellen der Entwurfsdatei ausgelöst.
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — Das `FeedStartingEvent` wird nach der Vorabprüfung von Speicher und Pfad, vor der Converter-Auflösung und dem Staging ausgelöst. Dies bedeutet nicht, dass bereits eine Entwurfsdatei existiert.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — Das `FeedFinishedEvent` wird ausgelöst, nachdem jede erzeugte Datei erfolgreich veröffentlicht wurde. Bei einer fehlgeschlagenen Generierung wird dieses Ereignis nicht ausgelöst.
 
 ## Vertrag des Abschlussereignisses {/* #finished_event_contract */}

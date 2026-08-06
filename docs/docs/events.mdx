@@ -13,7 +13,7 @@ keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 
 Feeds dispatch two events when running the command:
 
-- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — The `FeedStartingEvent` is dispatched immediately before the draft file is created.
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — The `FeedStartingEvent` is dispatched after storage and path preflight, before converter resolution and staging. It does not mean that a draft file exists.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — The `FeedFinishedEvent` is dispatched after every generated file has been published successfully. A failed generation does not dispatch this event.
 
 ## Finished event contract {/* #finished_event_contract */}

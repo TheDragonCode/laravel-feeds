@@ -13,7 +13,7 @@ keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 
 Os feeds disparam dois eventos durante a execução do comando:
 
-- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — O `FeedStartingEvent` é disparado imediatamente antes da criação do arquivo temporário.
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — O `FeedStartingEvent` é disparado após a verificação preliminar do armazenamento e do caminho, antes da resolução do conversor e da preparação. Isso não significa que já exista um arquivo temporário.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — O `FeedFinishedEvent` é disparado depois que todos os arquivos gerados são publicados com sucesso. Uma geração que falha não dispara esse evento.
 
 ## Contrato do evento de conclusão {/* #finished_event_contract */}

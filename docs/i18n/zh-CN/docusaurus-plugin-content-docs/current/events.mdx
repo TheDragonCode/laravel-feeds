@@ -13,7 +13,7 @@ keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 
 Feed 在运行命令时会分发两个事件：
 
-- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — `FeedStartingEvent` 在创建草稿文件前立即分发。
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — `FeedStartingEvent` 在存储和路径预检完成后、解析转换器和开始暂存之前分发。此时不保证草稿文件已经存在。
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — `FeedFinishedEvent` 在所有生成的文件成功发布后分发。生成失败时不会分发此事件。
 
 ## 完成事件契约 {/* #finished_event_contract */}

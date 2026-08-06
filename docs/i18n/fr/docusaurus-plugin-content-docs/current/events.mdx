@@ -13,7 +13,7 @@ keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 
 Les flux émettent deux événements lors de l’exécution de la commande :
 
-- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — `FeedStartingEvent` est émis juste avant la création du fichier provisoire.
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — `FeedStartingEvent` est émis après la vérification préalable du stockage et du chemin, avant la résolution du convertisseur et la préparation. Cela ne signifie pas qu’un fichier provisoire existe déjà.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — `FeedFinishedEvent` est émis lorsque tous les fichiers générés ont été publiés avec succès. Une génération échouée n’émet pas cet événement.
 
 ## Contrat de l’événement de fin {/* #finished_event_contract */}

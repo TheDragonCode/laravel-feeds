@@ -13,7 +13,7 @@ keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 
 Під час виконання команди фіди надсилають дві події:
 
-- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — подія `FeedStartingEvent` надсилається безпосередньо перед створенням чернетки файлу.
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — подія `FeedStartingEvent` надсилається після попередньої перевірки сховища й шляху, до визначення конвертера та підготовки файлів. Це не означає, що файл чернетки вже існує.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — подія `FeedFinishedEvent` надсилається після успішної публікації всіх згенерованих файлів. У разі помилки генерування ця подія не надсилається.
 
 ## Контракт завершальної події {/* #finished_event_contract */}

@@ -17,7 +17,7 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 
 | 이벤트 | Public 데이터 | 전달 시점 |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | 초안 파일을 만들기 직전입니다. |
+| `FeedStartingEvent` | `feed` | 저장소와 경로 사전 검사가 끝난 뒤, 컨버터 해석과 스테이징 전입니다. |
 | `FeedFinishedEvent` | `feed`, `path`, `paths` | 생성된 모든 파일을 성공적으로 게시한 후입니다. |
 
 `FeedFinishedEvent::$paths`에는 게시된 모든 경로가 순서대로 들어 있습니다. `$path`는 호환성을 위해 유지되며 항상 첫 번째 경로를 담습니다.

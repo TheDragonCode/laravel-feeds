@@ -17,7 +17,7 @@ Utilisez les événements du cycle de vie pour intégrer l’application et les 
 
 | Événement | Données publiques | Moment d’émission |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | Juste avant la création du fichier provisoire. |
+| `FeedStartingEvent` | `feed` | Après la vérification préalable du stockage et du chemin, avant la résolution du convertisseur et la préparation. |
 | `FeedFinishedEvent` | `feed`, `path`, `paths` | Après la publication réussie de tous les fichiers générés. |
 
 `FeedFinishedEvent::$paths` contient tous les chemins publiés dans l’ordre. `$path` est conservé pour la compatibilité et contient toujours le premier chemin.

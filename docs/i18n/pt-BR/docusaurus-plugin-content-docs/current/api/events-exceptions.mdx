@@ -17,7 +17,7 @@ Use eventos do ciclo de vida para integrar a aplicação e os tipos de exceção
 
 | Evento | Dados públicos | Momento do disparo |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | Imediatamente antes da criação do arquivo temporário. |
+| `FeedStartingEvent` | `feed` | Após a verificação preliminar do armazenamento e do caminho, antes da resolução do conversor e da preparação. |
 | `FeedFinishedEvent` | `feed`, `path`, `paths` | Depois da publicação bem-sucedida de todos os arquivos gerados. |
 
 `FeedFinishedEvent::$paths` contém todos os caminhos publicados em ordem. `$path` é mantido para compatibilidade e sempre contém o primeiro caminho.

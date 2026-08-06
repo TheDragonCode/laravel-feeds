@@ -13,7 +13,7 @@ keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 
 При выполнении команды фиды отправляют два события:
 
-- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — событие `FeedStartingEvent` отправляется непосредственно перед созданием чернового файла.
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — событие `FeedStartingEvent` отправляется после предварительной проверки хранилища и пути, до разрешения конвертера и подготовки файлов. Это не означает, что черновой файл уже существует.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — событие `FeedFinishedEvent` отправляется после успешной публикации всех сгенерированных файлов. Если генерация завершилась ошибкой, это событие не отправляется.
 
 ## Контракт события завершения {/* #finished_event_contract */}

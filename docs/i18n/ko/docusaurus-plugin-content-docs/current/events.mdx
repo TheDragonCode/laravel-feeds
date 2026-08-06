@@ -13,7 +13,7 @@ keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 
 피드는 명령을 실행할 때 두 가지 이벤트를 전달합니다.
 
-- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — `FeedStartingEvent`는 초안 파일을 만들기 직전에 전달됩니다.
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — `FeedStartingEvent`는 저장소와 경로 사전 검사가 끝난 뒤, 컨버터 해석과 스테이징 전에 전달됩니다. 이 시점에는 초안 파일이 존재한다고 보장되지 않습니다.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — `FeedFinishedEvent`는 생성된 모든 파일이 성공적으로 게시된 후 전달됩니다. 생성에 실패하면 이 이벤트가 전달되지 않습니다.
 
 ## 완료 이벤트 계약 {/* #finished_event_contract */}

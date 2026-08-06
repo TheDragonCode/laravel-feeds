@@ -17,7 +17,7 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 
 | 事件 | 公共数据 | 分发时机 |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | 创建草稿文件之前。 |
+| `FeedStartingEvent` | `feed` | 存储和路径预检完成后、解析转换器和开始暂存之前。 |
 | `FeedFinishedEvent` | `feed`、`path`、`paths` | 所有生成文件成功发布之后。 |
 
 `FeedFinishedEvent::$paths` 按顺序包含所有已发布路径。为保持兼容性而保留的 `$path` 始终包含第一个路径。

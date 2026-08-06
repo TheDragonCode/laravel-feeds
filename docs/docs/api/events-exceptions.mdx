@@ -17,7 +17,7 @@ Use lifecycle events for application integration and exception types for recover
 
 | Event | Public data | Dispatch point |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | Immediately before the draft file is created. |
+| `FeedStartingEvent` | `feed` | After storage and path preflight, before converter resolution and staging. |
 | `FeedFinishedEvent` | `feed`, `path`, `paths` | After every generated file is published successfully. |
 
 `FeedFinishedEvent::$paths` contains all published paths in order. `$path` is retained for compatibility and always contains the first path.

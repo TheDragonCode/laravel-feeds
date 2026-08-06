@@ -17,7 +17,7 @@ Verwenden Sie Lebenszyklusereignisse für die Anwendungsintegration und Ausnahme
 
 | Ereignis | Öffentliche Daten | Auslösezeitpunkt |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | Unmittelbar vor dem Erstellen der Entwurfsdatei. |
+| `FeedStartingEvent` | `feed` | Nach der Vorabprüfung von Speicher und Pfad, vor der Converter-Auflösung und dem Staging. |
 | `FeedFinishedEvent` | `feed`, `path`, `paths` | Nachdem alle erzeugten Dateien erfolgreich veröffentlicht wurden. |
 
 `FeedFinishedEvent::$paths` enthält alle veröffentlichten Pfade in ihrer Reihenfolge. `$path` bleibt aus Kompatibilitätsgründen erhalten und enthält immer den ersten Pfad.
