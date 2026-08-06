@@ -42,11 +42,11 @@ final class FeedJob implements ShouldBeUnique, ShouldQueue
 
     public function uniqueId(): string
     {
-        $identity = $this->target === null
-            ? $this->feedClass . "\0default"
-            : $this->feedClass . "\0target\0" . $this->target->key;
+        if ($this->target === null) {
+            return $this->feedClass;
+        }
 
-        return hash('xxh128', $identity);
+        return hash('xxh128', $this->feedClass . "\0target\0" . $this->target->key);
     }
 
     public function uniqueFor(): int

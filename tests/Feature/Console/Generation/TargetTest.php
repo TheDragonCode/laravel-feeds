@@ -8,6 +8,7 @@ use DragonCode\LaravelFeed\Jobs\FeedJob;
 use DragonCode\LaravelFeed\Models\Feed as FeedModel;
 use DragonCode\LaravelFeed\Services\GeneratorService;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Symfony\Component\Console\Command\Command;
 use Tests\Support\TargetedFeed;
@@ -226,7 +227,7 @@ test('returns one generated agent result per target', function () {
         ]);
 });
 
-test('queues one agent job per target', function () {
+test('dispatches one synchronous agent job per target', function () {
     $registration = registerCommandTargetedFeed();
 
     mockAgent(true);
@@ -237,7 +238,7 @@ test('queues one agent job per target', function () {
         'feeds.queue.name'       => 'feeds',
     ]);
 
-    Queue::fake()->serializeAndRestore();
+    Bus::fake()->serializeAndRestore();
 
     $status = Artisan::call(FeedGenerateCommand::class, [
         'feed' => (string) $registration->id,
@@ -264,16 +265,14 @@ test('queues one agent job per target', function () {
             ],
         ]);
 
-    Queue::assertPushed(FeedJob::class, 2);
+    Bus::assertDispatchedSync(FeedJob::class, 2);
 
     foreach (['42', '81'] as $key) {
-        Queue::assertPushed(
+        Bus::assertDispatchedSync(
             FeedJob::class,
             static fn (FeedJob $job) => $job->feedClass === TargetedFeed::class
                 && $job->target?->key                   === $key
-                && $job->target->parameters             === ['partner_id' => (int) $key]
-                && $job->connection                     === 'redis'
-                && $job->queue                          === 'feeds',
+                && $job->target->parameters             === ['partner_id' => (int) $key],
         );
     }
 });

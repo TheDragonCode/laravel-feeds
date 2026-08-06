@@ -93,7 +93,7 @@ test('generation with target uses a configured clone', function () {
         ->toThrow(LogicException::class, 'Feed [' . FullFeed::class . '] has no target.');
 });
 
-test('unique id includes feed class and target key using xxh128', function () {
+test('unique id preserves the legacy feed id and hashes targeted jobs using xxh128', function () {
     $plain          = new FeedJob(FullFeed::class);
     $plainDuplicate = new FeedJob(FullFeed::class);
     $target         = new FeedJob(FullFeed::class, new FeedTarget('42', ['partner_id' => 42]));
@@ -103,7 +103,7 @@ test('unique id includes feed class and target key using xxh128', function () {
     $defaultTarget  = new FeedJob(FullFeed::class, new FeedTarget('default'));
 
     expect($plain->uniqueId())
-        ->toBe(hash('xxh128', FullFeed::class . "\0default"))
+        ->toBe(FullFeed::class)
         ->toBe($plainDuplicate->uniqueId())
         ->not->toBe($defaultTarget->uniqueId());
 

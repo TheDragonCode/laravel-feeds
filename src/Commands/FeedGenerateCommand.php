@@ -164,9 +164,7 @@ final class FeedGenerateCommand extends Command
 
         foreach ($this->executionTargets($definition, $targetKeys) as $target) {
             if ($usesQueue) {
-                $target === null
-                    ? FeedJob::dispatchSync($feed->class)
-                    : FeedJob::dispatch($feed->class, $target);
+                FeedJob::dispatchSync($feed->class, $target);
 
                 $result = ['class' => $feed->class];
 
