@@ -9,6 +9,7 @@ import styles from "./styles.module.css";
 type DocSearchProps = {
     className?: string;
     mobile?: boolean;
+    onClick?: () => void;
 };
 
 type SearchRoute = {
@@ -20,7 +21,11 @@ type SearchRoute = {
     title: string;
 };
 
-export default function DocSearch({ className, mobile = false }: DocSearchProps) {
+export default function DocSearch({
+    className,
+    mobile = false,
+    onClick,
+}: DocSearchProps) {
     const { i18n } = useDocusaurusContext();
     const dialogRef = useRef<HTMLDialogElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -127,7 +132,12 @@ export default function DocSearch({ className, mobile = false }: DocSearchProps)
         setQuery("");
     };
 
-    return (
+    const handleResultClick = () => {
+        close();
+        onClick?.();
+    };
+
+    const search = (
         <>
             <button
                 className={clsx(
@@ -189,7 +199,11 @@ export default function DocSearch({ className, mobile = false }: DocSearchProps)
                     <div aria-live="polite" className={styles.results}>
                         {results.length > 0 ? (
                             results.map((route) => (
-                                <Link key={route.route} onClick={close} to={route.route}>
+                                <Link
+                                    key={route.route}
+                                    onClick={handleResultClick}
+                                    to={route.route}
+                                >
                                     <strong>{route.title}</strong>
                                     <span>{route.description}</span>
                                 </Link>
@@ -206,4 +220,6 @@ export default function DocSearch({ className, mobile = false }: DocSearchProps)
             </dialog>
         </>
     );
+
+    return mobile ? <li className="menu__list-item">{search}</li> : search;
 }

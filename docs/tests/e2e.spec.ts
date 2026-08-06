@@ -132,15 +132,26 @@ test("sidebar navigation opens another guide", async ({ page }) => {
     await expect(page.getByRole("heading", { level: 1, name: "Events" })).toBeVisible();
 });
 
-test("mobile navigation exposes documentation and search", async ({ page }) => {
+test("mobile search closes navigation after selection", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/");
     await page.locator(".navbar__toggle").click();
 
     const sidebar = page.locator(".navbar-sidebar");
+    const search = sidebar.getByRole("button", { name: "Search" });
+
     await expect(sidebar).toBeVisible();
     await expect(sidebar.getByRole("link", { name: "Documentation" })).toBeVisible();
-    await expect(sidebar.getByRole("button", { name: "Search" })).toBeVisible();
+    await expect(search.locator("..")).toHaveClass(/menu__list-item/);
+
+    await search.click();
+    const dialog = page.getByRole("dialog", { name: "Search documentation" });
+    await dialog.getByRole("searchbox").fill("runtime services");
+    await dialog.getByRole("link", { name: /Runtime services and contracts/ }).click();
+
+    await expect(page).toHaveURL(/\/api\/runtime\/$/);
+    await expect(sidebar).toBeHidden();
+    await expect(page.locator("body")).toHaveCSS("overflow", "visible");
 });
 
 test("localized routes render translated content", async ({ page }) => {
