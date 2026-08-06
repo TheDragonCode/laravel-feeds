@@ -1,0 +1,593 @@
+[
+    {
+        "route": "/pt-BR/",
+        "title": "Documentação do Laravel Feeds",
+        "description": "Exporte grandes conjuntos de dados do Laravel para XML, JSON, JSON Lines, CSV, RSS e feeds de marketplaces.",
+        "keywords": [
+            "Laravel",
+            "feeds",
+            "data export",
+            "documentation"
+        ],
+        "headings": [
+            "Exporte grandes conjuntos de dados sem carregá-los por completo na memória",
+            "Comece por uma tarefa e depois consulte a referência"
+        ],
+        "content": ""
+    },
+    {
+        "route": "/pt-BR/api/",
+        "title": "Referência da API",
+        "description": "Mapa das classes, contratos, objetos de dados, eventos e exceções públicos do Laravel Feeds",
+        "keywords": [
+            "API",
+            "reference",
+            "Feed",
+            "FeedItem",
+            "FeedInfo"
+        ],
+        "headings": [
+            "Referência da API",
+            "Pontos de extensão",
+            "Veja também"
+        ],
+        "content": "Referência da API Use esta seção quando já conhecer o fluxo e precisar de uma classe, método, chave de configuração, evento ou contrato de falha exato. Área Principais pontos de entrada Referência --- --- --- Configuração config/feeds.php Configuração Classes de feed Feed , FeedItem , FeedInfo Feeds e dados Estrutura da saída ElementData , diretivas XML Elementos, Diretivas Formatos FeedFormatEnum , conversores Formatos compatíveis Execução GeneratorService , FeedQuery , ScheduleFeedHelper Serviços e contratos de execução Ciclo de vida Eventos de início e conclusão Eventos e exceções Predefinições Sitemap, RSS, Instagram, Yandex Predefinições Pontos de extensão - Estenda Feed ou uma predefinição para definir a fonte de dados e o contrato de saída. - Estenda FeedItem e FeedInfo para controlar os dados serializados. - Implemente DragonCode\\LaravelFeed\\Contracts\\Transformer para conversão escalar personalizada. - Retorne DragonCode\\LaravelFeed\\Data\\OptionalData quando um campo precisar ser omitido. - Registre macros em Feed , FeedItem ou FeedInfo para auxiliares da aplicação. Veja também - Criar feeds - Extensão de funcionalidades - Solução de problemas"
+    },
+    {
+        "route": "/pt-BR/api/configuration/",
+        "title": "Referência de configuração",
+        "description": "Referência de todas as seções de configuração e variáveis de ambiente do Laravel Feeds",
+        "keywords": [
+            "configuration",
+            "environment",
+            "queue",
+            "schedule",
+            "converters"
+        ],
+        "headings": [
+            "Referência de configuração",
+            "Configurações principais",
+            "Agendamento e filas",
+            "Transformadores",
+            "Configurações dos conversores",
+            "Veja também"
+        ],
+        "content": "Referência de configuração Publique config/feeds.php com php artisan vendor:publish --tag=\"feeds\" . Os valores do ambiente são lidos quando o Laravel cria o cache de configuração. Configurações principais Chave Padrão Finalidade --- --- --- model DragonCode\\LaravelFeed\\Models\\Feed Modelo Eloquent dos registros de feeds. Um substituto deve estender o modelo do pacote. pretty / FEED_PRETTY false Ativa a saída XML e JSON formatada. date.format DATE_ATOM Formato de data PHP usado pelo transformador de datas. date.timezone / FEED_TIMEZONE UTC Fuso horário usado na serialização das datas. table.connection DB_CONNECTION , depois sqlite Conexão de banco dos registros de feeds. table.table / FEED_TABLE feeds Nome da tabela de registros de feeds. Agendamento e filas Variável de ambiente Padrão Finalidade --- --- --- FEED_SCHEDULE_TTL 1440 Duração do bloqueio do agendamento em minutos. FEED_SCHEDULE_RUN_BACKGROUND true Executa comandos agendados em segundo plano. FEED_QUEUE_ENABLED false Despacha a geração pelo Laravel Queue. FEED_QUEUE_CONNECTION QUEUE_CONNECTION , depois database Conexão da fila dos jobs de feed. FEED_QUEUE_NAME Padrão da conexão Nome da fila. FEED_QUEUE_UNIQUE_TTL 3600 Duração do bloqueio de unicidade em segundos. FEED_CONSOLE_PROGRESS_BAR_ENABLED false Exibe a barra de progresso no console. O modo de fila exige um worker quando a conexão é assíncrona. A conexão sync ainda executa a geração no processo do comando. Transformadores O pipeline padrão contém BoolTransformer , DateTimeTransformer e EnumTransformer , nessa ordem. Cada transformador compatível recebe o valor retornado pelo anterior. Depois de implementar DragonCode\\LaravelFeed\\Contracts\\Transformer , adicione a classe em transformers . O Laravel a resolve pelo contêiner de serviços. Configurações dos conversores Chave Padrão --- --- converters.json.options JSON_UNESCAPED_SLASHES JSON_UNESCAPED_UNICODE converters.jsonl.options JSON_UNESCAPED_SLASHES JSON_UNESCAPED_UNICODE converters.csv.delimiter ; converters.csv.enclosure \" converters.csv.escape String vazia converters.csv.line_ending PHP_EOL Veja também - Instalação - Geração e agendamento - Configuração do modelo Eloquent"
+    },
+    {
+        "route": "/pt-BR/api/events-exceptions/",
+        "title": "Eventos e exceções",
+        "description": "Referência dos eventos do ciclo de geração e dos tipos públicos de exceção",
+        "keywords": [
+            "events",
+            "exceptions",
+            "FeedStartingEvent",
+            "FeedFinishedEvent"
+        ],
+        "headings": [
+            "Eventos e exceções",
+            "Eventos do ciclo de vida",
+            "Falhas de entrada e busca",
+            "Falhas de serialização e armazenamento",
+            "Veja também"
+        ],
+        "content": "Eventos e exceções Use eventos do ciclo de vida para integrar a aplicação e os tipos de exceção para recuperação no limite capaz de tratar a falha. Eventos do ciclo de vida Evento Dados públicos Momento do disparo --- --- --- FeedStartingEvent feed Após a verificação preliminar do armazenamento e do caminho, antes da resolução do conversor e da preparação. FeedFinishedEvent feed , path , paths Depois da publicação bem-sucedida de todos os arquivos gerados. FeedFinishedEvent::$paths contém todos os caminhos publicados em ordem. $path é mantido para compatibilidade e sempre contém o primeiro caminho. Falhas de entrada e busca Exceção Significado --- --- InvalidFeedArgumentException O ID do feed no console é inválido. FeedNotFoundException Não existe registro para o ID solicitado. InvalidExpressionException A expressão de agendamento é inválida. UnknownFeedClassException A classe configurada não pode ser resolvida. UnexpectedClassException A classe resolvida não atende ao contrato esperado. Falhas de serialização e armazenamento Exceção Significado --- --- InvalidCsvRowException A linha CSV não corresponde ao esquema de colunas definido. InvalidCsvValueException Um campo CSV não pode ser serializado como valor escalar. InvalidXmlCDataException O valor CDATA é inválido. InvalidXmlFragmentException O fragmento XML bruto é inválido. UnsupportedStorageDiskException O disco Laravel escolhido não é resolvido como FilesystemAdapter . OpenFeedException O recurso temporário de saída não pode ser aberto. WriteFeedException A saída completa não pode ser gravada. CloseFeedException O recurso de saída não pode ser fechado. ResourceMetaException Os metadados necessários do stream não estão disponíveis. FeedGenerationException A geração falhou para uma classe de feed. Capture exceções somente onde a aplicação puder adicionar recuperação ou contexto útil. Deixe o Laravel reportar falhas irrecuperáveis. Veja também - Guia de eventos - Solução de problemas - Garantias de armazenamento"
+    },
+    {
+        "route": "/pt-BR/api/feed/",
+        "title": "Feeds e dados",
+        "description": "Contratos públicos de Feed, FeedItem, FeedInfo, ElementData e resultados de geração",
+        "keywords": [
+            "Feed",
+            "FeedItem",
+            "FeedInfo",
+            "ElementData",
+            "GenerationResultData"
+        ],
+        "headings": [
+            "Feeds e dados",
+            "Feed",
+            "FeedItem e FeedInfo",
+            "ElementData",
+            "Resultado da geração",
+            "FeedFormatEnum",
+            "Veja também"
+        ],
+        "content": "Feeds e dados A API principal separa a fonte de dados, o mapeamento dos itens, os metadados do feed, a estrutura da saída e o resultado da geração. Feed DragonCode\\LaravelFeed\\Feeds\\Feed é a classe-base de uma exportação. Implemente builder() e sobrescreva apenas os pontos de saída necessários. abstract public function builder(): Builder Método Padrão Contrato --- --- --- builder(): Builder Abstrato Retorna a consulta Eloquent usada como fonte de dados. item(Model $model): FeedItem Novo FeedItem base Mapeia um modelo para um item de saída. transformers(): array [] Adiciona no início os transformadores deste feed. chunkSize(): int 1000 Tamanho do lote da consulta ao banco. perFile(): int 0 Registros por arquivo. Zero desativa a divisão por quantidade. maxFiles(): int 0 Máximo de arquivos de saída. Zero não impõe limite. header(): string Declaração XML para XML/RSS Conteúdo antes da raiz e dos itens. footer(): string String vazia Conteúdo depois da raiz e dos itens. root(): ElementData Nome derivado da classe Define o elemento raiz e seus atributos. info(): FeedInfo FeedInfo vazio Define informações no nível do feed. filename(): string Nome derivado da classe Retorna o nome de saída relativo ao disco. path($suffix): string Caminho resolvido pelo adaptador Retorna um caminho local ou resolvido pelo adaptador. storagePath($suffix): string Nome relativo ao disco Retorna o caminho usado nas operações de armazenamento. storage(): FilesystemAdapter Disco public Resolve e valida o disco do Laravel. format(): FeedFormatEnum Xml Retorna o formato de saída configurado. Feed usa Conditionable e Macroable do Laravel. FeedItem e FeedInfo FeedItem recebe o modelo Eloquent atual. Por padrão: - name() retorna o nome-base da classe do modelo em kebab case; - attributes() retorna um array vazio; - toArray() retorna o array do modelo. FeedInfo::toArray() retorna um array vazio. As duas classes usam Conditionable e Macroable ; estenda-as quando a saída exigir um esquema explícito. ElementData ElementData é um objeto somente leitura com três propriedades de construtor: Propriedade Tipo Padrão --- --- --- name ?string null attributes array [] beforeInfo bool true Defina name como null ou string vazia para omitir a raiz. Defina beforeInfo como false para gravar as informações antes dela. Resultado da geração GeneratorService::feed() retorna GenerationResultData . A propriedade somente leitura paths contém os arquivos publicados em ordem. records associa cada caminho à quantidade de registros gravados nesse arquivo. Os métodos de geração e registro programáticos estão em Serviços e contratos de execução. FeedFormatEnum Caso Valor --- --- Xml xml Json json JsonLines jsonl Csv csv Rss rss Veja também - Criar feeds - Elementos - Armazenamento - Serviços e contratos de execução"
+    },
+    {
+        "route": "/pt-BR/api/runtime/",
+        "title": "Serviços e contratos de execução",
+        "description": "APIs públicas de geração, registro, agendamento, transformação e valores opcionais",
+        "keywords": [
+            "GeneratorService",
+            "FeedQuery",
+            "ScheduleFeedHelper",
+            "Transformer",
+            "OptionalData"
+        ],
+        "headings": [
+            "Serviços e contratos de execução",
+            "GeneratorService",
+            "FeedQuery",
+            "ScheduleFeedHelper",
+            "Transformer",
+            "OptionalData",
+            "Veja também"
+        ],
+        "content": "Serviços e contratos de execução Esses pontos de entrada cobrem geração programática, registro de feeds, integração com o agendador, transformação escalar e campos opcionais. GeneratorService DragonCode\\LaravelFeed\\Services\\GeneratorService gera e publica um feed. public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData O método publica todas as partes como uma operação, atualiza a última atividade do registro, dispara eventos do ciclo de vida e retorna os caminhos com a quantidade de registros por arquivo. A resolução do disco e do caminho de saída ocorre antes do início da geração; as exceções dessa verificação prévia, incluindo UnsupportedStorageDiskException , são lançadas diretamente. Depois que a verificação prévia é concluída, as falhas de geração são envolvidas em FeedGenerationException , mantendo a exceção original como anterior. Resolva o serviço pelo contêiner do Laravel em vez de construir suas dependências internas. FeedQuery DragonCode\\LaravelFeed\\Queries\\FeedQuery gerencia registros persistidos de feeds. Método Resultado --- --- create(string $class, string $title, string $expression = '0 ', bool $isActive = true, array $extra = []): Feed Cria um registro. find(int $id): Feed Retorna um registro ou lança FeedNotFoundException . all(): Builder Retorna todos os registros ordenados por ID. active(): Builder Retorna registros ativos ordenados por ID. setLastActivity(string $class): void Atualiza last_activity de uma classe de feed. delete(int $id): void Exclui logicamente um registro pelo ID. deleteByClass(string $class): void Remove definitivamente registros da classe, inclusive os excluídos. restore(int $id): void Restaura um registro excluído logicamente. Use a migration ou a operação de implantação gerada para alterações comuns, mantendo-as reproduzíveis entre ambientes. ScheduleFeedHelper DragonCode\\LaravelFeed\\Helpers\\ScheduleFeedHelper::register() adiciona registros ativos ao agendador do Laravel. Cada registro usa sua expressão cron e um bloqueio contra sobreposição. Execução em segundo plano e TTL vêm de feeds.schedule . O registro é ignorado com segurança quando a tabela configurada não existe. Transformer Implemente DragonCode\\LaravelFeed\\Contracts\\Transformer para converter valores compatíveis antes da serialização. public function allow(mixed $value): bool public function transform(mixed $value): string allow() decide se o transformador aceita o valor. transform() retorna sua representação escalar serializada. Adicione a classe por Feed::transformers() ou feeds.transformers . OptionalData Retorne um novo DragonCode\\LaravelFeed\\Data\\OptionalData para um campo que deve ser omitido quando não houver valor. XML, RSS, JSON e JSON Lines o omitem. CSV mantém a coluna e grava um campo vazio. Veja também - Feeds e dados - Configuração - Eventos e exceções - Geração e agendamento"
+    },
+    {
+        "route": "/pt-BR/compatibility/",
+        "title": "Compatibilidade",
+        "description": "Contratos compatíveis de PHP, Laravel, armazenamento, fila e formatos no Laravel Feeds 1.x",
+        "keywords": [
+            "compatibility",
+            "PHP",
+            "Laravel",
+            "Flysystem",
+            "formats"
+        ],
+        "headings": [
+            "Compatibilidade",
+            "Matriz de execução",
+            "Formatos de saída",
+            "Integrações opcionais",
+            "Veja também"
+        ],
+        "content": "Compatibilidade Use o grafo de dependências resolvido pelo Composer como verificação final de uma aplicação específica. Matriz de execução Componente Versões compatíveis --- --- PHP 8.2 e versões 8.x posteriores permitidas pelas restrições do pacote instalado Componentes Laravel 11.x , 12.x , 13.x Banco de dados Qualquer conexão Laravel aceita pelo modelo Eloquent e pela migration configurados Sistema de arquivos Discos graváveis do Laravel resolvidos como FilesystemAdapter O composer.lock instalado é a autoridade final da aplicação. O Composer rejeita combinações incompatíveis. Formatos de saída Formato Extensão Dados aninhados Diretivas XML --- --- --- --- XML .xml Sim Sim JSON .json Sim Não JSON Lines .jsonl Um valor JSON por linha Não CSV .csv Não; exige colunas escalares estáveis Não RSS .rss Sim Sim Integrações opcionais - O Laravel Queue só é necessário quando o modo de fila está ativo. - O make:feed usa Laravel Deploy Operations quando instalado; caso contrário, cria uma migration. - Valores opcionais do Spatie Laravel Data são reconhecidos quando o pacote está instalado. Veja também - Instalação - Formatos compatíveis - Guia de atualização"
+    },
+    {
+        "route": "/pt-BR/contributions/",
+        "title": "Guia de contribuição",
+        "description": "Instruções para desenvolvedores do projeto Laravel Feeds",
+        "keywords": [
+            "contributing",
+            "code style",
+            "code of conduct"
+        ],
+        "headings": [
+            "Guia de contribuição",
+            "Estilo de código",
+            "Código de conduta",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Guia de contribuição Contribuições são bem-vindas e receberão os devidos créditos . Aceitamos contribuições por meio de Pull Requests em todos os projetos da nossa organização. Estilo de código O Laravel Feeds segue o padrão de codificação PER-3 e o padrão de carregamento automático PSR-4. Para aplicar a formatação do código, execute o seguinte comando no console: Código de conduta O código de conduta do Laravel é baseado no Contributor Covenant. Qualquer violação pode ser comunicada a Andrey Helldar: - Os participantes devem ser tolerantes com opiniões divergentes. - Os participantes devem garantir que sua linguagem e suas ações não contenham ataques pessoais nem comentários depreciativos. - Ao interpretar as palavras e ações de outras pessoas, os participantes devem sempre presumir boas intenções. - Comportamentos que possam ser razoavelmente considerados assédio não serão tolerados. Veja também - Licença MIT - Primeiros passos - Aprendizado de máquina"
+    },
+    {
+        "route": "/pt-BR/create-feeds/",
+        "title": "Criar feeds",
+        "description": "Instruções para criar e preencher as classes do feed, dos itens e das informações",
+        "keywords": [
+            "feed",
+            "FeedItem",
+            "FeedInfo",
+            "make:feed"
+        ],
+        "headings": [
+            "Criar feeds",
+            "Preencher feeds",
+            "Feed",
+            "Item do feed",
+            "Valores opcionais",
+            "Formato do arquivo",
+            "Veja também"
+        ],
+        "content": "import ThemedImage from '@theme/ThemedImage'; ← Anterior · Voltar ao README · Próximo → Criar feeds A maneira mais prática de criar as classes necessárias é usar o plugin Laravel Idea para o PhpStorm. Para criar uma classe de feed, use o comando make:feed no console: Isso criará um arquivo de feed, por exemplo, app/Feeds/UserFeed.php . Esse comando também pode criar as classes de item e de informações junto com a classe do feed. Para isso, use as opções --item e --info . Também existem opções abreviadas: Ao criar um feed, uma operação ou migração também será criada para adicioná-lo ao banco de dados. Se o projeto usa o Laravel Deploy Operations , uma classe de operação será criada. Caso contrário, será criada uma classe de migração. Isso é necessário para adicionar e gerenciar as informações do feed no banco de dados. Preencher feeds Feed Preencha a classe principal do feed. Exemplo: Item do feed Preencha a classe de item do feed. Exemplo: Valores opcionais Para omitir um campo quando seu valor não estiver disponível, retorne uma instância de DragonCode\\LaravelFeed\\Data\\OptionalData como valor: Os campos opcionais são removidos de objetos JSON e JSON Lines e de elementos XML e RSS, inclusive de campos aninhados comuns. O CSV mantém a posição da coluna e grava um campo vazio. Se a aplicação usa o Spatie Laravel Data, você pode retornar Spatie\\LaravelData\\Optional . As duas classes de valor opcional são processadas automaticamente. Formato do arquivo A lista de formatos disponíveis está na página Formatos compatíveis. Você pode gerar feeds em formatos diferentes. Uma classe de feed só pode ser exportada corretamente para o formato ao qual se destina, devido ao uso de diretivas e a outras particularidades do formato. Para aplicar o formato necessário, basta sobrescrever a propriedade $format na classe do feed: Veja também - Geração e agendamento - Formatos compatíveis - Predefinições"
+    },
+    {
+        "route": "/pt-BR/directives/",
+        "title": "Diretivas",
+        "description": "Diretivas XML integradas para a saída dos feeds",
+        "keywords": [
+            "XML",
+            "directives",
+            "attributes",
+            "CDATA"
+        ],
+        "headings": [
+            "Diretivas",
+            "@attributes",
+            "@value",
+            "@cdata",
+            "@mixed",
+            "@custom",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Diretivas Formatos: XML [Diretivas reservadas] - @attributes - @value - @cdata - @mixed - @custom As diretivas só estão disponíveis durante a geração de feeds no formato XML. @attributes Indica um array de atributos. Você pode usar uma chave chamada @attributes para adicionar atributos a um nó: Esse código produzirá o seguinte resultado: @value Indica o valor aplicável “como está”. O valor do campo @value deve ser uma string. Você pode usar uma chave chamada @value para adicionar um valor a um nó: Esse código produzirá o seguinte resultado: @cdata Permite usar marcação XML sem transformação. Também é possível envolver o valor de um nó em uma seção CDATA. Isso permite usar caracteres reservados. Você pode usar uma chave chamada @cdata para adicionar CDATA a um nó: Esse código produzirá o seguinte resultado: @mixed Permite usar marcação XML diretamente na estrutura do documento. Para inserir fragmentos XML “como estão”, use a diretiva @mixed : Esse código produzirá o seguinte resultado: @custom Permite listar um array de elementos com as mesmas chaves. Em alguns casos, você precisa inserir um array de elementos com os mesmos nomes. Para isso, adicione o símbolo @ ao início do nome da chave: Esse código produzirá o seguinte resultado: Veja também - Elementos - Formatos compatíveis - Receita do Yandex"
+    },
+    {
+        "route": "/pt-BR/elements/",
+        "title": "Elementos",
+        "description": "Configurar a estrutura do feed: elemento raiz, bloco de informações, cabeçalho, rodapé e atributos",
+        "keywords": [
+            "elements",
+            "FeedInfo",
+            "attributes",
+            "split files"
+        ],
+        "headings": [
+            "Elementos",
+            "Elemento raiz",
+            "Informações",
+            "Cabeçalho e rodapé",
+            "Atributos",
+            "Dividir arquivos",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Elementos Elemento raiz Formatos: XML, RSS, JSON Por padrão, o nome do elemento raiz é derivado do nome-base da classe do feed. Por exemplo, para a classe App\\Feeds\\FooBarFeed , o nome é foo_bar . Para adicionar um elemento raiz e/ou seus atributos, sobrescreva o método root : Para desativar a inclusão do elemento raiz, informe um nome vazio: null ou \"\" . Esse código produzirá o seguinte resultado: Informações Formatos: XML, RSS, JSON, JSONL, CSV Para adicionar informações no início do elemento raiz, quando ele existir, ou sem ele, sobrescreva o método info na classe do feed e crie um objeto que estenda DragonCode\\LaravelFeed\\Feeds\\Info\\FeedInfo : Esse código produzirá o seguinte resultado: Para alterar a ordem de saída do elemento raiz em relação ao bloco de informações, defina o parâmetro beforeInfo no método root : Esse código produzirá o seguinte resultado: Cabeçalho e rodapé Formatos: XML, RSS, JSON Para alterar o cabeçalho e o rodapé, sobrescreva os métodos header e footer : Esse código produzirá o seguinte resultado: Atributos Formatos: XML, RSS Esse código produzirá o seguinte resultado: Dividir arquivos Formatos: XML, RSS, JSON, JSONL, CSV Se necessário, você pode limitar tanto a quantidade de linhas gravadas em cada arquivo quanto a quantidade de arquivos. Para isso, use as funções perFile e maxFiles . Os métodos funcionam de forma independente. Durante a divisão, um número sequencial será adicionado aos nomes dos arquivos. Exemplo: - attribute-1.xml - attribute-2.xml - attribute-3.xml Veja também - Diretivas - Formatos compatíveis - Armazenamento"
+    },
+    {
+        "route": "/pt-BR/eloquent/",
+        "title": "Eloquent",
+        "description": "Configure os modelos de registro dos feeds e o tamanho dos lotes das consultas.",
+        "keywords": [
+            "Eloquent",
+            "model",
+            "FeedQuery",
+            "chunk size"
+        ],
+        "headings": [
+            "Eloquent",
+            "Modelo personalizado de registro de feeds",
+            "Tamanho do lote",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Eloquent Modelo personalizado de registro de feeds Defina feeds.model como um modelo da aplicação quando os registros dos feeds precisarem de colunas, conversões, relacionamentos ou métodos adicionais. O modelo personalizado deve estender DragonCode\\LaravelFeed\\Models\\Feed . Registre o modelo em config/feeds.php : Adicione as colunas personalizadas à tabela de feeds em uma migration da aplicação. Mantenha em $fillable todos os atributos aceitos por atribuição em massa. FeedQuery usa o modelo configurado nas operações de criação, busca, listagem, atualização, exclusão e restauração. Ao criar um registro, passe os valores específicos da aplicação por extra . Esses valores são aplicados por último e podem substituir os argumentos do método: O modelo da aplicação também pode usar a API normal do Eloquent: O modelo configurado é resolvido em tempo de execução. A análise estática considera o resultado de FeedQuery::create() como o modelo base do pacote. Use App\\Models\\Feed::create() ou um tipo local explícito quando precisar de autocompletar para propriedades específicas da aplicação. Tamanho do lote As consultas ao banco de dados usam lotes de 1000 itens por padrão. Para alterar esse valor, sobrescreva o método chunkSize : Veja também - Criar feeds - Geração e agendamento - Extensão de funcionalidades"
+    },
+    {
+        "route": "/pt-BR/events/",
+        "title": "Eventos",
+        "description": "Eventos disparados durante a geração dos feeds",
+        "keywords": [
+            "events",
+            "FeedStartingEvent",
+            "FeedFinishedEvent"
+        ],
+        "headings": [
+            "Eventos",
+            "Contrato do evento de conclusão",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Eventos Os feeds disparam dois eventos durante a execução do comando: - DragonCode\\LaravelFeed\\Events\\FeedStartingEvent — O FeedStartingEvent é disparado após a verificação preliminar do armazenamento e do caminho, antes da resolução do conversor e da preparação. Isso não significa que já exista um arquivo temporário. - DragonCode\\LaravelFeed\\Events\\FeedFinishedEvent — O FeedFinishedEvent é disparado depois que todos os arquivos gerados são publicados com sucesso. Uma geração que falha não dispara esse evento. Contrato do evento de conclusão O evento de conclusão expõe as seguintes propriedades públicas: - $feed contém a classe do feed gerado. - $paths contém todos os caminhos dos arquivos publicados, na ordem de saída. - $path continua disponível para compatibilidade com versões anteriores e contém o primeiro caminho publicado. Use $paths quando um feed puder ser dividido entre vários arquivos. GeneratorService::feed() retorna um objeto GenerationResultData . A propriedade $paths contém os mesmos caminhos ordenados, e $records associa cada caminho à quantidade de registros gravados naquele arquivo. Veja também - Geração e agendamento - Armazenamento - Extensão de funcionalidades"
+    },
+    {
+        "route": "/pt-BR/extending-functionality/",
+        "title": "Extensão de funcionalidades",
+        "description": "Estenda os feeds com cláusulas condicionais, macros e transformadores personalizados.",
+        "keywords": [
+            "extensions",
+            "macros",
+            "transformers",
+            "conditional clauses"
+        ],
+        "headings": [
+            "Extensão de funcionalidades",
+            "Cláusulas condicionais",
+            "Macroable",
+            "Transformadores personalizados",
+            "Adicionar transformadores do feed no início",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Extensão de funcionalidades Cláusulas condicionais As cláusulas condicionais estão disponíveis para as classes Feed , FeedInfo e FeedItem . Às vezes, certas cláusulas devem ser aplicadas ao feed conforme outra condição. Por exemplo, uma cláusula de filtro pode ser necessária somente quando um valor de entrada estiver presente ou outro atributo tiver um valor. Faça isso com o método when : O método when executa a closure informada somente quando o primeiro argumento é true . Se o primeiro argumento for false , a closure não será executada. No exemplo acima, a closure passada ao método when só será chamada se o campo category estiver presente no modelo e for avaliado como true . Você pode passar outra closure como terceiro argumento do método when . Ela será executada somente se o primeiro argumento for avaliado como false . Neste exemplo, o recurso configura o sufixo do título do modelo: O método inverso unless também está disponível. Nesse caso, a lógica de processamento é exatamente oposta. Macroable Feed , FeedItem e FeedInfo são \"macroable\", o que permite adicionar métodos a eles em tempo de execução. O método macro aceita uma closure executada quando a macro é chamada. A closure da macro pode acessar os outros métodos do feed por $this , como se fosse um método real das classes de feed. Por exemplo, o código abaixo adiciona o método customFilename à classe Feed : Veja também exemplos para FeedInfo e FeedItem : Transformadores personalizados Um transformador converte um valor compatível antes que o conversor o serialize. Registre os nomes das classes dos transformadores em config/feeds.php . O Laravel resolve cada classe pelo contêiner de serviços, portanto dependências do construtor e bindings personalizados do contêiner são compatíveis. Adicione o transformador à lista configurada após os transformadores incluídos no pacote: Os transformadores configurados são executados na ordem de declaração. Cada chamada a allow() recebe o valor atual, inclusive as alterações feitas pelos transformadores anteriores, e todo transformador compatível pode atualizá-lo. As entradas duplicadas são removidas após a resolução pelo contêiner, enquanto a primeira ocorrência mantém sua posição. Um conversor monta esse pipeline ordenado uma vez e reutiliza as mesmas instâncias dos transformadores em todos os campos dessa geração do feed. Adicionar transformadores do feed no início Sobrescreva transformers() em um feed para adicionar transformadores no início da lista desse feed. O método retorna nomes de classes, e o Laravel os resolve pelo contêiner de serviços da mesma forma que a lista global. Por exemplo, defina um transformador de data com um formato específico para o feed: Depois, retorne-o no feed: A lista adicionada no início não substitui a lista global de config/feeds.php . Os transformadores são executados nesta ordem: 1. Transformadores adicionados no início e retornados por transformers() . 2. Transformadores globais de config/feeds.php . 3. Transformadores específicos do conversor exigidos pelo formato de saída selecionado. Assim, um transformador adicionado no início pode formatar uma data primeiro. O transformador global de data recebe a string resultante e a ignora, enquanto os outros transformadores globais continuam processando os campos compatíveis. Veja também - Criar feeds - Eloquent - Diretivas"
+    },
+    {
+        "route": "/pt-BR/faq/",
+        "title": "Perguntas frequentes",
+        "description": "Respostas curtas para dúvidas comuns sobre configuração, geração, armazenamento e formatos",
+        "keywords": [
+            "FAQ",
+            "generation",
+            "storage",
+            "formats",
+            "memory"
+        ],
+        "headings": [
+            "Perguntas frequentes",
+            "Veja também"
+        ],
+        "content": "Perguntas frequentes Respostas curtas para dúvidas comuns sobre configuração, geração, armazenamento, formatos e memória. O Laravel Feeds exporta milhões de registros? Sim. O pacote lê resultados do Eloquent em lotes e grava a saída gradualmente. Mantenha builder() lazy, não chame get() nem toArray() no resultado completo e ajuste chunkSize() depois de medir memória e carga do banco. Veja desempenho com grandes conjuntos de dados. Qual formato devo usar? Use o contrato exigido pelo consumidor. XML e RSS aceitam diretivas hierárquicas, JSON preserva dados aninhados, JSON Lines serve ao processamento por linha e CSV exige um esquema estável de colunas. Veja formatos compatíveis. Um feed pode criar vários arquivos? Sim. Sobrescreva perFile() para definir os registros por arquivo e maxFiles() para impor um limite opcional. Arquivos divididos recebem sufixos sequenciais. Veja dividir arquivos. Posso armazenar feeds no S3 ou em outro disco remoto? Sim, quando o disco Laravel configurado resolve para um FilesystemAdapter gravável. Movimentos remotos podem ser implementados por cópia e exclusão; a substituição atômica não é garantida. Veja discos compatíveis. Por que um feed desativado foi executado? Passar um ID para feed:generate executa o feed mesmo quando seu registro está inativo. Sem ID, o comando ignora registros inativos. Veja geração de um feed individual. Como omitir um campo opcional? Retorne DragonCode\\LaravelFeed\\Data\\OptionalData ou Spatie\\LaravelData\\Optional como valor. CSV mantém a coluna e grava um valor vazio; formatos de objeto e XML omitem o campo. Veja valores opcionais. Veja também - Solução de problemas - Referência de configuração - Referência da API"
+    },
+    {
+        "route": "/pt-BR/generation/",
+        "title": "Geração e agendamento",
+        "description": "Informações sobre a geração de arquivos de feed para distribuição posterior",
+        "keywords": [
+            "generation",
+            "schedule",
+            "queue",
+            "feed:generate"
+        ],
+        "headings": [
+            "Geração e agendamento",
+            "Feed individual",
+            "Saída para agentes de IA",
+            "Fila",
+            "Agendamento",
+            "Automático",
+            "Manual",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Geração e agendamento Para gerar todos os feeds ativos, use o comando: Como resultado, todos os feeds ativos ( is_active = true ) da tabela feeds , ou da tabela definida em config/feeds.php , serão executados. Ao chamar o comando sem parâmetro, o console exibirá links para todos os feeds, inclusive aqueles cuja propriedade is_active está definida como false . No entanto, esses feeds não serão executados: eles serão marcados com o status SKIP . Feed individual O feed informado será executado mesmo que esteja desativado na tabela feeds do banco de dados. Para gerar um feed específico, chame o comando feed:generate e passe como parâmetro o ID do feed na tabela feeds : Saída para agentes de IA Quando feed:generate é executado dentro de um agente de codificação com IA reconhecido pelo Laravel Agent Detector, o comando grava automaticamente um único objeto JSON em vez de barras de progresso e linhas de status formatadas. Nenhuma opção de comando é necessária. Fora de um agente reconhecido, a saída normal do console permanece inalterada. Na geração direta, cada feed gerado inclui todos os arquivos publicados e suas quantidades de registros: O comando emite um JSON compacto em uma única linha. O exemplo está formatado apenas para facilitar a leitura. Status Significado Campos adicionais --- --- --- generated Os arquivos do feed foram gerados diretamente. files , com path e records para cada arquivo queued O modo de fila está ativado e o job do feed foi executado de forma síncrona para o agente. Nenhum skipped O feed está inativo e o comando foi executado sem o ID de um feed. Nenhum No modo de fila, o caminho específico do agente executa cada job ativo de forma síncrona antes de retornar o resultado JSON. O caminho normal, formatado para pessoas, continua despachando os jobs pela conexão de fila configurada. Esse envelope JSON só é usado em execuções bem-sucedidas. Se a geração lançar uma exceção, o Laravel tratará o erro do comando normalmente e não emitirá um envelope de erro JSON. Fila Por padrão, a geração dos feeds é executada no processo do console. Para feeds demorados ou que usam muita memória, ative o modo de fila do Laravel no ambiente: Quando o modo de fila está ativado, feed:generate despacha um job para cada feed ativo em vez de gerar os arquivos diretamente. Com uma conexão assíncrona, o comando termina depois que os jobs são despachados. Inicie um worker da fila para a conexão e a fila selecionadas a fim de processar esses jobs. - FEED_QUEUE_CONNECTION seleciona a conexão da fila. Na ausência dela, são usadas QUEUE_CONNECTION e depois database . - FEED_QUEUE_NAME seleciona uma fila nessa conexão. Deixe a variável sem valor para usar a fila padrão da conexão. - FEED_QUEUE_UNIQUE_TTL define em segundos o tempo de vida máximo do bloqueio de exclusividade. Um segundo job para o mesmo feed não entra na fila enquanto o bloqueio estiver ativo. A conexão sync executa cada job imediatamente no processo do console. Selecione uma conexão assíncrona para transferir a geração para um worker. Defina FEED_QUEUE_ENABLED=false para gerar os feeds diretamente, sem despachar jobs. Agendamento Automático Para automatizar a geração dos feeds, use um agendamento. Para isso, adicione a chamada do helper ao arquivo routes/console.php , que é o caminho padrão, a menos que você o tenha alterado: Isso permite registrar chamadas para todos os feeds ativos conforme o agendamento definido na coluna expression do banco de dados. Manual Você também pode definir o agendamento diretamente segundo suas próprias regras. Nesse caso, somente os feeds informados serão executados. Veja também - Criar feeds - Eventos - Armazenamento"
+    },
+    {
+        "route": "/pt-BR/installation/",
+        "title": "Instalação e configuração",
+        "description": "Informações sobre a instalação e configuração do Laravel Feeds",
+        "keywords": [
+            "installation",
+            "Composer",
+            "configuration",
+            "migration"
+        ],
+        "headings": [
+            "Instalação e configuração",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Instalação e configuração Você pode instalar o pacote usando o Composer: Publique a migração e o arquivo de configuração config/feeds.php com: Antes de executar as migrações , verifique as configurações de conexão com o banco de dados no arquivo config/feeds.php . Agora você pode executar as migrações e seguir para a etapa de criação dos feeds. Veja também - Criar feeds - Geração e agendamento - Formatos compatíveis"
+    },
+    {
+        "route": "/pt-BR/introduction/",
+        "title": "Primeiros passos",
+        "description": "Instale o Laravel Feeds e gere seu primeiro feed em cinco minutos",
+        "keywords": [
+            "getting started",
+            "Laravel",
+            "feeds",
+            "quick start"
+        ],
+        "headings": [
+            "Primeiros passos",
+            "Pré-requisitos",
+            "Instalar e preparar",
+            "Definir a fonte dos dados",
+            "Definir cada item",
+            "Gerar o arquivo",
+            "Próximos passos"
+        ],
+        "content": "Primeiros passos Instale o pacote, defina uma consulta Eloquent e a estrutura do item e gere um arquivo de feed. Em uma aplicação Laravel existente, o primeiro export funcional leva cerca de cinco minutos. Pré-requisitos - PHP 8.2 ou uma versão 8.x posterior aceita pelo Composer - Laravel 11.x , 12.x ou 13.x - Banco de dados e disco do sistema de arquivos configurados Instalar e preparar O gerador cria as classes do feed e do item. Ele também cria a alteração no banco que registra o feed. Execute essa migration antes da primeira geração caso ela tenha sido criada depois do comando migrate anterior. Definir a fonte dos dados Retorne um Builder do Eloquent para que os registros sejam lidos em lotes. Definir cada item Gerar o arquivo O comando informa o status de cada feed; a saída normal do console não inclui os caminhos dos arquivos gerados. As classes de feed usam XML e o disco public por padrão. Altere qualquer um desses valores na classe do feed. Próximos passos - Instalação e configuração - Criar feeds - Geração e agendamento - Formatos compatíveis"
+    },
+    {
+        "route": "/pt-BR/license/",
+        "title": "Licença MIT",
+        "description": "Informações sobre a licença de distribuição do Laravel Feeds",
+        "keywords": [
+            "MIT",
+            "license",
+            "copyright"
+        ],
+        "headings": [
+            "Licença MIT",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README Licença MIT Copyright (c) 2025-2026 Andrey Helldar É concedida, gratuitamente, a qualquer pessoa que obtenha uma cópia deste software e dos arquivos de documentação associados (o “Software”), permissão para usar o Software sem restrições, incluindo, sem limitação, os direitos de usar, copiar, modificar, mesclar, publicar, distribuir, sublicenciar e/ou vender cópias do Software, bem como permitir que as pessoas a quem o Software for fornecido façam o mesmo, sujeitas às seguintes condições: O aviso de direitos autorais acima e este aviso de permissão devem ser incluídos em todas as cópias ou partes substanciais do Software. O SOFTWARE É FORNECIDO “NO ESTADO EM QUE SE ENCONTRA”, SEM GARANTIA DE QUALQUER TIPO, EXPRESSA OU IMPLÍCITA, INCLUINDO, ENTRE OUTRAS, GARANTIAS DE COMERCIALIZAÇÃO, ADEQUAÇÃO A UMA FINALIDADE ESPECÍFICA E NÃO VIOLAÇÃO. EM NENHUMA HIPÓTESE OS AUTORES OU TITULARES DOS DIREITOS AUTORAIS SERÃO RESPONSÁVEIS POR QUALQUER REIVINDICAÇÃO, DANO OU OUTRA RESPONSABILIDADE, SEJA EM AÇÃO CONTRATUAL, ILÍCITO CIVIL OU DE OUTRA NATUREZA, DECORRENTE DO SOFTWARE, DO SEU USO OU DE OUTRAS OPERAÇÕES COM O SOFTWARE, OU RELACIONADA A ELES. Veja também - Guia de contribuição - Primeiros passos - Aprendizado de máquina"
+    },
+    {
+        "route": "/pt-BR/location/",
+        "title": "Armazenamento",
+        "description": "Configure o disco de armazenamento e o nome do arquivo de saída dos feeds gerados",
+        "keywords": [
+            "storage",
+            "filesystem",
+            "filename",
+            "publication"
+        ],
+        "headings": [
+            "Armazenamento",
+            "Discos compatíveis",
+            "Contrato dos caminhos",
+            "Garantias de publicação",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Armazenamento Por padrão, os feeds são armazenados no disco public , e o nome do arquivo é gerado automaticamente a partir do nome da classe do feed após App\\Feeds\\ , no formato kebab-case . Por exemplo: Para alterar esses valores, sobrescreva a propriedade $storage e o método filename : Discos compatíveis A geração de feeds aceita discos do Laravel que sejam resolvidos como Illuminate\\Filesystem\\FilesystemAdapter . Isso inclui os drivers local , s3 , sftp e ftp quando os adaptadores correspondentes do Flysystem estão instalados e configurados. Adaptadores personalizados são compatíveis quando oferecem streams graváveis, movimentação de arquivos, gerenciamento e listagem de diretórios e exclusão pelo Flysystem. Discos somente leitura e discos personalizados que implementam apenas Illuminate\\Contracts\\Filesystem\\Filesystem não são compatíveis. Um disco personalizado que não é resolvido como Illuminate\\Filesystem\\FilesystemAdapter causa UnsupportedStorageDiskException antes do início da consulta do feed ao banco de dados. Um disco somente leitura do Laravel ainda é resolvido como FilesystemAdapter ; por isso, a consulta do feed e o staging local terminam antes de a gravação da publicação falhar. GeneratorService envolve essa falha de armazenamento em FeedGenerationException . Contrato dos caminhos - storage() retorna o FilesystemAdapter configurado. - storagePath() retorna o caminho relativo ao disco usado nas operações de armazenamento, incluindo um sufixo opcional para arquivos divididos. - path() retorna o caminho resolvido pelo adaptador do Laravel. Para um disco local, é um caminho absoluto do sistema de arquivos. Para um disco remoto, é o caminho resolvido pelo adaptador. Garantias de publicação Cada parte do feed é concluída antes do início da publicação. Em discos locais, os arquivos preparados são publicados por movimentações no sistema de arquivos sob um bloqueio exclusivo da aplicação. Se uma movimentação falhar, o Laravel Feeds tenta restaurar todos os arquivos anteriores a partir do backup temporário. Os discos remotos recebem arquivos preparados completos por streams do Flysystem antes que os objetos publicados sejam alterados. Em seguida, a publicação move cada objeto preparado para o destino e tenta a mesma reversão em caso de falha. Movimentações remotas podem ser implementadas como operações de copiar e excluir e podem apresentar consistência eventual. Por isso, a substituição atômica de um objeto ou de um feed dividido inteiro não é garantida. O bloqueio de publicação é local ao host da aplicação. Geradores executados em hosts diferentes precisam de um bloqueio distribuído externo se puderem publicar o mesmo feed simultaneamente. Veja também - Geração e agendamento - Elementos - Eventos"
+    },
+    {
+        "route": "/pt-BR/machine-learning/",
+        "title": "Aprendizado de máquina",
+        "description": "Orientações para usar o projeto com LLMs e uma base de conhecimento consolidada",
+        "keywords": [
+            "LLM",
+            "llms.txt",
+            "machine learning",
+            "knowledge base"
+        ],
+        "headings": [
+            "Aprendizado de máquina",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Aprendizado de máquina Você pode ajudar seu LLM a entender muito melhor a estrutura e as convenções deste projeto. Para isso, importe as orientações do arquivo a seguir: llms.txt . Esse arquivo é um único documento Markdown consolidado com toda a documentação compilada do projeto. Ele foi criado para servir como base de conhecimento para LLMs, por exemplo, como anexo de um prompt de sistema, corpus de recuperação ou arquivo de conhecimento personalizado. Salve a URL e importe o arquivo novamente de tempos em tempos para acompanhar as atualizações do projeto. Veja também - Primeiros passos - Guia de contribuição - Licença MIT"
+    },
+    {
+        "route": "/pt-BR/performance/",
+        "title": "Desempenho com grandes conjuntos de dados",
+        "description": "Controle memória, carga do banco, divisão de arquivos, filas e armazenamento em feeds grandes",
+        "keywords": [
+            "performance",
+            "memory",
+            "chunks",
+            "large datasets",
+            "queues"
+        ],
+        "headings": [
+            "Desempenho com grandes conjuntos de dados",
+            "Mantenha a consulta lazy",
+            "Ajuste o tamanho do lote",
+            "Divida os arquivos de saída",
+            "Envie feeds longos para a fila",
+            "Meça todo o caminho",
+            "Veja também"
+        ],
+        "content": "Desempenho com grandes conjuntos de dados O Laravel Feeds grava os registros gradualmente. O uso de memória só permanece limitado quando todas as etapas anteriores continuam lazy. Mantenha a consulta lazy Retorne um Builder do Eloquent diretamente: Não materialize o resultado completo antes da geração. Selecione apenas as colunas necessárias e carregue somente os relacionamentos usados por item() para evitar consultas N+1. Ajuste o tamanho do lote O padrão é 1000 registros. Valores menores reduzem o pico de memória dos modelos e aumentam as consultas. Valores maiores reduzem o custo das consultas e aumentam a memória. Meça com linhas próximas às de produção. Divida os arquivos de saída Use perFile() quando o consumidor aceitar vários arquivos ou quando uma saída única for difícil de publicar e repetir. Mantenha maxFiles() no valor padrão 0 quando todos os registros correspondentes precisarem ser exportados. Quando perFile() e maxFiles() forem maiores que zero, o Laravel Feeds exportará no máximo o produto desses valores e concluirá a geração com sucesso sem informar que os registros seguintes foram omitidos. Defina maxFiles() somente quando esse limite de registros for intencional. Envie feeds longos para a fila O modo de fila tira a geração do processo do console, mas não reduz a memória usada pelo feed. Use conexão assíncrona, workers com limites adequados e um TTL de unicidade maior que o tempo esperado de geração. Meça todo o caminho Meça separadamente banco de dados, hidratação dos modelos, transformação, serialização e publicação. Um disco remoto pode ser o maior custo mesmo quando a geração é rápida. Veja também - Tamanho do lote do Eloquent - Filas de geração - Garantias de publicação"
+    },
+    {
+        "route": "/pt-BR/presets/",
+        "title": "Predefinições",
+        "description": "Gere feeds rapidamente com predefinições incluídas (Instagram, Yandex, Sitemap, RSS)",
+        "keywords": [
+            "presets",
+            "Instagram",
+            "Yandex",
+            "Sitemap",
+            "RSS"
+        ],
+        "headings": [
+            "Predefinições",
+            "Valores padrão",
+            "Instagram",
+            "Yandex",
+            "Sitemap",
+            "RSS",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Predefinições Você pode criar feeds rapidamente com as predefinições incluídas: - DragonCode\\LaravelFeed\\Presets\\InstagramFeedPreset - DragonCode\\LaravelFeed\\Presets\\YandexFeedPreset - DragonCode\\LaravelFeed\\Presets\\SitemapFeedPreset - DragonCode\\LaravelFeed\\Presets\\RssFeedPreset Crie uma classe de feed manualmente ou com o comando de console php artisan make:feed e estenda a predefinição necessária. Por exemplo: Depois, implemente os dois métodos obrigatórios: builder e item . Por exemplo: Tecnicamente, as classes de predefinição são iguais à classe base Feed , mas incluem a lógica específica do serviço correspondente, inclusive a forma de montar os blocos de informações e os itens. Valores padrão Instagram class InstagramFeedItem extends FeedItem Yandex class YandexFeedItem extends FeedItem Sitemap class SitemapFeedItem extends FeedItem RSS class RssFeedItem extends FeedItem Veja também - Receita do Instagram - Receita do Yandex - Receita do Sitemap"
+    },
+    {
+        "route": "/pt-BR/receipt-instagram/",
+        "title": "Instagram",
+        "description": "Receita de geração de feed para o Instagram",
+        "keywords": [
+            "Instagram",
+            "product feed",
+            "recipe",
+            "XML"
+        ],
+        "headings": [
+            "Instagram",
+            "Criar os arquivos",
+            "Preencher o feed",
+            "Ativar",
+            "Gerar o feed",
+            "Resultado",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Instagram Criar os arquivos Preencher o feed Substitua extends Feed por extends InstagramFeedPreset na classe gerada: Ativar Revise o arquivo de operação ou migration gerado e execute o comando de console adequado: Gerar o feed Gere o feed com o seguinte comando de console: Resultado Veja também - Predefinições - Receita do Yandex - Receita RSS Atom"
+    },
+    {
+        "route": "/pt-BR/receipt-rss-atom/",
+        "title": "RSS Atom",
+        "description": "Receita de geração de feed RSS Atom",
+        "keywords": [
+            "RSS",
+            "Atom",
+            "recipe",
+            "XML"
+        ],
+        "headings": [
+            "RSS Atom",
+            "Criar os arquivos",
+            "Preencher o feed",
+            "Ativar",
+            "Gerar o feed",
+            "Resultado",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → RSS Atom Criar os arquivos Preencher o feed Substitua extends Feed por extends RssFeedPreset na classe gerada: Ativar Revise o arquivo de operação ou migration gerado e execute o comando de console adequado: Gerar o feed Gere o feed com o seguinte comando de console: Resultado Veja também - Predefinições - Receita do Sitemap - Receita do Instagram"
+    },
+    {
+        "route": "/pt-BR/receipt-sitemap/",
+        "title": "Sitemap",
+        "description": "Guia passo a passo para criar um feed de sitemap de produtos",
+        "keywords": [
+            "Sitemap",
+            "recipe",
+            "SEO",
+            "XML"
+        ],
+        "headings": [
+            "Sitemap",
+            "Criar os arquivos",
+            "Preencher o feed",
+            "Ativar",
+            "Links",
+            "Gerar o feed",
+            "Adicionar um link ao sitemap.xml raiz",
+            "Resultado",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Sitemap Esta receita mostra como criar um feed de sitemap de produtos com o Laravel Feeds. Você vai: - Gerar as classes necessárias. - Implementar a lógica do feed. - Disponibilizar os arquivos pelo sistema de arquivos. - Referenciar opcionalmente o sitemap gerado em um arquivo sitemap.xml raiz. Criar os arquivos Gere o feed e a classe do item com o seguinte comando de console: Preencher o feed Substitua extends Feed por extends SitemapFeedPreset na classe gerada: Métodos disponíveis na classe FeedItem : - url - preenchimento obrigatório - modifiedAt - por padrão, $model- updated_at - priority - por padrão, 0.9 Ativar Revise o arquivo de operação ou migration gerado e execute o comando de console adequado: Links Adicione ao arquivo de configuração config/filesystems.php um disco do sistema de arquivos que aponte para o diretório dos seus sitemaps: Depois, crie o link simbólico público para que os arquivos fiquem acessíveis pelo navegador: Gerar o feed Gere o feed com o seguinte comando de console: Adicionar um link ao sitemap.xml raiz Se você mantém um arquivo sitemap.xml raiz que referencia outros sitemaps, adicione uma entrada como esta: Resultado O sitemap.xml gerado para os seus produtos terá esta aparência: Veja também - Predefinições - Receita do Yandex - Receita RSS Atom"
+    },
+    {
+        "route": "/pt-BR/receipt-yandex/",
+        "title": "Yandex",
+        "description": "Receita de geração de feed para o Yandex",
+        "keywords": [
+            "Yandex",
+            "marketplace",
+            "recipe",
+            "XML"
+        ],
+        "headings": [
+            "Yandex",
+            "Criar os arquivos",
+            "Preencher o feed",
+            "Estrutura personalizada de categorias",
+            "Ativar",
+            "Gerar o feed",
+            "Resultado",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Yandex Criar os arquivos Preencher o feed Substitua extends Feed por extends YandexFeedPreset na classe gerada: Estrutura personalizada de categorias Por padrão, category() monta uma categoria com seu ID e nome. Use rawCategory() quando precisar de propriedades adicionais ou de outra estrutura. O array é adicionado ao feed sem alterações: O método categories() aceita as duas formas. Ele envia valores string para category() e valores array para rawCategory() . Arrays de categorias personalizados não são validados nem transformados. Monte-os com as diretivas XML compatíveis. Ativar Revise o arquivo de operação ou migration gerado e execute o comando de console adequado: Gerar o feed Gere o feed com o seguinte comando de console: Resultado Veja também - Predefinições - Diretivas - Receita do Sitemap"
+    },
+    {
+        "route": "/pt-BR/supported-formats/",
+        "title": "Formatos compatíveis",
+        "description": "Lista dos formatos compatíveis para exportação de feeds",
+        "keywords": [
+            "XML",
+            "JSON",
+            "JSONL",
+            "CSV",
+            "RSS"
+        ],
+        "headings": [
+            "Formatos compatíveis",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Formatos compatíveis - xml — Gera feeds no formato XML. - json — Gera feeds no formato JSON. - jsonl — Gera feeds no formato JSON Lines. - csv — Gera feeds no formato CSV. - rss — Gera feeds no formato RSS Atom. Por padrão, o formato xml é usado. Veja também - Elementos - Diretivas - Criar feeds"
+    },
+    {
+        "route": "/pt-BR/troubleshooting/",
+        "title": "Solução de problemas",
+        "description": "Diagnostique falhas de configuração, geração, armazenamento, fila e saída do Laravel Feeds",
+        "keywords": [
+            "troubleshooting",
+            "errors",
+            "queue",
+            "storage",
+            "diagnostics"
+        ],
+        "headings": [
+            "Solução de problemas",
+            "A classe do feed não foi encontrada",
+            "A geração usa memória demais",
+            "Um job da fila nunca é executado",
+            "O disco de armazenamento é rejeitado",
+            "A geração XML falha",
+            "Linhas CSV falham depois do primeiro item",
+            "Arquivos publicados estão incompletos ou antigos",
+            "Veja também"
+        ],
+        "content": "Solução de problemas Comece pelo primeiro limite que falha: registro, consulta, conversão, armazenamento ou entrega. Preserve a exceção original, pois ela contém a classe do feed e o contexto da saída. A classe do feed não foi encontrada Confirme que o registro contém o nome completo, que o autoload do Composer consegue resolvê-lo e que a classe estende DragonCode\\LaravelFeed\\Feeds\\Feed ou uma predefinição. Execute composer dump-autoload depois de mover uma classe. A geração usa memória demais - Retorne um Builder do Eloquent em builder() . - Não chame get() , all() nem toArray() no conjunto completo. - Reduza chunkSize() e meça novamente. - Divida saídas grandes com perFile() . - Mova o trabalho para uma fila assíncrona somente depois que o feed permanecer em fluxo contínuo. Veja desempenho. Um job da fila nunca é executado Verifique FEED_QUEUE_CONNECTION , FEED_QUEUE_NAME e o comando do worker. A conexão sync executa imediatamente e não testa a entrega assíncrona. Um bloqueio de unicidade pode impedir outro job até FEED_QUEUE_UNIQUE_TTL expirar. O disco de armazenamento é rejeitado O disco deve resolver para Illuminate\\Filesystem\\FilesystemAdapter e aceitar streams graváveis, movimentos, diretórios, listagens e exclusões. Uma implementação personalizada que não é um FilesystemAdapter falha com UnsupportedStorageDiskException antes da consulta ao banco. Um disco somente leitura do Laravel passa nessa verificação de tipo. A gravação falha durante a publicação, depois que a consulta do feed e o staging local terminam, e GeneratorService envolve a falha de armazenamento em FeedGenerationException . A geração XML falha Valide o XML bruto passado por @mixed , o conteúdo CDATA e os contratos escalares ou de array das diretivas. Prefira valores escapados quando XML bruto não for necessário. Linhas CSV falham depois do primeiro item O CSV define suas colunas pelo esquema da saída. Todos os itens devem produzir as mesmas chaves. Valores opcionais mantêm uma coluna vazia em vez de removê-la. Arquivos publicados estão incompletos ou antigos Inspecione a exceção original e as permissões do disco. Em discos remotos, considere consistência eventual e movimentos não atômicos por cópia e exclusão. Vários hosts publicando o mesmo destino exigem bloqueio distribuído externo. Veja também - Eventos e exceções - Armazenamento - Perguntas frequentes"
+    },
+    {
+        "route": "/pt-BR/upgrade-guide/",
+        "title": "Guia de atualização",
+        "description": "Processo seguro para atualizar o Laravel Feeds dentro da linha 1.x compatível",
+        "keywords": [
+            "upgrade",
+            "Composer",
+            "migration",
+            "rollback",
+            "compatibility"
+        ],
+        "headings": [
+            "Guia de atualização",
+            "Antes de atualizar",
+            "Aplicar a atualização",
+            "Verificar",
+            "Reverter",
+            "Veja também"
+        ],
+        "content": "Guia de atualização Esta documentação cobre a linha 1.x . Revise as notas da versão e o arquivo de bloqueio das dependências antes de cada atualização. Antes de atualizar 1. Confirme que a versão de destino aceita as versões de PHP e Laravel da aplicação. 2. Faça commit de composer.lock e do config/feeds.php publicado. 3. Registre os feeds ativos e os destinos dos arquivos gerados. 4. Execute os testes de geração ou gere feeds representativos fora de produção. Aplicar a atualização Compare o config/feeds.php do pacote instalado com a cópia publicada e mescle as novas chaves manualmente. Não publique novamente com --force : ele sobrescreve valores da aplicação. Verificar - Gere um feed para cada formato usado. - Verifique a quantidade e os nomes dos arquivos divididos. - Confirme a geração agendada e em fila. - Confirme modelos, transformadores, macros e subclasses de predefinições personalizados. - Compare uma saída representativa com a versão anterior. Reverter Restaure composer.lock e a configuração anteriores, execute composer install e aplique a política de rollback das migrations. Arquivos gerados são artefatos de implantação; restaure-os ou gere-os novamente conforme o plano de recuperação. Veja também - Compatibilidade - Referência de configuração - Guia de contribuição"
+    }
+]

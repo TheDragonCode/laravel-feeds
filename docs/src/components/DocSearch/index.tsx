@@ -27,27 +27,27 @@ export default function DocSearch({ className, mobile = false }: DocSearchProps)
     const [isReady, setIsReady] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState("");
-    const [searchIndexes, setSearchIndexes] = useState<Record<
-        string,
-        SearchRoute[]
-    > | null>(null);
+    const [searchIndex, setSearchIndex] = useState<{
+        locale: string;
+        routes: SearchRoute[];
+    } | null>(null);
+    const activeSearchIndex =
+        searchIndex?.locale === i18n.currentLocale ? searchIndex.routes : null;
     const searchableRoutes = useMemo(
         () =>
-            (searchIndexes?.[i18n.currentLocale] ?? searchIndexes?.en ?? []).map(
-                (route) => ({
-                    ...route,
-                    searchText: [
-                        route.title,
-                        route.description,
-                        ...route.keywords,
-                        ...route.headings,
-                        route.content,
-                    ]
-                        .join(" ")
-                        .toLocaleLowerCase(i18n.currentLocale),
-                }),
-            ),
-        [i18n.currentLocale, searchIndexes],
+            (activeSearchIndex ?? []).map((route) => ({
+                ...route,
+                searchText: [
+                    route.title,
+                    route.description,
+                    ...route.keywords,
+                    ...route.headings,
+                    route.content,
+                ]
+                    .join(" ")
+                    .toLocaleLowerCase(i18n.currentLocale),
+            })),
+        [activeSearchIndex, i18n.currentLocale],
     );
     const results = useMemo(() => {
         const normalizedQuery = query
@@ -77,22 +77,32 @@ export default function DocSearch({ className, mobile = false }: DocSearchProps)
     }, [isOpen]);
 
     useEffect(() => {
-        if (!isOpen || searchIndexes) {
+        if (!isOpen || activeSearchIndex) {
             return;
         }
 
         let active = true;
+        const locale = i18n.currentLocale;
 
-        void import("@site/routes.json").then(({ default: manifest }) => {
-            if (active) {
-                setSearchIndexes(manifest.search as Record<string, SearchRoute[]>);
-            }
-        });
+        void fetch(`/search/${locale}.json`)
+            .then(async (response) => {
+                if (!response.ok) {
+                    throw new Error(`Search index request failed: ${response.status}`);
+                }
+
+                return (await response.json()) as SearchRoute[];
+            })
+            .then((routes) => {
+                if (active) {
+                    setSearchIndex({ locale, routes });
+                }
+            })
+            .catch(() => undefined);
 
         return () => {
             active = false;
         };
-    }, [isOpen, searchIndexes]);
+    }, [activeSearchIndex, i18n.currentLocale, isOpen]);
 
     useEffect(() => {
         if (mobile) {
@@ -184,7 +194,7 @@ export default function DocSearch({ className, mobile = false }: DocSearchProps)
                                     <span>{route.description}</span>
                                 </Link>
                             ))
-                        ) : searchIndexes ? (
+                        ) : activeSearchIndex ? (
                             <p>
                                 <Translate id="search.empty">
                                     No matching documentation found.

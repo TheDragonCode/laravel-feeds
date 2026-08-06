@@ -1,0 +1,593 @@
+[
+    {
+        "route": "/fr/",
+        "title": "Documentation de Laravel Feeds",
+        "description": "Exportez de grands jeux de données Laravel vers XML, JSON, JSON Lines, CSV, RSS et des flux de places de marché.",
+        "keywords": [
+            "Laravel",
+            "feeds",
+            "data export",
+            "documentation"
+        ],
+        "headings": [
+            "Exportez de grands jeux de données sans les charger entièrement en mémoire",
+            "Commencez par une tâche, puis consultez la référence"
+        ],
+        "content": ""
+    },
+    {
+        "route": "/fr/api/",
+        "title": "Référence API",
+        "description": "Carte des classes, contrats, objets de données, événements et exceptions publics de Laravel Feeds",
+        "keywords": [
+            "API",
+            "reference",
+            "Feed",
+            "FeedItem",
+            "FeedInfo"
+        ],
+        "headings": [
+            "Référence API",
+            "Points d’extension",
+            "Voir aussi"
+        ],
+        "content": "Référence API Utilisez cette section lorsque vous connaissez déjà le processus et cherchez une classe, une méthode, une clé de configuration, un événement ou un contrat d’échec précis. Domaine Principaux points d’entrée Référence --- --- --- Configuration config/feeds.php Configuration Classes de flux Feed , FeedItem , FeedInfo Flux et données Structure de sortie ElementData , directives XML Éléments, Directives Formats FeedFormatEnum , convertisseurs Formats pris en charge Exécution GeneratorService , FeedQuery , ScheduleFeedHelper Services et contrats d’exécution Cycle de vie Événements de début et de fin Événements et exceptions Préréglages Sitemap, RSS, Instagram, Yandex Préréglages Points d’extension - Étendez Feed ou un préréglage pour définir la source de données et le contrat de sortie. - Étendez FeedItem et FeedInfo pour contrôler les données sérialisées. - Implémentez DragonCode\\LaravelFeed\\Contracts\\Transformer pour une conversion scalaire personnalisée. - Renvoyez DragonCode\\LaravelFeed\\Data\\OptionalData lorsqu’un champ doit être omis. - Enregistrez des macros sur Feed , FeedItem ou FeedInfo pour les utilitaires de l’application. Voir aussi - Créer des flux - Étendre les fonctionnalités - Dépannage"
+    },
+    {
+        "route": "/fr/api/configuration/",
+        "title": "Référence de configuration",
+        "description": "Référence de chaque section de configuration et variable d’environnement de Laravel Feeds",
+        "keywords": [
+            "configuration",
+            "environment",
+            "queue",
+            "schedule",
+            "converters"
+        ],
+        "headings": [
+            "Référence de configuration",
+            "Paramètres principaux",
+            "Planification et files d’attente",
+            "Transformateurs",
+            "Paramètres des convertisseurs",
+            "Voir aussi"
+        ],
+        "content": "Référence de configuration Publiez config/feeds.php avec php artisan vendor:publish --tag=\"feeds\" . Les valeurs d’environnement sont lues lorsque Laravel construit le cache de configuration. Paramètres principaux Clé Valeur par défaut Rôle --- --- --- model DragonCode\\LaravelFeed\\Models\\Feed Modèle Eloquent utilisé pour enregistrer les flux. Un remplacement doit étendre le modèle du paquet. pretty / FEED_PRETTY false Active une sortie XML et JSON mise en forme. date.format DATE_ATOM Format de date PHP utilisé par le transformateur de dates. date.timezone / FEED_TIMEZONE UTC Fuseau horaire utilisé pendant la sérialisation des dates. table.connection DB_CONNECTION , puis sqlite Connexion de base de données des enregistrements de flux. table.table / FEED_TABLE feeds Nom de la table d’enregistrement des flux. Planification et files d’attente Variable d’environnement Valeur par défaut Rôle --- --- --- FEED_SCHEDULE_TTL 1440 Durée du verrou de planification, en minutes. FEED_SCHEDULE_RUN_BACKGROUND true Exécute les commandes planifiées en arrière-plan. FEED_QUEUE_ENABLED false Envoie la génération dans Laravel Queue. FEED_QUEUE_CONNECTION QUEUE_CONNECTION , puis database Connexion de file d’attente des jobs de flux. FEED_QUEUE_NAME Valeur par défaut de la connexion Nom de la file d’attente. FEED_QUEUE_UNIQUE_TTL 3600 Durée du verrou d’unicité d’un job, en secondes. FEED_CONSOLE_PROGRESS_BAR_ENABLED false Affiche la barre de progression dans la console. Le mode file d’attente exige un worker avec une connexion asynchrone. La connexion sync exécute toujours la génération dans le processus de la commande. Transformateurs La chaîne par défaut contient BoolTransformer , DateTimeTransformer et EnumTransformer dans cet ordre. Chaque transformateur correspondant reçoit la valeur renvoyée par le précédent. Après avoir implémenté DragonCode\\LaravelFeed\\Contracts\\Transformer , ajoutez votre classe à transformers . Laravel la résout via le conteneur de services. Paramètres des convertisseurs Clé Valeur par défaut --- --- converters.json.options JSON_UNESCAPED_SLASHES JSON_UNESCAPED_UNICODE converters.jsonl.options JSON_UNESCAPED_SLASHES JSON_UNESCAPED_UNICODE converters.csv.delimiter ; converters.csv.enclosure \" converters.csv.escape Chaîne vide converters.csv.line_ending PHP_EOL Voir aussi - Installation - Génération et planification - Configuration du modèle Eloquent"
+    },
+    {
+        "route": "/fr/api/events-exceptions/",
+        "title": "Événements et exceptions",
+        "description": "Référence des événements du cycle de génération et des types d’exception publics",
+        "keywords": [
+            "events",
+            "exceptions",
+            "FeedStartingEvent",
+            "FeedFinishedEvent"
+        ],
+        "headings": [
+            "Événements et exceptions",
+            "Événements du cycle de vie",
+            "Échecs de saisie et de recherche",
+            "Échecs de sérialisation et de stockage",
+            "Voir aussi"
+        ],
+        "content": "Événements et exceptions Utilisez les événements du cycle de vie pour intégrer l’application et les types d’exception pour récupérer à la limite capable de traiter l’échec. Événements du cycle de vie Événement Données publiques Moment d’émission --- --- --- FeedStartingEvent feed Après la vérification préalable du stockage et du chemin, avant la résolution du convertisseur et la préparation. FeedFinishedEvent feed , path , paths Après la publication réussie de tous les fichiers générés. FeedFinishedEvent::$paths contient tous les chemins publiés dans l’ordre. $path est conservé pour la compatibilité et contient toujours le premier chemin. Échecs de saisie et de recherche Exception Signification --- --- InvalidFeedArgumentException L’identifiant de flux transmis en console est invalide. FeedNotFoundException Aucun enregistrement n’existe pour l’identifiant demandé. InvalidExpressionException Une expression de planification est invalide. UnknownFeedClassException Une classe de flux configurée ne peut pas être résolue. UnexpectedClassException Une classe résolue ne respecte pas le contrat attendu. Échecs de sérialisation et de stockage Exception Signification --- --- InvalidCsvRowException Une ligne CSV ne respecte pas le schéma de colonnes établi. InvalidCsvValueException Un champ CSV ne peut pas être sérialisé comme valeur scalaire. InvalidXmlCDataException Une valeur CDATA est invalide. InvalidXmlFragmentException Un fragment XML brut est invalide. UnsupportedStorageDiskException Le disque Laravel choisi ne se résout pas en FilesystemAdapter . OpenFeedException Une ressource de sortie provisoire ne peut pas être ouverte. WriteFeedException La sortie complète ne peut pas être écrite. CloseFeedException La ressource de sortie ne peut pas être fermée. ResourceMetaException Les métadonnées requises du flux ne sont pas disponibles. FeedGenerationException La génération a échoué pour une classe de flux donnée. N’interceptez les exceptions que lorsque l’application peut ajouter une récupération ou un contexte utile. Laissez Laravel signaler les échecs de génération irrécupérables. Voir aussi - Guide des événements - Dépannage - Garanties de stockage"
+    },
+    {
+        "route": "/fr/api/feed/",
+        "title": "Flux et données",
+        "description": "Contrats publics de Feed, FeedItem, FeedInfo, ElementData et des résultats de génération",
+        "keywords": [
+            "Feed",
+            "FeedItem",
+            "FeedInfo",
+            "ElementData",
+            "GenerationResultData"
+        ],
+        "headings": [
+            "Flux et données",
+            "Feed",
+            "FeedItem et FeedInfo",
+            "ElementData",
+            "Résultat de génération",
+            "FeedFormatEnum",
+            "Voir aussi"
+        ],
+        "content": "Flux et données L’API principale sépare la source de données, le mappage des éléments, les métadonnées du flux, la structure de sortie et le résultat de la génération. Feed DragonCode\\LaravelFeed\\Feeds\\Feed est la classe de base d’un export. Implémentez builder() et ne remplacez que les points de sortie nécessaires au flux. abstract public function builder(): Builder Méthode Valeur par défaut Contrat --- --- --- builder(): Builder Abstraite Renvoie la requête Eloquent utilisée comme source de données. item(Model $model): FeedItem Nouveau FeedItem de base Transforme un modèle en élément de sortie. transformers(): array [] Ajoute en tête les classes de transformateur de ce flux. chunkSize(): int 1000 Taille des lots de la requête de base de données. perFile(): int 0 Enregistrements par fichier. Zéro désactive le fractionnement par nombre. maxFiles(): int 0 Nombre maximal de fichiers. Zéro signifie sans limite. header(): string Déclaration XML pour XML/RSS Contenu écrit avant la racine et les éléments. footer(): string Chaîne vide Contenu écrit après la racine et les éléments. root(): ElementData Nom dérivé de la classe Définit l’élément racine et ses attributs. info(): FeedInfo FeedInfo vide Définit les informations du flux. filename(): string Nom de fichier dérivé de la classe Renvoie le nom de sortie relatif au disque. path($suffix): string Chemin résolu par l’adaptateur Renvoie un chemin local ou résolu par l’adaptateur. storagePath($suffix): string Nom relatif au disque Renvoie le chemin utilisé pour les opérations de stockage. storage(): FilesystemAdapter Disque public Résout et valide le disque Laravel. format(): FeedFormatEnum Xml Renvoie le format de sortie configuré. Feed utilise Conditionable et Macroable de Laravel. FeedItem et FeedInfo FeedItem reçoit le modèle Eloquent courant. Par défaut : - name() renvoie le nom de base de la classe du modèle en kebab case ; - attributes() renvoie un tableau vide ; - toArray() renvoie le tableau du modèle. FeedInfo::toArray() renvoie un tableau vide. Les deux classes utilisent Conditionable et Macroable ; étendez-les si la sortie exige un schéma explicite. ElementData ElementData est un objet en lecture seule avec trois propriétés de constructeur : Propriété Type Valeur par défaut --- --- --- name ?string null attributes array [] beforeInfo bool true Définissez name à null ou à une chaîne vide pour supprimer l’élément racine. Définissez beforeInfo à false pour écrire les informations du flux avant la racine. Résultat de génération GeneratorService::feed() renvoie GenerationResultData . Sa propriété en lecture seule paths contient les fichiers publiés dans l’ordre de sortie. records associe chaque chemin au nombre d’enregistrements écrits dans ce fichier. Les méthodes de génération et d’enregistrement programmatiques figurent dans Services et contrats d’exécution. FeedFormatEnum Cas Valeur --- --- Xml xml Json json JsonLines jsonl Csv csv Rss rss Voir aussi - Créer des flux - Éléments - Emplacement - Services et contrats d’exécution"
+    },
+    {
+        "route": "/fr/api/runtime/",
+        "title": "Services et contrats d’exécution",
+        "description": "API publiques de génération, d’enregistrement, de planification, de transformation et de valeurs facultatives",
+        "keywords": [
+            "GeneratorService",
+            "FeedQuery",
+            "ScheduleFeedHelper",
+            "Transformer",
+            "OptionalData"
+        ],
+        "headings": [
+            "Services et contrats d’exécution",
+            "GeneratorService",
+            "FeedQuery",
+            "ScheduleFeedHelper",
+            "Transformer",
+            "OptionalData",
+            "Voir aussi"
+        ],
+        "content": "Services et contrats d’exécution Ces points d’entrée couvrent la génération programmée, l’enregistrement des flux, l’intégration au planificateur, la transformation scalaire et les champs facultatifs. GeneratorService DragonCode\\LaravelFeed\\Services\\GeneratorService génère et publie un flux. public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData La méthode publie toutes les parties comme une seule opération, met à jour la dernière activité de l’enregistrement, émet les événements du cycle de vie et renvoie les chemins avec le nombre d’enregistrements de chaque fichier. La résolution du disque et du chemin de sortie a lieu avant le début de la génération ; les exceptions levées pendant cette vérification préalable, notamment UnsupportedStorageDiskException , sont propagées directement. Une fois cette vérification réussie, les échecs de génération sont enveloppés dans FeedGenerationException , avec l’exception d’origine comme exception précédente. Résolvez le service via le conteneur Laravel au lieu de construire ses dépendances internes. FeedQuery DragonCode\\LaravelFeed\\Queries\\FeedQuery gère les enregistrements persistants des flux. Méthode Résultat --- --- create(string $class, string $title, string $expression = '0 ', bool $isActive = true, array $extra = []): Feed Crée un enregistrement. find(int $id): Feed Renvoie un enregistrement ou lève FeedNotFoundException . all(): Builder Renvoie tous les enregistrements triés par identifiant. active(): Builder Renvoie les enregistrements actifs triés par identifiant. setLastActivity(string $class): void Met à jour last_activity pour une classe de flux. delete(int $id): void Supprime temporairement un enregistrement par identifiant. deleteByClass(string $class): void Supprime définitivement les enregistrements d’une classe, y compris ceux déjà supprimés. restore(int $id): void Restaure un enregistrement supprimé temporairement. Utilisez la migration ou l’opération de déploiement générée pour les changements habituels afin de les reproduire dans tous les environnements. ScheduleFeedHelper DragonCode\\LaravelFeed\\Helpers\\ScheduleFeedHelper::register() ajoute les enregistrements actifs au planificateur Laravel. Chacun utilise son expression cron et un verrou anti-chevauchement. L’exécution en arrière-plan et la durée du verrou viennent de feeds.schedule . L’enregistrement est ignoré sans erreur lorsque la table configurée n’existe pas. Transformer Implémentez DragonCode\\LaravelFeed\\Contracts\\Transformer pour convertir les valeurs prises en charge avant leur sérialisation. public function allow(mixed $value): bool public function transform(mixed $value): string allow() indique si le transformateur accepte une valeur. transform() renvoie sa représentation scalaire sérialisée. Ajoutez la classe via Feed::transformers() ou feeds.transformers . OptionalData Renvoyez un nouvel objet DragonCode\\LaravelFeed\\Data\\OptionalData pour un champ à omettre en l’absence de valeur. XML, RSS, JSON et JSON Lines l’omettent. CSV conserve la colonne et écrit un champ vide. Voir aussi - Flux et données - Configuration - Événements et exceptions - Génération et planification"
+    },
+    {
+        "route": "/fr/compatibility/",
+        "title": "Compatibilité",
+        "description": "Contrats pris en charge pour PHP, Laravel, le stockage, les files d’attente et les formats de Laravel Feeds 1.x",
+        "keywords": [
+            "compatibility",
+            "PHP",
+            "Laravel",
+            "Flysystem",
+            "formats"
+        ],
+        "headings": [
+            "Compatibilité",
+            "Matrice d’exécution",
+            "Formats de sortie",
+            "Intégrations facultatives",
+            "Voir aussi"
+        ],
+        "content": "Compatibilité Utilisez le graphe de dépendances résolu par Composer comme vérification finale de compatibilité d’une application donnée. Matrice d’exécution Composant Versions prises en charge --- --- PHP 8.2 et versions 8.x ultérieures autorisées par les contraintes du paquet installé Composants Laravel 11.x , 12.x , 13.x Base de données Toute connexion Laravel prise en charge par le modèle Eloquent configuré et la migration Système de fichiers Disques Laravel accessibles en écriture et résolus en FilesystemAdapter Le fichier composer.lock installé fait autorité pour une application donnée. Composer refuse les combinaisons non prises en charge. Formats de sortie Format Extension Données imbriquées Directives XML --- --- --- --- XML .xml Oui Oui JSON .json Oui Non JSON Lines .jsonl Une valeur JSON par ligne Non CSV .csv Non ; colonnes scalaires stables requises Non RSS .rss Oui Oui Intégrations facultatives - Laravel Queue n’est requis que lorsque le mode file d’attente est activé. - make:feed utilise Laravel Deploy Operations s’il est installé ; sinon, la commande crée une migration. - Les valeurs facultatives de Spatie Laravel Data sont reconnues si ce paquet est installé. Voir aussi - Installation - Formats pris en charge - Guide de mise à niveau"
+    },
+    {
+        "route": "/fr/contributions/",
+        "title": "Guide de contribution",
+        "description": "Instructions destinées aux développeurs du projet Laravel Feeds",
+        "keywords": [
+            "contributing",
+            "code style",
+            "code of conduct"
+        ],
+        "headings": [
+            "Guide de contribution",
+            "Style du code",
+            "Code de conduite",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Guide de contribution Les contributions sont les bienvenues et seront pleinement créditées . Nous acceptons les contributions sous forme de Pull Requests sur tous les projets de notre organisation. Style du code Laravel Feeds respecte la norme de codage PER-3 et la norme de chargement automatique PSR-4. Pour appliquer le formatage du code, exécutez la commande suivante : Code de conduite Le code de conduite de Laravel est issu du code de conduite Contributor Covenant. Toute infraction peut être signalée à Andrey Helldar : - Les participants doivent faire preuve de tolérance envers les opinions divergentes. - Les participants doivent veiller à ce que leurs propos et leurs actes soient exempts d’attaques personnelles et de remarques dénigrantes. - Lorsqu’ils interprètent les paroles et les actes d’autrui, les participants doivent toujours présumer de bonnes intentions. - Aucun comportement pouvant raisonnablement être considéré comme du harcèlement ne sera toléré. Voir aussi - Licence MIT - Bien démarrer - Apprentissage automatique"
+    },
+    {
+        "route": "/fr/create-feeds/",
+        "title": "Créer des flux",
+        "description": "Instructions pour créer et remplir les classes du flux, de ses éléments et de ses informations",
+        "keywords": [
+            "feed",
+            "FeedItem",
+            "FeedInfo",
+            "make:feed"
+        ],
+        "headings": [
+            "Créer des flux",
+            "Remplir les flux",
+            "Feed",
+            "Élément du flux",
+            "Valeurs facultatives",
+            "Format de fichier",
+            "Voir aussi"
+        ],
+        "content": "import ThemedImage from '@theme/ThemedImage'; ← Précédent · Retour au README · Suivant → Créer des flux Le moyen le plus pratique de créer les classes nécessaires consiste à utiliser le plugin Laravel Idea pour PhpStorm. Pour créer une classe de flux, utilisez la commande make:feed : Cette commande crée un fichier de flux, par exemple app/Feeds/UserFeed.php . Cette commande peut également créer les classes d’élément et d’informations avec la classe du flux. Utilisez pour cela les options --item et --info . Des options courtes sont également disponibles : Lors de la création d’un flux, une opération ou une migration est également créée afin de l’ajouter à la base de données. Si le projet utilise Laravel Deploy Operations , une classe d’opération est créée. Dans le cas contraire, une classe de migration est créée. Cette étape est nécessaire pour ajouter et gérer les informations du flux dans la base de données. Remplir les flux Feed Remplissez la classe principale du flux. Exemple : Élément du flux Remplissez la classe de l’élément du flux. Exemple : Valeurs facultatives Pour omettre un champ lorsque sa valeur n’est pas disponible, renvoyez une instance de DragonCode\\LaravelFeed\\Data\\OptionalData comme valeur : Les champs facultatifs sont supprimés des objets JSON et JSON Lines ainsi que des éléments XML et RSS, y compris les champs imbriqués ordinaires. Le format CSV conserve la position de la colonne et écrit un champ vide. Si votre application utilise Spatie Laravel Data, vous pouvez renvoyer Spatie\\LaravelData\\Optional à la place. Les deux classes de valeur facultative sont prises en charge automatiquement. Format de fichier La liste des formats disponibles figure sur la page Formats pris en charge. Vous pouvez générer des flux dans différents formats. Une classe de flux ne peut être exportée correctement que dans le format auquel elle est destinée, en raison des directives et des autres particularités propres à chaque format. Pour appliquer le format requis, remplacez simplement la propriété $format dans la classe du flux : Voir aussi - Génération et planification - Formats pris en charge - Préréglages"
+    },
+    {
+        "route": "/fr/directives/",
+        "title": "Directives",
+        "description": "Directives XML intégrées pour la sortie des flux",
+        "keywords": [
+            "XML",
+            "directives",
+            "attributes",
+            "CDATA"
+        ],
+        "headings": [
+            "Directives",
+            "@attributes",
+            "@value",
+            "@cdata",
+            "@mixed",
+            "@custom",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Directives Formats : XML [Directives réservées] - @attributes - @value - @cdata - @mixed - @custom Les directives sont disponibles uniquement lors de la génération de flux au format XML. @attributes Indique un tableau d’attributs. Vous pouvez utiliser une clé nommée @attributes pour ajouter des attributs à un nœud : Ce code produit le résultat suivant : @value Indique la valeur à appliquer « telle quelle ». La valeur du champ @value doit être une chaîne de caractères. Vous pouvez utiliser une clé nommée @value pour ajouter une valeur à un nœud : Ce code produit le résultat suivant : @cdata Permet d’utiliser du balisage XML sans transformation. Vous pouvez également envelopper la valeur d’un nœud dans une section CDATA afin d’utiliser des caractères réservés. Vous pouvez utiliser une clé nommée @cdata pour ajouter une section CDATA à un nœud : Ce code produit le résultat suivant : @mixed Permet d’utiliser directement du balisage XML dans la structure du document. Pour insérer des fragments XML « tels quels », utilisez la directive @mixed : Ce code produit le résultat suivant : @custom Permet d’énumérer un tableau d’éléments possédant les mêmes clés. Dans certains cas, vous devez insérer un tableau d’éléments portant les mêmes noms. Pour cela, ajoutez le symbole @ au début du nom de la clé : Ce code produit le résultat suivant : Voir aussi - Éléments - Formats pris en charge - Recette Yandex"
+    },
+    {
+        "route": "/fr/elements/",
+        "title": "Éléments",
+        "description": "Configurer la structure du flux : élément racine, bloc d’informations, en-têtes, pieds de page et attributs",
+        "keywords": [
+            "elements",
+            "FeedInfo",
+            "attributes",
+            "split files"
+        ],
+        "headings": [
+            "Éléments",
+            "Élément racine",
+            "Informations",
+            "En-tête et pied de page",
+            "Attributs",
+            "Répartir entre plusieurs fichiers",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Éléments Élément racine Formats : XML, RSS, JSON Par défaut, le nom de l’élément racine est dérivé du nom de base de la classe du flux. Par exemple, pour la classe App\\Feeds\\FooBarFeed , ce nom est foo_bar . Pour ajouter un élément racine et/ou ses attributs, remplacez la méthode root : Pour désactiver l’ajout de l’élément racine, indiquez un nom vide : null ou \"\" . Ce code produit le résultat suivant : Informations Formats : XML, RSS, JSON, JSONL, CSV Pour ajouter des informations au début de l’élément racine, s’il existe, ou sans celui-ci, remplacez la méthode info dans la classe du flux et créez un objet qui étend DragonCode\\LaravelFeed\\Feeds\\Info\\FeedInfo : Ce code produit le résultat suivant : Pour modifier l’ordre de sortie de l’élément racine par rapport au bloc d’informations, définissez le paramètre beforeInfo dans la méthode root : Ce code produit le résultat suivant : En-tête et pied de page Formats : XML, RSS, JSON Pour modifier l’en-tête et le pied de page, remplacez les méthodes header et footer : Ce code produit le résultat suivant : Attributs Formats : XML, RSS Ce code produit le résultat suivant : Répartir entre plusieurs fichiers Formats : XML, RSS, JSON, JSONL, CSV Si nécessaire, vous pouvez limiter le nombre de lignes écrites dans chaque fichier ainsi que le nombre de fichiers. Utilisez pour cela les fonctions perFile et maxFiles . Les méthodes fonctionnent indépendamment l’une de l’autre. Lors de la répartition, un numéro séquentiel est ajouté aux noms des fichiers. Exemple : - attribute-1.xml - attribute-2.xml - attribute-3.xml Voir aussi - Directives - Formats pris en charge - Emplacement"
+    },
+    {
+        "route": "/fr/eloquent/",
+        "title": "Eloquent",
+        "description": "Configurer les modèles d’enregistrement des flux et la taille des lots de requêtes.",
+        "keywords": [
+            "Eloquent",
+            "model",
+            "FeedQuery",
+            "chunk size"
+        ],
+        "headings": [
+            "Eloquent",
+            "Modèle d’enregistrement de flux personnalisé",
+            "Taille des lots",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Eloquent Modèle d’enregistrement de flux personnalisé Définissez feeds.model sur un modèle de l’application lorsque les enregistrements de flux nécessitent des colonnes, casts, relations ou méthodes supplémentaires. Le modèle personnalisé doit étendre DragonCode\\LaravelFeed\\Models\\Feed . Enregistrez le modèle dans config/feeds.php : Ajoutez les colonnes personnalisées à la table des flux dans une migration de l’application. Conservez dans $fillable chaque attribut autorisé pour l’assignation en masse. FeedQuery utilise le modèle configuré pour les opérations de création, de recherche, de liste, de mise à jour, de suppression et de restauration. Lors de la création d’un enregistrement, transmettez les valeurs propres à l’application via extra . Elles sont appliquées en dernier et peuvent remplacer les arguments de la méthode : Le modèle de l’application peut également utiliser l’API Eloquent habituelle : Le modèle configuré est résolu à l’exécution. L’analyse statique considère le résultat de FeedQuery::create() comme le modèle de base du paquet. Utilisez App\\Models\\Feed::create() ou un type local explicite lorsque l’autocomplétion des propriétés propres à l’application est nécessaire. Taille des lots Les requêtes de base de données utilisent des lots de 1000 éléments par défaut. Vous pouvez modifier cette valeur en remplaçant la méthode chunkSize : Voir aussi - Créer des flux - Génération et planification - Étendre les fonctionnalités"
+    },
+    {
+        "route": "/fr/events/",
+        "title": "Événements",
+        "description": "Événements émis pendant la génération des flux",
+        "keywords": [
+            "events",
+            "FeedStartingEvent",
+            "FeedFinishedEvent"
+        ],
+        "headings": [
+            "Événements",
+            "Contrat de l’événement de fin",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Événements Les flux émettent deux événements lors de l’exécution de la commande : - DragonCode\\LaravelFeed\\Events\\FeedStartingEvent — FeedStartingEvent est émis après la vérification préalable du stockage et du chemin, avant la résolution du convertisseur et la préparation. Cela ne signifie pas qu’un fichier provisoire existe déjà. - DragonCode\\LaravelFeed\\Events\\FeedFinishedEvent — FeedFinishedEvent est émis lorsque tous les fichiers générés ont été publiés avec succès. Une génération échouée n’émet pas cet événement. Contrat de l’événement de fin L’événement de fin expose les propriétés publiques suivantes : - $feed contient la classe du flux généré. - $paths contient tous les chemins des fichiers publiés, dans l’ordre de sortie. - $path reste disponible pour assurer la rétrocompatibilité et contient le premier chemin publié. Utilisez $paths lorsqu’un flux peut être réparti entre plusieurs fichiers. GeneratorService::feed() renvoie un objet GenerationResultData . Sa propriété $paths contient les mêmes chemins ordonnés, tandis que sa propriété $records associe chaque chemin au nombre d’enregistrements écrits dans ce fichier. Voir aussi - Génération et planification - Emplacement - Étendre les fonctionnalités"
+    },
+    {
+        "route": "/fr/extending-functionality/",
+        "title": "Étendre les fonctionnalités",
+        "description": "Étendre les flux avec des clauses conditionnelles, des macros et des transformateurs personnalisés.",
+        "keywords": [
+            "extensions",
+            "macros",
+            "transformers",
+            "conditional clauses"
+        ],
+        "headings": [
+            "Étendre les fonctionnalités",
+            "Clauses conditionnelles",
+            "Macroable",
+            "Transformateurs personnalisés",
+            "Ajouter des transformateurs de flux en tête",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Étendre les fonctionnalités Clauses conditionnelles Les clauses conditionnelles sont disponibles pour les classes Feed , FeedInfo et FeedItem . Vous pouvez parfois vouloir appliquer certaines clauses à un flux en fonction d’une autre condition. Par exemple, une clause where ne doit s’appliquer que si une valeur d’entrée est présente ou si un autre attribut possède une valeur. La méthode when permet de le faire : La méthode when n’exécute la closure fournie que lorsque le premier argument vaut true . S’il vaut false , la closure n’est pas exécutée. Dans l’exemple ci-dessus, la closure transmise à when n’est donc appelée que si le champ category existe sur le modèle et est évalué à true . Vous pouvez transmettre une autre closure comme troisième argument de when . Elle ne sera exécutée que si le premier argument est évalué à false . L’exemple suivant utilise cette fonctionnalité pour configurer le suffixe du titre du modèle : La méthode inverse unless est également disponible. Sa logique de traitement est exactement opposée. Macroable Feed , FeedItem et FeedInfo sont « macroable », ce qui permet de leur ajouter des méthodes à l’exécution. La méthode macro accepte une closure exécutée lors de l’appel de votre macro. Cette closure peut accéder aux autres méthodes du flux via $this , comme s’il s’agissait d’une véritable méthode des classes de flux. Le code suivant ajoute par exemple une méthode customFilename à la classe Feed : Voici également des exemples pour FeedInfo et FeedItem : Transformateurs personnalisés Un transformateur convertit une valeur prise en charge avant sa sérialisation par le convertisseur. Enregistrez les noms des classes de transformateur dans config/feeds.php . Laravel résout chaque classe via le conteneur de services, ce qui prend en charge les dépendances de constructeur et les liaisons personnalisées du conteneur. Ajoutez le transformateur à la liste configurée après les transformateurs intégrés : Les transformateurs configurés s’exécutent dans l’ordre de déclaration. Chaque appel à allow() reçoit la valeur actuelle, y compris les modifications apportées par les transformateurs précédents, et chaque transformateur correspondant peut la mettre à jour. Les doublons sont supprimés après la résolution du conteneur, tandis que la première occurrence conserve sa position. Un convertisseur construit cette chaîne ordonnée une seule fois et réutilise les mêmes instances de transformateur pour chaque champ de cette génération de flux. Ajouter des transformateurs de flux en tête Remplacez transformers() dans un flux pour ajouter ses transformateurs en tête. La méthode renvoie des noms de classes de transformateur que Laravel résout via le conteneur de services, comme pour la liste globale. Définissez par exemple un transformateur de date avec un format propre au flux : Renvoyez-le ensuite depuis le flux : La liste ajoutée en tête ne remplace pas la liste globale de config/feeds.php . Les transformateurs s’exécutent dans l’ordre suivant : 1. Transformateurs ajoutés en tête et renvoyés par transformers() . 2. Transformateurs globaux de config/feeds.php . 3. Transformateurs propres au convertisseur et requis par le format de sortie sélectionné. Un transformateur ajouté en tête peut donc formater une date en premier. Le transformateur de date global reçoit la chaîne obtenue et l’ignore, tandis que les autres transformateurs globaux continuent de traiter les champs correspondants. Voir aussi - Créer des flux - Eloquent - Directives"
+    },
+    {
+        "route": "/fr/faq/",
+        "title": "Questions fréquentes",
+        "description": "Réponses courtes aux questions courantes sur la configuration, la génération, le stockage et les formats",
+        "keywords": [
+            "FAQ",
+            "generation",
+            "storage",
+            "formats",
+            "memory"
+        ],
+        "headings": [
+            "Questions fréquentes",
+            "Voir aussi"
+        ],
+        "content": "Questions fréquentes Réponses courtes aux questions courantes sur la configuration, la génération, le stockage, les formats et la mémoire. Laravel Feeds peut-il exporter des millions d’enregistrements ? Oui. Le paquet lit les résultats Eloquent par lots et écrit progressivement. Gardez builder() lazy, n’appelez pas get() ou toArray() sur le résultat complet et ajustez chunkSize() après avoir mesuré la mémoire et la charge de la base. Consultez les performances sur les grands jeux de données. Quel format choisir ? Utilisez le contrat demandé par le consommateur. XML et RSS gèrent les directives hiérarchiques, JSON conserve les données imbriquées, JSON Lines convient au traitement ligne par ligne et CSV exige un schéma de colonnes stable. Consultez les formats pris en charge. Un flux peut-il créer plusieurs fichiers ? Oui. Remplacez perFile() pour fixer le nombre d’enregistrements par fichier et maxFiles() pour définir une limite facultative. Les fichiers fractionnés reçoivent des suffixes séquentiels. Consultez la répartition des fichiers. Puis-je stocker les flux sur S3 ou un autre disque distant ? Oui, si le disque Laravel configuré se résout en FilesystemAdapter accessible en écriture. Un déplacement distant peut être une copie suivie d’une suppression ; le remplacement atomique n’est donc pas garanti. Consultez les disques pris en charge. Pourquoi un flux désactivé a-t-il été exécuté ? Transmettre un identifiant à feed:generate exécute ce flux même si son enregistrement est inactif. Sans identifiant, la commande ignore les enregistrements inactifs. Consultez la génération d’un flux unique. Comment omettre un champ facultatif ? Renvoyez DragonCode\\LaravelFeed\\Data\\OptionalData ou Spatie\\LaravelData\\Optional comme valeur. CSV conserve la colonne avec une valeur vide ; les formats d’objet et XML omettent le champ. Consultez les valeurs facultatives. Voir aussi - Dépannage - Référence de configuration - Référence API"
+    },
+    {
+        "route": "/fr/generation/",
+        "title": "Génération et planification",
+        "description": "Informations sur la génération de fichiers de flux destinés à une diffusion ultérieure",
+        "keywords": [
+            "generation",
+            "schedule",
+            "queue",
+            "feed:generate"
+        ],
+        "headings": [
+            "Génération et planification",
+            "Flux unique",
+            "Sortie pour les agents d’IA",
+            "File d’attente",
+            "Planification",
+            "Automatique",
+            "Manuelle",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Génération et planification Pour générer tous les flux actifs, utilisez la commande suivante : Tous les flux actifs ( is_active = true ) de la table feeds , ou de celle indiquée dans le fichier config/feeds.php , seront alors exécutés. Lorsque vous appelez la commande sans paramètre, la console affiche des liens vers tous les flux, y compris ceux dont la propriété is_active vaut false . Ces flux ne sont toutefois pas exécutés : ils sont marqués avec le statut SKIP . Flux unique Le flux indiqué sera exécuté , même s’il est désactivé dans la table feeds de la base de données. Pour générer un flux particulier, appelez la commande feed:generate en lui passant comme paramètre l’identifiant du flux dans la table feeds : Sortie pour les agents d’IA Lorsque feed:generate s’exécute dans un agent de codage IA reconnu par Laravel Agent Detector, la commande écrit automatiquement un seul objet JSON au lieu des barres de progression et des lignes d’état formatées. Aucune option de commande n’est requise. En dehors d’un agent reconnu, la sortie habituelle de la console reste inchangée. Lors d’une génération directe, chaque flux généré contient tous les fichiers publiés et leur nombre d’enregistrements : La commande émet un JSON compact sur une seule ligne. L’exemple est mis en forme uniquement pour faciliter la lecture. Statut Signification Champs supplémentaires --- --- --- generated Les fichiers du flux ont été générés directement. files , avec path et records pour chaque fichier queued Le mode file d’attente est activé et le job du flux a été exécuté de manière synchrone pour l’agent. Aucun skipped Le flux est inactif et la commande a été exécutée sans identifiant de flux. Aucun En mode file d’attente, le chemin propre à l’agent exécute chaque job actif de manière synchrone avant de renvoyer le résultat JSON. Le chemin habituel, formaté pour les humains, continue d’envoyer les jobs via la connexion de file d’attente configurée. Cette enveloppe JSON est utilisée uniquement pour les exécutions réussies. Si la génération lève une exception, Laravel traite normalement l’erreur de la commande et n’émet aucune enveloppe d’erreur JSON. File d’attente Par défaut, la génération des flux s’exécute dans le processus de console. Pour les flux longs à générer ou gourmands en mémoire, activez le mode Laravel Queue dans votre environnement : Lorsque le mode file d’attente est activé, feed:generate envoie un job pour chaque flux actif au lieu de générer directement les fichiers. Avec une connexion asynchrone, la commande se termine après l’envoi des jobs. Démarrez un worker de file d’attente pour la connexion et la file sélectionnées afin de traiter ces jobs. - FEED_QUEUE_CONNECTION sélectionne la connexion de file d’attente. À défaut, QUEUE_CONNECTION , puis database , sont utilisés. - FEED_QUEUE_NAME sélectionne une file sur cette connexion. Laissez cette variable non définie pour utiliser la file par défaut de la connexion. - FEED_QUEUE_UNIQUE_TTL définit en secondes la durée de vie maximale du verrou d’unicité. Tant que ce verrou est actif, aucun second job n’est ajouté pour le même flux. La connexion sync exécute immédiatement chaque job dans le processus de console. Sélectionnez une connexion asynchrone pour transférer la génération à un worker. Définissez FEED_QUEUE_ENABLED=false pour générer directement les flux sans envoyer de jobs. Planification Automatique Pour automatiser la génération des flux, utilisez une planification. Ajoutez pour cela l’appel du helper dans le fichier routes/console.php , qui est le chemin par défaut sauf si vous l’avez modifié : Vous pourrez ainsi enregistrer les appels de tous les flux actifs selon la planification indiquée dans la colonne expression de la base de données. Manuelle Vous pouvez également définir directement la planification selon vos propres règles. Dans ce cas, seuls les flux indiqués seront exécutés. Voir aussi - Créer des flux - Événements - Emplacement"
+    },
+    {
+        "route": "/fr/installation/",
+        "title": "Installation et configuration",
+        "description": "Informations sur l’installation et la configuration de Laravel Feeds",
+        "keywords": [
+            "installation",
+            "Composer",
+            "configuration",
+            "migration"
+        ],
+        "headings": [
+            "Installation et configuration",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Installation et configuration Vous pouvez installer le paquet avec Composer : Publiez la migration et le fichier de configuration config/feeds.php avec : Avant d’exécuter les migrations , vérifiez les paramètres de connexion à la base de données dans le fichier config/feeds.php . Vous pouvez maintenant exécuter les migrations, puis créer des flux. Voir aussi - Créer des flux - Génération et planification - Formats pris en charge"
+    },
+    {
+        "route": "/fr/introduction/",
+        "title": "Bien démarrer",
+        "description": "Installer Laravel Feeds et générer un premier flux en cinq minutes",
+        "keywords": [
+            "getting started",
+            "Laravel",
+            "feeds",
+            "quick start"
+        ],
+        "headings": [
+            "Bien démarrer",
+            "Prérequis",
+            "Installer et préparer",
+            "Définir la source de données",
+            "Définir chaque élément",
+            "Générer le fichier",
+            "Étapes suivantes"
+        ],
+        "content": "Bien démarrer Installez le paquet, définissez une requête Eloquent et la structure d’un élément, puis générez un fichier de flux. Dans une application Laravel existante, le premier export fonctionnel prend environ cinq minutes. Prérequis - PHP 8.2 ou une version 8.x ultérieure acceptée par Composer - Laravel 11.x , 12.x ou 13.x - Une base de données et un disque de système de fichiers configurés Installer et préparer Le générateur crée les classes du flux et de l’élément. Il crée aussi la modification de base de données qui enregistre le flux. Exécutez cette migration avant la première génération si elle a été créée après la commande migrate précédente. Définir la source de données Renvoyez un builder Eloquent afin de lire les enregistrements par lots. Définir chaque élément Générer le fichier La commande indique l’état de chaque flux ; la sortie normale de la console ne contient pas les chemins des fichiers générés. Les classes de flux utilisent XML et le disque public par défaut. Modifiez l’une ou l’autre valeur dans la classe du flux. Étapes suivantes - Installation et configuration - Créer des flux - Génération et planification - Formats pris en charge"
+    },
+    {
+        "route": "/fr/license/",
+        "title": "Licence MIT",
+        "description": "Informations sur la licence sous laquelle Laravel Feeds est distribué",
+        "keywords": [
+            "MIT",
+            "license",
+            "copyright"
+        ],
+        "headings": [
+            "Licence MIT",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README Licence MIT Copyright (c) 2025-2026 Andrey Helldar La permission est accordée, gratuitement, à toute personne obtenant une copie de ce logiciel et des fichiers de documentation associés (le « Logiciel »), d’utiliser le Logiciel sans restriction, notamment de l’utiliser, le copier, le modifier, le fusionner, le publier, le distribuer, le concéder sous licence et/ou d’en vendre des copies, ainsi que d’autoriser les personnes auxquelles le Logiciel est fourni à le faire, sous réserve des conditions suivantes : L’avis de droit d’auteur ci-dessus et le présent avis d’autorisation doivent être inclus dans toutes les copies ou parties substantielles du Logiciel. LE LOGICIEL EST FOURNI « EN L’ÉTAT », SANS GARANTIE D’AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS, MAIS SANS S’Y LIMITER, LES GARANTIES DE QUALITÉ MARCHANDE, D’ADÉQUATION À UN USAGE PARTICULIER ET D’ABSENCE DE CONTREFAÇON. EN AUCUN CAS LES AUTEURS OU LES TITULAIRES DES DROITS D’AUTEUR NE POURRONT ÊTRE TENUS RESPONSABLES DE TOUTE RÉCLAMATION, DE TOUT DOMMAGE OU DE TOUTE AUTRE RESPONSABILITÉ, QUE CE SOIT DANS LE CADRE D’UNE ACTION CONTRACTUELLE, DÉLICTUELLE OU AUTRE, DÉCOULANT DU LOGICIEL, DE SON UTILISATION OU D’AUTRES OPÉRATIONS SUR LE LOGICIEL, OU EN RELATION AVEC CEUX-CI. Voir aussi - Guide de contribution - Bien démarrer - Apprentissage automatique"
+    },
+    {
+        "route": "/fr/location/",
+        "title": "Emplacement",
+        "description": "Configurer le disque de stockage et le nom des fichiers de sortie des flux générés",
+        "keywords": [
+            "storage",
+            "filesystem",
+            "filename",
+            "publication"
+        ],
+        "headings": [
+            "Emplacement",
+            "Disques pris en charge",
+            "Contrat des chemins",
+            "Garanties de publication",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Emplacement Par défaut, les flux sont enregistrés dans le stockage public . Le nom du fichier est généré automatiquement à partir du nom de la classe du flux après App\\Feeds\\ , au format kebab-case . Exemple : Vous pouvez modifier ces valeurs en remplaçant la propriété $storage et la méthode filename : Disques pris en charge La génération des flux prend en charge les disques Laravel résolus en Illuminate\\Filesystem\\FilesystemAdapter . Cela comprend les pilotes local , s3 , sftp et ftp lorsque leurs adaptateurs Flysystem sont installés et configurés. Les adaptateurs personnalisés sont pris en charge s’ils fournissent des flux accessibles en écriture, le déplacement de fichiers, la gestion et l’énumération des répertoires ainsi que la suppression via Flysystem. Les disques en lecture seule et les disques personnalisés qui implémentent uniquement Illuminate\\Contracts\\Filesystem\\Filesystem ne sont pas pris en charge. Un disque personnalisé qui n’est pas résolu en Illuminate\\Filesystem\\FilesystemAdapter échoue avec UnsupportedStorageDiskException avant le démarrage de la requête de base de données du flux. Un disque Laravel en lecture seule est toujours résolu en FilesystemAdapter ; la requête du flux et la préparation locale se terminent donc avant l’échec de l’écriture lors de la publication. GeneratorService enveloppe cette erreur de stockage dans FeedGenerationException . Contrat des chemins - storage() renvoie le FilesystemAdapter configuré. - storagePath() renvoie le chemin relatif au disque utilisé pour les opérations de stockage, y compris un suffixe facultatif pour les fichiers répartis. - path() renvoie le chemin résolu par l’adaptateur Laravel. Il s’agit d’un chemin absolu du système de fichiers pour un disque local et d’un chemin résolu par l’adaptateur pour un disque distant. Garanties de publication Chaque partie du flux est terminée avant le début de la publication. Les disques locaux publient les fichiers préparés au moyen de déplacements dans le système de fichiers, sous un verrou applicatif exclusif. Si un déplacement échoue, Laravel Feeds tente de restaurer chaque fichier précédent depuis sa sauvegarde de préparation. Les disques distants reçoivent les fichiers préparés complets via des flux Flysystem avant toute modification des objets publiés. La publication déplace ensuite chaque objet préparé vers sa destination et tente la même restauration en cas d’échec. Les déplacements distants peuvent être réalisés sous forme d’opérations de copie et de suppression, avec une cohérence éventuelle. Le remplacement atomique d’un objet ou d’un flux réparti complet n’est donc pas garanti. Le verrou de publication est local à l’hôte de l’application. Des générateurs exécutés sur des hôtes différents nécessitent donc un verrou distribué externe s’ils peuvent publier simultanément le même flux. Voir aussi - Génération et planification - Éléments - Événements"
+    },
+    {
+        "route": "/fr/machine-learning/",
+        "title": "Apprentissage automatique",
+        "description": "Conseils pour utiliser le projet avec des LLM et une base de connaissances consolidée",
+        "keywords": [
+            "LLM",
+            "llms.txt",
+            "machine learning",
+            "knowledge base"
+        ],
+        "headings": [
+            "Apprentissage automatique",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Apprentissage automatique Vous pouvez aider votre LLM à mieux comprendre la structure et les conventions de ce projet. Pour cela, importez les instructions du fichier suivant : llms.txt . Ce fichier est un document Markdown unique et consolidé qui contient l’ensemble de la documentation compilée du projet. Il est conçu comme une base de connaissances pour les LLM, par exemple comme pièce jointe à un prompt système, corpus de recherche ou fichier de connaissances personnalisé. Enregistrez l’URL et réimportez régulièrement le fichier pour récupérer les mises à jour du projet. Voir aussi - Bien démarrer - Guide de contribution - Licence MIT"
+    },
+    {
+        "route": "/fr/performance/",
+        "title": "Performances sur les grands jeux de données",
+        "description": "Contrôler la mémoire, la charge de base de données, le fractionnement, les files d’attente et le stockage",
+        "keywords": [
+            "performance",
+            "memory",
+            "chunks",
+            "large datasets",
+            "queues"
+        ],
+        "headings": [
+            "Performances sur les grands jeux de données",
+            "Garder la requête lazy",
+            "Ajuster la taille des lots",
+            "Fractionner les fichiers de sortie",
+            "Mettre les flux longs en file d’attente",
+            "Mesurer tout le parcours",
+            "Voir aussi"
+        ],
+        "content": "Performances sur les grands jeux de données Laravel Feeds écrit progressivement les enregistrements. La mémoire reste limitée uniquement si chaque étape en amont demeure lazy. Garder la requête lazy Renvoyez directement un Builder Eloquent : Ne matérialisez pas le résultat complet avant la génération. Sélectionnez uniquement les colonnes nécessaires et ne préchargez que les relations utilisées par item() afin d’éviter les requêtes N+1. Ajuster la taille des lots La valeur par défaut est de 1000 enregistrements. Une valeur plus basse réduit le pic de mémoire des modèles et augmente le nombre de requêtes. Une valeur plus haute réduit le coût des requêtes et augmente la mémoire. Mesurez avec des lignes proches de la production. Fractionner les fichiers de sortie Utilisez perFile() si les consommateurs acceptent plusieurs fichiers ou si une seule sortie devient difficile à publier et à relancer. Laissez maxFiles() à sa valeur par défaut 0 lorsque tous les enregistrements correspondants doivent être exportés. Lorsque perFile() et maxFiles() sont tous deux supérieurs à zéro, Laravel Feeds exporte au plus leur produit et termine la génération avec succès sans signaler les enregistrements suivants omis. Définissez maxFiles() uniquement si cette limite du nombre d’enregistrements est volontaire. Mettre les flux longs en file d’attente Le mode file d’attente déplace la génération hors de la commande, mais ne réduit pas la mémoire utilisée par un flux. Utilisez une connexion asynchrone, des workers avec des limites adaptées et un TTL d’unicité supérieur à la durée attendue. Mesurer tout le parcours Mesurez séparément la base de données, l’hydratation des modèles, la transformation, la sérialisation et la publication. Un disque distant peut devenir le coût principal même si la génération est rapide. Voir aussi - Taille des lots Eloquent - Files d’attente de génération - Garanties de publication"
+    },
+    {
+        "route": "/fr/presets/",
+        "title": "Préréglages",
+        "description": "Générer rapidement des flux avec les préréglages intégrés (Instagram, Yandex, Sitemap, RSS)",
+        "keywords": [
+            "presets",
+            "Instagram",
+            "Yandex",
+            "Sitemap",
+            "RSS"
+        ],
+        "headings": [
+            "Préréglages",
+            "Valeurs par défaut",
+            "Instagram",
+            "Yandex",
+            "Sitemap",
+            "RSS",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Préréglages Vous pouvez créer rapidement des flux à l’aide des préréglages prêts à l’emploi : - DragonCode\\LaravelFeed\\Presets\\InstagramFeedPreset - DragonCode\\LaravelFeed\\Presets\\YandexFeedPreset - DragonCode\\LaravelFeed\\Presets\\SitemapFeedPreset - DragonCode\\LaravelFeed\\Presets\\RssFeedPreset Créez une classe de flux manuellement ou avec la commande php artisan make:feed , puis étendez le préréglage requis. Exemple : Implémentez ensuite les deux méthodes requises, builder et item . Exemple : Techniquement, les classes de préréglage sont identiques à la classe de base Feed , mais elles intègrent la logique propre au service ciblé, notamment la construction des blocs d’informations et des éléments. Valeurs par défaut Instagram class InstagramFeedItem extends FeedItem Yandex class YandexFeedItem extends FeedItem Sitemap class SitemapFeedItem extends FeedItem RSS class RssFeedItem extends FeedItem Voir aussi - Recette Instagram - Recette Yandex - Recette Sitemap"
+    },
+    {
+        "route": "/fr/receipt-instagram/",
+        "title": "Instagram",
+        "description": "Recette de génération d’un flux pour Instagram",
+        "keywords": [
+            "Instagram",
+            "product feed",
+            "recipe",
+            "XML"
+        ],
+        "headings": [
+            "Instagram",
+            "Créer les fichiers",
+            "Remplir le flux",
+            "Activer",
+            "Générer le flux",
+            "Résultat",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Instagram Créer les fichiers Remplir le flux Dans la classe générée, remplacez extends Feed par extends InstagramFeedPreset : Activer Vérifiez le fichier d’opération ou de migration généré, puis exécutez la commande appropriée : Générer le flux Générez le flux avec la commande suivante : Résultat Voir aussi - Préréglages - Recette Yandex - Recette RSS Atom"
+    },
+    {
+        "route": "/fr/receipt-rss-atom/",
+        "title": "RSS Atom",
+        "description": "Recette de génération d’un flux RSS Atom",
+        "keywords": [
+            "RSS",
+            "Atom",
+            "recipe",
+            "XML"
+        ],
+        "headings": [
+            "RSS Atom",
+            "Créer les fichiers",
+            "Remplir le flux",
+            "Activer",
+            "Générer le flux",
+            "Résultat",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → RSS Atom Créer les fichiers Remplir le flux Dans la classe générée, remplacez extends Feed par extends RssFeedPreset : Activer Vérifiez le fichier d’opération ou de migration généré, puis exécutez la commande appropriée : Générer le flux Générez le flux avec la commande suivante : Résultat Voir aussi - Préréglages - Recette Sitemap - Recette Instagram"
+    },
+    {
+        "route": "/fr/receipt-sitemap/",
+        "title": "Sitemap",
+        "description": "Guide pas à pas pour créer un flux de sitemap de produits",
+        "keywords": [
+            "Sitemap",
+            "recipe",
+            "SEO",
+            "XML"
+        ],
+        "headings": [
+            "Sitemap",
+            "Créer les fichiers",
+            "Remplir le flux",
+            "Activer",
+            "Liens",
+            "Générer le flux",
+            "Ajouter un lien au fichier sitemap.xml racine",
+            "Résultat",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Sitemap Cette recette vous guide dans la création d’un flux de sitemap de produits avec Laravel Feeds. Vous allez : - générer les classes nécessaires ; - implémenter la logique du flux ; - exposer les fichiers via le système de fichiers ; - référencer éventuellement le sitemap généré depuis un fichier racine sitemap.xml . Créer les fichiers Générez le flux et sa classe d’élément avec la commande suivante : Remplir le flux Dans la classe générée, remplacez extends Feed par extends SitemapFeedPreset : Méthodes disponibles dans la classe FeedItem : - url — doit être indiquée - modifiedAt — vaut $model- updated_at par défaut - priority — vaut 0.9 par défaut Activer Vérifiez le fichier d’opération ou de migration généré, puis exécutez la commande appropriée : Liens Dans le fichier de configuration config/filesystems.php, ajoutez un disque qui pointe vers le répertoire contenant vos sitemaps : Créez ensuite le lien symbolique public afin que les fichiers soient accessibles dans un navigateur : Générer le flux Générez le flux avec la commande suivante : Ajouter un lien au fichier sitemap.xml racine Si vous maintenez un fichier sitemap.xml racine qui référence d’autres sitemaps, ajoutez une entrée comme celle-ci : Résultat Le fichier sitemap.xml généré pour vos produits aura cette forme : Voir aussi - Préréglages - Recette Yandex - Recette RSS Atom"
+    },
+    {
+        "route": "/fr/receipt-yandex/",
+        "title": "Yandex",
+        "description": "Recette de génération d’un flux pour Yandex",
+        "keywords": [
+            "Yandex",
+            "marketplace",
+            "recipe",
+            "XML"
+        ],
+        "headings": [
+            "Yandex",
+            "Créer les fichiers",
+            "Remplir le flux",
+            "Structure de catégorie personnalisée",
+            "Activer",
+            "Générer le flux",
+            "Résultat",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Yandex Créer les fichiers Remplir le flux Dans la classe générée, remplacez extends Feed par extends YandexFeedPreset : Structure de catégorie personnalisée Par défaut, category() construit une catégorie à partir de son identifiant et de son nom. Utilisez rawCategory() lorsque des propriétés supplémentaires ou une autre structure sont nécessaires. Le tableau est ajouté au flux sans modification : La méthode categories() accepte les deux formes. Elle envoie les chaînes à category() et les tableaux à rawCategory() . Les tableaux de catégories personnalisés ne sont ni validés ni transformés. Construisez-les avec les directives XML prises en charge. Activer Vérifiez le fichier d’opération ou de migration généré, puis exécutez la commande appropriée : Générer le flux Générez le flux avec la commande suivante : Résultat Voir aussi - Préréglages - Directives - Recette Sitemap"
+    },
+    {
+        "route": "/fr/supported-formats/",
+        "title": "Formats pris en charge",
+        "description": "Liste des formats d’exportation de flux pris en charge",
+        "keywords": [
+            "XML",
+            "JSON",
+            "JSONL",
+            "CSV",
+            "RSS"
+        ],
+        "headings": [
+            "Formats pris en charge",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Formats pris en charge - xml — Génère des flux au format XML. - json — Génère des flux au format JSON. - jsonl — Génère des flux au format JSON Lines. - csv — Génère des flux au format CSV. - rss — Génère des flux au format RSS Atom. Le format xml est utilisé par défaut. Voir aussi - Éléments - Directives - Créer des flux"
+    },
+    {
+        "route": "/fr/troubleshooting/",
+        "title": "Dépannage",
+        "description": "Diagnostiquer les échecs de configuration, génération, stockage, file d’attente et sortie",
+        "keywords": [
+            "troubleshooting",
+            "errors",
+            "queue",
+            "storage",
+            "diagnostics"
+        ],
+        "headings": [
+            "Dépannage",
+            "La classe du flux est introuvable",
+            "La génération utilise trop de mémoire",
+            "Un job de file d’attente ne s’exécute jamais",
+            "Le disque de stockage est refusé",
+            "La génération XML échoue",
+            "Les lignes CSV échouent après le premier élément",
+            "Les fichiers publiés sont incomplets ou obsolètes",
+            "Voir aussi"
+        ],
+        "content": "Dépannage Commencez par la première limite en échec : enregistrement, requête, conversion, stockage ou livraison. Conservez l’exception d’origine, car elle contient la classe du flux et le contexte de sortie. La classe du flux est introuvable Vérifiez que l’enregistrement contient le nom complet, que l’autoloading Composer peut le résoudre et que la classe étend DragonCode\\LaravelFeed\\Feeds\\Feed ou un préréglage. Exécutez composer dump-autoload après avoir déplacé une classe. La génération utilise trop de mémoire - Renvoyez un Builder Eloquent depuis builder() . - N’appelez pas get() , all() ou toArray() sur toutes les données. - Réduisez chunkSize() et mesurez à nouveau. - Fractionnez les grandes sorties avec perFile() . - Passez à une file asynchrone seulement après avoir conservé le traitement en continu du flux. Consultez les performances. Un job de file d’attente ne s’exécute jamais Vérifiez FEED_QUEUE_CONNECTION , FEED_QUEUE_NAME et la commande du worker. La connexion sync s’exécute immédiatement et ne teste pas la livraison asynchrone. Un verrou d’unicité peut bloquer un autre job jusqu’à l’expiration de FEED_QUEUE_UNIQUE_TTL . Le disque de stockage est refusé Le disque doit se résoudre en Illuminate\\Filesystem\\FilesystemAdapter et gérer les flux inscriptibles, déplacements, répertoires, listes et suppressions. Une implémentation personnalisée qui n’est pas un FilesystemAdapter échoue avec UnsupportedStorageDiskException avant la requête de base de données. Un disque Laravel en lecture seule passe ce contrôle de type. Son écriture échoue lors de la publication, après la fin de la requête du flux et de la préparation locale ; GeneratorService enveloppe l’erreur de stockage dans FeedGenerationException . La génération XML échoue Validez le XML brut transmis via @mixed , le contenu CDATA et les contrats scalaires ou tableaux des directives. Préférez les valeurs échappées normales lorsque du XML brut n’est pas nécessaire. Les lignes CSV échouent après le premier élément CSV établit ses colonnes à partir du schéma de sortie. Chaque élément doit produire les mêmes clés. Les valeurs facultatives conservent une colonne vide au lieu de la supprimer. Les fichiers publiés sont incomplets ou obsolètes Examinez l’exception de stockage d’origine et les permissions. Sur un disque distant, tenez compte de la cohérence éventuelle et des déplacements non atomiques par copie et suppression. Plusieurs hôtes publiant la même cible nécessitent un verrou distribué externe. Voir aussi - Événements et exceptions - Emplacement - Questions fréquentes"
+    },
+    {
+        "route": "/fr/upgrade-guide/",
+        "title": "Guide de mise à niveau",
+        "description": "Procédure sûre de mise à niveau de Laravel Feeds dans la série 1.x prise en charge",
+        "keywords": [
+            "upgrade",
+            "Composer",
+            "migration",
+            "rollback",
+            "compatibility"
+        ],
+        "headings": [
+            "Guide de mise à niveau",
+            "Avant la mise à niveau",
+            "Appliquer la mise à jour",
+            "Vérifier",
+            "Revenir en arrière",
+            "Voir aussi"
+        ],
+        "content": "Guide de mise à niveau Cette documentation couvre actuellement la série 1.x . Consultez les notes de version et le verrou des dépendances avant chaque mise à jour. Avant la mise à niveau 1. Vérifiez que la version cible prend en charge les versions PHP et Laravel de l’application. 2. Validez composer.lock et le fichier config/feeds.php actuellement publié. 3. Notez les enregistrements actifs et les destinations des fichiers générés. 4. Exécutez les tests de génération ou produisez des flux représentatifs hors production. Appliquer la mise à jour Comparez le fichier config/feeds.php du paquet installé à la copie publiée et fusionnez les nouvelles clés manuellement. Ne republiez pas avec --force : cela écrase les valeurs propres à l’application. Vérifier - Générez un flux pour chaque format utilisé. - Vérifiez le nombre et le nom des fichiers fractionnés. - Vérifiez la génération planifiée et en file d’attente. - Vérifiez les modèles, transformateurs, macros et sous-classes de préréglage personnalisés. - Comparez une sortie représentative avec la version précédente. Revenir en arrière Restaurez les anciens composer.lock et configuration, exécutez composer install , puis appliquez la politique d’annulation des migrations de l’application. Les fichiers générés sont des artefacts de déploiement ; restaurez-les ou régénérez-les selon le plan de reprise du stockage. Voir aussi - Compatibilité - Référence de configuration - Guide de contribution"
+    }
+]

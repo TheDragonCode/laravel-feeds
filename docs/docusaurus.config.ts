@@ -12,7 +12,7 @@ const legacyRedirects = [
     { from: "/contributions.html", to: "/contributions/" },
     { from: "/machine-learning.html", to: "/machine-learning/" },
     { from: "/license.html", to: "/license/" },
-    { from: "/introduction.html", to: "/" },
+    { from: "/introduction.html", to: "/introduction/" },
     { from: "/installation.html", to: "/installation/" },
     { from: "/create-feeds.html", to: "/create-feeds/" },
     { from: "/generation.html", to: "/generation/" },

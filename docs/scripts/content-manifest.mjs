@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -9,6 +9,7 @@ const siteDirectory = path.resolve(
 const docsDirectory = path.join(siteDirectory, "docs");
 const configPath = path.join(siteDirectory, "docusaurus.config.ts");
 const manifestPath = path.join(siteDirectory, "routes.json");
+const searchDirectory = path.join(siteDirectory, "static", "search");
 const requiredFields = [
     "title",
     "description",
@@ -357,7 +358,13 @@ const manifestRoutes = routes.map((route) => {
 
     return manifestRoute;
 });
-const output = `${JSON.stringify({ version: 2, routes: manifestRoutes, search }, null, 4)}\n`;
+const output = `${JSON.stringify({ version: 3, routes: manifestRoutes }, null, 4)}\n`;
+const searchOutputs = Object.fromEntries(
+    locales.map((locale) => [
+        locale,
+        `${JSON.stringify(search[locale], null, 4)}\n`,
+    ]),
+);
 
 if (process.argv.includes("--check")) {
     const current = normalize(await readFile(manifestPath, "utf8"));
@@ -365,6 +372,28 @@ if (process.argv.includes("--check")) {
     if (current !== output) {
         throw new Error("routes.json is stale. Run npm run content:manifest.");
     }
+
+    for (const locale of locales) {
+        const currentSearch = normalize(
+            await readFile(path.join(searchDirectory, `${locale}.json`), "utf8"),
+        );
+
+        if (currentSearch !== searchOutputs[locale]) {
+            throw new Error(
+                `static/search/${locale}.json is stale. Run npm run content:manifest.`,
+            );
+        }
+    }
 } else {
-    await writeFile(manifestPath, output, "utf8");
+    await mkdir(searchDirectory, { recursive: true });
+    await Promise.all([
+        writeFile(manifestPath, output, "utf8"),
+        ...locales.map((locale) =>
+            writeFile(
+                path.join(searchDirectory, `${locale}.json`),
+                searchOutputs[locale],
+                "utf8",
+            ),
+        ),
+    ]);
 }

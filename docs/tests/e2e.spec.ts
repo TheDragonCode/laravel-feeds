@@ -18,6 +18,15 @@ test("homepage leads to installation", async ({ page }) => {
     ).toBeVisible();
 });
 
+test("legacy introduction URL redirects to getting started", async ({ page }) => {
+    await page.goto("/introduction.html");
+
+    await expect(page).toHaveURL(/\/introduction\/$/);
+    await expect(
+        page.getByRole("heading", { level: 1, name: "Getting started" }),
+    ).toBeVisible();
+});
+
 test("search opens from the keyboard and navigates", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator('[data-search-ready="true"]')).toBeVisible();
@@ -66,6 +75,41 @@ test("search closes with Escape", async ({ page }) => {
     await expect(dialog).toBeHidden();
 });
 
+test("search retries the locale index after a failed request", async ({ page }) => {
+    let attempts = 0;
+
+    await page.route("**/search/en.json", async (route) => {
+        attempts++;
+
+        if (attempts === 1) {
+            await route.fulfill({ status: 503 });
+
+            return;
+        }
+
+        await route.continue();
+    });
+
+    await page.goto("/");
+
+    const trigger = page.getByRole("button", { name: "Search" });
+    const dialog = page.getByRole("dialog", { name: "Search documentation" });
+    const firstResponse = page.waitForResponse(
+        (response) => new URL(response.url()).pathname === "/search/en.json",
+    );
+
+    await trigger.click();
+    await firstResponse;
+    await dialog.getByRole("button", { name: "Close" }).click();
+    await trigger.click();
+    await dialog.getByRole("searchbox").fill("runtime services");
+
+    await expect(
+        dialog.getByRole("link", { name: /Runtime services and contracts/ }),
+    ).toBeVisible();
+    expect(attempts).toBe(2);
+});
+
 test("installation command copies to the clipboard", async ({ context, page }) => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
     await page.goto("/");
@@ -109,6 +153,16 @@ test("localized routes render translated content", async ({ page }) => {
 });
 
 test("localized search uses translated content", async ({ page }) => {
+    const searchAssets = new Set<string>();
+
+    page.on("response", (response) => {
+        const pathname = new URL(response.url()).pathname;
+
+        if (pathname.startsWith("/search/") && pathname.endsWith(".json")) {
+            searchAssets.add(pathname);
+        }
+    });
+
     await page.goto("/ru/");
     await page.getByRole("button", { name: "Поиск" }).click();
 
@@ -120,4 +174,5 @@ test("localized search uses translated content", async ({ page }) => {
     await expect(
         page.getByRole("heading", { level: 1, name: "Установка и настройка" }),
     ).toBeVisible();
+    expect([...searchAssets]).toEqual(["/search/ru.json"]);
 });
