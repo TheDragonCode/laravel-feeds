@@ -42,7 +42,7 @@ class UserFeed extends Feed
 Die Feed-Generierung unterstützt Laravel-Datenträger, die zu `Illuminate\Filesystem\FilesystemAdapter` aufgelöst werden. Dazu gehören die Treiber `local`, `s3`, `sftp` und `ftp`, wenn ihre Flysystem-Adapter installiert und konfiguriert sind. Benutzerdefinierte Adapter werden unterstützt, wenn sie beschreibbare Streams, Dateiverschiebungen, Verzeichnisverwaltung und -auflistung sowie Löschvorgänge über Flysystem bereitstellen.
 
 :::warning
-Schreibgeschützte Datenträger und benutzerdefinierte Datenträger, die nur `Illuminate\Contracts\Filesystem\Filesystem` implementieren, werden nicht unterstützt. Ein inkompatibler Datenträger schlägt vor dem Start der Datenbankabfrage des Feeds mit einer `UnsupportedStorageDiskException` fehl.
+Schreibgeschützte Datenträger und benutzerdefinierte Datenträger, die nur `Illuminate\Contracts\Filesystem\Filesystem` implementieren, werden nicht unterstützt. Ein benutzerdefinierter Datenträger, der nicht zu `Illuminate\Filesystem\FilesystemAdapter` aufgelöst wird, schlägt vor dem Start der Datenbankabfrage des Feeds mit `UnsupportedStorageDiskException` fehl. Ein schreibgeschützter Laravel-Datenträger wird weiterhin zu `FilesystemAdapter` aufgelöst; daher werden die Feed-Abfrage und das lokale Staging abgeschlossen, bevor der Schreibvorgang bei der Veröffentlichung fehlschlägt. `GeneratorService` schließt diesen Speicherfehler in `FeedGenerationException` ein.
 :::
 
 ## Pfadvertrag {/* #path_contract */}

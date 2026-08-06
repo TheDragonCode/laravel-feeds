@@ -42,7 +42,7 @@ class UserFeed extends Feed
 Feed 生成支持能够解析为 `Illuminate\Filesystem\FilesystemAdapter` 的 Laravel 磁盘。安装并配置相应的 Flysystem 适配器后，支持 `local`、`s3`、`sftp` 和 `ftp` 驱动。自定义适配器需要通过 Flysystem 提供可写流、文件移动、目录管理与列表以及删除功能。
 
 :::warning
-不支持只读磁盘，也不支持仅实现 `Illuminate\Contracts\Filesystem\Filesystem` 的自定义磁盘。不兼容的磁盘会在 Feed 数据库查询开始前抛出 `UnsupportedStorageDiskException`。
+不支持只读磁盘，也不支持仅实现 `Illuminate\Contracts\Filesystem\Filesystem` 的自定义磁盘。无法解析为 `Illuminate\Filesystem\FilesystemAdapter` 的自定义磁盘会在 Feed 数据库查询开始前抛出 `UnsupportedStorageDiskException`。Laravel 只读磁盘仍会解析为 `FilesystemAdapter`，因此 Feed 查询和本地暂存会先完成，随后发布写入才会失败。`GeneratorService` 会将该存储错误包装为 `FeedGenerationException`。
 :::
 
 ## 路径约定 {/* #path_contract */}

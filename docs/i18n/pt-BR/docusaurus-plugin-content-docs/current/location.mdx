@@ -42,7 +42,7 @@ class UserFeed extends Feed
 A geração de feeds aceita discos do Laravel que sejam resolvidos como `Illuminate\Filesystem\FilesystemAdapter`. Isso inclui os drivers `local`, `s3`, `sftp` e `ftp` quando os adaptadores correspondentes do Flysystem estão instalados e configurados. Adaptadores personalizados são compatíveis quando oferecem streams graváveis, movimentação de arquivos, gerenciamento e listagem de diretórios e exclusão pelo Flysystem.
 
 :::warning
-Discos somente leitura e discos personalizados que implementam apenas `Illuminate\Contracts\Filesystem\Filesystem` não são compatíveis. Um disco incompatível causa uma `UnsupportedStorageDiskException` antes do início da consulta do feed ao banco de dados.
+Discos somente leitura e discos personalizados que implementam apenas `Illuminate\Contracts\Filesystem\Filesystem` não são compatíveis. Um disco personalizado que não é resolvido como `Illuminate\Filesystem\FilesystemAdapter` causa `UnsupportedStorageDiskException` antes do início da consulta do feed ao banco de dados. Um disco somente leitura do Laravel ainda é resolvido como `FilesystemAdapter`; por isso, a consulta do feed e o staging local terminam antes de a gravação da publicação falhar. `GeneratorService` envolve essa falha de armazenamento em `FeedGenerationException`.
 :::
 
 ## Contrato dos caminhos {/* #path_contract */}

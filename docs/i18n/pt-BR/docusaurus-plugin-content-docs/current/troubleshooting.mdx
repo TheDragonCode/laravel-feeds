@@ -33,7 +33,7 @@ Verifique `FEED_QUEUE_CONNECTION`, `FEED_QUEUE_NAME` e o comando do worker. A co
 
 ## O disco de armazenamento é rejeitado {/* #storage-disk */}
 
-O disco deve resolver para `Illuminate\Filesystem\FilesystemAdapter` e aceitar streams graváveis, movimentos, diretórios, listagens e exclusões. Discos somente leitura e implementações limitadas ao contrato falham antes da consulta ao banco.
+O disco deve resolver para `Illuminate\Filesystem\FilesystemAdapter` e aceitar streams graváveis, movimentos, diretórios, listagens e exclusões. Uma implementação personalizada que não é um `FilesystemAdapter` falha com `UnsupportedStorageDiskException` antes da consulta ao banco. Um disco somente leitura do Laravel passa nessa verificação de tipo. A gravação falha durante a publicação, depois que a consulta do feed e o staging local terminam, e `GeneratorService` envolve a falha de armazenamento em `FeedGenerationException`.
 
 ## A geração XML falha {/* #xml-failure */}
 

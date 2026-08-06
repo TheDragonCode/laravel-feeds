@@ -33,7 +33,7 @@ Prüfen Sie `FEED_QUEUE_CONNECTION`, `FEED_QUEUE_NAME` und den Worker-Befehl. Di
 
 ## Speicherdatenträger wird abgelehnt {/* #storage-disk */}
 
-Der Datenträger muss zu `Illuminate\Filesystem\FilesystemAdapter` aufgelöst werden und beschreibbare Streams, Verschiebungen, Verzeichnisverwaltung, Auflistungen und Löschvorgänge unterstützen. Schreibgeschützte Datenträger und benutzerdefinierte Implementierungen, die nur den Vertrag erfüllen, schlagen vor der Datenbankabfrage fehl.
+Der Datenträger muss zu `Illuminate\Filesystem\FilesystemAdapter` aufgelöst werden und beschreibbare Streams, Verschiebungen, Verzeichnisverwaltung, Auflistungen und Löschvorgänge unterstützen. Eine benutzerdefinierte Implementierung, die kein `FilesystemAdapter` ist, schlägt vor der Datenbankabfrage mit `UnsupportedStorageDiskException` fehl. Ein schreibgeschützter Laravel-Datenträger besteht diese Typprüfung. Sein Schreibvorgang schlägt während der Veröffentlichung fehl, nachdem die Feed-Abfrage und das lokale Staging abgeschlossen wurden; `GeneratorService` schließt den Speicherfehler in `FeedGenerationException` ein.
 
 ## XML-Generierung schlägt fehl {/* #xml-failure */}
 

@@ -33,7 +33,7 @@ Vérifiez `FEED_QUEUE_CONNECTION`, `FEED_QUEUE_NAME` et la commande du worker. L
 
 ## Le disque de stockage est refusé {/* #storage-disk */}
 
-Le disque doit se résoudre en `Illuminate\Filesystem\FilesystemAdapter` et gérer les flux inscriptibles, déplacements, répertoires, listes et suppressions. Les disques en lecture seule et les implémentations limitées au contrat échouent avant la requête de base de données.
+Le disque doit se résoudre en `Illuminate\Filesystem\FilesystemAdapter` et gérer les flux inscriptibles, déplacements, répertoires, listes et suppressions. Une implémentation personnalisée qui n’est pas un `FilesystemAdapter` échoue avec `UnsupportedStorageDiskException` avant la requête de base de données. Un disque Laravel en lecture seule passe ce contrôle de type. Son écriture échoue lors de la publication, après la fin de la requête du flux et de la préparation locale ; `GeneratorService` enveloppe l’erreur de stockage dans `FeedGenerationException`.
 
 ## La génération XML échoue {/* #xml-failure */}
 

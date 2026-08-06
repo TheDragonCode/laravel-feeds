@@ -33,7 +33,7 @@ Check `FEED_QUEUE_CONNECTION`, `FEED_QUEUE_NAME`, and the worker command. The `s
 
 ## The storage disk is rejected {/* #storage-disk */}
 
-The disk must resolve to `Illuminate\Filesystem\FilesystemAdapter` and support writable streams, moves, directory management, listings, and deletion. Read-only disks and contract-only custom implementations fail before the database query begins.
+The disk must resolve to `Illuminate\Filesystem\FilesystemAdapter` and support writable streams, moves, directory management, listings, and deletion. A custom implementation that is not a `FilesystemAdapter` fails before the database query with `UnsupportedStorageDiskException`. A Laravel read-only disk passes that type check. Its write fails during publication, after the feed query and local staging have completed, and `GeneratorService` wraps the storage failure in `FeedGenerationException`.
 
 ## XML generation fails {/* #xml-failure */}
 

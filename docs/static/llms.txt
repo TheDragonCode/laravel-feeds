@@ -1358,7 +1358,7 @@ class UserFeed extends Feed
 Feed generation supports Laravel disks that resolve to `Illuminate\Filesystem\FilesystemAdapter`. This includes the `local`, `s3`, `sftp`, and `ftp` drivers when their Flysystem adapters are installed and configured. Custom adapters are supported when they provide writable streams, file moves, directory management and listings, and deletion through Flysystem.
 
 :::warning
-Read-only disks and custom disks that implement only `Illuminate\Contracts\Filesystem\Filesystem` are not supported. An incompatible disk fails before the feed database query starts with an `UnsupportedStorageDiskException`.
+Read-only disks and custom disks that implement only `Illuminate\Contracts\Filesystem\Filesystem` are not supported. A custom disk that does not resolve to `Illuminate\Filesystem\FilesystemAdapter` fails before the feed database query starts with `UnsupportedStorageDiskException`. A Laravel read-only disk still resolves to `FilesystemAdapter`, so the feed query and local staging finish before the publication write fails. `GeneratorService` wraps that storage failure in `FeedGenerationException`.
 :::
 
 ## Path contract
@@ -3157,7 +3157,7 @@ Use lifecycle events for application integration and exception types for recover
 | `InvalidCsvValueException` | A CSV field cannot be serialized as a scalar value. |
 | `InvalidXmlCDataException` | A CDATA value is invalid. |
 | `InvalidXmlFragmentException` | A raw XML fragment is invalid. |
-| `UnsupportedStorageDiskException` | The selected Laravel disk is not a writable `FilesystemAdapter`. |
+| `UnsupportedStorageDiskException` | The selected Laravel disk does not resolve to `FilesystemAdapter`. |
 | `OpenFeedException` | A draft output resource cannot be opened. |
 | `WriteFeedException` | The full output cannot be written. |
 | `CloseFeedException` | The output resource cannot be closed. |
@@ -3262,7 +3262,7 @@ Check `FEED_QUEUE_CONNECTION`, `FEED_QUEUE_NAME`, and the worker command. The `s
 
 ## The storage disk is rejected
 
-The disk must resolve to `Illuminate\Filesystem\FilesystemAdapter` and support writable streams, moves, directory management, listings, and deletion. Read-only disks and contract-only custom implementations fail before the database query begins.
+The disk must resolve to `Illuminate\Filesystem\FilesystemAdapter` and support writable streams, moves, directory management, listings, and deletion. A custom implementation that is not a `FilesystemAdapter` fails before the database query with `UnsupportedStorageDiskException`. A Laravel read-only disk passes that type check. Its write fails during publication, after the feed query and local staging have completed, and `GeneratorService` wraps the storage failure in `FeedGenerationException`.
 
 ## XML generation fails
 

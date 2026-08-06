@@ -33,7 +33,7 @@ keywords: ["troubleshooting", "errors", "queue", "storage", "diagnostics"]
 
 ## 저장소 디스크가 거부됨 {/* #storage-disk */}
 
-디스크는 `Illuminate\Filesystem\FilesystemAdapter`로 해석되어야 하며 쓰기 스트림, 이동, 디렉터리 관리, 목록 및 삭제를 지원해야 합니다. 읽기 전용 디스크와 계약만 구현한 사용자 지정 디스크는 데이터베이스 쿼리 전에 실패합니다.
+디스크는 `Illuminate\Filesystem\FilesystemAdapter`로 해석되어야 하며 쓰기 스트림, 이동, 디렉터리 관리, 목록 및 삭제를 지원해야 합니다. 사용자 지정 구현이 `FilesystemAdapter`가 아니면 데이터베이스 쿼리 전에 `UnsupportedStorageDiskException`으로 실패합니다. Laravel 읽기 전용 디스크는 이 타입 검사를 통과합니다. 쓰기는 피드 쿼리와 로컬 스테이징이 완료된 뒤 게시 중에 실패하며, `GeneratorService`는 스토리지 오류를 `FeedGenerationException`으로 감쌉니다.
 
 ## XML 생성 실패 {/* #xml-failure */}
 
