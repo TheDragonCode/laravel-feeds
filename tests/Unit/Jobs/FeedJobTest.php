@@ -32,6 +32,19 @@ test('serialization without target', function () {
         ->and($job->target)->toBeNull();
 });
 
+test('serialization from a legacy job without target', function () {
+    $job = new FeedJob(FullFeed::class);
+
+    unset($job->target);
+
+    $job = unserialize(serialize($job));
+
+    expect($job)->toBeInstanceOf(FeedJob::class)
+        ->and($job->feedClass)->toBe(FullFeed::class)
+        ->and($job->target)->toBeNull()
+        ->and($job->uniqueId())->toBe(FullFeed::class);
+});
+
 test('serialization with target', function () {
     $job = unserialize(serialize(new FeedJob(
         FullFeed::class,

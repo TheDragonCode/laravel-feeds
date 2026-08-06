@@ -25,10 +25,14 @@ final class FeedJob implements ShouldBeUnique, ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public ?FeedTarget $target = null;
+
     public function __construct(
         public string $feedClass,
-        public ?FeedTarget $target = null,
+        ?FeedTarget $target = null,
     ) {
+        $this->target = $target;
+
         $this->onConnection(config('feeds.queue.connection'));
         $this->onQueue(config('feeds.queue.name'));
     }
