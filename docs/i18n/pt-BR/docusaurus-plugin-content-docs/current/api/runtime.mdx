@@ -19,7 +19,7 @@ Esses pontos de entrada cobrem geração programática, registro de feeds, integ
 
 <ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
 
-O método publica todas as partes como uma operação, atualiza a última atividade do registro, dispara eventos do ciclo de vida e retorna os caminhos com a quantidade de registros por arquivo. Falhas são envolvidas em `FeedGenerationException`, mantendo a exceção original como anterior.
+O método publica todas as partes como uma operação, atualiza a última atividade do registro, dispara eventos do ciclo de vida e retorna os caminhos com a quantidade de registros por arquivo. A resolução do disco e do caminho de saída ocorre antes do início da geração; as exceções dessa verificação prévia, incluindo `UnsupportedStorageDiskException`, são lançadas diretamente. Depois que a verificação prévia é concluída, as falhas de geração são envolvidas em `FeedGenerationException`, mantendo a exceção original como anterior.
 
 Resolva o serviço pelo contêiner do Laravel em vez de construir suas dependências internas.
 

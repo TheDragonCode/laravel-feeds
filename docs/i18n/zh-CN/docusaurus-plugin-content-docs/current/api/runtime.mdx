@@ -19,7 +19,7 @@ keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer",
 
 <ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
 
-该方法将所有分片作为一个操作发布，更新注册记录的最后活动时间，分发生命周期事件，并返回路径以及每个文件的记录数。生成失败会包装为 `FeedGenerationException`，原始异常作为其前一个 throwable 保留。
+该方法将所有分片作为一个操作发布，更新注册记录的最后活动时间，分发生命周期事件，并返回路径以及每个文件的记录数。系统会在生成开始前解析存储磁盘并查找输出路径；此前置检查中发生的异常（包括 `UnsupportedStorageDiskException`）会直接抛出。前置检查成功后，生成失败会包装为 `FeedGenerationException`，原始异常作为其前一个 throwable 保留。
 
 应通过 Laravel 容器解析该服务，不要自行构造其内部协作对象。
 

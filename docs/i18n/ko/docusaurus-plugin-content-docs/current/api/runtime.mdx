@@ -19,7 +19,7 @@ keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer",
 
 <ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
 
-이 메서드는 모든 부분을 하나의 작업으로 게시하고, 등록 정보의 마지막 활동 시간을 갱신하고, 수명 주기 이벤트를 전달하고, 파일별 레코드 수와 경로를 반환합니다. 생성 오류는 `FeedGenerationException`으로 감싸며 원래 예외는 이전 예외로 유지합니다.
+이 메서드는 모든 부분을 하나의 작업으로 게시하고, 등록 정보의 마지막 활동 시간을 갱신하고, 수명 주기 이벤트를 전달하고, 파일별 레코드 수와 경로를 반환합니다. 스토리지와 출력 경로는 생성을 시작하기 전에 확인하며, 이 사전 검사에서 발생한 예외(`UnsupportedStorageDiskException` 포함)는 그대로 전달됩니다. 사전 검사가 성공한 뒤 발생한 생성 오류는 `FeedGenerationException`으로 감싸며 원래 예외는 이전 예외로 유지합니다.
 
 내부 의존성을 직접 생성하지 말고 Laravel 컨테이너에서 서비스를 해석하십시오.
 

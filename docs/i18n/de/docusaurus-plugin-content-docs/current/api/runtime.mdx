@@ -19,7 +19,7 @@ Diese Einstiegspunkte unterstützen programmgesteuerte Generierung, Feed-Registr
 
 <ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
 
-Die Methode veröffentlicht alle Teile als einen Vorgang, aktualisiert die letzte Aktivität der Registrierung, löst Lebenszyklusereignisse aus und gibt Pfade mit der Anzahl der Datensätze pro Datei zurück. Generierungsfehler werden in `FeedGenerationException` eingeschlossen; die ursprüngliche Ausnahme bleibt als vorherige Ausnahme erhalten.
+Die Methode veröffentlicht alle Teile als einen Vorgang, aktualisiert die letzte Aktivität der Registrierung, löst Lebenszyklusereignisse aus und gibt Pfade mit der Anzahl der Datensätze pro Datei zurück. Der Datenträger und der Ausgabepfad werden vor Beginn der Generierung aufgelöst; Ausnahmen aus dieser Vorabprüfung, einschließlich `UnsupportedStorageDiskException`, werden direkt ausgelöst. Nach erfolgreicher Vorabprüfung werden Generierungsfehler in `FeedGenerationException` eingeschlossen; die ursprüngliche Ausnahme bleibt als vorherige Ausnahme erhalten.
 
 Lösen Sie den Dienst über Laravels Container auf, anstatt seine internen Abhängigkeiten selbst zu erstellen.
 
