@@ -87,7 +87,7 @@ class UserFeedItem extends FeedItem
 php artisan feed:generate
 ```
 
-命令会输出生成文件的路径。默认 Feed 格式为 XML，默认磁盘为 `public`；两者都可以在 Feed 类或软件包配置中更改。
+命令会显示每个 Feed 的状态；普通控制台输出不包含生成文件的路径。Feed 类默认使用 XML 格式和 `public` 磁盘。请在 Feed 类中修改相应值。
 
 ## 后续步骤 {/* #next-steps */}
 

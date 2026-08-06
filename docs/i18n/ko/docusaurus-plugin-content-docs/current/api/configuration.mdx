@@ -18,11 +18,11 @@ keywords: ["configuration", "environment", "queue", "schedule", "converters"]
 | 키 | 기본값 | 용도 |
 | --- | --- | --- |
 | `model` | `DragonCode\LaravelFeed\Models\Feed` | 피드 등록에 사용하는 Eloquent 모델입니다. 대체 모델은 패키지 모델을 확장해야 합니다. |
-| `pretty` | `false` | 형식화된 XML 및 JSON 출력을 활성화합니다. |
+| `pretty` / `FEED_PRETTY` | `false` | 형식화된 XML 및 JSON 출력을 활성화합니다. |
 | `date.format` | `DATE_ATOM` | 날짜 트랜스포머가 사용하는 PHP 날짜 형식입니다. |
-| `date.timezone` | `UTC` | 날짜 직렬화에 사용하는 시간대입니다. |
+| `date.timezone` / `FEED_TIMEZONE` | `UTC` | 날짜 직렬화에 사용하는 시간대입니다. |
 | `table.connection` | `DB_CONNECTION`, 다음 `sqlite` | 피드 등록용 데이터베이스 연결입니다. |
-| `table.table` | `feeds` | 피드 등록 테이블 이름입니다. |
+| `table.table` / `FEED_TABLE` | `feeds` | 피드 등록 테이블 이름입니다. |
 
 ## 스케줄 및 큐 {/* #scheduling-and-queues */}
 

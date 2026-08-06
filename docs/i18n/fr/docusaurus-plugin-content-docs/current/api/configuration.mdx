@@ -18,11 +18,11 @@ Publiez `config/feeds.php` avec `php artisan vendor:publish --tag="feeds"`. Les 
 | Clé | Valeur par défaut | Rôle |
 | --- | --- | --- |
 | `model` | `DragonCode\LaravelFeed\Models\Feed` | Modèle Eloquent utilisé pour enregistrer les flux. Un remplacement doit étendre le modèle du paquet. |
-| `pretty` | `false` | Active une sortie XML et JSON mise en forme. |
+| `pretty` / `FEED_PRETTY` | `false` | Active une sortie XML et JSON mise en forme. |
 | `date.format` | `DATE_ATOM` | Format de date PHP utilisé par le transformateur de dates. |
-| `date.timezone` | `UTC` | Fuseau horaire utilisé pendant la sérialisation des dates. |
+| `date.timezone` / `FEED_TIMEZONE` | `UTC` | Fuseau horaire utilisé pendant la sérialisation des dates. |
 | `table.connection` | `DB_CONNECTION`, puis `sqlite` | Connexion de base de données des enregistrements de flux. |
-| `table.table` | `feeds` | Nom de la table d’enregistrement des flux. |
+| `table.table` / `FEED_TABLE` | `feeds` | Nom de la table d’enregistrement des flux. |
 
 ## Planification et files d’attente {/* #scheduling-and-queues */}
 

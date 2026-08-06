@@ -18,11 +18,11 @@ Publish `config/feeds.php` with `php artisan vendor:publish --tag="feeds"`. Envi
 | Key | Default | Purpose |
 | --- | --- | --- |
 | `model` | `DragonCode\LaravelFeed\Models\Feed` | Eloquent model used for feed registrations. A replacement must extend the package model. |
-| `pretty` | `false` | Enables formatted XML and JSON output. |
+| `pretty` / `FEED_PRETTY` | `false` | Enables formatted XML and JSON output. |
 | `date.format` | `DATE_ATOM` | PHP date format used by the date transformer. |
-| `date.timezone` | `UTC` | Timezone used while serializing dates. |
+| `date.timezone` / `FEED_TIMEZONE` | `UTC` | Timezone used while serializing dates. |
 | `table.connection` | `DB_CONNECTION`, then `sqlite` | Database connection for feed registrations. |
-| `table.table` | `feeds` | Feed registration table name. |
+| `table.table` / `FEED_TABLE` | `feeds` | Feed registration table name. |
 
 ## Scheduling and queues {/* #scheduling-and-queues */}
 

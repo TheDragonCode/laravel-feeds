@@ -18,11 +18,11 @@ keywords: ["configuration", "environment", "queue", "schedule", "converters"]
 | Ключ | Значение по умолчанию | Назначение |
 | --- | --- | --- |
 | `model` | `DragonCode\LaravelFeed\Models\Feed` | Модель Eloquent для регистрации фидов. Замена должна расширять модель пакета. |
-| `pretty` | `false` | Включает форматированный вывод XML и JSON. |
+| `pretty` / `FEED_PRETTY` | `false` | Включает форматированный вывод XML и JSON. |
 | `date.format` | `DATE_ATOM` | Формат даты PHP для преобразователя дат. |
-| `date.timezone` | `UTC` | Часовой пояс при сериализации дат. |
+| `date.timezone` / `FEED_TIMEZONE` | `UTC` | Часовой пояс при сериализации дат. |
 | `table.connection` | `DB_CONNECTION`, затем `sqlite` | Подключение к базе данных для регистрации фидов. |
-| `table.table` | `feeds` | Имя таблицы регистрации фидов. |
+| `table.table` / `FEED_TABLE` | `feeds` | Имя таблицы регистрации фидов. |
 
 ## Расписание и очереди {/* #scheduling-and-queues */}
 

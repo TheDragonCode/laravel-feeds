@@ -18,11 +18,11 @@ keywords: ["configuration", "environment", "queue", "schedule", "converters"]
 | 键 | 默认值 | 用途 |
 | --- | --- | --- |
 | `model` | `DragonCode\LaravelFeed\Models\Feed` | 用于 Feed 注册的 Eloquent 模型。替代模型必须继承软件包模型。 |
-| `pretty` | `false` | 启用格式化的 XML 和 JSON 输出。 |
+| `pretty` / `FEED_PRETTY` | `false` | 启用格式化的 XML 和 JSON 输出。 |
 | `date.format` | `DATE_ATOM` | 日期转换器使用的 PHP 日期格式。 |
-| `date.timezone` | `UTC` | 序列化日期时使用的时区。 |
+| `date.timezone` / `FEED_TIMEZONE` | `UTC` | 序列化日期时使用的时区。 |
 | `table.connection` | `DB_CONNECTION`，然后是 `sqlite` | Feed 注册使用的数据库连接。 |
-| `table.table` | `feeds` | Feed 注册表名。 |
+| `table.table` / `FEED_TABLE` | `feeds` | Feed 注册表名。 |
 
 ## 调度与队列 {/* #scheduling-and-queues */}
 

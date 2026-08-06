@@ -87,7 +87,7 @@ class UserFeedItem extends FeedItem
 php artisan feed:generate
 ```
 
-The command prints the generated path. The default feed format is XML and the default disk is `public`; both can be changed in the feed class or package configuration.
+The command reports the status of each feed; normal console output does not include generated file paths. Feed classes use XML and the `public` disk by default. Change either value in the feed class.
 
 ## Next steps {/* #next-steps */}
 

@@ -18,11 +18,11 @@ keywords: ["configuration", "environment", "queue", "schedule", "converters"]
 | Ключ | Стандартнае значэнне | Прызначэнне |
 | --- | --- | --- |
 | `model` | `DragonCode\LaravelFeed\Models\Feed` | Мадэль Eloquent для рэгістрацый стужак. Замена павінна пашыраць мадэль пакета. |
-| `pretty` | `false` | Уключае фарматаваны вывад XML і JSON. |
+| `pretty` / `FEED_PRETTY` | `false` | Уключае фарматаваны вывад XML і JSON. |
 | `date.format` | `DATE_ATOM` | Фармат даты PHP для пераўтваральніка дат. |
-| `date.timezone` | `UTC` | Часавы пояс пры серыялізацыі дат. |
+| `date.timezone` / `FEED_TIMEZONE` | `UTC` | Часавы пояс пры серыялізацыі дат. |
 | `table.connection` | `DB_CONNECTION`, затым `sqlite` | Падключэнне да базы даных для рэгістрацый стужак. |
-| `table.table` | `feeds` | Імя табліцы рэгістрацый стужак. |
+| `table.table` / `FEED_TABLE` | `feeds` | Імя табліцы рэгістрацый стужак. |
 
 ## Расклад і чэргі {/* #scheduling-and-queues */}
 

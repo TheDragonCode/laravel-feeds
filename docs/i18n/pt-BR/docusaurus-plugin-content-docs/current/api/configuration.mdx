@@ -18,11 +18,11 @@ Publique `config/feeds.php` com `php artisan vendor:publish --tag="feeds"`. Os v
 | Chave | Padrão | Finalidade |
 | --- | --- | --- |
 | `model` | `DragonCode\LaravelFeed\Models\Feed` | Modelo Eloquent dos registros de feeds. Um substituto deve estender o modelo do pacote. |
-| `pretty` | `false` | Ativa a saída XML e JSON formatada. |
+| `pretty` / `FEED_PRETTY` | `false` | Ativa a saída XML e JSON formatada. |
 | `date.format` | `DATE_ATOM` | Formato de data PHP usado pelo transformador de datas. |
-| `date.timezone` | `UTC` | Fuso horário usado na serialização das datas. |
+| `date.timezone` / `FEED_TIMEZONE` | `UTC` | Fuso horário usado na serialização das datas. |
 | `table.connection` | `DB_CONNECTION`, depois `sqlite` | Conexão de banco dos registros de feeds. |
-| `table.table` | `feeds` | Nome da tabela de registros de feeds. |
+| `table.table` / `FEED_TABLE` | `feeds` | Nome da tabela de registros de feeds. |
 
 ## Agendamento e filas {/* #scheduling-and-queues */}
 
