@@ -6,6 +6,7 @@ namespace DragonCode\LaravelFeed\Services;
 
 use Closure;
 use DragonCode\LaravelFeed\Contracts\FileAwareInfoConverter;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
 use DragonCode\LaravelFeed\Converters\Converter;
 use DragonCode\LaravelFeed\Data\GenerationResultData;
 use DragonCode\LaravelFeed\Events\FeedFinishedEvent;
@@ -102,7 +103,7 @@ class GeneratorService
                 'message'   => $e->getMessage(),
             ]);
 
-            throw new FeedGenerationException($class, $e);
+            throw new FeedGenerationException($class, $e, $this->feedTargetKey($feed));
         }
     }
 
@@ -250,11 +251,26 @@ class GeneratorService
 
     protected function started(Feed $feed): void
     {
-        event(new FeedStartingEvent(get_class($feed)));
+        event(new FeedStartingEvent(
+            get_class($feed),
+            $this->feedTargetKey($feed),
+        ));
     }
 
     protected function finished(Feed $feed, GenerationResultData $result): void
     {
-        event(new FeedFinishedEvent(get_class($feed), $result->paths[0], $result->paths));
+        event(new FeedFinishedEvent(
+            get_class($feed),
+            $result->paths[0],
+            $result->paths,
+            $this->feedTargetKey($feed),
+        ));
+    }
+
+    protected function feedTargetKey(Feed $feed): ?string
+    {
+        return $feed instanceof HasFeedTargets
+            ? $feed->target()->key
+            : null;
     }
 }

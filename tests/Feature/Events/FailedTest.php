@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
 use DragonCode\LaravelFeed\Exceptions\FeedGenerationException;
 use DragonCode\LaravelFeed\Feeds\Feed as BaseFeed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Models\Feed;
 use DragonCode\LaravelFeed\Services\GeneratorService;
@@ -47,6 +49,34 @@ final class FailedAfterDraftFeedItem extends FeedItem
         }
 
         return parent::toArray();
+    }
+}
+
+final class FailedTargetedFeed extends BaseFeed implements HasFeedTargets
+{
+    public function targets(): iterable
+    {
+        yield new FeedTarget('42');
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        return $key === '42' ? new FeedTarget($key) : null;
+    }
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function filename(): string
+    {
+        return "failed-targets/{$this->target()->key}.xml";
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new FailedAfterDraftFeedItem($model);
     }
 }
 
@@ -118,3 +148,22 @@ test('failed generation removes its draft and preserves another staging director
         $filesystem->delete($feed->path());
     }
 });
+
+test('failed targeted generation keeps feed and target context', function () {
+    Event::fake();
+
+    FailedAfterDraftFeedItem::$calls = 0;
+
+    $feed = app(FailedTargetedFeed::class)->forTarget(new FeedTarget('42'));
+
+    try {
+        app(GeneratorService::class)->feed($feed);
+    } catch (FeedGenerationException $exception) {
+        expect($exception->getFeed())
+            ->toBe(FailedTargetedFeed::class)
+            ->and($exception->getTarget())
+            ->toBe('42');
+
+        throw $exception;
+    }
+})->throws(FeedGenerationException::class, 'Generation failed after opening a draft.');

@@ -16,5 +16,6 @@ final class FeedStartingEvent
      */
     public function __construct(
         public string $feed,
+        public ?string $target = null,
     ) {}
 }

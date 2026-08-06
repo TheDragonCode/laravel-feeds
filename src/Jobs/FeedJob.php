@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Jobs;
 
 use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use DragonCode\LaravelFeed\Services\GeneratorService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -15,6 +16,7 @@ use Illuminate\Queue\SerializesModels;
 
 use function app;
 use function config;
+use function hash;
 
 final class FeedJob implements ShouldBeUnique, ShouldQueue
 {
@@ -24,7 +26,8 @@ final class FeedJob implements ShouldBeUnique, ShouldQueue
     use SerializesModels;
 
     public function __construct(
-        public string $feedClass
+        public string $feedClass,
+        public ?FeedTarget $target = null,
     ) {
         $this->onConnection(config('feeds.queue.connection'));
         $this->onQueue(config('feeds.queue.name'));
@@ -39,7 +42,11 @@ final class FeedJob implements ShouldBeUnique, ShouldQueue
 
     public function uniqueId(): string
     {
-        return $this->feedClass;
+        $identity = $this->target === null
+            ? $this->feedClass . "\0default"
+            : $this->feedClass . "\0target\0" . $this->target->key;
+
+        return hash('xxh128', $identity);
     }
 
     public function uniqueFor(): int
@@ -49,6 +56,10 @@ final class FeedJob implements ShouldBeUnique, ShouldQueue
 
     protected function resolve(): Feed
     {
-        return app($this->feedClass);
+        $feed = app($this->feedClass);
+
+        return $this->target === null
+            ? $feed
+            : $feed->forTarget($this->target);
     }
 }
