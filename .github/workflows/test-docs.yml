@@ -20,7 +20,9 @@ jobs:
     build:
         name: Documentation quality gates
         runs-on: ubuntu-latest
-        container: mcr.microsoft.com/playwright:v1.62.1-noble
+        container:
+            image: mcr.microsoft.com/playwright:v1.62.1-noble
+            options: --ipc=host
         timeout-minutes: 25
         defaults:
             run:

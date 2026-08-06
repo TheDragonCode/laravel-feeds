@@ -110,7 +110,10 @@ test('validates Docusaurus for documentation pull requests and manual runs', fun
             '.github/workflows/docs.yml',
             '.github/workflows/test-docs.yml'
         )
-        ->and($build['container'])->toBe('mcr.microsoft.com/playwright:v1.62.1-noble')
+        ->and($build['container'])->toBe([
+            'image'   => 'mcr.microsoft.com/playwright:v1.62.1-noble',
+            'options' => '--ipc=host',
+        ])
         ->and($build['defaults']['run']['working-directory'])->toBe('docs')
         ->and($checkout['with']['persist-credentials'])->toBeFalse()
         ->and($setupNode['uses'])->toBe('actions/setup-node@820762786026740c76f36085b0efc47a31fe5020')
