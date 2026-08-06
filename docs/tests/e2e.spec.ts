@@ -89,3 +89,17 @@ test("localized routes render translated content", async ({ page }) => {
         page.getByRole("heading", { level: 1, name: "Начало работы" }),
     ).toBeVisible();
 });
+
+test("localized search uses translated content", async ({ page }) => {
+    await page.goto("/ru/");
+    await page.getByRole("button", { name: "Поиск" }).click();
+
+    const dialog = page.getByRole("dialog", { name: "Поиск по документации" });
+    await dialog.getByRole("searchbox").fill("установка");
+    await dialog.getByRole("link", { name: /Установка и настройка/ }).click();
+
+    await expect(page).toHaveURL(/\/ru\/installation\/$/);
+    await expect(
+        page.getByRole("heading", { level: 1, name: "Установка и настройка" }),
+    ).toBeVisible();
+});

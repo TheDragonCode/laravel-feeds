@@ -144,39 +144,66 @@ const routeFor = (source, slug) => {
         : `${withLeadingSlash.replace(/\/+$/, "")}/`;
 };
 
+const searchEntry = (page, route) => ({
+    route,
+    title: page.title,
+    description: page.description,
+    keywords: page.keywords,
+    headings: page.headings.map((heading) => heading.text),
+});
+
+const localizedMessage = (catalog, locale, id) => {
+    const message = catalog[id]?.message;
+
+    if (typeof message !== "string" || !message.trim()) {
+        throw new Error(`${locale}: missing translation ${id}.`);
+    }
+
+    return message;
+};
+
 const config = normalize(await readFile(configPath, "utf8"));
+const defaultLocale = config.match(/defaultLocale:\s*["']([^"']+)["']/)?.[1];
+const localeBlock = config.match(/locales:\s*\[([^\]]+)]/)?.[1];
+const locales = [...(localeBlock?.matchAll(/["']([^"']+)["']/g) ?? [])].map(
+    (match) => match[1],
+);
+
+if (!defaultLocale || locales.length === 0 || !locales.includes(defaultLocale)) {
+    throw new Error("Unable to read locale configuration.");
+}
+
 const redirects = [...config.matchAll(/\{\s*from:\s*"([^"]+)",\s*to:\s*"([^"]+)"\s*\}/gs)].map(
     ([, from, to]) => ({ from, to }),
 );
-const routes = [
-    {
-        route: "/",
-        source: "src/pages/index.tsx",
-        aliases: redirects
-            .filter((redirect) => redirect.to === "/")
-            .map((redirect) => redirect.from)
-            .sort(),
-        title: "Laravel Feeds documentation",
-        description:
-            "Export large Laravel datasets to XML, JSON, JSON Lines, CSV, RSS, and marketplace feeds.",
-        type: "guide",
-        status: "stable",
-        since: "1.0",
-        keywords: ["Laravel", "feeds", "data export", "documentation"],
-        headings: [
-            {
-                level: 1,
-                id: "",
-                text: "Export large datasets without loading them all into memory",
-            },
-            {
-                level: 2,
-                id: "paths-title",
-                text: "Start with a task, then use the reference",
-            },
-        ],
-    },
-];
+const homepage = {
+    route: "/",
+    source: "src/pages/index.tsx",
+    aliases: redirects
+        .filter((redirect) => redirect.to === "/")
+        .map((redirect) => redirect.from)
+        .sort(),
+    title: "Laravel Feeds documentation",
+    description:
+        "Export large Laravel datasets to XML, JSON, JSON Lines, CSV, RSS, and marketplace feeds.",
+    type: "guide",
+    status: "stable",
+    since: "1.0",
+    keywords: ["Laravel", "feeds", "data export", "documentation"],
+    headings: [
+        {
+            level: 1,
+            id: "",
+            text: "Export large datasets without loading them all into memory",
+        },
+        {
+            level: 2,
+            id: "paths-title",
+            text: "Start with a task, then use the reference",
+        },
+    ],
+};
+const routes = [homepage];
 
 for (const source of await listPages(docsDirectory)) {
     const parsed = parsePage(
@@ -234,7 +261,76 @@ for (const redirect of redirects) {
     }
 }
 
-const output = `${JSON.stringify({ version: 1, routes }, null, 4)}\n`;
+const search = {
+    [defaultLocale]: routes.map((route) => searchEntry(route, route.route)),
+};
+
+for (const locale of locales.filter((locale) => locale !== defaultLocale)) {
+    const catalog = JSON.parse(
+        await readFile(path.join(siteDirectory, "i18n", locale, "code.json"), "utf8"),
+    );
+    const localizedDirectory = path.join(
+        siteDirectory,
+        "i18n",
+        locale,
+        "docusaurus-plugin-content-docs",
+        "current",
+    );
+    const localizedRoutes = [
+        {
+            route: "/",
+            title: localizedMessage(catalog, locale, "homepage.meta.title"),
+            description: localizedMessage(
+                catalog,
+                locale,
+                "homepage.meta.description",
+            ),
+            keywords: homepage.keywords,
+            headings: [
+                {
+                    ...homepage.headings[0],
+                    text: localizedMessage(catalog, locale, "homepage.title"),
+                },
+                {
+                    ...homepage.headings[1],
+                    text: localizedMessage(catalog, locale, "homepage.paths.title"),
+                },
+            ],
+        },
+    ];
+
+    for (const source of await listPages(localizedDirectory)) {
+        const parsed = parsePage(
+            `${locale}/${source}`,
+            await readFile(path.join(localizedDirectory, source), "utf8"),
+        );
+
+        localizedRoutes.push({
+            route: routeFor(source, parsed.metadata.slug),
+            title: parsed.metadata.title,
+            description: parsed.metadata.description,
+            keywords: parsed.metadata.keywords,
+            headings: parsed.headings,
+        });
+    }
+
+    localizedRoutes.sort((left, right) =>
+        left.route.localeCompare(right.route, "en"),
+    );
+
+    if (
+        localizedRoutes.length !== routes.length ||
+        localizedRoutes.some((route, index) => route.route !== routes[index].route)
+    ) {
+        throw new Error(`${locale}: localized routes do not match English routes.`);
+    }
+
+    search[locale] = localizedRoutes.map((route) =>
+        searchEntry(route, `/${locale}${route.route}`),
+    );
+}
+
+const output = `${JSON.stringify({ version: 2, routes, search }, null, 4)}\n`;
 
 if (process.argv.includes("--check")) {
     const current = normalize(await readFile(manifestPath, "utf8"));

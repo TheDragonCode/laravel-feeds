@@ -1,5 +1,5 @@
 {
-    "version": 1,
+    "version": 2,
     "routes": [
         {
             "route": "/",
@@ -1400,5 +1400,5074 @@
                 }
             ]
         }
-    ]
+    ],
+    "search": {
+        "en": [
+            {
+                "route": "/",
+                "title": "Laravel Feeds documentation",
+                "description": "Export large Laravel datasets to XML, JSON, JSON Lines, CSV, RSS, and marketplace feeds.",
+                "keywords": [
+                    "Laravel",
+                    "feeds",
+                    "data export",
+                    "documentation"
+                ],
+                "headings": [
+                    "Export large datasets without loading them all into memory",
+                    "Start with a task, then use the reference"
+                ]
+            },
+            {
+                "route": "/api/",
+                "title": "API reference",
+                "description": "Reference map for Laravel Feeds public classes, contracts, data objects, events, and exceptions",
+                "keywords": [
+                    "API",
+                    "reference",
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo"
+                ],
+                "headings": [
+                    "API reference",
+                    "Extension points",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/api/configuration/",
+                "title": "Configuration reference",
+                "description": "Reference for every Laravel Feeds configuration section and environment variable",
+                "keywords": [
+                    "configuration",
+                    "environment",
+                    "queue",
+                    "schedule",
+                    "converters"
+                ],
+                "headings": [
+                    "Configuration reference",
+                    "Core settings",
+                    "Scheduling and queues",
+                    "Transformers",
+                    "Converter settings",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/api/events-exceptions/",
+                "title": "Events and exceptions",
+                "description": "Reference for feed generation lifecycle events and public exception types",
+                "keywords": [
+                    "events",
+                    "exceptions",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "Events and exceptions",
+                    "Lifecycle events",
+                    "Input and lookup failures",
+                    "Serialization and storage failures",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/api/feed/",
+                "title": "Feeds and data",
+                "description": "Public contracts for Feed, FeedItem, FeedInfo, ElementData, and generation results",
+                "keywords": [
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "ElementData",
+                    "GenerationResultData"
+                ],
+                "headings": [
+                    "Feeds and data",
+                    "Feed",
+                    "FeedItem and FeedInfo",
+                    "ElementData",
+                    "Generation result",
+                    "FeedFormatEnum",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/api/runtime/",
+                "title": "Runtime services and contracts",
+                "description": "Public generation, registration, scheduling, transformation, and optional-value APIs",
+                "keywords": [
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData"
+                ],
+                "headings": [
+                    "Runtime services and contracts",
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/compatibility/",
+                "title": "Compatibility",
+                "description": "Supported PHP, Laravel, storage, queue, and output format contracts for Laravel Feeds 1.x",
+                "keywords": [
+                    "compatibility",
+                    "PHP",
+                    "Laravel",
+                    "Flysystem",
+                    "formats"
+                ],
+                "headings": [
+                    "Compatibility",
+                    "Runtime matrix",
+                    "Output formats",
+                    "Optional integrations",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/contributions/",
+                "title": "Contribution guide",
+                "description": "Instructions for Laravel Feeds project developers",
+                "keywords": [
+                    "contributing",
+                    "code style",
+                    "code of conduct"
+                ],
+                "headings": [
+                    "Contribution guide",
+                    "Code Style",
+                    "Code of Conduct",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/create-feeds/",
+                "title": "Create feeds",
+                "description": "Instructions for creating and populating the feed, feed item, and feed info classes",
+                "keywords": [
+                    "feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "make:feed"
+                ],
+                "headings": [
+                    "Create feeds",
+                    "Populating feeds",
+                    "Feed",
+                    "Feed item",
+                    "Optional values",
+                    "File format",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/directives/",
+                "title": "Directives",
+                "description": "Built-in XML directives for feed output",
+                "keywords": [
+                    "XML",
+                    "directives",
+                    "attributes",
+                    "CDATA"
+                ],
+                "headings": [
+                    "Directives",
+                    "@attributes",
+                    "@value",
+                    "@cdata",
+                    "@mixed",
+                    "@custom",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/elements/",
+                "title": "Elements",
+                "description": "Configure feed structure: root element, info block, headers/footers, and attributes",
+                "keywords": [
+                    "elements",
+                    "FeedInfo",
+                    "attributes",
+                    "split files"
+                ],
+                "headings": [
+                    "Elements",
+                    "Root element",
+                    "Information",
+                    "Header & footer",
+                    "Attributes",
+                    "Split files",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/eloquent/",
+                "title": "Eloquent",
+                "description": "Configure feed registration models and feed query chunk size.",
+                "keywords": [
+                    "Eloquent",
+                    "model",
+                    "FeedQuery",
+                    "chunk size"
+                ],
+                "headings": [
+                    "Eloquent",
+                    "Custom feed registration model",
+                    "Chunk size",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/events/",
+                "title": "Events",
+                "description": "Events dispatched during feed generation",
+                "keywords": [
+                    "events",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "Events",
+                    "Finished event contract",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/extending-functionality/",
+                "title": "Extending functionality",
+                "description": "Extend feeds with conditional clauses, macros, and custom transformers.",
+                "keywords": [
+                    "extensions",
+                    "macros",
+                    "transformers",
+                    "conditional clauses"
+                ],
+                "headings": [
+                    "Extending functionality",
+                    "Conditional clauses",
+                    "Macroable",
+                    "Custom transformers",
+                    "Prepending feed transformers",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/faq/",
+                "title": "Frequently asked questions",
+                "description": "Short answers to common Laravel Feeds setup, generation, storage, and format questions",
+                "keywords": [
+                    "FAQ",
+                    "generation",
+                    "storage",
+                    "formats",
+                    "memory"
+                ],
+                "headings": [
+                    "Frequently asked questions",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/generation/",
+                "title": "Generation & schedule",
+                "description": "Information on generating feed files for later distribution",
+                "keywords": [
+                    "generation",
+                    "schedule",
+                    "queue",
+                    "feed:generate"
+                ],
+                "headings": [
+                    "Generation & schedule",
+                    "Single feed",
+                    "AI agent output",
+                    "Queue",
+                    "Schedule",
+                    "Automatic",
+                    "Manual",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/installation/",
+                "title": "Installation & setup",
+                "description": "Information on installing and configuring Laravel Feeds",
+                "keywords": [
+                    "installation",
+                    "Composer",
+                    "configuration",
+                    "migration"
+                ],
+                "headings": [
+                    "Installation & setup",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/introduction/",
+                "title": "Getting started",
+                "description": "Install Laravel Feeds and generate your first feed in five minutes",
+                "keywords": [
+                    "getting started",
+                    "Laravel",
+                    "feeds",
+                    "quick start"
+                ],
+                "headings": [
+                    "Getting started",
+                    "Prerequisites",
+                    "Install and prepare",
+                    "Define the data source",
+                    "Define each item",
+                    "Generate the file",
+                    "Next steps"
+                ]
+            },
+            {
+                "route": "/license/",
+                "title": "MIT License",
+                "description": "Information about the license under which Laravel Feeds is distributed",
+                "keywords": [
+                    "MIT",
+                    "license",
+                    "copyright"
+                ],
+                "headings": [
+                    "MIT License",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/location/",
+                "title": "Location",
+                "description": "Configure storage disk and output filename for generated feeds",
+                "keywords": [
+                    "storage",
+                    "filesystem",
+                    "filename",
+                    "publication"
+                ],
+                "headings": [
+                    "Location",
+                    "Supported disks",
+                    "Path contract",
+                    "Publication guarantees",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/machine-learning/",
+                "title": "Machine Learning",
+                "description": "Guidance for using the project with LLMs and a consolidated knowledge base",
+                "keywords": [
+                    "LLM",
+                    "llms.txt",
+                    "machine learning",
+                    "knowledge base"
+                ],
+                "headings": [
+                    "Machine Learning",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/performance/",
+                "title": "Large dataset performance",
+                "description": "Control memory, database load, file splitting, queues, and storage throughput for large feeds",
+                "keywords": [
+                    "performance",
+                    "memory",
+                    "chunks",
+                    "large datasets",
+                    "queues"
+                ],
+                "headings": [
+                    "Large dataset performance",
+                    "Keep the query lazy",
+                    "Tune chunk size",
+                    "Split output files",
+                    "Queue long-running feeds",
+                    "Measure the whole path",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/presets/",
+                "title": "Presets",
+                "description": "Generate feeds quickly with built-in presets (Instagram, Yandex, Sitemap, RSS)",
+                "keywords": [
+                    "presets",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS"
+                ],
+                "headings": [
+                    "Presets",
+                    "Defaults",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/receipt-instagram/",
+                "title": "Instagram",
+                "description": "Feed generation recipe for Instagram",
+                "keywords": [
+                    "Instagram",
+                    "product feed",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Instagram",
+                    "Create the files",
+                    "Populate the feed",
+                    "Activate",
+                    "Generate feed",
+                    "Result",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/receipt-rss-atom/",
+                "title": "RSS Atom",
+                "description": "Feed generation recipe for RSS Atom",
+                "keywords": [
+                    "RSS",
+                    "Atom",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "RSS Atom",
+                    "Create the files",
+                    "Populate the feed",
+                    "Activate",
+                    "Generate feed",
+                    "Result",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/receipt-sitemap/",
+                "title": "Sitemap",
+                "description": "Step-by-step guide to creating a product sitemap feed",
+                "keywords": [
+                    "Sitemap",
+                    "recipe",
+                    "SEO",
+                    "XML"
+                ],
+                "headings": [
+                    "Sitemap",
+                    "Create the files",
+                    "Populate the feed",
+                    "Activate",
+                    "Links",
+                    "Generate feed",
+                    "Add a link to the root sitemap.xml",
+                    "Result",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/receipt-yandex/",
+                "title": "Yandex",
+                "description": "Feed generation recipe for Yandex",
+                "keywords": [
+                    "Yandex",
+                    "marketplace",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Yandex",
+                    "Create the files",
+                    "Populate the feed",
+                    "Custom category structure",
+                    "Activate",
+                    "Generate feed",
+                    "Result",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/supported-formats/",
+                "title": "Supported formats",
+                "description": "List of supported feed export formats",
+                "keywords": [
+                    "XML",
+                    "JSON",
+                    "JSONL",
+                    "CSV",
+                    "RSS"
+                ],
+                "headings": [
+                    "Supported formats",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/troubleshooting/",
+                "title": "Troubleshooting",
+                "description": "Diagnose Laravel Feeds configuration, generation, storage, queue, and output failures",
+                "keywords": [
+                    "troubleshooting",
+                    "errors",
+                    "queue",
+                    "storage",
+                    "diagnostics"
+                ],
+                "headings": [
+                    "Troubleshooting",
+                    "The feed class is not found",
+                    "Generation uses too much memory",
+                    "A queue job never runs",
+                    "The storage disk is rejected",
+                    "XML generation fails",
+                    "CSV rows fail after the first item",
+                    "Published files are incomplete or stale",
+                    "See Also"
+                ]
+            },
+            {
+                "route": "/upgrade-guide/",
+                "title": "Upgrade guide",
+                "description": "Safe process for upgrading Laravel Feeds within the supported 1.x release line",
+                "keywords": [
+                    "upgrade",
+                    "Composer",
+                    "migration",
+                    "rollback",
+                    "compatibility"
+                ],
+                "headings": [
+                    "Upgrade guide",
+                    "Before upgrading",
+                    "Apply the update",
+                    "Verify",
+                    "Rollback",
+                    "See Also"
+                ]
+            }
+        ],
+        "be": [
+            {
+                "route": "/be/",
+                "title": "Дакументацыя Laravel Feeds",
+                "description": "Экспартуйце вялікія наборы даных Laravel у XML, JSON, JSON Lines, CSV, RSS і стужкі маркетплэйсаў.",
+                "keywords": [
+                    "Laravel",
+                    "feeds",
+                    "data export",
+                    "documentation"
+                ],
+                "headings": [
+                    "Экспартуйце вялікія наборы даных без поўнай загрузкі ў памяць",
+                    "Пачніце з задачы, затым выкарыстоўвайце даведнік"
+                ]
+            },
+            {
+                "route": "/be/api/",
+                "title": "Даведнік API",
+                "description": "Карта публічных класаў, кантрактаў, аб'ектаў даных, падзей і выключэнняў Laravel Feeds",
+                "keywords": [
+                    "API",
+                    "reference",
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo"
+                ],
+                "headings": [
+                    "Даведнік API",
+                    "Пункты пашырэння",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/api/configuration/",
+                "title": "Даведнік па канфігурацыі",
+                "description": "Даведнік па ўсіх раздзелах канфігурацыі Laravel Feeds і зменных асяроддзя",
+                "keywords": [
+                    "configuration",
+                    "environment",
+                    "queue",
+                    "schedule",
+                    "converters"
+                ],
+                "headings": [
+                    "Даведнік па канфігурацыі",
+                    "Асноўныя налады",
+                    "Расклад і чэргі",
+                    "Пераўтваральнікі",
+                    "Налады канвертараў",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/api/events-exceptions/",
+                "title": "Падзеі і выключэнні",
+                "description": "Даведнік па падзеях жыццёвага цыкла генерацыі і публічных тыпах выключэнняў",
+                "keywords": [
+                    "events",
+                    "exceptions",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "Падзеі і выключэнні",
+                    "Падзеі жыццёвага цыкла",
+                    "Памылкі ўводу і пошуку",
+                    "Памылкі серыялізацыі і сховішча",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/api/feed/",
+                "title": "Стужкі і даныя",
+                "description": "Публічныя кантракты Feed, FeedItem, FeedInfo, ElementData і вынікаў генерацыі",
+                "keywords": [
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "ElementData",
+                    "GenerationResultData"
+                ],
+                "headings": [
+                    "Стужкі і даныя",
+                    "Feed",
+                    "FeedItem і FeedInfo",
+                    "ElementData",
+                    "Вынік генерацыі",
+                    "FeedFormatEnum",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/api/runtime/",
+                "title": "Сэрвісы і кантракты выканання",
+                "description": "Публічныя API генерацыі, рэгістрацыі, раскладу, пераўтварэння і неабавязковых значэнняў",
+                "keywords": [
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData"
+                ],
+                "headings": [
+                    "Сэрвісы і кантракты выканання",
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/compatibility/",
+                "title": "Сумяшчальнасць",
+                "description": "Падтрыманыя кантракты PHP, Laravel, сховішча, чаргі і фарматаў вываду для Laravel Feeds 1.x",
+                "keywords": [
+                    "compatibility",
+                    "PHP",
+                    "Laravel",
+                    "Flysystem",
+                    "formats"
+                ],
+                "headings": [
+                    "Сумяшчальнасць",
+                    "Матрыца выканання",
+                    "Фарматы вываду",
+                    "Неабавязковыя інтэграцыі",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/contributions/",
+                "title": "Кіраўніцтва па ўдзеле",
+                "description": "Інструкцыі для распрацоўшчыкаў праекта Laravel Feeds",
+                "keywords": [
+                    "contributing",
+                    "code style",
+                    "code of conduct"
+                ],
+                "headings": [
+                    "Кіраўніцтва па ўдзеле",
+                    "Стыль кода",
+                    "Кодэкс паводзін",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/create-feeds/",
+                "title": "Стварэнне стужак",
+                "description": "Інструкцыі па стварэнні і запаўненні класаў стужкі, элемента стужкі і звестак пра стужку",
+                "keywords": [
+                    "feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "make:feed"
+                ],
+                "headings": [
+                    "Стварэнне стужак",
+                    "Запаўненне стужак",
+                    "Стужка",
+                    "Элемент стужкі",
+                    "Неабавязковыя значэнні",
+                    "Фармат файла",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/directives/",
+                "title": "Дырэктывы",
+                "description": "Убудаваныя XML-дырэктывы для вываду стужак",
+                "keywords": [
+                    "XML",
+                    "directives",
+                    "attributes",
+                    "CDATA"
+                ],
+                "headings": [
+                    "Дырэктывы",
+                    "@attributes",
+                    "@value",
+                    "@cdata",
+                    "@mixed",
+                    "@custom",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/elements/",
+                "title": "Элементы",
+                "description": "Наладжванне структуры стужкі: каранёвы элемент, інфармацыйны блок, загаловак, ніжняя частка і атрыбуты",
+                "keywords": [
+                    "elements",
+                    "FeedInfo",
+                    "attributes",
+                    "split files"
+                ],
+                "headings": [
+                    "Элементы",
+                    "Каранёвы элемент",
+                    "Звесткі",
+                    "Загаловак і ніжняя частка",
+                    "Атрыбуты",
+                    "Падзел файлаў",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/eloquent/",
+                "title": "Eloquent",
+                "description": "Наладжванне мадэляў рэгістрацыі стужак і памеру блока запыту стужкі",
+                "keywords": [
+                    "Eloquent",
+                    "model",
+                    "FeedQuery",
+                    "chunk size"
+                ],
+                "headings": [
+                    "Eloquent",
+                    "Карыстальніцкая мадэль рэгістрацыі стужкі",
+                    "Памер блока",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/events/",
+                "title": "Падзеі",
+                "description": "Падзеі, якія адпраўляюцца падчас генерацыі стужкі",
+                "keywords": [
+                    "events",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "Падзеі",
+                    "Кантракт падзеі завяршэння",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/extending-functionality/",
+                "title": "Пашырэнне функцыянальнасці",
+                "description": "Пашырэнне стужак умоўнымі канструкцыямі, макрасамі і карыстальніцкімі пераўтваральнікамі",
+                "keywords": [
+                    "extensions",
+                    "macros",
+                    "transformers",
+                    "conditional clauses"
+                ],
+                "headings": [
+                    "Пашырэнне функцыянальнасці",
+                    "Умоўныя канструкцыі",
+                    "Макрасы",
+                    "Карыстальніцкія пераўтваральнікі",
+                    "Даданне пераўтваральнікаў стужкі ў пачатак",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/faq/",
+                "title": "Частыя пытанні",
+                "description": "Кароткія адказы на частыя пытанні пра наладжванне, генерацыю, сховішча і фарматы Laravel Feeds",
+                "keywords": [
+                    "FAQ",
+                    "generation",
+                    "storage",
+                    "formats",
+                    "memory"
+                ],
+                "headings": [
+                    "Частыя пытанні",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/generation/",
+                "title": "Генерацыя і расклад",
+                "description": "Звесткі пра генерацыю файлаў стужак для далейшага распаўсюджвання",
+                "keywords": [
+                    "generation",
+                    "schedule",
+                    "queue",
+                    "feed:generate"
+                ],
+                "headings": [
+                    "Генерацыя і расклад",
+                    "Адна стужка",
+                    "Вывад для ШІ-агента",
+                    "Чарга",
+                    "Расклад",
+                    "Аўтаматычны",
+                    "Ручны",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/installation/",
+                "title": "Усталяванне і наладжванне",
+                "description": "Звесткі пра ўсталяванне і наладжванне Laravel Feeds",
+                "keywords": [
+                    "installation",
+                    "Composer",
+                    "configuration",
+                    "migration"
+                ],
+                "headings": [
+                    "Усталяванне і наладжванне",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/introduction/",
+                "title": "Пачатак працы",
+                "description": "Усталюйце Laravel Feeds і згенеруйце першую стужку за пяць хвілін",
+                "keywords": [
+                    "getting started",
+                    "Laravel",
+                    "feeds",
+                    "quick start"
+                ],
+                "headings": [
+                    "Пачатак працы",
+                    "Патрабаванні",
+                    "Усталяванне і падрыхтоўка",
+                    "Вызначэнне крыніцы даных",
+                    "Вызначэнне элемента",
+                    "Генерацыя файла",
+                    "Наступныя крокі"
+                ]
+            },
+            {
+                "route": "/be/license/",
+                "title": "Ліцэнзія MIT",
+                "description": "Звесткі пра ліцэнзію, на ўмовах якой распаўсюджваецца Laravel Feeds",
+                "keywords": [
+                    "MIT",
+                    "license",
+                    "copyright"
+                ],
+                "headings": [
+                    "Ліцэнзія MIT",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/location/",
+                "title": "Размяшчэнне",
+                "description": "Наладжванне дыска захоўвання і імя выходнага файла для згенераваных стужак",
+                "keywords": [
+                    "storage",
+                    "filesystem",
+                    "filename",
+                    "publication"
+                ],
+                "headings": [
+                    "Размяшчэнне",
+                    "Падтрыманыя дыскі",
+                    "Кантракт шляхоў",
+                    "Гарантыі публікацыі",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/machine-learning/",
+                "title": "Машыннае навучанне",
+                "description": "Рэкамендацыі па выкарыстанні праекта з LLM і адзінай базай ведаў",
+                "keywords": [
+                    "LLM",
+                    "llms.txt",
+                    "machine learning",
+                    "knowledge base"
+                ],
+                "headings": [
+                    "Машыннае навучанне",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/performance/",
+                "title": "Прадукцыйнасць на вялікіх наборах даных",
+                "description": "Кіраванне памяццю, нагрузкай на базу даных, падзелам файлаў, чэргамі і хуткасцю сховішча",
+                "keywords": [
+                    "performance",
+                    "memory",
+                    "chunks",
+                    "large datasets",
+                    "queues"
+                ],
+                "headings": [
+                    "Прадукцыйнасць на вялікіх наборах даных",
+                    "Пакідайце запыт лянівым",
+                    "Наладжвайце памер блока",
+                    "Падзяляйце выходныя файлы",
+                    "Адпраўляйце доўгія стужкі ў чаргу",
+                    "Вымярайце ўвесь шлях",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/presets/",
+                "title": "Перадусталёўкі",
+                "description": "Хуткая генерацыя стужак з убудаванымі перадусталёўкамі Instagram, Yandex, Sitemap і RSS",
+                "keywords": [
+                    "presets",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS"
+                ],
+                "headings": [
+                    "Перадусталёўкі",
+                    "Стандартныя значэнні",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/receipt-instagram/",
+                "title": "Instagram",
+                "description": "Рэцэпт генерацыі стужкі для Instagram",
+                "keywords": [
+                    "Instagram",
+                    "product feed",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Instagram",
+                    "Стварэнне файлаў",
+                    "Запаўненне стужкі",
+                    "Актывацыя",
+                    "Генерацыя стужкі",
+                    "Вынік",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/receipt-rss-atom/",
+                "title": "RSS Atom",
+                "description": "Рэцэпт генерацыі стужкі RSS Atom",
+                "keywords": [
+                    "RSS",
+                    "Atom",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "RSS Atom",
+                    "Стварэнне файлаў",
+                    "Запаўненне стужкі",
+                    "Актывацыя",
+                    "Генерацыя стужкі",
+                    "Вынік",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/receipt-sitemap/",
+                "title": "Sitemap",
+                "description": "Пакрокавае кіраўніцтва па стварэнні стужкі карты сайта для тавараў",
+                "keywords": [
+                    "Sitemap",
+                    "recipe",
+                    "SEO",
+                    "XML"
+                ],
+                "headings": [
+                    "Sitemap",
+                    "Стварэнне файлаў",
+                    "Запаўненне стужкі",
+                    "Актывацыя",
+                    "Спасылкі",
+                    "Генерацыя стужкі",
+                    "Даданне спасылкі ў каранёвы sitemap.xml",
+                    "Вынік",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/receipt-yandex/",
+                "title": "Yandex",
+                "description": "Рэцэпт генерацыі стужкі для Yandex",
+                "keywords": [
+                    "Yandex",
+                    "marketplace",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Yandex",
+                    "Стварэнне файлаў",
+                    "Запаўненне стужкі",
+                    "Карыстальніцкая структура катэгорый",
+                    "Актывацыя",
+                    "Генерацыя стужкі",
+                    "Вынік",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/supported-formats/",
+                "title": "Падтрыманыя фарматы",
+                "description": "Спіс падтрыманых фарматаў экспарту стужак",
+                "keywords": [
+                    "XML",
+                    "JSON",
+                    "JSONL",
+                    "CSV",
+                    "RSS"
+                ],
+                "headings": [
+                    "Падтрыманыя фарматы",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/troubleshooting/",
+                "title": "Вырашэнне праблем",
+                "description": "Дыягностыка памылак канфігурацыі, генерацыі, сховішча, чаргі і вываду Laravel Feeds",
+                "keywords": [
+                    "troubleshooting",
+                    "errors",
+                    "queue",
+                    "storage",
+                    "diagnostics"
+                ],
+                "headings": [
+                    "Вырашэнне праблем",
+                    "Клас стужкі не знойдзены",
+                    "Генерацыя выкарыстоўвае зашмат памяці",
+                    "Задача чаргі не запускаецца",
+                    "Дыск сховішча адхілены",
+                    "Генерацыя XML завяршаецца памылкай",
+                    "Радкі CSV памыляюцца пасля першага элемента",
+                    "Апублікаваныя файлы няпоўныя або састарэлыя",
+                    "Глядзіце таксама"
+                ]
+            },
+            {
+                "route": "/be/upgrade-guide/",
+                "title": "Кіраўніцтва па абнаўленні",
+                "description": "Бяспечны працэс абнаўлення Laravel Feeds у межах падтрыманага выпуску 1.x",
+                "keywords": [
+                    "upgrade",
+                    "Composer",
+                    "migration",
+                    "rollback",
+                    "compatibility"
+                ],
+                "headings": [
+                    "Кіраўніцтва па абнаўленні",
+                    "Перад абнаўленнем",
+                    "Прымяненне абнаўлення",
+                    "Праверка",
+                    "Адкат",
+                    "Глядзіце таксама"
+                ]
+            }
+        ],
+        "de": [
+            {
+                "route": "/de/",
+                "title": "Laravel-Feeds-Dokumentation",
+                "description": "Exportieren Sie große Laravel-Datenmengen in XML, JSON, JSON Lines, CSV, RSS und Marktplatz-Feeds.",
+                "keywords": [
+                    "Laravel",
+                    "feeds",
+                    "data export",
+                    "documentation"
+                ],
+                "headings": [
+                    "Große Datenmengen exportieren, ohne sie vollständig in den Arbeitsspeicher zu laden",
+                    "Mit einer Aufgabe beginnen, dann das Nachschlagewerk verwenden"
+                ]
+            },
+            {
+                "route": "/de/api/",
+                "title": "API-Referenz",
+                "description": "Übersicht öffentlicher Klassen, Verträge, Datenobjekte, Ereignisse und Ausnahmen von Laravel Feeds",
+                "keywords": [
+                    "API",
+                    "reference",
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo"
+                ],
+                "headings": [
+                    "API-Referenz",
+                    "Erweiterungspunkte",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/api/configuration/",
+                "title": "Konfigurationsreferenz",
+                "description": "Referenz für alle Konfigurationsbereiche und Umgebungsvariablen von Laravel Feeds",
+                "keywords": [
+                    "configuration",
+                    "environment",
+                    "queue",
+                    "schedule",
+                    "converters"
+                ],
+                "headings": [
+                    "Konfigurationsreferenz",
+                    "Grundeinstellungen",
+                    "Zeitplanung und Queues",
+                    "Transformer",
+                    "Konvertereinstellungen",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/api/events-exceptions/",
+                "title": "Ereignisse und Ausnahmen",
+                "description": "Referenz für Lebenszyklusereignisse der Feed-Generierung und öffentliche Ausnahmetypen",
+                "keywords": [
+                    "events",
+                    "exceptions",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "Ereignisse und Ausnahmen",
+                    "Lebenszyklusereignisse",
+                    "Eingabe- und Suchfehler",
+                    "Serialisierungs- und Speicherfehler",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/api/feed/",
+                "title": "Feeds und Daten",
+                "description": "Öffentliche Verträge für Feed, FeedItem, FeedInfo, ElementData und Generierungsergebnisse",
+                "keywords": [
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "ElementData",
+                    "GenerationResultData"
+                ],
+                "headings": [
+                    "Feeds und Daten",
+                    "Feed",
+                    "FeedItem und FeedInfo",
+                    "ElementData",
+                    "Generierungsergebnis",
+                    "FeedFormatEnum",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/api/runtime/",
+                "title": "Laufzeitdienste und Verträge",
+                "description": "Öffentliche APIs für Generierung, Registrierung, Zeitplanung, Transformation und optionale Werte",
+                "keywords": [
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData"
+                ],
+                "headings": [
+                    "Laufzeitdienste und Verträge",
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/compatibility/",
+                "title": "Kompatibilität",
+                "description": "Unterstützte Verträge für PHP, Laravel, Speicher, Queue und Ausgabeformate von Laravel Feeds 1.x",
+                "keywords": [
+                    "compatibility",
+                    "PHP",
+                    "Laravel",
+                    "Flysystem",
+                    "formats"
+                ],
+                "headings": [
+                    "Kompatibilität",
+                    "Laufzeitmatrix",
+                    "Ausgabeformate",
+                    "Optionale Integrationen",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/contributions/",
+                "title": "Beitragsleitfaden",
+                "description": "Anleitung für Entwickler des Laravel-Feeds-Projekts",
+                "keywords": [
+                    "contributing",
+                    "code style",
+                    "code of conduct"
+                ],
+                "headings": [
+                    "Beitragsleitfaden",
+                    "Codestil",
+                    "Verhaltenskodex",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/create-feeds/",
+                "title": "Feeds erstellen",
+                "description": "Anleitung zum Erstellen und Befüllen der Klassen für Feed, Feed-Element und Feed-Informationen",
+                "keywords": [
+                    "feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "make:feed"
+                ],
+                "headings": [
+                    "Feeds erstellen",
+                    "Feeds befüllen",
+                    "Feed",
+                    "Feed-Element",
+                    "Optionale Werte",
+                    "Dateiformat",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/directives/",
+                "title": "Direktiven",
+                "description": "Integrierte XML-Direktiven für die Feed-Ausgabe",
+                "keywords": [
+                    "XML",
+                    "directives",
+                    "attributes",
+                    "CDATA"
+                ],
+                "headings": [
+                    "Direktiven",
+                    "@attributes",
+                    "@value",
+                    "@cdata",
+                    "@mixed",
+                    "@custom",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/elements/",
+                "title": "Elemente",
+                "description": "Feed-Struktur konfigurieren: Wurzelelement, Informationsblock, Kopf- und Fußzeilen sowie Attribute",
+                "keywords": [
+                    "elements",
+                    "FeedInfo",
+                    "attributes",
+                    "split files"
+                ],
+                "headings": [
+                    "Elemente",
+                    "Wurzelelement",
+                    "Informationen",
+                    "Kopf- und Fußzeile",
+                    "Attribute",
+                    "Dateien aufteilen",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/eloquent/",
+                "title": "Eloquent",
+                "description": "Registrierungsmodelle für Feeds und Chunk-Größe der Feed-Abfrage konfigurieren.",
+                "keywords": [
+                    "Eloquent",
+                    "model",
+                    "FeedQuery",
+                    "chunk size"
+                ],
+                "headings": [
+                    "Eloquent",
+                    "Benutzerdefiniertes Registrierungsmodell für Feeds",
+                    "Chunk-Größe",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/events/",
+                "title": "Ereignisse",
+                "description": "Während der Feed-Generierung ausgelöste Ereignisse",
+                "keywords": [
+                    "events",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "Ereignisse",
+                    "Vertrag des Abschlussereignisses",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/extending-functionality/",
+                "title": "Funktionalität erweitern",
+                "description": "Feeds mit bedingten Klauseln, Makros und benutzerdefinierten Transformern erweitern.",
+                "keywords": [
+                    "extensions",
+                    "macros",
+                    "transformers",
+                    "conditional clauses"
+                ],
+                "headings": [
+                    "Funktionalität erweitern",
+                    "Bedingte Klauseln",
+                    "Macroable",
+                    "Benutzerdefinierte Transformer",
+                    "Feed-Transformer voranstellen",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/faq/",
+                "title": "Häufig gestellte Fragen",
+                "description": "Kurze Antworten auf häufige Fragen zu Einrichtung, Generierung, Speicher und Formaten von Laravel Feeds",
+                "keywords": [
+                    "FAQ",
+                    "generation",
+                    "storage",
+                    "formats",
+                    "memory"
+                ],
+                "headings": [
+                    "Häufig gestellte Fragen",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/generation/",
+                "title": "Generierung und Zeitplanung",
+                "description": "Informationen zum Erzeugen von Feed-Dateien für die spätere Verteilung",
+                "keywords": [
+                    "generation",
+                    "schedule",
+                    "queue",
+                    "feed:generate"
+                ],
+                "headings": [
+                    "Generierung und Zeitplanung",
+                    "Einzelner Feed",
+                    "Ausgabe für KI-Agenten",
+                    "Queue",
+                    "Zeitplan",
+                    "Automatisch",
+                    "Manuell",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/installation/",
+                "title": "Installation und Einrichtung",
+                "description": "Informationen zur Installation und Konfiguration von Laravel Feeds",
+                "keywords": [
+                    "installation",
+                    "Composer",
+                    "configuration",
+                    "migration"
+                ],
+                "headings": [
+                    "Installation und Einrichtung",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/introduction/",
+                "title": "Erste Schritte",
+                "description": "Laravel Feeds installieren und den ersten Feed in fünf Minuten erzeugen",
+                "keywords": [
+                    "getting started",
+                    "Laravel",
+                    "feeds",
+                    "quick start"
+                ],
+                "headings": [
+                    "Erste Schritte",
+                    "Voraussetzungen",
+                    "Installation und Vorbereitung",
+                    "Datenquelle definieren",
+                    "Jedes Element definieren",
+                    "Datei erzeugen",
+                    "Nächste Schritte"
+                ]
+            },
+            {
+                "route": "/de/license/",
+                "title": "MIT-Lizenz",
+                "description": "Informationen zur Lizenz, unter der Laravel Feeds verbreitet wird",
+                "keywords": [
+                    "MIT",
+                    "license",
+                    "copyright"
+                ],
+                "headings": [
+                    "MIT-Lizenz",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/location/",
+                "title": "Speicherort",
+                "description": "Speicherdatenträger und Ausgabedateiname für erzeugte Feeds konfigurieren",
+                "keywords": [
+                    "storage",
+                    "filesystem",
+                    "filename",
+                    "publication"
+                ],
+                "headings": [
+                    "Speicherort",
+                    "Unterstützte Datenträger",
+                    "Pfadvertrag",
+                    "Veröffentlichungsgarantien",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/machine-learning/",
+                "title": "Maschinelles Lernen",
+                "description": "Anleitung zur Verwendung des Projekts mit LLMs und einer konsolidierten Wissensbasis",
+                "keywords": [
+                    "LLM",
+                    "llms.txt",
+                    "machine learning",
+                    "knowledge base"
+                ],
+                "headings": [
+                    "Maschinelles Lernen",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/performance/",
+                "title": "Leistung bei großen Datenmengen",
+                "description": "Arbeitsspeicher, Datenbanklast, Dateiaufteilung, Queues und Speicherdurchsatz großer Feeds steuern",
+                "keywords": [
+                    "performance",
+                    "memory",
+                    "chunks",
+                    "large datasets",
+                    "queues"
+                ],
+                "headings": [
+                    "Leistung bei großen Datenmengen",
+                    "Abfrage lazy halten",
+                    "Chunk-Größe abstimmen",
+                    "Ausgabedateien aufteilen",
+                    "Lang laufende Feeds in die Queue stellen",
+                    "Gesamten Pfad messen",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/presets/",
+                "title": "Voreinstellungen",
+                "description": "Feeds schnell mit integrierten Voreinstellungen erzeugen (Instagram, Yandex, Sitemap, RSS)",
+                "keywords": [
+                    "presets",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS"
+                ],
+                "headings": [
+                    "Voreinstellungen",
+                    "Standardwerte",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/receipt-instagram/",
+                "title": "Instagram",
+                "description": "Rezept zur Feed-Generierung für Instagram",
+                "keywords": [
+                    "Instagram",
+                    "product feed",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Instagram",
+                    "Dateien erstellen",
+                    "Feed befüllen",
+                    "Aktivieren",
+                    "Feed erzeugen",
+                    "Ergebnis",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/receipt-rss-atom/",
+                "title": "RSS Atom",
+                "description": "Rezept zur Feed-Generierung für RSS Atom",
+                "keywords": [
+                    "RSS",
+                    "Atom",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "RSS Atom",
+                    "Dateien erstellen",
+                    "Feed befüllen",
+                    "Aktivieren",
+                    "Feed erzeugen",
+                    "Ergebnis",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/receipt-sitemap/",
+                "title": "Sitemap",
+                "description": "Schrittweise Anleitung zum Erstellen eines Produkt-Sitemap-Feeds",
+                "keywords": [
+                    "Sitemap",
+                    "recipe",
+                    "SEO",
+                    "XML"
+                ],
+                "headings": [
+                    "Sitemap",
+                    "Dateien erstellen",
+                    "Feed befüllen",
+                    "Aktivieren",
+                    "Verknüpfungen",
+                    "Feed erzeugen",
+                    "Verweis zur Stammdatei sitemap.xml hinzufügen",
+                    "Ergebnis",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/receipt-yandex/",
+                "title": "Yandex",
+                "description": "Rezept zur Feed-Generierung für Yandex",
+                "keywords": [
+                    "Yandex",
+                    "marketplace",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Yandex",
+                    "Dateien erstellen",
+                    "Feed befüllen",
+                    "Benutzerdefinierte Kategoriestruktur",
+                    "Aktivieren",
+                    "Feed erzeugen",
+                    "Ergebnis",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/supported-formats/",
+                "title": "Unterstützte Formate",
+                "description": "Liste der unterstützten Exportformate für Feeds",
+                "keywords": [
+                    "XML",
+                    "JSON",
+                    "JSONL",
+                    "CSV",
+                    "RSS"
+                ],
+                "headings": [
+                    "Unterstützte Formate",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/troubleshooting/",
+                "title": "Fehlerbehebung",
+                "description": "Fehler bei Konfiguration, Generierung, Speicher, Queue und Ausgabe von Laravel Feeds diagnostizieren",
+                "keywords": [
+                    "troubleshooting",
+                    "errors",
+                    "queue",
+                    "storage",
+                    "diagnostics"
+                ],
+                "headings": [
+                    "Fehlerbehebung",
+                    "Feed-Klasse wurde nicht gefunden",
+                    "Generierung benötigt zu viel Arbeitsspeicher",
+                    "Ein Queue-Job wird nie ausgeführt",
+                    "Speicherdatenträger wird abgelehnt",
+                    "XML-Generierung schlägt fehl",
+                    "CSV-Zeilen schlagen nach dem ersten Element fehl",
+                    "Veröffentlichte Dateien sind unvollständig oder veraltet",
+                    "Siehe auch"
+                ]
+            },
+            {
+                "route": "/de/upgrade-guide/",
+                "title": "Upgrade-Leitfaden",
+                "description": "Sicherer Prozess für Upgrades von Laravel Feeds innerhalb der unterstützten Versionsreihe 1.x",
+                "keywords": [
+                    "upgrade",
+                    "Composer",
+                    "migration",
+                    "rollback",
+                    "compatibility"
+                ],
+                "headings": [
+                    "Upgrade-Leitfaden",
+                    "Vor dem Upgrade",
+                    "Update anwenden",
+                    "Prüfen",
+                    "Zurücksetzen",
+                    "Siehe auch"
+                ]
+            }
+        ],
+        "fr": [
+            {
+                "route": "/fr/",
+                "title": "Documentation de Laravel Feeds",
+                "description": "Exportez de grands jeux de données Laravel vers XML, JSON, JSON Lines, CSV, RSS et des flux de places de marché.",
+                "keywords": [
+                    "Laravel",
+                    "feeds",
+                    "data export",
+                    "documentation"
+                ],
+                "headings": [
+                    "Exportez de grands jeux de données sans les charger entièrement en mémoire",
+                    "Commencez par une tâche, puis consultez la référence"
+                ]
+            },
+            {
+                "route": "/fr/api/",
+                "title": "Référence API",
+                "description": "Carte des classes, contrats, objets de données, événements et exceptions publics de Laravel Feeds",
+                "keywords": [
+                    "API",
+                    "reference",
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo"
+                ],
+                "headings": [
+                    "Référence API",
+                    "Points d’extension",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/api/configuration/",
+                "title": "Référence de configuration",
+                "description": "Référence de chaque section de configuration et variable d’environnement de Laravel Feeds",
+                "keywords": [
+                    "configuration",
+                    "environment",
+                    "queue",
+                    "schedule",
+                    "converters"
+                ],
+                "headings": [
+                    "Référence de configuration",
+                    "Paramètres principaux",
+                    "Planification et files d’attente",
+                    "Transformateurs",
+                    "Paramètres des convertisseurs",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/api/events-exceptions/",
+                "title": "Événements et exceptions",
+                "description": "Référence des événements du cycle de génération et des types d’exception publics",
+                "keywords": [
+                    "events",
+                    "exceptions",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "Événements et exceptions",
+                    "Événements du cycle de vie",
+                    "Échecs de saisie et de recherche",
+                    "Échecs de sérialisation et de stockage",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/api/feed/",
+                "title": "Flux et données",
+                "description": "Contrats publics de Feed, FeedItem, FeedInfo, ElementData et des résultats de génération",
+                "keywords": [
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "ElementData",
+                    "GenerationResultData"
+                ],
+                "headings": [
+                    "Flux et données",
+                    "Feed",
+                    "FeedItem et FeedInfo",
+                    "ElementData",
+                    "Résultat de génération",
+                    "FeedFormatEnum",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/api/runtime/",
+                "title": "Services et contrats d’exécution",
+                "description": "API publiques de génération, d’enregistrement, de planification, de transformation et de valeurs facultatives",
+                "keywords": [
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData"
+                ],
+                "headings": [
+                    "Services et contrats d’exécution",
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/compatibility/",
+                "title": "Compatibilité",
+                "description": "Contrats pris en charge pour PHP, Laravel, le stockage, les files d’attente et les formats de Laravel Feeds 1.x",
+                "keywords": [
+                    "compatibility",
+                    "PHP",
+                    "Laravel",
+                    "Flysystem",
+                    "formats"
+                ],
+                "headings": [
+                    "Compatibilité",
+                    "Matrice d’exécution",
+                    "Formats de sortie",
+                    "Intégrations facultatives",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/contributions/",
+                "title": "Guide de contribution",
+                "description": "Instructions destinées aux développeurs du projet Laravel Feeds",
+                "keywords": [
+                    "contributing",
+                    "code style",
+                    "code of conduct"
+                ],
+                "headings": [
+                    "Guide de contribution",
+                    "Style du code",
+                    "Code de conduite",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/create-feeds/",
+                "title": "Créer des flux",
+                "description": "Instructions pour créer et remplir les classes du flux, de ses éléments et de ses informations",
+                "keywords": [
+                    "feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "make:feed"
+                ],
+                "headings": [
+                    "Créer des flux",
+                    "Remplir les flux",
+                    "Feed",
+                    "Élément du flux",
+                    "Valeurs facultatives",
+                    "Format de fichier",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/directives/",
+                "title": "Directives",
+                "description": "Directives XML intégrées pour la sortie des flux",
+                "keywords": [
+                    "XML",
+                    "directives",
+                    "attributes",
+                    "CDATA"
+                ],
+                "headings": [
+                    "Directives",
+                    "@attributes",
+                    "@value",
+                    "@cdata",
+                    "@mixed",
+                    "@custom",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/elements/",
+                "title": "Éléments",
+                "description": "Configurer la structure du flux : élément racine, bloc d’informations, en-têtes, pieds de page et attributs",
+                "keywords": [
+                    "elements",
+                    "FeedInfo",
+                    "attributes",
+                    "split files"
+                ],
+                "headings": [
+                    "Éléments",
+                    "Élément racine",
+                    "Informations",
+                    "En-tête et pied de page",
+                    "Attributs",
+                    "Répartir entre plusieurs fichiers",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/eloquent/",
+                "title": "Eloquent",
+                "description": "Configurer les modèles d’enregistrement des flux et la taille des lots de requêtes.",
+                "keywords": [
+                    "Eloquent",
+                    "model",
+                    "FeedQuery",
+                    "chunk size"
+                ],
+                "headings": [
+                    "Eloquent",
+                    "Modèle d’enregistrement de flux personnalisé",
+                    "Taille des lots",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/events/",
+                "title": "Événements",
+                "description": "Événements émis pendant la génération des flux",
+                "keywords": [
+                    "events",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "Événements",
+                    "Contrat de l’événement de fin",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/extending-functionality/",
+                "title": "Étendre les fonctionnalités",
+                "description": "Étendre les flux avec des clauses conditionnelles, des macros et des transformateurs personnalisés.",
+                "keywords": [
+                    "extensions",
+                    "macros",
+                    "transformers",
+                    "conditional clauses"
+                ],
+                "headings": [
+                    "Étendre les fonctionnalités",
+                    "Clauses conditionnelles",
+                    "Macroable",
+                    "Transformateurs personnalisés",
+                    "Ajouter des transformateurs de flux en tête",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/faq/",
+                "title": "Questions fréquentes",
+                "description": "Réponses courtes aux questions courantes sur la configuration, la génération, le stockage et les formats",
+                "keywords": [
+                    "FAQ",
+                    "generation",
+                    "storage",
+                    "formats",
+                    "memory"
+                ],
+                "headings": [
+                    "Questions fréquentes",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/generation/",
+                "title": "Génération et planification",
+                "description": "Informations sur la génération de fichiers de flux destinés à une diffusion ultérieure",
+                "keywords": [
+                    "generation",
+                    "schedule",
+                    "queue",
+                    "feed:generate"
+                ],
+                "headings": [
+                    "Génération et planification",
+                    "Flux unique",
+                    "Sortie pour les agents d’IA",
+                    "File d’attente",
+                    "Planification",
+                    "Automatique",
+                    "Manuelle",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/installation/",
+                "title": "Installation et configuration",
+                "description": "Informations sur l’installation et la configuration de Laravel Feeds",
+                "keywords": [
+                    "installation",
+                    "Composer",
+                    "configuration",
+                    "migration"
+                ],
+                "headings": [
+                    "Installation et configuration",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/introduction/",
+                "title": "Bien démarrer",
+                "description": "Installer Laravel Feeds et générer un premier flux en cinq minutes",
+                "keywords": [
+                    "getting started",
+                    "Laravel",
+                    "feeds",
+                    "quick start"
+                ],
+                "headings": [
+                    "Bien démarrer",
+                    "Prérequis",
+                    "Installer et préparer",
+                    "Définir la source de données",
+                    "Définir chaque élément",
+                    "Générer le fichier",
+                    "Étapes suivantes"
+                ]
+            },
+            {
+                "route": "/fr/license/",
+                "title": "Licence MIT",
+                "description": "Informations sur la licence sous laquelle Laravel Feeds est distribué",
+                "keywords": [
+                    "MIT",
+                    "license",
+                    "copyright"
+                ],
+                "headings": [
+                    "Licence MIT",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/location/",
+                "title": "Emplacement",
+                "description": "Configurer le disque de stockage et le nom des fichiers de sortie des flux générés",
+                "keywords": [
+                    "storage",
+                    "filesystem",
+                    "filename",
+                    "publication"
+                ],
+                "headings": [
+                    "Emplacement",
+                    "Disques pris en charge",
+                    "Contrat des chemins",
+                    "Garanties de publication",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/machine-learning/",
+                "title": "Apprentissage automatique",
+                "description": "Conseils pour utiliser le projet avec des LLM et une base de connaissances consolidée",
+                "keywords": [
+                    "LLM",
+                    "llms.txt",
+                    "machine learning",
+                    "knowledge base"
+                ],
+                "headings": [
+                    "Apprentissage automatique",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/performance/",
+                "title": "Performances sur les grands jeux de données",
+                "description": "Contrôler la mémoire, la charge de base de données, le fractionnement, les files d’attente et le stockage",
+                "keywords": [
+                    "performance",
+                    "memory",
+                    "chunks",
+                    "large datasets",
+                    "queues"
+                ],
+                "headings": [
+                    "Performances sur les grands jeux de données",
+                    "Garder la requête lazy",
+                    "Ajuster la taille des lots",
+                    "Fractionner les fichiers de sortie",
+                    "Mettre les flux longs en file d’attente",
+                    "Mesurer tout le parcours",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/presets/",
+                "title": "Préréglages",
+                "description": "Générer rapidement des flux avec les préréglages intégrés (Instagram, Yandex, Sitemap, RSS)",
+                "keywords": [
+                    "presets",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS"
+                ],
+                "headings": [
+                    "Préréglages",
+                    "Valeurs par défaut",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/receipt-instagram/",
+                "title": "Instagram",
+                "description": "Recette de génération d’un flux pour Instagram",
+                "keywords": [
+                    "Instagram",
+                    "product feed",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Instagram",
+                    "Créer les fichiers",
+                    "Remplir le flux",
+                    "Activer",
+                    "Générer le flux",
+                    "Résultat",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/receipt-rss-atom/",
+                "title": "RSS Atom",
+                "description": "Recette de génération d’un flux RSS Atom",
+                "keywords": [
+                    "RSS",
+                    "Atom",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "RSS Atom",
+                    "Créer les fichiers",
+                    "Remplir le flux",
+                    "Activer",
+                    "Générer le flux",
+                    "Résultat",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/receipt-sitemap/",
+                "title": "Sitemap",
+                "description": "Guide pas à pas pour créer un flux de sitemap de produits",
+                "keywords": [
+                    "Sitemap",
+                    "recipe",
+                    "SEO",
+                    "XML"
+                ],
+                "headings": [
+                    "Sitemap",
+                    "Créer les fichiers",
+                    "Remplir le flux",
+                    "Activer",
+                    "Liens",
+                    "Générer le flux",
+                    "Ajouter un lien au fichier sitemap.xml racine",
+                    "Résultat",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/receipt-yandex/",
+                "title": "Yandex",
+                "description": "Recette de génération d’un flux pour Yandex",
+                "keywords": [
+                    "Yandex",
+                    "marketplace",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Yandex",
+                    "Créer les fichiers",
+                    "Remplir le flux",
+                    "Structure de catégorie personnalisée",
+                    "Activer",
+                    "Générer le flux",
+                    "Résultat",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/supported-formats/",
+                "title": "Formats pris en charge",
+                "description": "Liste des formats d’exportation de flux pris en charge",
+                "keywords": [
+                    "XML",
+                    "JSON",
+                    "JSONL",
+                    "CSV",
+                    "RSS"
+                ],
+                "headings": [
+                    "Formats pris en charge",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/troubleshooting/",
+                "title": "Dépannage",
+                "description": "Diagnostiquer les échecs de configuration, génération, stockage, file d’attente et sortie",
+                "keywords": [
+                    "troubleshooting",
+                    "errors",
+                    "queue",
+                    "storage",
+                    "diagnostics"
+                ],
+                "headings": [
+                    "Dépannage",
+                    "La classe du flux est introuvable",
+                    "La génération utilise trop de mémoire",
+                    "Un job de file d’attente ne s’exécute jamais",
+                    "Le disque de stockage est refusé",
+                    "La génération XML échoue",
+                    "Les lignes CSV échouent après le premier élément",
+                    "Les fichiers publiés sont incomplets ou obsolètes",
+                    "Voir aussi"
+                ]
+            },
+            {
+                "route": "/fr/upgrade-guide/",
+                "title": "Guide de mise à niveau",
+                "description": "Procédure sûre de mise à niveau de Laravel Feeds dans la série 1.x prise en charge",
+                "keywords": [
+                    "upgrade",
+                    "Composer",
+                    "migration",
+                    "rollback",
+                    "compatibility"
+                ],
+                "headings": [
+                    "Guide de mise à niveau",
+                    "Avant la mise à niveau",
+                    "Appliquer la mise à jour",
+                    "Vérifier",
+                    "Revenir en arrière",
+                    "Voir aussi"
+                ]
+            }
+        ],
+        "ko": [
+            {
+                "route": "/ko/",
+                "title": "Laravel Feeds 문서",
+                "description": "대규모 Laravel 데이터셋을 XML, JSON, JSON Lines, CSV, RSS 및 마켓플레이스 피드로 내보냅니다.",
+                "keywords": [
+                    "Laravel",
+                    "feeds",
+                    "data export",
+                    "documentation"
+                ],
+                "headings": [
+                    "전체 데이터를 메모리에 올리지 않고 대규모 데이터셋 내보내기",
+                    "작업부터 시작하고 참조 문서로 세부 정보 확인"
+                ]
+            },
+            {
+                "route": "/ko/api/",
+                "title": "API 참조",
+                "description": "Laravel Feeds public 클래스, 계약, 데이터 객체, 이벤트 및 예외 안내",
+                "keywords": [
+                    "API",
+                    "reference",
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo"
+                ],
+                "headings": [
+                    "API 참조",
+                    "확장 지점",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/api/configuration/",
+                "title": "구성 참조",
+                "description": "Laravel Feeds의 모든 구성 섹션과 환경 변수 참조",
+                "keywords": [
+                    "configuration",
+                    "environment",
+                    "queue",
+                    "schedule",
+                    "converters"
+                ],
+                "headings": [
+                    "구성 참조",
+                    "기본 설정",
+                    "스케줄 및 큐",
+                    "트랜스포머",
+                    "변환기 설정",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/api/events-exceptions/",
+                "title": "이벤트 및 예외",
+                "description": "피드 생성 수명 주기 이벤트와 public 예외 타입 참조",
+                "keywords": [
+                    "events",
+                    "exceptions",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "이벤트 및 예외",
+                    "수명 주기 이벤트",
+                    "입력 및 조회 오류",
+                    "직렬화 및 저장소 오류",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/api/feed/",
+                "title": "피드 및 데이터",
+                "description": "Feed, FeedItem, FeedInfo, ElementData 및 생성 결과의 public 계약",
+                "keywords": [
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "ElementData",
+                    "GenerationResultData"
+                ],
+                "headings": [
+                    "피드 및 데이터",
+                    "Feed",
+                    "FeedItem 및 FeedInfo",
+                    "ElementData",
+                    "생성 결과",
+                    "FeedFormatEnum",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/api/runtime/",
+                "title": "런타임 서비스 및 계약",
+                "description": "생성, 등록, 스케줄, 변환 및 선택적 값의 public API",
+                "keywords": [
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData"
+                ],
+                "headings": [
+                    "런타임 서비스 및 계약",
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/compatibility/",
+                "title": "호환성",
+                "description": "Laravel Feeds 1.x의 PHP, Laravel, 저장소, 큐 및 출력 형식 지원 계약",
+                "keywords": [
+                    "compatibility",
+                    "PHP",
+                    "Laravel",
+                    "Flysystem",
+                    "formats"
+                ],
+                "headings": [
+                    "호환성",
+                    "런타임 매트릭스",
+                    "출력 형식",
+                    "선택적 통합",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/contributions/",
+                "title": "기여 가이드",
+                "description": "Laravel Feeds 프로젝트 개발자를 위한 안내",
+                "keywords": [
+                    "contributing",
+                    "code style",
+                    "code of conduct"
+                ],
+                "headings": [
+                    "기여 가이드",
+                    "코드 스타일",
+                    "행동 강령",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/create-feeds/",
+                "title": "피드 생성",
+                "description": "피드, 피드 항목 및 피드 정보 클래스를 생성하고 채우는 방법",
+                "keywords": [
+                    "feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "make:feed"
+                ],
+                "headings": [
+                    "피드 생성",
+                    "피드 채우기",
+                    "피드",
+                    "피드 항목",
+                    "선택적 값",
+                    "파일 형식",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/directives/",
+                "title": "디렉티브",
+                "description": "피드 출력을 위한 기본 제공 XML 디렉티브",
+                "keywords": [
+                    "XML",
+                    "directives",
+                    "attributes",
+                    "CDATA"
+                ],
+                "headings": [
+                    "디렉티브",
+                    "@attributes",
+                    "@value",
+                    "@cdata",
+                    "@mixed",
+                    "@custom",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/elements/",
+                "title": "요소",
+                "description": "루트 요소, 정보 블록, 헤더/푸터 및 속성을 포함한 피드 구조 구성",
+                "keywords": [
+                    "elements",
+                    "FeedInfo",
+                    "attributes",
+                    "split files"
+                ],
+                "headings": [
+                    "요소",
+                    "루트 요소",
+                    "정보",
+                    "헤더 및 푸터",
+                    "속성",
+                    "파일 분할",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/eloquent/",
+                "title": "Eloquent",
+                "description": "피드 등록 모델과 피드 쿼리 청크 크기 구성",
+                "keywords": [
+                    "Eloquent",
+                    "model",
+                    "FeedQuery",
+                    "chunk size"
+                ],
+                "headings": [
+                    "Eloquent",
+                    "사용자 지정 피드 등록 모델",
+                    "청크 크기",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/events/",
+                "title": "이벤트",
+                "description": "피드 생성 중 전달되는 이벤트",
+                "keywords": [
+                    "events",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "이벤트",
+                    "완료 이벤트 계약",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/extending-functionality/",
+                "title": "기능 확장",
+                "description": "조건부 절, 매크로 및 사용자 지정 트랜스포머로 피드 확장",
+                "keywords": [
+                    "extensions",
+                    "macros",
+                    "transformers",
+                    "conditional clauses"
+                ],
+                "headings": [
+                    "기능 확장",
+                    "조건부 절",
+                    "매크로 기능",
+                    "사용자 지정 트랜스포머",
+                    "피드 트랜스포머 앞에 추가",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/faq/",
+                "title": "자주 묻는 질문",
+                "description": "Laravel Feeds 설정, 생성, 저장소 및 형식에 관한 일반적인 질문과 답변",
+                "keywords": [
+                    "FAQ",
+                    "generation",
+                    "storage",
+                    "formats",
+                    "memory"
+                ],
+                "headings": [
+                    "자주 묻는 질문",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/generation/",
+                "title": "생성 및 스케줄",
+                "description": "나중에 배포할 피드 파일을 생성하는 방법",
+                "keywords": [
+                    "generation",
+                    "schedule",
+                    "queue",
+                    "feed:generate"
+                ],
+                "headings": [
+                    "생성 및 스케줄",
+                    "단일 피드",
+                    "AI 에이전트 출력",
+                    "큐",
+                    "스케줄",
+                    "자동",
+                    "수동",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/installation/",
+                "title": "설치 및 설정",
+                "description": "Laravel Feeds 설치 및 구성 안내",
+                "keywords": [
+                    "installation",
+                    "Composer",
+                    "configuration",
+                    "migration"
+                ],
+                "headings": [
+                    "설치 및 설정",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/introduction/",
+                "title": "시작하기",
+                "description": "Laravel Feeds를 설치하고 5분 안에 첫 번째 피드 생성",
+                "keywords": [
+                    "getting started",
+                    "Laravel",
+                    "feeds",
+                    "quick start"
+                ],
+                "headings": [
+                    "시작하기",
+                    "요구 사항",
+                    "설치 및 준비",
+                    "데이터 소스 정의",
+                    "각 항목 정의",
+                    "파일 생성",
+                    "다음 단계"
+                ]
+            },
+            {
+                "route": "/ko/license/",
+                "title": "MIT 라이선스",
+                "description": "Laravel Feeds 배포에 적용되는 라이선스 정보",
+                "keywords": [
+                    "MIT",
+                    "license",
+                    "copyright"
+                ],
+                "headings": [
+                    "MIT 라이선스",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/location/",
+                "title": "저장 위치",
+                "description": "생성된 피드의 스토리지 디스크와 출력 파일 이름 구성",
+                "keywords": [
+                    "storage",
+                    "filesystem",
+                    "filename",
+                    "publication"
+                ],
+                "headings": [
+                    "저장 위치",
+                    "지원되는 디스크",
+                    "경로 계약",
+                    "게시 보장",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/machine-learning/",
+                "title": "머신 러닝",
+                "description": "LLM 및 통합 지식 베이스와 함께 프로젝트를 사용하는 방법",
+                "keywords": [
+                    "LLM",
+                    "llms.txt",
+                    "machine learning",
+                    "knowledge base"
+                ],
+                "headings": [
+                    "머신 러닝",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/performance/",
+                "title": "대규모 데이터셋 성능",
+                "description": "대규모 피드의 메모리, 데이터베이스 부하, 파일 분할, 큐 및 저장소 처리량 제어",
+                "keywords": [
+                    "performance",
+                    "memory",
+                    "chunks",
+                    "large datasets",
+                    "queues"
+                ],
+                "headings": [
+                    "대규모 데이터셋 성능",
+                    "쿼리를 지연 상태로 유지",
+                    "청크 크기 조정",
+                    "출력 파일 분할",
+                    "장시간 실행 피드를 큐로 이동",
+                    "전체 경로 측정",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/presets/",
+                "title": "프리셋",
+                "description": "기본 제공 프리셋(Instagram, Yandex, Sitemap, RSS)으로 피드를 빠르게 생성",
+                "keywords": [
+                    "presets",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS"
+                ],
+                "headings": [
+                    "프리셋",
+                    "기본값",
+                    "Instagram",
+                    "Yandex",
+                    "사이트맵",
+                    "RSS",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/receipt-instagram/",
+                "title": "Instagram",
+                "description": "Instagram용 피드 생성 레시피",
+                "keywords": [
+                    "Instagram",
+                    "product feed",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Instagram",
+                    "파일 생성",
+                    "피드 채우기",
+                    "활성화",
+                    "피드 생성",
+                    "결과",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/receipt-rss-atom/",
+                "title": "RSS Atom",
+                "description": "RSS Atom용 피드 생성 레시피",
+                "keywords": [
+                    "RSS",
+                    "Atom",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "RSS Atom",
+                    "파일 생성",
+                    "피드 채우기",
+                    "활성화",
+                    "피드 생성",
+                    "결과",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/receipt-sitemap/",
+                "title": "사이트맵",
+                "description": "제품 사이트맵 피드를 만드는 단계별 가이드",
+                "keywords": [
+                    "Sitemap",
+                    "recipe",
+                    "SEO",
+                    "XML"
+                ],
+                "headings": [
+                    "사이트맵",
+                    "파일 생성",
+                    "피드 채우기",
+                    "활성화",
+                    "링크",
+                    "피드 생성",
+                    "루트 sitemap.xml에 링크 추가",
+                    "결과",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/receipt-yandex/",
+                "title": "Yandex",
+                "description": "Yandex용 피드 생성 레시피",
+                "keywords": [
+                    "Yandex",
+                    "marketplace",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Yandex",
+                    "파일 생성",
+                    "피드 채우기",
+                    "사용자 지정 카테고리 구조",
+                    "활성화",
+                    "피드 생성",
+                    "결과",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/supported-formats/",
+                "title": "지원 형식",
+                "description": "지원되는 피드 내보내기 형식 목록",
+                "keywords": [
+                    "XML",
+                    "JSON",
+                    "JSONL",
+                    "CSV",
+                    "RSS"
+                ],
+                "headings": [
+                    "지원 형식",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/troubleshooting/",
+                "title": "문제 해결",
+                "description": "Laravel Feeds 구성, 생성, 저장소, 큐 및 출력 오류 진단",
+                "keywords": [
+                    "troubleshooting",
+                    "errors",
+                    "queue",
+                    "storage",
+                    "diagnostics"
+                ],
+                "headings": [
+                    "문제 해결",
+                    "피드 클래스를 찾을 수 없음",
+                    "생성에 너무 많은 메모리 사용",
+                    "큐 작업이 실행되지 않음",
+                    "저장소 디스크가 거부됨",
+                    "XML 생성 실패",
+                    "첫 항목 이후 CSV 행 실패",
+                    "게시된 파일이 불완전하거나 오래됨",
+                    "관련 문서"
+                ]
+            },
+            {
+                "route": "/ko/upgrade-guide/",
+                "title": "업그레이드 가이드",
+                "description": "지원되는 1.x 릴리스 범위에서 Laravel Feeds를 안전하게 업그레이드하는 절차",
+                "keywords": [
+                    "upgrade",
+                    "Composer",
+                    "migration",
+                    "rollback",
+                    "compatibility"
+                ],
+                "headings": [
+                    "업그레이드 가이드",
+                    "업그레이드 전",
+                    "업데이트 적용",
+                    "검증",
+                    "롤백",
+                    "관련 문서"
+                ]
+            }
+        ],
+        "pt-BR": [
+            {
+                "route": "/pt-BR/",
+                "title": "Documentação do Laravel Feeds",
+                "description": "Exporte grandes conjuntos de dados do Laravel para XML, JSON, JSON Lines, CSV, RSS e feeds de marketplaces.",
+                "keywords": [
+                    "Laravel",
+                    "feeds",
+                    "data export",
+                    "documentation"
+                ],
+                "headings": [
+                    "Exporte grandes conjuntos de dados sem carregá-los por completo na memória",
+                    "Comece por uma tarefa e depois consulte a referência"
+                ]
+            },
+            {
+                "route": "/pt-BR/api/",
+                "title": "Referência da API",
+                "description": "Mapa das classes, contratos, objetos de dados, eventos e exceções públicos do Laravel Feeds",
+                "keywords": [
+                    "API",
+                    "reference",
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo"
+                ],
+                "headings": [
+                    "Referência da API",
+                    "Pontos de extensão",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/api/configuration/",
+                "title": "Referência de configuração",
+                "description": "Referência de todas as seções de configuração e variáveis de ambiente do Laravel Feeds",
+                "keywords": [
+                    "configuration",
+                    "environment",
+                    "queue",
+                    "schedule",
+                    "converters"
+                ],
+                "headings": [
+                    "Referência de configuração",
+                    "Configurações principais",
+                    "Agendamento e filas",
+                    "Transformadores",
+                    "Configurações dos conversores",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/api/events-exceptions/",
+                "title": "Eventos e exceções",
+                "description": "Referência dos eventos do ciclo de geração e dos tipos públicos de exceção",
+                "keywords": [
+                    "events",
+                    "exceptions",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "Eventos e exceções",
+                    "Eventos do ciclo de vida",
+                    "Falhas de entrada e busca",
+                    "Falhas de serialização e armazenamento",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/api/feed/",
+                "title": "Feeds e dados",
+                "description": "Contratos públicos de Feed, FeedItem, FeedInfo, ElementData e resultados de geração",
+                "keywords": [
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "ElementData",
+                    "GenerationResultData"
+                ],
+                "headings": [
+                    "Feeds e dados",
+                    "Feed",
+                    "FeedItem e FeedInfo",
+                    "ElementData",
+                    "Resultado da geração",
+                    "FeedFormatEnum",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/api/runtime/",
+                "title": "Serviços e contratos de execução",
+                "description": "APIs públicas de geração, registro, agendamento, transformação e valores opcionais",
+                "keywords": [
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData"
+                ],
+                "headings": [
+                    "Serviços e contratos de execução",
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/compatibility/",
+                "title": "Compatibilidade",
+                "description": "Contratos compatíveis de PHP, Laravel, armazenamento, fila e formatos no Laravel Feeds 1.x",
+                "keywords": [
+                    "compatibility",
+                    "PHP",
+                    "Laravel",
+                    "Flysystem",
+                    "formats"
+                ],
+                "headings": [
+                    "Compatibilidade",
+                    "Matriz de execução",
+                    "Formatos de saída",
+                    "Integrações opcionais",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/contributions/",
+                "title": "Guia de contribuição",
+                "description": "Instruções para desenvolvedores do projeto Laravel Feeds",
+                "keywords": [
+                    "contributing",
+                    "code style",
+                    "code of conduct"
+                ],
+                "headings": [
+                    "Guia de contribuição",
+                    "Estilo de código",
+                    "Código de conduta",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/create-feeds/",
+                "title": "Criar feeds",
+                "description": "Instruções para criar e preencher as classes do feed, dos itens e das informações",
+                "keywords": [
+                    "feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "make:feed"
+                ],
+                "headings": [
+                    "Criar feeds",
+                    "Preencher feeds",
+                    "Feed",
+                    "Item do feed",
+                    "Valores opcionais",
+                    "Formato do arquivo",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/directives/",
+                "title": "Diretivas",
+                "description": "Diretivas XML integradas para a saída dos feeds",
+                "keywords": [
+                    "XML",
+                    "directives",
+                    "attributes",
+                    "CDATA"
+                ],
+                "headings": [
+                    "Diretivas",
+                    "@attributes",
+                    "@value",
+                    "@cdata",
+                    "@mixed",
+                    "@custom",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/elements/",
+                "title": "Elementos",
+                "description": "Configurar a estrutura do feed: elemento raiz, bloco de informações, cabeçalho, rodapé e atributos",
+                "keywords": [
+                    "elements",
+                    "FeedInfo",
+                    "attributes",
+                    "split files"
+                ],
+                "headings": [
+                    "Elementos",
+                    "Elemento raiz",
+                    "Informações",
+                    "Cabeçalho e rodapé",
+                    "Atributos",
+                    "Dividir arquivos",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/eloquent/",
+                "title": "Eloquent",
+                "description": "Configure os modelos de registro dos feeds e o tamanho dos lotes das consultas.",
+                "keywords": [
+                    "Eloquent",
+                    "model",
+                    "FeedQuery",
+                    "chunk size"
+                ],
+                "headings": [
+                    "Eloquent",
+                    "Modelo personalizado de registro de feeds",
+                    "Tamanho do lote",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/events/",
+                "title": "Eventos",
+                "description": "Eventos disparados durante a geração dos feeds",
+                "keywords": [
+                    "events",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "Eventos",
+                    "Contrato do evento de conclusão",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/extending-functionality/",
+                "title": "Extensão de funcionalidades",
+                "description": "Estenda os feeds com cláusulas condicionais, macros e transformadores personalizados.",
+                "keywords": [
+                    "extensions",
+                    "macros",
+                    "transformers",
+                    "conditional clauses"
+                ],
+                "headings": [
+                    "Extensão de funcionalidades",
+                    "Cláusulas condicionais",
+                    "Macroable",
+                    "Transformadores personalizados",
+                    "Adicionar transformadores do feed no início",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/faq/",
+                "title": "Perguntas frequentes",
+                "description": "Respostas curtas para dúvidas comuns sobre configuração, geração, armazenamento e formatos",
+                "keywords": [
+                    "FAQ",
+                    "generation",
+                    "storage",
+                    "formats",
+                    "memory"
+                ],
+                "headings": [
+                    "Perguntas frequentes",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/generation/",
+                "title": "Geração e agendamento",
+                "description": "Informações sobre a geração de arquivos de feed para distribuição posterior",
+                "keywords": [
+                    "generation",
+                    "schedule",
+                    "queue",
+                    "feed:generate"
+                ],
+                "headings": [
+                    "Geração e agendamento",
+                    "Feed individual",
+                    "Saída para agentes de IA",
+                    "Fila",
+                    "Agendamento",
+                    "Automático",
+                    "Manual",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/installation/",
+                "title": "Instalação e configuração",
+                "description": "Informações sobre a instalação e configuração do Laravel Feeds",
+                "keywords": [
+                    "installation",
+                    "Composer",
+                    "configuration",
+                    "migration"
+                ],
+                "headings": [
+                    "Instalação e configuração",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/introduction/",
+                "title": "Primeiros passos",
+                "description": "Instale o Laravel Feeds e gere seu primeiro feed em cinco minutos",
+                "keywords": [
+                    "getting started",
+                    "Laravel",
+                    "feeds",
+                    "quick start"
+                ],
+                "headings": [
+                    "Primeiros passos",
+                    "Pré-requisitos",
+                    "Instalar e preparar",
+                    "Definir a fonte dos dados",
+                    "Definir cada item",
+                    "Gerar o arquivo",
+                    "Próximos passos"
+                ]
+            },
+            {
+                "route": "/pt-BR/license/",
+                "title": "Licença MIT",
+                "description": "Informações sobre a licença de distribuição do Laravel Feeds",
+                "keywords": [
+                    "MIT",
+                    "license",
+                    "copyright"
+                ],
+                "headings": [
+                    "Licença MIT",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/location/",
+                "title": "Armazenamento",
+                "description": "Configure o disco de armazenamento e o nome do arquivo de saída dos feeds gerados",
+                "keywords": [
+                    "storage",
+                    "filesystem",
+                    "filename",
+                    "publication"
+                ],
+                "headings": [
+                    "Armazenamento",
+                    "Discos compatíveis",
+                    "Contrato dos caminhos",
+                    "Garantias de publicação",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/machine-learning/",
+                "title": "Aprendizado de máquina",
+                "description": "Orientações para usar o projeto com LLMs e uma base de conhecimento consolidada",
+                "keywords": [
+                    "LLM",
+                    "llms.txt",
+                    "machine learning",
+                    "knowledge base"
+                ],
+                "headings": [
+                    "Aprendizado de máquina",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/performance/",
+                "title": "Desempenho com grandes conjuntos de dados",
+                "description": "Controle memória, carga do banco, divisão de arquivos, filas e armazenamento em feeds grandes",
+                "keywords": [
+                    "performance",
+                    "memory",
+                    "chunks",
+                    "large datasets",
+                    "queues"
+                ],
+                "headings": [
+                    "Desempenho com grandes conjuntos de dados",
+                    "Mantenha a consulta lazy",
+                    "Ajuste o tamanho do lote",
+                    "Divida os arquivos de saída",
+                    "Envie feeds longos para a fila",
+                    "Meça todo o caminho",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/presets/",
+                "title": "Predefinições",
+                "description": "Gere feeds rapidamente com predefinições incluídas (Instagram, Yandex, Sitemap, RSS)",
+                "keywords": [
+                    "presets",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS"
+                ],
+                "headings": [
+                    "Predefinições",
+                    "Valores padrão",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/receipt-instagram/",
+                "title": "Instagram",
+                "description": "Receita de geração de feed para o Instagram",
+                "keywords": [
+                    "Instagram",
+                    "product feed",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Instagram",
+                    "Criar os arquivos",
+                    "Preencher o feed",
+                    "Ativar",
+                    "Gerar o feed",
+                    "Resultado",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/receipt-rss-atom/",
+                "title": "RSS Atom",
+                "description": "Receita de geração de feed RSS Atom",
+                "keywords": [
+                    "RSS",
+                    "Atom",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "RSS Atom",
+                    "Criar os arquivos",
+                    "Preencher o feed",
+                    "Ativar",
+                    "Gerar o feed",
+                    "Resultado",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/receipt-sitemap/",
+                "title": "Sitemap",
+                "description": "Guia passo a passo para criar um feed de sitemap de produtos",
+                "keywords": [
+                    "Sitemap",
+                    "recipe",
+                    "SEO",
+                    "XML"
+                ],
+                "headings": [
+                    "Sitemap",
+                    "Criar os arquivos",
+                    "Preencher o feed",
+                    "Ativar",
+                    "Links",
+                    "Gerar o feed",
+                    "Adicionar um link ao sitemap.xml raiz",
+                    "Resultado",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/receipt-yandex/",
+                "title": "Yandex",
+                "description": "Receita de geração de feed para o Yandex",
+                "keywords": [
+                    "Yandex",
+                    "marketplace",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Yandex",
+                    "Criar os arquivos",
+                    "Preencher o feed",
+                    "Estrutura personalizada de categorias",
+                    "Ativar",
+                    "Gerar o feed",
+                    "Resultado",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/supported-formats/",
+                "title": "Formatos compatíveis",
+                "description": "Lista dos formatos compatíveis para exportação de feeds",
+                "keywords": [
+                    "XML",
+                    "JSON",
+                    "JSONL",
+                    "CSV",
+                    "RSS"
+                ],
+                "headings": [
+                    "Formatos compatíveis",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/troubleshooting/",
+                "title": "Solução de problemas",
+                "description": "Diagnostique falhas de configuração, geração, armazenamento, fila e saída do Laravel Feeds",
+                "keywords": [
+                    "troubleshooting",
+                    "errors",
+                    "queue",
+                    "storage",
+                    "diagnostics"
+                ],
+                "headings": [
+                    "Solução de problemas",
+                    "A classe do feed não foi encontrada",
+                    "A geração usa memória demais",
+                    "Um job da fila nunca é executado",
+                    "O disco de armazenamento é rejeitado",
+                    "A geração XML falha",
+                    "Linhas CSV falham depois do primeiro item",
+                    "Arquivos publicados estão incompletos ou antigos",
+                    "Veja também"
+                ]
+            },
+            {
+                "route": "/pt-BR/upgrade-guide/",
+                "title": "Guia de atualização",
+                "description": "Processo seguro para atualizar o Laravel Feeds dentro da linha 1.x compatível",
+                "keywords": [
+                    "upgrade",
+                    "Composer",
+                    "migration",
+                    "rollback",
+                    "compatibility"
+                ],
+                "headings": [
+                    "Guia de atualização",
+                    "Antes de atualizar",
+                    "Aplicar a atualização",
+                    "Verificar",
+                    "Reverter",
+                    "Veja também"
+                ]
+            }
+        ],
+        "ru": [
+            {
+                "route": "/ru/",
+                "title": "Документация Laravel Feeds",
+                "description": "Экспортируйте большие наборы данных Laravel в XML, JSON, JSON Lines, CSV, RSS и фиды маркетплейсов.",
+                "keywords": [
+                    "Laravel",
+                    "feeds",
+                    "data export",
+                    "documentation"
+                ],
+                "headings": [
+                    "Экспортируйте большие наборы данных без полной загрузки в память",
+                    "Начните с задачи, затем используйте справочник"
+                ]
+            },
+            {
+                "route": "/ru/api/",
+                "title": "Справочник API",
+                "description": "Карта публичных классов, контрактов, объектов данных, событий и исключений Laravel Feeds",
+                "keywords": [
+                    "API",
+                    "reference",
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo"
+                ],
+                "headings": [
+                    "Справочник API",
+                    "Точки расширения",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/api/configuration/",
+                "title": "Справочник по конфигурации",
+                "description": "Справочник по всем разделам конфигурации Laravel Feeds и переменным окружения",
+                "keywords": [
+                    "configuration",
+                    "environment",
+                    "queue",
+                    "schedule",
+                    "converters"
+                ],
+                "headings": [
+                    "Справочник по конфигурации",
+                    "Основные настройки",
+                    "Расписание и очереди",
+                    "Преобразователи",
+                    "Настройки конвертеров",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/api/events-exceptions/",
+                "title": "События и исключения",
+                "description": "Справочник по событиям жизненного цикла генерации и публичным типам исключений",
+                "keywords": [
+                    "events",
+                    "exceptions",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "События и исключения",
+                    "События жизненного цикла",
+                    "Ошибки ввода и поиска",
+                    "Ошибки сериализации и хранилища",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/api/feed/",
+                "title": "Фиды и данные",
+                "description": "Публичные контракты Feed, FeedItem, FeedInfo, ElementData и результатов генерации",
+                "keywords": [
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "ElementData",
+                    "GenerationResultData"
+                ],
+                "headings": [
+                    "Фиды и данные",
+                    "Feed",
+                    "FeedItem и FeedInfo",
+                    "ElementData",
+                    "Результат генерации",
+                    "FeedFormatEnum",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/api/runtime/",
+                "title": "Сервисы и контракты выполнения",
+                "description": "Публичные API генерации, регистрации, расписания, преобразования и необязательных значений",
+                "keywords": [
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData"
+                ],
+                "headings": [
+                    "Сервисы и контракты выполнения",
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/compatibility/",
+                "title": "Совместимость",
+                "description": "Поддерживаемые контракты PHP, Laravel, хранилища, очереди и форматов для Laravel Feeds 1.x",
+                "keywords": [
+                    "compatibility",
+                    "PHP",
+                    "Laravel",
+                    "Flysystem",
+                    "formats"
+                ],
+                "headings": [
+                    "Совместимость",
+                    "Матрица выполнения",
+                    "Форматы вывода",
+                    "Необязательные интеграции",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/contributions/",
+                "title": "Руководство по участию",
+                "description": "Инструкции для разработчиков проекта Laravel Feeds",
+                "keywords": [
+                    "contributing",
+                    "code style",
+                    "code of conduct"
+                ],
+                "headings": [
+                    "Руководство по участию",
+                    "Стиль кода",
+                    "Кодекс поведения",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/create-feeds/",
+                "title": "Создание фидов",
+                "description": "Инструкции по созданию и заполнению классов фида, элемента фида и информации о фиде",
+                "keywords": [
+                    "feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "make:feed"
+                ],
+                "headings": [
+                    "Создание фидов",
+                    "Заполнение фидов",
+                    "Фид",
+                    "Элемент фида",
+                    "Необязательные значения",
+                    "Формат файла",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/directives/",
+                "title": "Директивы",
+                "description": "Встроенные XML-директивы для вывода фидов",
+                "keywords": [
+                    "XML",
+                    "directives",
+                    "attributes",
+                    "CDATA"
+                ],
+                "headings": [
+                    "Директивы",
+                    "@attributes",
+                    "@value",
+                    "@cdata",
+                    "@mixed",
+                    "@custom",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/elements/",
+                "title": "Элементы",
+                "description": "Настройка структуры фида: корневой элемент, информационный блок, заголовок, нижняя часть и атрибуты",
+                "keywords": [
+                    "elements",
+                    "FeedInfo",
+                    "attributes",
+                    "split files"
+                ],
+                "headings": [
+                    "Элементы",
+                    "Корневой элемент",
+                    "Информация",
+                    "Заголовок и нижняя часть",
+                    "Атрибуты",
+                    "Разделение файлов",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/eloquent/",
+                "title": "Eloquent",
+                "description": "Настройка моделей регистрации фидов и размера блока запроса фида",
+                "keywords": [
+                    "Eloquent",
+                    "model",
+                    "FeedQuery",
+                    "chunk size"
+                ],
+                "headings": [
+                    "Eloquent",
+                    "Пользовательская модель регистрации фида",
+                    "Размер блока",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/events/",
+                "title": "События",
+                "description": "События, отправляемые во время генерации фида",
+                "keywords": [
+                    "events",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "События",
+                    "Контракт события завершения",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/extending-functionality/",
+                "title": "Расширение функциональности",
+                "description": "Расширение фидов условными конструкциями, макросами и пользовательскими преобразователями",
+                "keywords": [
+                    "extensions",
+                    "macros",
+                    "transformers",
+                    "conditional clauses"
+                ],
+                "headings": [
+                    "Расширение функциональности",
+                    "Условные конструкции",
+                    "Макросы",
+                    "Пользовательские преобразователи",
+                    "Добавление преобразователей фида в начало",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/faq/",
+                "title": "Частые вопросы",
+                "description": "Короткие ответы на частые вопросы о настройке, генерации, хранилище и форматах",
+                "keywords": [
+                    "FAQ",
+                    "generation",
+                    "storage",
+                    "formats",
+                    "memory"
+                ],
+                "headings": [
+                    "Частые вопросы",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/generation/",
+                "title": "Генерация и расписание",
+                "description": "Сведения о генерации файлов фидов для дальнейшего распространения",
+                "keywords": [
+                    "generation",
+                    "schedule",
+                    "queue",
+                    "feed:generate"
+                ],
+                "headings": [
+                    "Генерация и расписание",
+                    "Один фид",
+                    "Вывод для ИИ-агентов",
+                    "Очередь",
+                    "Расписание",
+                    "Автоматическое",
+                    "Ручное",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/installation/",
+                "title": "Установка и настройка",
+                "description": "Сведения об установке и настройке Laravel Feeds",
+                "keywords": [
+                    "installation",
+                    "Composer",
+                    "configuration",
+                    "migration"
+                ],
+                "headings": [
+                    "Установка и настройка",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/introduction/",
+                "title": "Начало работы",
+                "description": "Установите Laravel Feeds и сгенерируйте первый фид за пять минут",
+                "keywords": [
+                    "getting started",
+                    "Laravel",
+                    "feeds",
+                    "quick start"
+                ],
+                "headings": [
+                    "Начало работы",
+                    "Требования",
+                    "Установка и подготовка",
+                    "Источник данных",
+                    "Структура элемента",
+                    "Генерация файла",
+                    "Следующие шаги"
+                ]
+            },
+            {
+                "route": "/ru/license/",
+                "title": "Лицензия MIT",
+                "description": "Сведения о лицензии, на условиях которой распространяется Laravel Feeds",
+                "keywords": [
+                    "MIT",
+                    "license",
+                    "copyright"
+                ],
+                "headings": [
+                    "Лицензия MIT",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/location/",
+                "title": "Расположение",
+                "description": "Настройка диска хранения и имени выходного файла для сгенерированных фидов",
+                "keywords": [
+                    "storage",
+                    "filesystem",
+                    "filename",
+                    "publication"
+                ],
+                "headings": [
+                    "Расположение",
+                    "Поддерживаемые диски",
+                    "Контракт путей",
+                    "Гарантии публикации",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/machine-learning/",
+                "title": "Машинное обучение",
+                "description": "Рекомендации по использованию проекта с LLM и единой базой знаний",
+                "keywords": [
+                    "LLM",
+                    "llms.txt",
+                    "machine learning",
+                    "knowledge base"
+                ],
+                "headings": [
+                    "Машинное обучение",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/performance/",
+                "title": "Производительность на больших наборах данных",
+                "description": "Управление памятью, нагрузкой на базу, разделением файлов, очередями и скоростью хранилища",
+                "keywords": [
+                    "performance",
+                    "memory",
+                    "chunks",
+                    "large datasets",
+                    "queues"
+                ],
+                "headings": [
+                    "Производительность на больших наборах данных",
+                    "Оставляйте запрос ленивым",
+                    "Настраивайте размер блока",
+                    "Разделяйте выходные файлы",
+                    "Отправляйте долгие фиды в очередь",
+                    "Измеряйте весь путь",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/presets/",
+                "title": "Предустановки",
+                "description": "Быстрая генерация фидов со встроенными предустановками Instagram, Yandex, Sitemap и RSS",
+                "keywords": [
+                    "presets",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS"
+                ],
+                "headings": [
+                    "Предустановки",
+                    "Значения по умолчанию",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/receipt-instagram/",
+                "title": "Instagram",
+                "description": "Рецепт генерации фида для Instagram",
+                "keywords": [
+                    "Instagram",
+                    "product feed",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Instagram",
+                    "Создание файлов",
+                    "Заполнение фида",
+                    "Активация",
+                    "Генерация фида",
+                    "Результат",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/receipt-rss-atom/",
+                "title": "RSS Atom",
+                "description": "Рецепт генерации фида RSS Atom",
+                "keywords": [
+                    "RSS",
+                    "Atom",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "RSS Atom",
+                    "Создание файлов",
+                    "Заполнение фида",
+                    "Активация",
+                    "Генерация фида",
+                    "Результат",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/receipt-sitemap/",
+                "title": "Sitemap",
+                "description": "Пошаговое руководство по созданию фида карты сайта для товаров",
+                "keywords": [
+                    "Sitemap",
+                    "recipe",
+                    "SEO",
+                    "XML"
+                ],
+                "headings": [
+                    "Sitemap",
+                    "Создание файлов",
+                    "Заполнение фида",
+                    "Активация",
+                    "Ссылки",
+                    "Генерация фида",
+                    "Добавление ссылки в корневой sitemap.xml",
+                    "Результат",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/receipt-yandex/",
+                "title": "Yandex",
+                "description": "Рецепт генерации фида для Yandex",
+                "keywords": [
+                    "Yandex",
+                    "marketplace",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Yandex",
+                    "Создание файлов",
+                    "Заполнение фида",
+                    "Пользовательская структура категорий",
+                    "Активация",
+                    "Генерация фида",
+                    "Результат",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/supported-formats/",
+                "title": "Поддерживаемые форматы",
+                "description": "Список поддерживаемых форматов экспорта фидов",
+                "keywords": [
+                    "XML",
+                    "JSON",
+                    "JSONL",
+                    "CSV",
+                    "RSS"
+                ],
+                "headings": [
+                    "Поддерживаемые форматы",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/troubleshooting/",
+                "title": "Решение проблем",
+                "description": "Диагностика ошибок конфигурации, генерации, хранилища, очереди и вывода Laravel Feeds",
+                "keywords": [
+                    "troubleshooting",
+                    "errors",
+                    "queue",
+                    "storage",
+                    "diagnostics"
+                ],
+                "headings": [
+                    "Решение проблем",
+                    "Класс фида не найден",
+                    "Генерация использует слишком много памяти",
+                    "Задача очереди не запускается",
+                    "Диск хранилища отклонён",
+                    "Генерация XML завершается ошибкой",
+                    "Строки CSV ошибочны после первого элемента",
+                    "Опубликованные файлы неполные или устаревшие",
+                    "Смотрите также"
+                ]
+            },
+            {
+                "route": "/ru/upgrade-guide/",
+                "title": "Руководство по обновлению",
+                "description": "Безопасный процесс обновления Laravel Feeds в пределах поддерживаемой ветки 1.x",
+                "keywords": [
+                    "upgrade",
+                    "Composer",
+                    "migration",
+                    "rollback",
+                    "compatibility"
+                ],
+                "headings": [
+                    "Руководство по обновлению",
+                    "Перед обновлением",
+                    "Применение обновления",
+                    "Проверка",
+                    "Откат",
+                    "Смотрите также"
+                ]
+            }
+        ],
+        "uk": [
+            {
+                "route": "/uk/",
+                "title": "Документація Laravel Feeds",
+                "description": "Експортуйте великі набори даних Laravel у XML, JSON, JSON Lines, CSV, RSS і фіди маркетплейсів.",
+                "keywords": [
+                    "Laravel",
+                    "feeds",
+                    "data export",
+                    "documentation"
+                ],
+                "headings": [
+                    "Експортуйте великі набори даних без повного завантаження в пам'ять",
+                    "Почніть із завдання, потім використовуйте довідник"
+                ]
+            },
+            {
+                "route": "/uk/api/",
+                "title": "Довідник API",
+                "description": "Карта публічних класів, контрактів, об'єктів даних, подій і винятків Laravel Feeds",
+                "keywords": [
+                    "API",
+                    "reference",
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo"
+                ],
+                "headings": [
+                    "Довідник API",
+                    "Точки розширення",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/api/configuration/",
+                "title": "Довідник конфігурації",
+                "description": "Довідка для всіх розділів конфігурації та змінних середовища Laravel Feeds",
+                "keywords": [
+                    "configuration",
+                    "environment",
+                    "queue",
+                    "schedule",
+                    "converters"
+                ],
+                "headings": [
+                    "Довідник конфігурації",
+                    "Основні налаштування",
+                    "Розклад і черги",
+                    "Перетворювачі",
+                    "Налаштування конвертерів",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/api/events-exceptions/",
+                "title": "Події та винятки",
+                "description": "Довідка про події життєвого циклу генерування фіду та публічні типи винятків",
+                "keywords": [
+                    "events",
+                    "exceptions",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "Події та винятки",
+                    "Події життєвого циклу",
+                    "Помилки введення та пошуку",
+                    "Помилки серіалізації та сховища",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/api/feed/",
+                "title": "Фіди та дані",
+                "description": "Публічні контракти Feed, FeedItem, FeedInfo, ElementData і результатів генерування",
+                "keywords": [
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "ElementData",
+                    "GenerationResultData"
+                ],
+                "headings": [
+                    "Фіди та дані",
+                    "Feed",
+                    "FeedItem і FeedInfo",
+                    "ElementData",
+                    "Результат генерування",
+                    "FeedFormatEnum",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/api/runtime/",
+                "title": "Служби та контракти виконання",
+                "description": "Публічні API генерування, реєстрації, планування, перетворення та необов'язкових значень",
+                "keywords": [
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData"
+                ],
+                "headings": [
+                    "Служби та контракти виконання",
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/compatibility/",
+                "title": "Сумісність",
+                "description": "Підтримувані контракти PHP, Laravel, сховища, черги та форматів виведення для Laravel Feeds 1.x",
+                "keywords": [
+                    "compatibility",
+                    "PHP",
+                    "Laravel",
+                    "Flysystem",
+                    "formats"
+                ],
+                "headings": [
+                    "Сумісність",
+                    "Матриця середовища виконання",
+                    "Формати виведення",
+                    "Необов'язкові інтеграції",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/contributions/",
+                "title": "Посібник зі внеску",
+                "description": "Інструкції для розробників проєкту Laravel Feeds",
+                "keywords": [
+                    "contributing",
+                    "code style",
+                    "code of conduct"
+                ],
+                "headings": [
+                    "Посібник зі внеску",
+                    "Стиль коду",
+                    "Кодекс поведінки",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/create-feeds/",
+                "title": "Створення фідів",
+                "description": "Інструкції зі створення та наповнення класів фіду, його елемента й інформації",
+                "keywords": [
+                    "feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "make:feed"
+                ],
+                "headings": [
+                    "Створення фідів",
+                    "Наповнення фідів",
+                    "Фід",
+                    "Елемент фіду",
+                    "Необов’язкові значення",
+                    "Формат файлу",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/directives/",
+                "title": "Директиви",
+                "description": "Вбудовані XML-директиви для виведення фіду",
+                "keywords": [
+                    "XML",
+                    "directives",
+                    "attributes",
+                    "CDATA"
+                ],
+                "headings": [
+                    "Директиви",
+                    "@attributes",
+                    "@value",
+                    "@cdata",
+                    "@mixed",
+                    "@custom",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/elements/",
+                "title": "Елементи",
+                "description": "Налаштування структури фіду: кореневого елемента, інформаційного блока, заголовка, нижнього колонтитула й атрибутів",
+                "keywords": [
+                    "elements",
+                    "FeedInfo",
+                    "attributes",
+                    "split files"
+                ],
+                "headings": [
+                    "Елементи",
+                    "Кореневий елемент",
+                    "Інформація",
+                    "Заголовок і нижній колонтитул",
+                    "Атрибути",
+                    "Розділення файлів",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/eloquent/",
+                "title": "Eloquent",
+                "description": "Налаштування моделей реєстрації фідів і розміру блока запитів фіду",
+                "keywords": [
+                    "Eloquent",
+                    "model",
+                    "FeedQuery",
+                    "chunk size"
+                ],
+                "headings": [
+                    "Eloquent",
+                    "Власна модель реєстрації фіду",
+                    "Розмір блока",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/events/",
+                "title": "Події",
+                "description": "Події, що надсилаються під час генерування фіду",
+                "keywords": [
+                    "events",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "Події",
+                    "Контракт завершальної події",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/extending-functionality/",
+                "title": "Розширення функціональності",
+                "description": "Розширення фідів за допомогою умовних конструкцій, макросів і власних перетворювачів",
+                "keywords": [
+                    "extensions",
+                    "macros",
+                    "transformers",
+                    "conditional clauses"
+                ],
+                "headings": [
+                    "Розширення функціональності",
+                    "Умовні конструкції",
+                    "Макроси",
+                    "Власні перетворювачі",
+                    "Додавання перетворювачів фіду на початок",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/faq/",
+                "title": "Часті запитання",
+                "description": "Короткі відповіді на поширені запитання про налаштування, генерування, сховище та формати Laravel Feeds",
+                "keywords": [
+                    "FAQ",
+                    "generation",
+                    "storage",
+                    "formats",
+                    "memory"
+                ],
+                "headings": [
+                    "Часті запитання",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/generation/",
+                "title": "Генерування й розклад",
+                "description": "Відомості про генерування файлів фіду для подальшого розповсюдження",
+                "keywords": [
+                    "generation",
+                    "schedule",
+                    "queue",
+                    "feed:generate"
+                ],
+                "headings": [
+                    "Генерування й розклад",
+                    "Окремий фід",
+                    "Виведення для ШІ-агентів",
+                    "Черга",
+                    "Розклад",
+                    "Автоматичний",
+                    "Ручний",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/installation/",
+                "title": "Встановлення й налаштування",
+                "description": "Відомості про встановлення та налаштування Laravel Feeds",
+                "keywords": [
+                    "installation",
+                    "Composer",
+                    "configuration",
+                    "migration"
+                ],
+                "headings": [
+                    "Встановлення й налаштування",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/introduction/",
+                "title": "Початок роботи",
+                "description": "Установіть Laravel Feeds і згенеруйте перший фід за п'ять хвилин",
+                "keywords": [
+                    "getting started",
+                    "Laravel",
+                    "feeds",
+                    "quick start"
+                ],
+                "headings": [
+                    "Початок роботи",
+                    "Передумови",
+                    "Установлення та підготовка",
+                    "Визначення джерела даних",
+                    "Визначення кожного елемента",
+                    "Генерування файлу",
+                    "Наступні кроки"
+                ]
+            },
+            {
+                "route": "/uk/license/",
+                "title": "Ліцензія MIT",
+                "description": "Відомості про ліцензію, за якою розповсюджується Laravel Feeds",
+                "keywords": [
+                    "MIT",
+                    "license",
+                    "copyright"
+                ],
+                "headings": [
+                    "Ліцензія MIT",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/location/",
+                "title": "Розташування",
+                "description": "Налаштування диска зберігання та назви вихідного файлу для згенерованих фідів",
+                "keywords": [
+                    "storage",
+                    "filesystem",
+                    "filename",
+                    "publication"
+                ],
+                "headings": [
+                    "Розташування",
+                    "Підтримувані диски",
+                    "Контракт шляхів",
+                    "Гарантії публікації",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/machine-learning/",
+                "title": "Машинне навчання",
+                "description": "Рекомендації з використання проєкту з LLM та об’єднаною базою знань",
+                "keywords": [
+                    "LLM",
+                    "llms.txt",
+                    "machine learning",
+                    "knowledge base"
+                ],
+                "headings": [
+                    "Машинне навчання",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/performance/",
+                "title": "Швидкодія на великих наборах даних",
+                "description": "Керування пам'яттю, навантаженням на базу даних, розділенням файлів, чергами та пропускною здатністю сховища для великих фідів",
+                "keywords": [
+                    "performance",
+                    "memory",
+                    "chunks",
+                    "large datasets",
+                    "queues"
+                ],
+                "headings": [
+                    "Швидкодія на великих наборах даних",
+                    "Зберігайте запит ледачим",
+                    "Налаштуйте розмір блока",
+                    "Розділяйте вихідні файли",
+                    "Передавайте тривалі фіди до черги",
+                    "Вимірюйте весь шлях",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/presets/",
+                "title": "Шаблони",
+                "description": "Швидке генерування фідів за допомогою вбудованих шаблонів Instagram, Yandex, Sitemap і RSS",
+                "keywords": [
+                    "presets",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS"
+                ],
+                "headings": [
+                    "Шаблони",
+                    "Типові реалізації",
+                    "Instagram",
+                    "Yandex",
+                    "Карта сайту",
+                    "RSS",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/receipt-instagram/",
+                "title": "Instagram",
+                "description": "Приклад генерування фіду для Instagram",
+                "keywords": [
+                    "Instagram",
+                    "product feed",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Instagram",
+                    "Створення файлів",
+                    "Наповнення фіду",
+                    "Активація",
+                    "Генерування фіду",
+                    "Результат",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/receipt-rss-atom/",
+                "title": "RSS Atom",
+                "description": "Приклад генерування фіду RSS Atom",
+                "keywords": [
+                    "RSS",
+                    "Atom",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "RSS Atom",
+                    "Створення файлів",
+                    "Наповнення фіду",
+                    "Активація",
+                    "Генерування фіду",
+                    "Результат",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/receipt-sitemap/",
+                "title": "Карта сайту",
+                "description": "Покроковий посібник зі створення фіду карти сайту для товарів",
+                "keywords": [
+                    "Sitemap",
+                    "recipe",
+                    "SEO",
+                    "XML"
+                ],
+                "headings": [
+                    "Карта сайту",
+                    "Створення файлів",
+                    "Наповнення фіду",
+                    "Активація",
+                    "Посилання",
+                    "Генерування фіду",
+                    "Додавання посилання до кореневого sitemap.xml",
+                    "Результат",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/receipt-yandex/",
+                "title": "Yandex",
+                "description": "Приклад генерування фіду для Yandex",
+                "keywords": [
+                    "Yandex",
+                    "marketplace",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Yandex",
+                    "Створення файлів",
+                    "Наповнення фіду",
+                    "Власна структура категорій",
+                    "Активація",
+                    "Генерування фіду",
+                    "Результат",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/supported-formats/",
+                "title": "Підтримувані формати",
+                "description": "Список підтримуваних форматів експорту фідів",
+                "keywords": [
+                    "XML",
+                    "JSON",
+                    "JSONL",
+                    "CSV",
+                    "RSS"
+                ],
+                "headings": [
+                    "Підтримувані формати",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/troubleshooting/",
+                "title": "Розв'язання проблем",
+                "description": "Діагностика помилок конфігурації, генерування, сховища, черги та виведення Laravel Feeds",
+                "keywords": [
+                    "troubleshooting",
+                    "errors",
+                    "queue",
+                    "storage",
+                    "diagnostics"
+                ],
+                "headings": [
+                    "Розв'язання проблем",
+                    "Клас фіду не знайдено",
+                    "Генерування використовує забагато пам'яті",
+                    "Завдання черги не виконується",
+                    "Диск сховища відхилено",
+                    "Генерування XML завершується помилкою",
+                    "Рядки CSV завершуються помилкою після першого елемента",
+                    "Опубліковані файли неповні або застарілі",
+                    "Дивіться також"
+                ]
+            },
+            {
+                "route": "/uk/upgrade-guide/",
+                "title": "Посібник з оновлення",
+                "description": "Безпечний процес оновлення Laravel Feeds у межах підтримуваної гілки випусків 1.x",
+                "keywords": [
+                    "upgrade",
+                    "Composer",
+                    "migration",
+                    "rollback",
+                    "compatibility"
+                ],
+                "headings": [
+                    "Посібник з оновлення",
+                    "Перед оновленням",
+                    "Застосування оновлення",
+                    "Перевірка",
+                    "Відкат",
+                    "Дивіться також"
+                ]
+            }
+        ],
+        "zh-CN": [
+            {
+                "route": "/zh-CN/",
+                "title": "Laravel Feeds 文档",
+                "description": "将大型 Laravel 数据集导出为 XML、JSON、JSON Lines、CSV、RSS 和市场平台 Feed。",
+                "keywords": [
+                    "Laravel",
+                    "feeds",
+                    "data export",
+                    "documentation"
+                ],
+                "headings": [
+                    "无需将全部数据加载到内存即可导出大型数据集",
+                    "从任务开始，再查阅参考资料"
+                ]
+            },
+            {
+                "route": "/zh-CN/api/",
+                "title": "API 参考",
+                "description": "Laravel Feeds 公共类、契约、数据对象、事件和异常的参考索引",
+                "keywords": [
+                    "API",
+                    "reference",
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo"
+                ],
+                "headings": [
+                    "API 参考",
+                    "扩展点",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/api/configuration/",
+                "title": "配置参考",
+                "description": "Laravel Feeds 所有配置部分和环境变量的参考资料",
+                "keywords": [
+                    "configuration",
+                    "environment",
+                    "queue",
+                    "schedule",
+                    "converters"
+                ],
+                "headings": [
+                    "配置参考",
+                    "核心设置",
+                    "调度与队列",
+                    "转换器",
+                    "转换程序设置",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/api/events-exceptions/",
+                "title": "事件与异常",
+                "description": "Feed 生成生命周期事件和公共异常类型的参考资料",
+                "keywords": [
+                    "events",
+                    "exceptions",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "事件与异常",
+                    "生命周期事件",
+                    "输入与查找失败",
+                    "序列化与存储失败",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/api/feed/",
+                "title": "Feed 与数据",
+                "description": "Feed、FeedItem、FeedInfo、ElementData 和生成结果的公共契约",
+                "keywords": [
+                    "Feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "ElementData",
+                    "GenerationResultData"
+                ],
+                "headings": [
+                    "Feed 与数据",
+                    "Feed",
+                    "FeedItem 与 FeedInfo",
+                    "ElementData",
+                    "生成结果",
+                    "FeedFormatEnum",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/api/runtime/",
+                "title": "运行时服务与契约",
+                "description": "公共生成、注册、调度、转换和可选值 API",
+                "keywords": [
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData"
+                ],
+                "headings": [
+                    "运行时服务与契约",
+                    "GeneratorService",
+                    "FeedQuery",
+                    "ScheduleFeedHelper",
+                    "Transformer",
+                    "OptionalData",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/compatibility/",
+                "title": "兼容性",
+                "description": "Laravel Feeds 1.x 支持的 PHP、Laravel、存储、队列和输出格式契约",
+                "keywords": [
+                    "compatibility",
+                    "PHP",
+                    "Laravel",
+                    "Flysystem",
+                    "formats"
+                ],
+                "headings": [
+                    "兼容性",
+                    "运行时矩阵",
+                    "输出格式",
+                    "可选集成",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/contributions/",
+                "title": "贡献指南",
+                "description": "面向 Laravel Feeds 项目开发者的说明",
+                "keywords": [
+                    "contributing",
+                    "code style",
+                    "code of conduct"
+                ],
+                "headings": [
+                    "贡献指南",
+                    "代码风格",
+                    "行为准则",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/create-feeds/",
+                "title": "创建 Feed",
+                "description": "创建并填充 Feed、Feed 项和 Feed 信息类的说明",
+                "keywords": [
+                    "feed",
+                    "FeedItem",
+                    "FeedInfo",
+                    "make:feed"
+                ],
+                "headings": [
+                    "创建 Feed",
+                    "填充 Feed",
+                    "Feed",
+                    "Feed 项",
+                    "可选值",
+                    "文件格式",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/directives/",
+                "title": "指令",
+                "description": "用于 Feed 输出的内置 XML 指令",
+                "keywords": [
+                    "XML",
+                    "directives",
+                    "attributes",
+                    "CDATA"
+                ],
+                "headings": [
+                    "指令",
+                    "@attributes",
+                    "@value",
+                    "@cdata",
+                    "@mixed",
+                    "@custom",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/elements/",
+                "title": "元素",
+                "description": "配置 Feed 结构：根元素、信息块、页眉和页脚以及属性",
+                "keywords": [
+                    "elements",
+                    "FeedInfo",
+                    "attributes",
+                    "split files"
+                ],
+                "headings": [
+                    "元素",
+                    "根元素",
+                    "信息",
+                    "页眉和页脚",
+                    "属性",
+                    "拆分文件",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/eloquent/",
+                "title": "Eloquent",
+                "description": "配置 Feed 注册模型和 Feed 查询分块大小",
+                "keywords": [
+                    "Eloquent",
+                    "model",
+                    "FeedQuery",
+                    "chunk size"
+                ],
+                "headings": [
+                    "Eloquent",
+                    "自定义 Feed 注册模型",
+                    "分块大小",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/events/",
+                "title": "事件",
+                "description": "Feed 生成期间分发的事件",
+                "keywords": [
+                    "events",
+                    "FeedStartingEvent",
+                    "FeedFinishedEvent"
+                ],
+                "headings": [
+                    "事件",
+                    "完成事件契约",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/extending-functionality/",
+                "title": "扩展功能",
+                "description": "使用条件子句、宏和自定义转换器扩展 Feed",
+                "keywords": [
+                    "extensions",
+                    "macros",
+                    "transformers",
+                    "conditional clauses"
+                ],
+                "headings": [
+                    "扩展功能",
+                    "条件子句",
+                    "宏功能",
+                    "自定义转换器",
+                    "前置 Feed 转换器",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/faq/",
+                "title": "常见问题",
+                "description": "Laravel Feeds 设置、生成、存储和格式常见问题的简短答案",
+                "keywords": [
+                    "FAQ",
+                    "generation",
+                    "storage",
+                    "formats",
+                    "memory"
+                ],
+                "headings": [
+                    "常见问题",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/generation/",
+                "title": "生成与调度",
+                "description": "生成 Feed 文件以供后续分发的说明",
+                "keywords": [
+                    "generation",
+                    "schedule",
+                    "queue",
+                    "feed:generate"
+                ],
+                "headings": [
+                    "生成与调度",
+                    "单个 Feed",
+                    "AI 代理输出",
+                    "队列",
+                    "调度",
+                    "自动调度",
+                    "手动调度",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/installation/",
+                "title": "安装与设置",
+                "description": "安装和配置 Laravel Feeds 的说明",
+                "keywords": [
+                    "installation",
+                    "Composer",
+                    "configuration",
+                    "migration"
+                ],
+                "headings": [
+                    "安装与设置",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/introduction/",
+                "title": "入门",
+                "description": "安装 Laravel Feeds，并在五分钟内生成第一个 Feed",
+                "keywords": [
+                    "getting started",
+                    "Laravel",
+                    "feeds",
+                    "quick start"
+                ],
+                "headings": [
+                    "入门",
+                    "前置条件",
+                    "安装与准备",
+                    "定义数据源",
+                    "定义每个 Feed 项",
+                    "生成文件",
+                    "后续步骤"
+                ]
+            },
+            {
+                "route": "/zh-CN/license/",
+                "title": "MIT 许可证",
+                "description": "Laravel Feeds 分发所依据的许可证信息",
+                "keywords": [
+                    "MIT",
+                    "license",
+                    "copyright"
+                ],
+                "headings": [
+                    "MIT 许可证",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/location/",
+                "title": "存储位置",
+                "description": "配置生成 Feed 使用的存储磁盘和输出文件名",
+                "keywords": [
+                    "storage",
+                    "filesystem",
+                    "filename",
+                    "publication"
+                ],
+                "headings": [
+                    "存储位置",
+                    "支持的磁盘",
+                    "路径约定",
+                    "发布保证",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/machine-learning/",
+                "title": "机器学习",
+                "description": "将项目与 LLM 和统一知识库配合使用的指南",
+                "keywords": [
+                    "LLM",
+                    "llms.txt",
+                    "machine learning",
+                    "knowledge base"
+                ],
+                "headings": [
+                    "机器学习",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/performance/",
+                "title": "大型数据集性能",
+                "description": "控制大型 Feed 的内存、数据库负载、文件拆分、队列和存储吞吐量",
+                "keywords": [
+                    "performance",
+                    "memory",
+                    "chunks",
+                    "large datasets",
+                    "queues"
+                ],
+                "headings": [
+                    "大型数据集性能",
+                    "保持查询惰性",
+                    "调整分块大小",
+                    "拆分输出文件",
+                    "将长时间运行的 Feed 放入队列",
+                    "测量整个路径",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/presets/",
+                "title": "预设",
+                "description": "使用内置预设快速生成 Feed（Instagram、Yandex、站点地图、RSS）",
+                "keywords": [
+                    "presets",
+                    "Instagram",
+                    "Yandex",
+                    "Sitemap",
+                    "RSS"
+                ],
+                "headings": [
+                    "预设",
+                    "默认实现",
+                    "Instagram",
+                    "Yandex",
+                    "站点地图",
+                    "RSS",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/receipt-instagram/",
+                "title": "Instagram",
+                "description": "Instagram Feed 生成示例",
+                "keywords": [
+                    "Instagram",
+                    "product feed",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Instagram",
+                    "创建文件",
+                    "填充 Feed",
+                    "启用",
+                    "生成 Feed",
+                    "结果",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/receipt-rss-atom/",
+                "title": "RSS Atom",
+                "description": "RSS Atom Feed 生成示例",
+                "keywords": [
+                    "RSS",
+                    "Atom",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "RSS Atom",
+                    "创建文件",
+                    "填充 Feed",
+                    "启用",
+                    "生成 Feed",
+                    "结果",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/receipt-sitemap/",
+                "title": "站点地图",
+                "description": "创建产品站点地图 Feed 的分步指南",
+                "keywords": [
+                    "Sitemap",
+                    "recipe",
+                    "SEO",
+                    "XML"
+                ],
+                "headings": [
+                    "站点地图",
+                    "创建文件",
+                    "填充 Feed",
+                    "启用",
+                    "链接",
+                    "生成 Feed",
+                    "添加到根 sitemap.xml 的链接",
+                    "结果",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/receipt-yandex/",
+                "title": "Yandex",
+                "description": "Yandex Feed 生成示例",
+                "keywords": [
+                    "Yandex",
+                    "marketplace",
+                    "recipe",
+                    "XML"
+                ],
+                "headings": [
+                    "Yandex",
+                    "创建文件",
+                    "填充 Feed",
+                    "自定义分类结构",
+                    "启用",
+                    "生成 Feed",
+                    "结果",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/supported-formats/",
+                "title": "支持的格式",
+                "description": "支持的 Feed 导出格式列表",
+                "keywords": [
+                    "XML",
+                    "JSON",
+                    "JSONL",
+                    "CSV",
+                    "RSS"
+                ],
+                "headings": [
+                    "支持的格式",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/troubleshooting/",
+                "title": "故障排除",
+                "description": "诊断 Laravel Feeds 配置、生成、存储、队列和输出失败",
+                "keywords": [
+                    "troubleshooting",
+                    "errors",
+                    "queue",
+                    "storage",
+                    "diagnostics"
+                ],
+                "headings": [
+                    "故障排除",
+                    "找不到 Feed 类",
+                    "生成占用过多内存",
+                    "队列任务没有运行",
+                    "存储磁盘被拒绝",
+                    "XML 生成失败",
+                    "CSV 行在第一项之后失败",
+                    "已发布文件不完整或过期",
+                    "另请参阅"
+                ]
+            },
+            {
+                "route": "/zh-CN/upgrade-guide/",
+                "title": "升级指南",
+                "description": "在支持的 1.x 发布系列中安全升级 Laravel Feeds 的流程",
+                "keywords": [
+                    "upgrade",
+                    "Composer",
+                    "migration",
+                    "rollback",
+                    "compatibility"
+                ],
+                "headings": [
+                    "升级指南",
+                    "升级前",
+                    "应用更新",
+                    "验证",
+                    "回滚",
+                    "另请参阅"
+                ]
+            }
+        ]
+    }
 }

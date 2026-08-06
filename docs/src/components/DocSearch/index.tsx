@@ -1,5 +1,6 @@
 import Translate, { translate } from "@docusaurus/Translate";
 import Link from "@docusaurus/Link";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -12,26 +13,38 @@ type DocSearchProps = {
     mobile?: boolean;
 };
 
-const searchableRoutes = manifest.routes.map((route) => ({
-    ...route,
-    searchText: [
-        route.title,
-        route.description,
-        ...route.keywords,
-        ...route.headings.map((heading) => heading.text),
-    ]
-        .join(" ")
-        .toLocaleLowerCase("en-US"),
-}));
+type SearchRoute = (typeof manifest.search.en)[number];
+
+const searchIndexes = manifest.search as Record<string, SearchRoute[]>;
 
 export default function DocSearch({ className, mobile = false }: DocSearchProps) {
+    const { i18n } = useDocusaurusContext();
     const dialogRef = useRef<HTMLDialogElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [isReady, setIsReady] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState("");
+    const searchableRoutes = useMemo(
+        () =>
+            (searchIndexes[i18n.currentLocale] ?? searchIndexes.en).map(
+                (route) => ({
+                    ...route,
+                    searchText: [
+                        route.title,
+                        route.description,
+                        ...route.keywords,
+                        ...route.headings,
+                    ]
+                        .join(" ")
+                        .toLocaleLowerCase(i18n.currentLocale),
+                }),
+            ),
+        [i18n.currentLocale],
+    );
     const results = useMemo(() => {
-        const normalizedQuery = query.trim().toLocaleLowerCase("en-US");
+        const normalizedQuery = query
+            .trim()
+            .toLocaleLowerCase(i18n.currentLocale);
 
         return searchableRoutes
             .filter(
@@ -40,7 +53,7 @@ export default function DocSearch({ className, mobile = false }: DocSearchProps)
                     route.searchText.includes(normalizedQuery),
             )
             .slice(0, 8);
-    }, [query]);
+    }, [i18n.currentLocale, query, searchableRoutes]);
 
     useEffect(() => {
         setIsReady(true);
