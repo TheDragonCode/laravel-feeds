@@ -190,6 +190,17 @@ const translatableLines = (content) => {
         );
 };
 
+const translatableMdxAttributes = (content) => {
+    const withoutFences = normalize(content).replace(
+        /^```[^\r\n]*\r?\n[\s\S]*?^```\s*$/gm,
+        "",
+    );
+
+    return [...withoutFences.matchAll(
+        /\b(aria-label|alt|label|placeholder|title)\s*=\s*(["'])([\s\S]*?)\2/g,
+    )].map(([, name, , value]) => ({ name, value }));
+};
+
 let versions = [];
 
 try {
@@ -443,6 +454,31 @@ for (const locale of translatedLocales) {
             if (untranslatedLines.length > 0) {
                 errors.push(
                     `${locale}/${sourceVersion.name}/${file}: untranslated source lines: ${untranslatedLines.join(" | ")}`,
+                );
+            }
+
+            const sourceAttributes = translatableMdxAttributes(sourceText);
+            const localizedAttributes = translatableMdxAttributes(localizedText);
+
+            if (
+                JSON.stringify(sourceAttributes.map(({ name }) => name)) !==
+                JSON.stringify(localizedAttributes.map(({ name }) => name))
+            ) {
+                errors.push(
+                    `${locale}/${sourceVersion.name}/${file}: translatable MDX attributes changed`,
+                );
+                continue;
+            }
+
+            const untranslatedAttributes = sourceAttributes.filter(
+                ({ value }, index) =>
+                    value === localizedAttributes[index].value &&
+                    !isNeutralSourceLine(value),
+            );
+
+            if (untranslatedAttributes.length > 0) {
+                errors.push(
+                    `${locale}/${sourceVersion.name}/${file}: untranslated MDX attributes: ${untranslatedAttributes.map(({ name, value }) => `${name}="${value}"`).join(" | ")}`,
                 );
             }
         }

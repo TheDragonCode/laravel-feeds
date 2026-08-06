@@ -38,6 +38,24 @@ test("search opens from the keyboard and navigates", async ({ page }) => {
     ).toBeVisible();
 });
 
+test("search indexes page bodies", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Search" }).click();
+
+    const dialog = page.getByRole("dialog", { name: "Search documentation" });
+    const searchbox = dialog.getByRole("searchbox");
+
+    await searchbox.fill("deleteByClass");
+    await expect(
+        dialog.getByRole("link", { name: /Runtime services and contracts/ }),
+    ).toBeVisible();
+
+    await searchbox.fill("FEED_QUEUE_NAME");
+    await expect(
+        dialog.getByRole("link", { name: /Configuration reference/ }),
+    ).toBeVisible();
+});
+
 test("search closes with Escape", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: "Search" }).click();

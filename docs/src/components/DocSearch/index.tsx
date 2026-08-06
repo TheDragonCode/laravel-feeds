@@ -4,8 +4,6 @@ import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import manifest from "@site/routes.json";
-
 import styles from "./styles.module.css";
 
 type DocSearchProps = {
@@ -13,9 +11,14 @@ type DocSearchProps = {
     mobile?: boolean;
 };
 
-type SearchRoute = (typeof manifest.search.en)[number];
-
-const searchIndexes = manifest.search as Record<string, SearchRoute[]>;
+type SearchRoute = {
+    content: string;
+    description: string;
+    headings: string[];
+    keywords: string[];
+    route: string;
+    title: string;
+};
 
 export default function DocSearch({ className, mobile = false }: DocSearchProps) {
     const { i18n } = useDocusaurusContext();
@@ -24,9 +27,13 @@ export default function DocSearch({ className, mobile = false }: DocSearchProps)
     const [isReady, setIsReady] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState("");
+    const [searchIndexes, setSearchIndexes] = useState<Record<
+        string,
+        SearchRoute[]
+    > | null>(null);
     const searchableRoutes = useMemo(
         () =>
-            (searchIndexes[i18n.currentLocale] ?? searchIndexes.en).map(
+            (searchIndexes?.[i18n.currentLocale] ?? searchIndexes?.en ?? []).map(
                 (route) => ({
                     ...route,
                     searchText: [
@@ -34,12 +41,13 @@ export default function DocSearch({ className, mobile = false }: DocSearchProps)
                         route.description,
                         ...route.keywords,
                         ...route.headings,
+                        route.content,
                     ]
                         .join(" ")
                         .toLocaleLowerCase(i18n.currentLocale),
                 }),
             ),
-        [i18n.currentLocale],
+        [i18n.currentLocale, searchIndexes],
     );
     const results = useMemo(() => {
         const normalizedQuery = query
@@ -67,6 +75,24 @@ export default function DocSearch({ className, mobile = false }: DocSearchProps)
         dialogRef.current?.showModal();
         inputRef.current?.focus();
     }, [isOpen]);
+
+    useEffect(() => {
+        if (!isOpen || searchIndexes) {
+            return;
+        }
+
+        let active = true;
+
+        void import("@site/routes.json").then(({ default: manifest }) => {
+            if (active) {
+                setSearchIndexes(manifest.search as Record<string, SearchRoute[]>);
+            }
+        });
+
+        return () => {
+            active = false;
+        };
+    }, [isOpen, searchIndexes]);
 
     useEffect(() => {
         if (mobile) {
@@ -158,13 +184,13 @@ export default function DocSearch({ className, mobile = false }: DocSearchProps)
                                     <span>{route.description}</span>
                                 </Link>
                             ))
-                        ) : (
+                        ) : searchIndexes ? (
                             <p>
                                 <Translate id="search.empty">
                                     No matching documentation found.
                                 </Translate>
                             </p>
-                        )}
+                        ) : null}
                     </div>
                 </div>
             </dialog>

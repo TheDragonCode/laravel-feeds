@@ -63,6 +63,17 @@ const scalar = (value) => {
     return trimmed;
 };
 
+const plainText = (content) =>
+    content
+        .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+        .replace(/!\[([^\]]*)\]\([^)]+\)/g, "$1")
+        .replace(/\[([^\]]+)]\([^)]+\)/g, "$1")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/[`*~#>|]/g, " ")
+        .replace(/:::[A-Za-z-]*/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
 const parsePage = (source, content) => {
     const normalized = normalize(content);
     const match = normalized.match(/^---\n([\s\S]*?)\n---(?:\n|$)/);
@@ -132,7 +143,11 @@ const parsePage = (source, content) => {
         },
     );
 
-    return { metadata: { ...metadata, keywords }, headings };
+    return {
+        metadata: { ...metadata, keywords },
+        headings,
+        content: plainText(body),
+    };
 };
 
 const routeFor = (source, slug) => {
@@ -150,6 +165,7 @@ const searchEntry = (page, route) => ({
     description: page.description,
     keywords: page.keywords,
     headings: page.headings.map((heading) => heading.text),
+    content: page.content,
 });
 
 const localizedMessage = (catalog, locale, id) => {
@@ -190,6 +206,7 @@ const homepage = {
     status: "stable",
     since: "1.0",
     keywords: ["Laravel", "feeds", "data export", "documentation"],
+    content: "",
     headings: [
         {
             level: 1,
@@ -226,6 +243,7 @@ for (const source of await listPages(docsDirectory)) {
         since: parsed.metadata.since,
         keywords: parsed.metadata.keywords,
         headings: parsed.headings,
+        content: parsed.content,
     });
 }
 
@@ -286,6 +304,7 @@ for (const locale of locales.filter((locale) => locale !== defaultLocale)) {
                 "homepage.meta.description",
             ),
             keywords: homepage.keywords,
+            content: "",
             headings: [
                 {
                     ...homepage.headings[0],
@@ -311,6 +330,7 @@ for (const locale of locales.filter((locale) => locale !== defaultLocale)) {
             description: parsed.metadata.description,
             keywords: parsed.metadata.keywords,
             headings: parsed.headings,
+            content: parsed.content,
         });
     }
 
@@ -330,7 +350,14 @@ for (const locale of locales.filter((locale) => locale !== defaultLocale)) {
     );
 }
 
-const output = `${JSON.stringify({ version: 2, routes, search }, null, 4)}\n`;
+const manifestRoutes = routes.map((route) => {
+    const manifestRoute = { ...route };
+
+    delete manifestRoute.content;
+
+    return manifestRoute;
+});
+const output = `${JSON.stringify({ version: 2, routes: manifestRoutes, search }, null, 4)}\n`;
 
 if (process.argv.includes("--check")) {
     const current = normalize(await readFile(manifestPath, "utf8"));
