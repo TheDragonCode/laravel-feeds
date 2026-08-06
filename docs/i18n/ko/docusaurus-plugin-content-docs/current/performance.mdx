@@ -48,12 +48,9 @@ public function perFile(): int
 {
     return 50000;
 }
-
-public function maxFiles(): int
-{
-    return 20;
-}
 ```
+
+일치하는 모든 레코드를 내보내야 한다면 `maxFiles()`의 기본값 `0`을 유지하십시오. `perFile()`과 `maxFiles()`가 모두 0보다 크면 Laravel Feeds는 두 값의 곱만큼만 내보내고 이후 레코드가 제외되었다는 알림 없이 성공적으로 완료됩니다. 이 레코드 제한이 의도된 경우에만 `maxFiles()`를 설정하십시오.
 
 ## 장시간 실행 피드를 큐로 이동 {/* #queue-long-running */}
 

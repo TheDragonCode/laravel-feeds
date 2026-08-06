@@ -48,12 +48,9 @@ public function perFile(): int
 {
     return 50000;
 }
-
-public function maxFiles(): int
-{
-    return 20;
-}
 ```
+
+Leave `maxFiles()` at its default `0` when every matching record must be exported. When both `perFile()` and `maxFiles()` are greater than zero, Laravel Feeds exports at most their product and completes successfully without reporting that later records were omitted. Set `maxFiles()` only when that record cap is intentional.
 
 ## Queue long-running feeds {/* #queue-long-running */}
 

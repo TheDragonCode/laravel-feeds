@@ -48,12 +48,9 @@ public function perFile(): int
 {
     return 50000;
 }
-
-public function maxFiles(): int
-{
-    return 20;
-}
 ```
+
+Belassen Sie `maxFiles()` beim Standardwert `0`, wenn alle passenden Datensätze exportiert werden müssen. Sind `perFile()` und `maxFiles()` beide größer als null, exportiert Laravel Feeds höchstens ihr Produkt und beendet die Generierung erfolgreich, ohne auf die ausgelassenen weiteren Datensätze hinzuweisen. Setzen Sie `maxFiles()` nur, wenn diese Begrenzung der Datensatzanzahl beabsichtigt ist.
 
 ## Lang laufende Feeds in die Queue stellen {/* #queue-long-running */}
 

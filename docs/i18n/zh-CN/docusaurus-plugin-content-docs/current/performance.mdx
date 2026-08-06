@@ -48,12 +48,9 @@ public function perFile(): int
 {
     return 50000;
 }
-
-public function maxFiles(): int
-{
-    return 20;
-}
 ```
+
+如果必须导出所有匹配的记录，请保留 `maxFiles()` 的默认值 `0`。当 `perFile()` 和 `maxFiles()` 都大于零时，Laravel Feeds 最多只会导出两者乘积数量的记录，并在不提示后续记录已被省略的情况下成功完成。仅在有意限制记录总数时设置 `maxFiles()`。
 
 ## 将长时间运行的 Feed 放入队列 {/* #queue-long-running */}
 

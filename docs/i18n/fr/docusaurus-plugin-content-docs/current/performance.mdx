@@ -48,12 +48,9 @@ public function perFile(): int
 {
     return 50000;
 }
-
-public function maxFiles(): int
-{
-    return 20;
-}
 ```
+
+Laissez `maxFiles()` à sa valeur par défaut `0` lorsque tous les enregistrements correspondants doivent être exportés. Lorsque `perFile()` et `maxFiles()` sont tous deux supérieurs à zéro, Laravel Feeds exporte au plus leur produit et termine la génération avec succès sans signaler les enregistrements suivants omis. Définissez `maxFiles()` uniquement si cette limite du nombre d’enregistrements est volontaire.
 
 ## Mettre les flux longs en file d’attente {/* #queue-long-running */}
 
