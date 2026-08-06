@@ -1,0 +1,11 @@
+.lead {
+    max-inline-size: 66ch;
+    margin-block: 0 var(--space-8);
+    color: var(--color-text-muted);
+    font-size: 1.125rem;
+    line-height: 1.65;
+}
+
+.lead > :last-child {
+    margin-block-end: 0;
+}

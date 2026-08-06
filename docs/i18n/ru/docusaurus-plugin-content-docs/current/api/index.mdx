@@ -1,0 +1,40 @@
+---
+title: "Справочник API"
+description: "Карта публичных классов, контрактов, объектов данных, событий и исключений Laravel Feeds"
+slug: /api/
+type: reference
+status: stable
+since: "1.0"
+keywords: ["API", "reference", "Feed", "FeedItem", "FeedInfo"]
+---
+
+# Справочник API
+
+<PageLead>
+Используйте этот раздел, если процесс уже известен и нужен точный класс, метод, ключ конфигурации, событие или контракт ошибки.
+</PageLead>
+
+| Область | Основные точки входа | Справочник |
+| --- | --- | --- |
+| Конфигурация | `config/feeds.php` | [Конфигурация](./configuration.mdx) |
+| Классы фидов | `Feed`, `FeedItem`, `FeedInfo` | [Фиды и данные](./feed.mdx) |
+| Структура вывода | `ElementData`, директивы XML | [Элементы](../elements.mdx), [Директивы](../directives.mdx) |
+| Форматы | `FeedFormatEnum`, конвертеры | [Поддерживаемые форматы](../supported-formats.mdx) |
+| Выполнение | `GeneratorService`, `FeedQuery`, `ScheduleFeedHelper` | [Сервисы и контракты выполнения](./runtime.mdx) |
+| Жизненный цикл | События начала и завершения | [События и исключения](./events-exceptions.mdx) |
+| Предустановки | Sitemap, RSS, Instagram, Yandex | [Предустановки](../presets.mdx) |
+
+## Точки расширения {/* #extension-points */}
+
+- Расширьте `Feed` или предустановку, чтобы задать источник данных и контракт вывода.
+- Расширьте `FeedItem` и `FeedInfo`, чтобы управлять сериализованными данными.
+- Реализуйте `DragonCode\LaravelFeed\Contracts\Transformer` для пользовательского преобразования скалярных значений.
+- Возвращайте `DragonCode\LaravelFeed\Data\OptionalData`, если поле нужно пропустить.
+- Регистрируйте макросы в `Feed`, `FeedItem` или `FeedInfo` для вспомогательных методов приложения.
+
+## Смотрите также
+
+- [Создание фидов](../create-feeds.mdx)
+- [Расширение функциональности](../extending-functionality.mdx)
+- [Решение проблем](../troubleshooting.mdx)
+

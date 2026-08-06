@@ -3,20 +3,28 @@
     "message": "1.x",
     "description": "Позначка поточної версії"
   },
-  "sidebar.docs.category.Getting Started": {
-    "message": "Початок роботи",
-    "description": "Позначка категорії 'Getting Started' на бічній панелі 'docs'"
-  },
-  "sidebar.docs.category.Digging Deeper": {
-    "message": "Докладніше",
-    "description": "Позначка категорії 'Digging Deeper' на бічній панелі 'docs'"
-  },
-  "sidebar.docs.category.Recipes": {
-    "message": "Приклади",
-    "description": "Позначка категорії 'Recipes' на бічній панелі 'docs'"
-  },
   "sidebar.docs.category.Project": {
     "message": "Проєкт",
     "description": "Позначка категорії 'Project' на бічній панелі 'docs'"
+  },
+  "sidebar.docs.category.Quick Start": {
+    "message": "Швидкий старт",
+    "description": "Позначка категорії 'Швидкий старт' на бічній панелі 'docs'"
+  },
+  "sidebar.docs.category.Guides": {
+    "message": "Посібники",
+    "description": "Позначка категорії 'Посібники' на бічній панелі 'docs'"
+  },
+  "sidebar.docs.category.Formats & Recipes": {
+    "message": "Формати та приклади",
+    "description": "Позначка категорії 'Формати та приклади' на бічній панелі 'docs'"
+  },
+  "sidebar.docs.category.API Reference": {
+    "message": "Довідник API",
+    "description": "Позначка категорії 'Довідник API' на бічній панелі 'docs'"
+  },
+  "sidebar.docs.category.Troubleshooting": {
+    "message": "Розв'язання проблем",
+    "description": "Позначка категорії 'Розв'язання проблем' на бічній панелі 'docs'"
   }
 }

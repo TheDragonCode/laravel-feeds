@@ -4,11 +4,15 @@
     "description": "Заголовок на панелі навігації"
   },
   "logo.alt": {
-    "message": "Laravel Feeds",
+    "message": "Логотип проєкту",
     "description": "Альтернативний текст логотипа на панелі навігації"
   },
   "item.label.GitHub": {
     "message": "GitHub",
     "description": "Елемент панелі навігації з позначкою GitHub"
+  },
+  "item.label.Documentation": {
+    "message": "Документація",
+    "description": "Елемент панелі навігації з позначкою «Документація»"
   }
 }

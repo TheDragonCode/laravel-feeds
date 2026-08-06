@@ -4,31 +4,34 @@ const sidebars: SidebarsConfig = {
     docs: [
         {
             type: "category",
-            label: "Getting Started",
+            label: "Quick Start",
             link: {
                 type: "doc",
                 id: "introduction",
             },
-            items: ["installation", "create-feeds", "generation"],
+            items: [
+                "installation",
+                "create-feeds",
+                "performance",
+            ],
         },
         {
             type: "category",
-            label: "Digging Deeper",
+            label: "Guides",
             items: [
-                "supported-formats",
-                "elements",
-                "directives",
+                "generation",
                 "eloquent",
                 "location",
-                "presets",
                 "events",
                 "extending-functionality",
             ],
         },
         {
             type: "category",
-            label: "Recipes",
+            label: "Formats & Recipes",
             items: [
+                "supported-formats",
+                "presets",
                 "receipt-sitemap",
                 "receipt-instagram",
                 "receipt-yandex",
@@ -37,8 +40,39 @@ const sidebars: SidebarsConfig = {
         },
         {
             type: "category",
+            label: "API Reference",
+            link: {
+                type: "doc",
+                id: "api/index",
+            },
+            items: [
+                "api/configuration",
+                "api/feed",
+                "api/runtime",
+                "elements",
+                "directives",
+                "api/events-exceptions",
+            ],
+        },
+        {
+            type: "category",
+            label: "Troubleshooting",
+            link: {
+                type: "doc",
+                id: "faq",
+            },
+            items: ["troubleshooting"],
+        },
+        {
+            type: "category",
             label: "Project",
-            items: ["contributions", "machine-learning", "license"],
+            items: [
+                "upgrade-guide",
+                "compatibility",
+                "contributions",
+                "machine-learning",
+                "license",
+            ],
         },
     ],
 };

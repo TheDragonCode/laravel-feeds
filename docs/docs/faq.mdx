@@ -1,0 +1,68 @@
+---
+title: "Frequently asked questions"
+description: "Short answers to common Laravel Feeds setup, generation, storage, and format questions"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["FAQ", "generation", "storage", "formats", "memory"]
+---
+
+# Frequently asked questions
+
+<PageLead>
+Short answers to common setup, generation, storage, format, and memory questions.
+</PageLead>
+
+<details className="faqItem" id="large-datasets">
+<summary>Can Laravel Feeds export millions of records?</summary>
+
+Yes. The package reads Eloquent results in chunks and writes output incrementally. Keep `builder()` lazy, avoid calling `get()` or `toArray()` on the full result, and tune `chunkSize()` after measuring memory and database load.
+
+See [large dataset performance](./performance.mdx).
+</details>
+
+<details className="faqItem" id="choose-format">
+<summary>Which format should I use?</summary>
+
+Use the consumer's required contract. XML and RSS support hierarchical directives, JSON preserves nested data, JSON Lines is suited to line-oriented processing, and CSV requires a stable column schema.
+
+See [supported formats](./supported-formats.mdx).
+</details>
+
+<details className="faqItem" id="split-files">
+<summary>Can one feed create multiple files?</summary>
+
+Yes. Override `perFile()` to set the number of records per file and `maxFiles()` to set an optional cap. Split files receive sequential suffixes.
+
+See [split files](./elements.mdx#split_files).
+</details>
+
+<details className="faqItem" id="remote-storage">
+<summary>Can I store feeds on S3 or another remote disk?</summary>
+
+Yes, when the configured Laravel disk resolves to a writable `FilesystemAdapter`. Remote moves may be implemented as copy and delete, so atomic replacement is not guaranteed.
+
+See [supported disks](./location.mdx#supported_disks).
+</details>
+
+<details className="faqItem" id="disabled-feed">
+<summary>Why did a disabled feed run?</summary>
+
+Passing a feed ID to `feed:generate` executes that feed even when its registration is inactive. Running the command without an ID skips inactive registrations.
+
+See [single feed generation](./generation.mdx#single_feed).
+</details>
+
+<details className="faqItem" id="optional-field">
+<summary>How do I omit an optional field?</summary>
+
+Return `DragonCode\LaravelFeed\Data\OptionalData` or `Spatie\LaravelData\Optional` as the field value. CSV keeps the column and writes an empty value; object and XML formats omit the field.
+
+See [optional values](./create-feeds.mdx#optional_values).
+</details>
+
+## See Also
+
+- [Troubleshooting](./troubleshooting.mdx)
+- [Configuration reference](./api/configuration.mdx)
+- [API reference](./api/index.mdx)

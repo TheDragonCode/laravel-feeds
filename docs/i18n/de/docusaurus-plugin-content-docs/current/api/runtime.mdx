@@ -1,0 +1,80 @@
+---
+title: "Laufzeitdienste und Verträge"
+description: "Öffentliche APIs für Generierung, Registrierung, Zeitplanung, Transformation und optionale Werte"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+---
+
+# Laufzeitdienste und Verträge
+
+<PageLead>
+Diese Einstiegspunkte unterstützen programmgesteuerte Generierung, Feed-Registrierung, Scheduler-Integration, skalare Transformation und optionale Felder.
+</PageLead>
+
+## GeneratorService {/* #generator-service */}
+
+`DragonCode\LaravelFeed\Services\GeneratorService` erzeugt und veröffentlicht einen Feed.
+
+<ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
+
+Die Methode veröffentlicht alle Teile als einen Vorgang, aktualisiert die letzte Aktivität der Registrierung, löst Lebenszyklusereignisse aus und gibt Pfade mit der Anzahl der Datensätze pro Datei zurück. Generierungsfehler werden in `FeedGenerationException` eingeschlossen; die ursprüngliche Ausnahme bleibt als vorherige Ausnahme erhalten.
+
+Lösen Sie den Dienst über Laravels Container auf, anstatt seine internen Abhängigkeiten selbst zu erstellen.
+
+```php
+use App\Feeds\UserFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+
+$result = app(GeneratorService::class)->feed(app(UserFeed::class));
+
+foreach ($result->records as $path => $count) {
+    processFeedResult($path, $count);
+}
+```
+
+## FeedQuery {/* #feed-query */}
+
+`DragonCode\LaravelFeed\Queries\FeedQuery` verwaltet gespeicherte Feed-Registrierungen.
+
+| Methode | Ergebnis |
+| --- | --- |
+| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Erstellt eine Registrierung. |
+| `find(int $id): Feed` | Gibt eine Registrierung zurück oder löst `FeedNotFoundException` aus. |
+| `all(): Builder` | Gibt alle Registrierungen nach ID sortiert zurück. |
+| `active(): Builder` | Gibt aktive Registrierungen nach ID sortiert zurück. |
+| `setLastActivity(string $class): void` | Aktualisiert `last_activity` für eine Feed-Klasse. |
+| `delete(int $id): void` | Löscht eine Registrierung anhand der ID vorläufig. |
+| `deleteByClass(string $class): void` | Entfernt Registrierungen einer Klasse einschließlich gelöschter Zeilen endgültig. |
+| `restore(int $id): void` | Stellt eine vorläufig gelöschte Registrierung wieder her. |
+
+Verwenden Sie für normale Registrierungsänderungen die erzeugte Migration oder Deployment-Operation, damit sie in allen Umgebungen reproduzierbar bleiben.
+
+## ScheduleFeedHelper {/* #schedule-feed-helper */}
+
+`DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper::register()` fügt aktive Registrierungen zum Laravel-Scheduler hinzu. Jede Registrierung verwendet ihren gespeicherten Cron-Ausdruck und eine Überlappungssperre. Hintergrundausführung und Sperrzeit stammen aus der Konfiguration `feeds.schedule`.
+
+Die Registrierung wird sicher übersprungen, wenn die konfigurierte Feed-Tabelle nicht existiert.
+
+## Transformer {/* #transformer */}
+
+Implementieren Sie `DragonCode\LaravelFeed\Contracts\Transformer`, um unterstützte Werte vor der Serialisierung umzuwandeln.
+
+<ApiSignature>public function allow(mixed $value): bool</ApiSignature>
+
+<ApiSignature>public function transform(mixed $value): string</ApiSignature>
+
+`allow()` entscheidet, ob der Transformer einen Wert annimmt. `transform()` gibt seine serialisierte skalare Darstellung zurück. Fügen Sie die Klasse über `Feed::transformers()` oder `feeds.transformers` hinzu.
+
+## OptionalData {/* #optional-data */}
+
+Geben Sie für ein Feld, das bei fehlendem Wert ausgelassen werden soll, ein neues `DragonCode\LaravelFeed\Data\OptionalData` zurück. XML, RSS, JSON und JSON Lines lassen das Feld aus. CSV behält die Spalte bei und schreibt ein leeres Feld.
+
+## Siehe auch
+
+- [Feeds und Daten](./feed.mdx)
+- [Konfiguration](./configuration.mdx)
+- [Ereignisse und Ausnahmen](./events-exceptions.mdx)
+- [Generierung und Zeitplanung](../generation.mdx)
+

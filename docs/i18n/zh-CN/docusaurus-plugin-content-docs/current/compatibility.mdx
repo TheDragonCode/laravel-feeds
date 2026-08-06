@@ -1,0 +1,52 @@
+---
+title: "兼容性"
+description: "Laravel Feeds 1.x 支持的 PHP、Laravel、存储、队列和输出格式契约"
+type: project
+status: stable
+since: "1.0"
+keywords: ["compatibility", "PHP", "Laravel", "Flysystem", "formats"]
+---
+
+# 兼容性
+
+<PageLead>
+对于具体应用，请以 Composer 解析出的依赖关系图作为最终兼容性检查依据。
+</PageLead>
+
+## 运行时矩阵 {/* #runtime-matrix */}
+
+<ResponsiveTable label="Laravel Feeds runtime compatibility">
+
+| 组件 | 支持的版本 |
+| --- | --- |
+| PHP | `8.2` 以及已安装软件包约束允许的更高 `8.x` 版本 |
+| Laravel 组件 | `11.x`、`12.x`、`13.x` |
+| 数据库 | 配置的 Eloquent 模型和迁移支持的任意 Laravel 连接 |
+| 文件系统 | 可写且解析为 `FilesystemAdapter` 的 Laravel 磁盘 |
+
+</ResponsiveTable>
+
+对于具体应用，已安装的 `composer.lock` 是最终依据。Composer 会拒绝不支持的组合。
+
+## 输出格式 {/* #output-formats */}
+
+| 格式 | 扩展名 | 嵌套数据 | XML 指令 |
+| --- | --- | --- | --- |
+| XML | `.xml` | 支持 | 支持 |
+| JSON | `.json` | 支持 | 不支持 |
+| JSON Lines | `.jsonl` | 每行一个 JSON 值 | 不支持 |
+| CSV | `.csv` | 不支持；需要稳定的标量列 | 不支持 |
+| RSS | `.rss` | 支持 | 支持 |
+
+## 可选集成 {/* #optional-integrations */}
+
+- 仅在启用队列模式时需要 Laravel Queue。
+- 安装 Laravel Deploy Operations 后，`make:feed` 会使用它；否则该命令会创建迁移。
+- 安装 Spatie Laravel Data 后，可以识别其可选值。
+
+## 另请参阅
+
+- [安装](./installation.mdx)
+- [支持的格式](./supported-formats.mdx)
+- [升级指南](./upgrade-guide.mdx)
+

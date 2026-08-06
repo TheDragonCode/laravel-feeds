@@ -3,20 +3,28 @@
     "message": "1.x",
     "description": "Libellé de la version actuelle"
   },
-  "sidebar.docs.category.Getting Started": {
-    "message": "Bien démarrer",
-    "description": "Libellé de la catégorie « Bien démarrer » dans la barre latérale « docs »"
-  },
-  "sidebar.docs.category.Digging Deeper": {
-    "message": "Approfondir",
-    "description": "Libellé de la catégorie « Approfondir » dans la barre latérale « docs »"
-  },
-  "sidebar.docs.category.Recipes": {
-    "message": "Recettes",
-    "description": "Libellé de la catégorie « Recettes » dans la barre latérale « docs »"
-  },
   "sidebar.docs.category.Project": {
     "message": "Projet",
     "description": "Libellé de la catégorie « Projet » dans la barre latérale « docs »"
+  },
+  "sidebar.docs.category.Quick Start": {
+    "message": "Démarrage rapide",
+    "description": "Libellé de la catégorie « Démarrage rapide » dans la barre latérale « docs »"
+  },
+  "sidebar.docs.category.Guides": {
+    "message": "Guides",
+    "description": "Libellé de la catégorie « Guides » dans la barre latérale « docs »"
+  },
+  "sidebar.docs.category.Formats & Recipes": {
+    "message": "Formats et recettes",
+    "description": "Libellé de la catégorie « Formats et recettes » dans la barre latérale « docs »"
+  },
+  "sidebar.docs.category.API Reference": {
+    "message": "Référence API",
+    "description": "Libellé de la catégorie « Référence API » dans la barre latérale « docs »"
+  },
+  "sidebar.docs.category.Troubleshooting": {
+    "message": "Dépannage",
+    "description": "Libellé de la catégorie « Dépannage » dans la barre latérale « docs »"
   }
 }

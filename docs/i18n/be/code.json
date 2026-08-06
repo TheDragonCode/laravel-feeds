@@ -325,5 +325,98 @@
   "theme.tags.tagsPageTitle": {
     "message": "Тэгі",
     "description": "Загаловак старонкі са спісам тэгаў"
+  },
+  "homepage.install.copied": {
+    "message": "Скапіявана"
+  },
+  "homepage.install.copy": {
+    "message": "Капіяваць"
+  },
+  "homepage.install.copySuccess": {
+    "message": "Каманда ўсталявання скапіявана ў буфер абмену."
+  },
+  "homepage.install.copyFailure": {
+    "message": "Не ўдалося скапіяваць. Вылучыце каманду ўручную."
+  },
+  "homepage.meta.title": {
+    "message": "Дакументацыя Laravel Feeds"
+  },
+  "homepage.meta.description": {
+    "message": "Экспартуйце вялікія наборы даных Laravel у XML, JSON, JSON Lines, CSV, RSS і стужкі маркетплэйсаў."
+  },
+  "homepage.eyebrow": {
+    "message": "Пакет Laravel · Дакументацыя 1.x"
+  },
+  "homepage.title": {
+    "message": "Экспартуйце вялікія наборы даных без поўнай загрузкі ў памяць"
+  },
+  "homepage.summary": {
+    "message": "Генеруйце стужкі XML, JSON, JSON Lines, CSV, RSS, Sitemap, Instagram і Yandex у струменевым працэсе Laravel."
+  },
+  "homepage.action.start": {
+    "message": "Пачаць за 5 хвілін"
+  },
+  "homepage.action.formats": {
+    "message": "Выбраць фармат"
+  },
+  "homepage.example.php": {
+    "message": "ProductFeed.php"
+  },
+  "homepage.example.output": {
+    "message": "Згенераваны XML"
+  },
+  "homepage.paths.eyebrow": {
+    "message": "Выберыце свой шлях"
+  },
+  "homepage.paths.title": {
+    "message": "Пачніце з задачы, затым выкарыстоўвайце даведнік"
+  },
+  "homepage.card.quick.description": {
+    "message": "Усталюйце пакет і згенеруйце першую стужку."
+  },
+  "homepage.card.quick.title": {
+    "message": "Хуткі старт"
+  },
+  "homepage.card.performance.description": {
+    "message": "Кіруйце блокамі, памяццю, чэргамі і падзелам файлаў."
+  },
+  "homepage.card.performance.title": {
+    "message": "Вялікія наборы даных"
+  },
+  "homepage.card.recipes.description": {
+    "message": "Выкарыстоўвайце гатовыя шаблоны для Sitemap, RSS, Instagram і Yandex."
+  },
+  "homepage.card.recipes.title": {
+    "message": "Фарматы і рэцэпты"
+  },
+  "homepage.card.api.description": {
+    "message": "Знаходзьце дакладныя метады, ключы канфігурацыі, падзеі і памылкі."
+  },
+  "homepage.card.api.title": {
+    "message": "Даведнік API"
+  },
+  "homepage.support.label": {
+    "message": "Сумяшчальнасць"
+  },
+  "homepage.support.details": {
+    "message": "Падрабязнасці сумяшчальнасці"
+  },
+  "search.trigger": {
+    "message": "Пошук"
+  },
+  "search.dialog.label": {
+    "message": "Пошук па дакументацыі"
+  },
+  "search.input.label": {
+    "message": "Пошук па дакументацыі"
+  },
+  "search.input.placeholder": {
+    "message": "Пошук кіраўніцтваў, API і рашэнняў праблем"
+  },
+  "search.close": {
+    "message": "Закрыць"
+  },
+  "search.empty": {
+    "message": "Адпаведная дакументацыя не знойдзена."
   }
 }

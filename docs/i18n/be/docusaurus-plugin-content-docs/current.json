@@ -3,20 +3,28 @@
     "message": "1.x",
     "description": "Пазнака бягучай версіі"
   },
-  "sidebar.docs.category.Getting Started": {
-    "message": "Пачатак працы",
-    "description": "Пазнака катэгорыі «Пачатак працы» на бакавой панэлі «docs»"
-  },
-  "sidebar.docs.category.Digging Deeper": {
-    "message": "Паглыбленае вывучэнне",
-    "description": "Пазнака катэгорыі «Паглыбленае вывучэнне» на бакавой панэлі «docs»"
-  },
-  "sidebar.docs.category.Recipes": {
-    "message": "Рэцэпты",
-    "description": "Пазнака катэгорыі «Рэцэпты» на бакавой панэлі «docs»"
-  },
   "sidebar.docs.category.Project": {
     "message": "Праект",
     "description": "Пазнака катэгорыі «Праект» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.Quick Start": {
+    "message": "Хуткі старт",
+    "description": "Пазнака катэгорыі «Хуткі старт» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.Guides": {
+    "message": "Кіраўніцтвы",
+    "description": "Пазнака катэгорыі «Кіраўніцтвы» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.Formats & Recipes": {
+    "message": "Фарматы і рэцэпты",
+    "description": "Пазнака катэгорыі «Фарматы і рэцэпты» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.API Reference": {
+    "message": "Даведнік API",
+    "description": "Пазнака катэгорыі «Даведнік API» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.Troubleshooting": {
+    "message": "Вырашэнне праблем",
+    "description": "Пазнака катэгорыі «Вырашэнне праблем» на бакавой панэлі «docs»"
   }
 }

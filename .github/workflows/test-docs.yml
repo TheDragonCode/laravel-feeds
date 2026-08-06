@@ -18,9 +18,9 @@ permissions:
 
 jobs:
     build:
-        name: Build Docusaurus
+        name: Documentation quality gates
         runs-on: ubuntu-latest
-        timeout-minutes: 10
+        timeout-minutes: 25
         defaults:
             run:
                 working-directory: docs
@@ -41,8 +41,17 @@ jobs:
             -   name: Install dependencies
                 run: npm ci
 
-            -   name: Type check
-                run: npm run typecheck
-
             -   name: Build documentation
                 run: npm run build
+
+            -   name: Check metadata and SEO
+                run: npm run check:seo
+
+            -   name: Install Chromium
+                run: npx playwright install --with-deps chromium
+
+            -   name: Run browser, accessibility, and visual tests
+                run: npm run test:browser
+
+            -   name: Check performance budgets
+                run: npm run test:performance

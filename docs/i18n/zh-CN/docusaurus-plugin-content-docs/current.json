@@ -3,20 +3,28 @@
     "message": "1.x",
     "description": "当前文档版本的标签"
   },
-  "sidebar.docs.category.Getting Started": {
-    "message": "入门",
-    "description": "侧边栏 'docs' 中 'Getting Started' 分类的标签"
-  },
-  "sidebar.docs.category.Digging Deeper": {
-    "message": "深入了解",
-    "description": "侧边栏 'docs' 中 'Digging Deeper' 分类的标签"
-  },
-  "sidebar.docs.category.Recipes": {
-    "message": "示例",
-    "description": "侧边栏 'docs' 中 'Recipes' 分类的标签"
-  },
   "sidebar.docs.category.Project": {
     "message": "项目",
     "description": "侧边栏 'docs' 中 'Project' 分类的标签"
+  },
+  "sidebar.docs.category.Quick Start": {
+    "message": "快速入门",
+    "description": "侧边栏 docs 中 快速入门 分类的标签"
+  },
+  "sidebar.docs.category.Guides": {
+    "message": "指南",
+    "description": "侧边栏 docs 中 指南 分类的标签"
+  },
+  "sidebar.docs.category.Formats & Recipes": {
+    "message": "格式与示例",
+    "description": "侧边栏 docs 中 格式与示例 分类的标签"
+  },
+  "sidebar.docs.category.API Reference": {
+    "message": "API 参考",
+    "description": "侧边栏 docs 中 API 参考 分类的标签"
+  },
+  "sidebar.docs.category.Troubleshooting": {
+    "message": "故障排除",
+    "description": "侧边栏 docs 中 故障排除 分类的标签"
   }
 }

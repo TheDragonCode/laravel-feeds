@@ -1,0 +1,57 @@
+---
+title: "Падзеі і выключэнні"
+description: "Даведнік па падзеях жыццёвага цыкла генерацыі і публічных тыпах выключэнняў"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+---
+
+# Падзеі і выключэнні
+
+<PageLead>
+Выкарыстоўвайце падзеі жыццёвага цыкла для інтэграцыі з праграмай, а тыпы выключэнняў — для аднаўлення на мяжы, якая можа апрацаваць памылку.
+</PageLead>
+
+## Падзеі жыццёвага цыкла {/* #lifecycle-events */}
+
+| Падзея | Публічныя даныя | Момант адпраўкі |
+| --- | --- | --- |
+| `FeedStartingEvent` | `feed` | Непасрэдна перад стварэннем чарнавога файла. |
+| `FeedFinishedEvent` | `feed`, `path`, `paths` | Пасля паспяховай публікацыі ўсіх згенераваных файлаў. |
+
+`FeedFinishedEvent::$paths` змяшчае ўсе апублікаваныя шляхі па парадку. `$path` захавана для сумяшчальнасці і заўсёды змяшчае першы шлях.
+
+## Памылкі ўводу і пошуку {/* #input-and-lookup-failures */}
+
+| Выключэнне | Значэнне |
+| --- | --- |
+| `InvalidFeedArgumentException` | Ідэнтыфікатар стужкі ў кансолі няправільны. |
+| `FeedNotFoundException` | Рэгістрацыя з запытаным ідэнтыфікатарам не існуе. |
+| `InvalidExpressionException` | Выраз раскладу няправільны. |
+| `UnknownFeedClassException` | Наладжаны клас стужкі немагчыма атрымаць. |
+| `UnexpectedClassException` | Атрыманы клас не адпавядае чаканаму кантракту. |
+
+## Памылкі серыялізацыі і сховішча {/* #serialization-and-storage-failures */}
+
+| Выключэнне | Значэнне |
+| --- | --- |
+| `InvalidCsvRowException` | Радок CSV не адпавядае вызначанай схеме слупкоў. |
+| `InvalidCsvValueException` | Поле CSV немагчыма серыялізаваць як скалярнае значэнне. |
+| `InvalidXmlCDataException` | Значэнне CDATA няправільнае. |
+| `InvalidXmlFragmentException` | Неапрацаваны фрагмент XML няправільны. |
+| `UnsupportedStorageDiskException` | Выбраны дыск Laravel не з'яўляецца даступным для запісу `FilesystemAdapter`. |
+| `OpenFeedException` | Немагчыма адкрыць чарнавы рэсурс вываду. |
+| `WriteFeedException` | Немагчыма цалкам запісаць вывад. |
+| `CloseFeedException` | Немагчыма закрыць рэсурс вываду. |
+| `ResourceMetaException` | Абавязковыя метаданыя патоку недаступныя. |
+| `FeedGenerationException` | Генерацыя пэўнага класа стужкі завяршылася памылкай. |
+
+Перахоплівайце выключэнні толькі там, дзе праграма можа дадаць аднаўленне або зразумелы карыстальніку кантэкст. Невыпраўляльныя памылкі генерацыі павінен паведамляць Laravel.
+
+## Глядзіце таксама
+
+- [Кіраўніцтва па падзеях](../events.mdx)
+- [Вырашэнне праблем](../troubleshooting.mdx)
+- [Гарантыі сховішча](../location.mdx#publication_guarantees)
+

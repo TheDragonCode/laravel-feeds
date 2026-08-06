@@ -1,0 +1,51 @@
+---
+title: "Compatibility"
+description: "Supported PHP, Laravel, storage, queue, and output format contracts for Laravel Feeds 1.x"
+type: project
+status: stable
+since: "1.0"
+keywords: ["compatibility", "PHP", "Laravel", "Flysystem", "formats"]
+---
+
+# Compatibility
+
+<PageLead>
+Use Composer's resolved dependency graph as the final compatibility check for a specific application.
+</PageLead>
+
+## Runtime matrix {/* #runtime-matrix */}
+
+<ResponsiveTable label="Laravel Feeds runtime compatibility">
+
+| Component | Supported versions |
+| --- | --- |
+| PHP | `8.2` and later `8.x` versions allowed by the installed package constraints |
+| Laravel components | `11.x`, `12.x`, `13.x` |
+| Database | Any Laravel connection supported by the configured Eloquent model and migration |
+| Filesystem | Writable Laravel disks resolving to `FilesystemAdapter` |
+
+</ResponsiveTable>
+
+The installed `composer.lock` is the final authority for a specific application. Composer rejects unsupported combinations.
+
+## Output formats {/* #output-formats */}
+
+| Format | Extension | Nested data | XML directives |
+| --- | --- | --- | --- |
+| XML | `.xml` | Yes | Yes |
+| JSON | `.json` | Yes | No |
+| JSON Lines | `.jsonl` | One JSON value per line | No |
+| CSV | `.csv` | No; stable scalar columns required | No |
+| RSS | `.rss` | Yes | Yes |
+
+## Optional integrations {/* #optional-integrations */}
+
+- Laravel Queue is required only when queue mode is enabled.
+- Laravel Deploy Operations is used by `make:feed` when installed; otherwise the command creates a migration.
+- Spatie Laravel Data optional values are recognized when that package is installed.
+
+## See Also
+
+- [Installation](./installation.mdx)
+- [Supported formats](./supported-formats.mdx)
+- [Upgrade guide](./upgrade-guide.mdx)

@@ -1,0 +1,69 @@
+---
+title: "常见问题"
+description: "Laravel Feeds 设置、生成、存储和格式常见问题的简短答案"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["FAQ", "generation", "storage", "formats", "memory"]
+---
+
+# 常见问题
+
+<PageLead>
+关于设置、生成、存储、格式和内存常见问题的简短答案。
+</PageLead>
+
+<details className="faqItem" id="large-datasets">
+<summary>Laravel Feeds 能否导出数百万条记录？</summary>
+
+可以。软件包分块读取 Eloquent 结果并增量写入输出。让 `builder()` 保持惰性，不要对完整结果调用 `get()` 或 `toArray()`，并在测量内存和数据库负载后调整 `chunkSize()`。
+
+请参阅[大型数据集性能](./performance.mdx)。
+</details>
+
+<details className="faqItem" id="choose-format">
+<summary>应该使用哪种格式？</summary>
+
+使用数据使用方要求的契约。XML 和 RSS 支持层级指令，JSON 保留嵌套数据，JSON Lines 适合逐行处理，CSV 则要求稳定的列结构。
+
+请参阅[支持的格式](./supported-formats.mdx)。
+</details>
+
+<details className="faqItem" id="split-files">
+<summary>一个 Feed 能否创建多个文件？</summary>
+
+可以。覆盖 `perFile()` 以设置每个文件的记录数，覆盖 `maxFiles()` 以设置可选上限。拆分文件会获得连续后缀。
+
+请参阅[拆分文件](./elements.mdx#split_files)。
+</details>
+
+<details className="faqItem" id="remote-storage">
+<summary>能否将 Feed 存储在 S3 或其他远程磁盘？</summary>
+
+可以，但配置的 Laravel 磁盘必须解析为可写的 `FilesystemAdapter`。远程移动可能通过复制后删除实现，因此不保证原子替换。
+
+请参阅[支持的磁盘](./location.mdx#supported_disks)。
+</details>
+
+<details className="faqItem" id="disabled-feed">
+<summary>为什么已禁用的 Feed 仍然运行了？</summary>
+
+向 `feed:generate` 传入 Feed ID 会执行该 Feed，即使其注册记录未启用。不传 ID 运行命令时会跳过未启用的注册记录。
+
+请参阅[单个 Feed 生成](./generation.mdx#single_feed)。
+</details>
+
+<details className="faqItem" id="optional-field">
+<summary>如何省略可选字段？</summary>
+
+将 `DragonCode\LaravelFeed\Data\OptionalData` 或 `Spatie\LaravelData\Optional` 作为字段值返回。CSV 会保留列并写入空值；对象格式和 XML 会省略该字段。
+
+请参阅[可选值](./create-feeds.mdx#optional_values)。
+</details>
+
+## 另请参阅
+
+- [故障排除](./troubleshooting.mdx)
+- [配置参考](./api/configuration.mdx)
+- [API 参考](./api/index.mdx)
+

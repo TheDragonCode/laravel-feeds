@@ -1,0 +1,55 @@
+html {
+    scroll-padding-block-start: calc(var(--ifm-navbar-height) + var(--space-4));
+}
+
+body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    text-rendering: optimizeLegibility;
+}
+
+::selection {
+    background: color-mix(in srgb, var(--color-action) 22%, transparent);
+}
+
+:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+}
+
+a {
+    text-underline-offset: 0.18em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    scroll-margin-block-start: calc(var(--ifm-navbar-height) + var(--space-4));
+    text-wrap: balance;
+}
+
+code,
+pre {
+    font-variant-ligatures: none;
+    tab-size: 4;
+}
+
+img {
+    block-size: auto;
+    max-inline-size: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        transition-delay: 0ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

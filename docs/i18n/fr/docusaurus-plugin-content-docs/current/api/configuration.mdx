@@ -1,0 +1,63 @@
+---
+title: "Référence de configuration"
+description: "Référence de chaque section de configuration et variable d’environnement de Laravel Feeds"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["configuration", "environment", "queue", "schedule", "converters"]
+---
+
+# Référence de configuration
+
+<PageLead>
+Publiez `config/feeds.php` avec `php artisan vendor:publish --tag="feeds"`. Les valeurs d’environnement sont lues lorsque Laravel construit le cache de configuration.
+</PageLead>
+
+## Paramètres principaux {/* #core-settings */}
+
+| Clé | Valeur par défaut | Rôle |
+| --- | --- | --- |
+| `model` | `DragonCode\LaravelFeed\Models\Feed` | Modèle Eloquent utilisé pour enregistrer les flux. Un remplacement doit étendre le modèle du paquet. |
+| `pretty` | `false` | Active une sortie XML et JSON mise en forme. |
+| `date.format` | `DATE_ATOM` | Format de date PHP utilisé par le transformateur de dates. |
+| `date.timezone` | `UTC` | Fuseau horaire utilisé pendant la sérialisation des dates. |
+| `table.connection` | `DB_CONNECTION`, puis `sqlite` | Connexion de base de données des enregistrements de flux. |
+| `table.table` | `feeds` | Nom de la table d’enregistrement des flux. |
+
+## Planification et files d’attente {/* #scheduling-and-queues */}
+
+| Variable d’environnement | Valeur par défaut | Rôle |
+| --- | --- | --- |
+| `FEED_SCHEDULE_TTL` | `1440` | Durée du verrou de planification, en minutes. |
+| `FEED_SCHEDULE_RUN_BACKGROUND` | `true` | Exécute les commandes planifiées en arrière-plan. |
+| `FEED_QUEUE_ENABLED` | `false` | Envoie la génération dans Laravel Queue. |
+| `FEED_QUEUE_CONNECTION` | `QUEUE_CONNECTION`, puis `database` | Connexion de file d’attente des jobs de flux. |
+| `FEED_QUEUE_NAME` | Valeur par défaut de la connexion | Nom de la file d’attente. |
+| `FEED_QUEUE_UNIQUE_TTL` | `3600` | Durée du verrou d’unicité d’un job, en secondes. |
+| `FEED_CONSOLE_PROGRESS_BAR_ENABLED` | `false` | Affiche la barre de progression dans la console. |
+
+Le mode file d’attente exige un worker avec une connexion asynchrone. La connexion `sync` exécute toujours la génération dans le processus de la commande.
+
+## Transformateurs {/* #transformers */}
+
+La chaîne par défaut contient `BoolTransformer`, `DateTimeTransformer` et `EnumTransformer` dans cet ordre. Chaque transformateur correspondant reçoit la valeur renvoyée par le précédent.
+
+Après avoir implémenté `DragonCode\LaravelFeed\Contracts\Transformer`, ajoutez votre classe à `transformers`. Laravel la résout via le conteneur de services.
+
+## Paramètres des convertisseurs {/* #converter-settings */}
+
+| Clé | Valeur par défaut |
+| --- | --- |
+| `converters.json.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.jsonl.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.csv.delimiter` | `;` |
+| `converters.csv.enclosure` | `"` |
+| `converters.csv.escape` | Chaîne vide |
+| `converters.csv.line_ending` | `PHP_EOL` |
+
+## Voir aussi
+
+- [Installation](../installation.mdx)
+- [Génération et planification](../generation.mdx)
+- [Configuration du modèle Eloquent](../eloquent.mdx)
+

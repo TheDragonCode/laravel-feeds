@@ -1,0 +1,80 @@
+---
+title: "런타임 서비스 및 계약"
+description: "생성, 등록, 스케줄, 변환 및 선택적 값의 public API"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+---
+
+# 런타임 서비스 및 계약
+
+<PageLead>
+이 진입점은 프로그래밍 방식의 생성, 피드 등록, 스케줄러 통합, 스칼라 변환 및 선택적 필드를 지원합니다.
+</PageLead>
+
+## GeneratorService {/* #generator-service */}
+
+`DragonCode\LaravelFeed\Services\GeneratorService`는 하나의 피드를 생성하고 게시합니다.
+
+<ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
+
+이 메서드는 모든 부분을 하나의 작업으로 게시하고, 등록 정보의 마지막 활동 시간을 갱신하고, 수명 주기 이벤트를 전달하고, 파일별 레코드 수와 경로를 반환합니다. 생성 오류는 `FeedGenerationException`으로 감싸며 원래 예외는 이전 예외로 유지합니다.
+
+내부 의존성을 직접 생성하지 말고 Laravel 컨테이너에서 서비스를 해석하십시오.
+
+```php
+use App\Feeds\UserFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+
+$result = app(GeneratorService::class)->feed(app(UserFeed::class));
+
+foreach ($result->records as $path => $count) {
+    processFeedResult($path, $count);
+}
+```
+
+## FeedQuery {/* #feed-query */}
+
+`DragonCode\LaravelFeed\Queries\FeedQuery`는 저장된 피드 등록 정보를 관리합니다.
+
+| 메서드 | 결과 |
+| --- | --- |
+| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | 등록 정보를 생성합니다. |
+| `find(int $id): Feed` | 등록 정보를 반환하거나 `FeedNotFoundException`을 발생시킵니다. |
+| `all(): Builder` | 모든 등록 정보를 ID순으로 반환합니다. |
+| `active(): Builder` | 활성 등록 정보를 ID순으로 반환합니다. |
+| `setLastActivity(string $class): void` | 피드 클래스의 `last_activity`를 갱신합니다. |
+| `delete(int $id): void` | ID로 등록 정보를 소프트 삭제합니다. |
+| `deleteByClass(string $class): void` | 삭제된 행을 포함해 해당 클래스의 등록 정보를 영구 삭제합니다. |
+| `restore(int $id): void` | 소프트 삭제된 등록 정보를 복원합니다. |
+
+일반적인 등록 변경은 생성된 마이그레이션이나 배포 operation을 사용하여 모든 환경에서 재현할 수 있게 하십시오.
+
+## ScheduleFeedHelper {/* #schedule-feed-helper */}
+
+`DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper::register()`는 활성 등록 정보를 Laravel 스케줄러에 추가합니다. 각 등록은 저장된 cron 표현식과 중복 방지 잠금을 사용합니다. 백그라운드 실행과 잠금 TTL은 `feeds.schedule` 구성에서 가져옵니다.
+
+구성된 피드 테이블이 없으면 등록을 안전하게 건너뜁니다.
+
+## Transformer {/* #transformer */}
+
+직렬화 전에 지원되는 값을 변환하려면 `DragonCode\LaravelFeed\Contracts\Transformer`를 구현하십시오.
+
+<ApiSignature>public function allow(mixed $value): bool</ApiSignature>
+
+<ApiSignature>public function transform(mixed $value): string</ApiSignature>
+
+`allow()`는 트랜스포머가 값을 처리할지 결정합니다. `transform()`은 직렬화된 스칼라 표현을 반환합니다. `Feed::transformers()` 또는 `feeds.transformers`로 클래스를 추가하십시오.
+
+## OptionalData {/* #optional-data */}
+
+값이 없을 때 생략할 필드에는 새 `DragonCode\LaravelFeed\Data\OptionalData`를 반환하십시오. XML, RSS, JSON 및 JSON Lines는 필드를 생략합니다. CSV는 열을 유지하고 빈 필드를 기록합니다.
+
+## 관련 문서
+
+- [피드 및 데이터](./feed.mdx)
+- [구성](./configuration.mdx)
+- [이벤트 및 예외](./events-exceptions.mdx)
+- [생성 및 스케줄](../generation.mdx)
+

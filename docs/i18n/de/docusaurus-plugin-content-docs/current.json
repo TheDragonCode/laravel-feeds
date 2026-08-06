@@ -3,20 +3,28 @@
     "message": "1.x",
     "description": "Label für die aktuelle Version"
   },
-  "sidebar.docs.category.Getting Started": {
-    "message": "Erste Schritte",
-    "description": "Label der Kategorie „Erste Schritte“ in der Seitenleiste „docs“"
-  },
-  "sidebar.docs.category.Digging Deeper": {
-    "message": "Vertiefung",
-    "description": "Label der Kategorie „Vertiefung“ in der Seitenleiste „docs“"
-  },
-  "sidebar.docs.category.Recipes": {
-    "message": "Rezepte",
-    "description": "Label der Kategorie „Rezepte“ in der Seitenleiste „docs“"
-  },
   "sidebar.docs.category.Project": {
     "message": "Projekt",
     "description": "Label der Kategorie „Projekt“ in der Seitenleiste „docs“"
+  },
+  "sidebar.docs.category.Quick Start": {
+    "message": "Schnellstart",
+    "description": "Label der Kategorie „Schnellstart“ in der Seitenleiste „docs“"
+  },
+  "sidebar.docs.category.Guides": {
+    "message": "Anleitungen",
+    "description": "Label der Kategorie „Anleitungen“ in der Seitenleiste „docs“"
+  },
+  "sidebar.docs.category.Formats & Recipes": {
+    "message": "Formate und Rezepte",
+    "description": "Label der Kategorie „Formate und Rezepte“ in der Seitenleiste „docs“"
+  },
+  "sidebar.docs.category.API Reference": {
+    "message": "API-Referenz",
+    "description": "Label der Kategorie „API-Referenz“ in der Seitenleiste „docs“"
+  },
+  "sidebar.docs.category.Troubleshooting": {
+    "message": "Fehlerbehebung",
+    "description": "Label der Kategorie „Fehlerbehebung“ in der Seitenleiste „docs“"
   }
 }

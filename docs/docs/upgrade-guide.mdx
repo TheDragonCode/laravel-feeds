@@ -1,0 +1,48 @@
+---
+title: "Upgrade guide"
+description: "Safe process for upgrading Laravel Feeds within the supported 1.x release line"
+type: project
+status: stable
+since: "1.0"
+keywords: ["upgrade", "Composer", "migration", "rollback", "compatibility"]
+---
+
+# Upgrade guide
+
+<PageLead>
+The documentation currently covers the `1.x` release line. Review the package release notes and your dependency lock before each update.
+</PageLead>
+
+## Before upgrading {/* #before-upgrading */}
+
+1. Confirm that the target version supports the application's PHP and Laravel versions.
+2. Commit `composer.lock` and the current published `config/feeds.php`.
+3. Record active feed registrations and generated-file destinations.
+4. Run the application's feed generation tests or generate representative feeds in a non-production environment.
+
+## Apply the update {/* #apply-update */}
+
+```bash
+composer update dragon-code/laravel-feeds --with-all-dependencies
+php artisan migrate
+```
+
+Compare the installed package's `config/feeds.php` with the application's published copy and merge new keys manually. Do not republish with `--force`: it overwrites application-specific values.
+
+## Verify {/* #verify */}
+
+- Generate one feed for every used format.
+- Verify split-file counts and filenames.
+- Confirm scheduled and queued generation.
+- Confirm custom feed models, transformers, macros, and preset subclasses.
+- Compare representative output with the previous version.
+
+## Rollback {/* #rollback */}
+
+Restore the previous `composer.lock` and configuration, run `composer install`, and apply the application's migration rollback policy. Generated files are deployment artifacts; restore or regenerate them according to the storage recovery plan.
+
+## See Also
+
+- [Compatibility](./compatibility.mdx)
+- [Configuration reference](./api/configuration.mdx)
+- [Contribution guide](./contributions.mdx)

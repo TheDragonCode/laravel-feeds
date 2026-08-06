@@ -1,0 +1,55 @@
+---
+title: "故障排除"
+description: "诊断 Laravel Feeds 配置、生成、存储、队列和输出失败"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["troubleshooting", "errors", "queue", "storage", "diagnostics"]
+---
+
+# 故障排除
+
+<PageLead>
+从第一个失败边界开始：注册、查询、转换、存储或交付。保留原始异常，因为它包含 Feed 类和输出上下文。
+</PageLead>
+
+## 找不到 Feed 类 {/* #feed-class-not-found */}
+
+确认注册记录包含完整类名、Composer 自动加载能够解析该类，并且该类继承 `DragonCode\LaravelFeed\Feeds\Feed` 或预设。移动类后运行 `composer dump-autoload`。
+
+## 生成占用过多内存 {/* #high-memory */}
+
+- 从 `builder()` 返回 Eloquent `Builder`。
+- 不要对完整数据集调用 `get()`、`all()` 或 `toArray()`。
+- 降低 `chunkSize()` 并重新测量。
+- 使用 `perFile()` 拆分大型输出。
+- 只有 Feed 本身保持流式处理后，才将任务移到异步队列。
+
+请参阅[性能](./performance.mdx)。
+
+## 队列任务没有运行 {/* #queue-job */}
+
+检查 `FEED_QUEUE_CONNECTION`、`FEED_QUEUE_NAME` 和工作进程命令。`sync` 连接会立即运行，无法测试异步交付。唯一性锁可能阻止同一 Feed 的另一个任务，直到 `FEED_QUEUE_UNIQUE_TTL` 过期。
+
+## 存储磁盘被拒绝 {/* #storage-disk */}
+
+磁盘必须解析为 `Illuminate\Filesystem\FilesystemAdapter`，并支持可写流、移动、目录管理、列表和删除。只读磁盘和仅实现契约的自定义实现会在数据库查询开始前失败。
+
+## XML 生成失败 {/* #xml-failure */}
+
+验证通过 `@mixed` 传入的原始 XML，确保 CDATA 内容有效，并让指令值符合文档规定的标量或数组契约。除非必须使用原始 XML，否则应使用普通转义值。
+
+## CSV 行在第一项之后失败 {/* #csv-schema */}
+
+CSV 根据输出结构建立列。每个 Feed 项必须生成相同的键。可选值会保留空列，而不是将其删除。
+
+## 已发布文件不完整或过期 {/* #publication */}
+
+检查原始存储异常并验证磁盘权限。对于远程磁盘，应考虑最终一致性以及非原子的复制后删除移动。如果多个主机上的生成器可能发布同一目标，则需要外部分布式锁。
+
+## 另请参阅
+
+- [事件与异常](./api/events-exceptions.mdx)
+- [存储位置](./location.mdx)
+- [常见问题](./faq.mdx)
+

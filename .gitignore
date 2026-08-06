@@ -9,6 +9,10 @@ build/
 .docusaurus/
 .cache-loader/
 node_modules/
+playwright-report/
+test-results/
+lighthouse-reports/
+.lighthouseci/
 tmp/
 vendor/
 

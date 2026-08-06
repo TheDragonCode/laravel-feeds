@@ -1,0 +1,63 @@
+---
+title: "Konfigurationsreferenz"
+description: "Referenz für alle Konfigurationsbereiche und Umgebungsvariablen von Laravel Feeds"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["configuration", "environment", "queue", "schedule", "converters"]
+---
+
+# Konfigurationsreferenz
+
+<PageLead>
+Veröffentlichen Sie `config/feeds.php` mit `php artisan vendor:publish --tag="feeds"`. Umgebungswerte werden gelesen, wenn Laravel den Konfigurations-Cache erstellt.
+</PageLead>
+
+## Grundeinstellungen {/* #core-settings */}
+
+| Schlüssel | Standard | Zweck |
+| --- | --- | --- |
+| `model` | `DragonCode\LaravelFeed\Models\Feed` | Eloquent-Modell für Feed-Registrierungen. Ein Ersatz muss das Paketmodell erweitern. |
+| `pretty` | `false` | Aktiviert formatierte XML- und JSON-Ausgabe. |
+| `date.format` | `DATE_ATOM` | PHP-Datumsformat des Datumstransformers. |
+| `date.timezone` | `UTC` | Zeitzone bei der Serialisierung von Datumswerten. |
+| `table.connection` | `DB_CONNECTION`, dann `sqlite` | Datenbankverbindung für Feed-Registrierungen. |
+| `table.table` | `feeds` | Name der Tabelle für Feed-Registrierungen. |
+
+## Zeitplanung und Queues {/* #scheduling-and-queues */}
+
+| Umgebungsvariable | Standard | Zweck |
+| --- | --- | --- |
+| `FEED_SCHEDULE_TTL` | `1440` | Lebensdauer der Zeitplansperre in Minuten. |
+| `FEED_SCHEDULE_RUN_BACKGROUND` | `true` | Führt geplante Feed-Befehle im Hintergrund aus. |
+| `FEED_QUEUE_ENABLED` | `false` | Übermittelt die Generierung über Laravel Queue. |
+| `FEED_QUEUE_CONNECTION` | `QUEUE_CONNECTION`, dann `database` | Queue-Verbindung für Feed-Jobs. |
+| `FEED_QUEUE_NAME` | Standard der Verbindung | Name der Queue. |
+| `FEED_QUEUE_UNIQUE_TTL` | `3600` | Lebensdauer der eindeutigen Jobsperre in Sekunden. |
+| `FEED_CONSOLE_PROGRESS_BAR_ENABLED` | `false` | Zeigt den Fortschrittsbalken in der Konsole an. |
+
+Der Queue-Modus benötigt bei einer asynchronen Verbindung einen Worker. Die Verbindung `sync` führt die Generierung weiterhin im Befehlsprozess aus.
+
+## Transformer {/* #transformers */}
+
+Die Standardpipeline enthält `BoolTransformer`, `DateTimeTransformer` und `EnumTransformer` in dieser Reihenfolge. Jeder passende Transformer erhält den Wert, den der vorherige Transformer zurückgegeben hat.
+
+Implementieren Sie `DragonCode\LaravelFeed\Contracts\Transformer` und fügen Sie die benutzerdefinierte Klasse anschließend zu `transformers` hinzu. Laravel löst sie über den Service-Container auf.
+
+## Konvertereinstellungen {/* #converter-settings */}
+
+| Schlüssel | Standard |
+| --- | --- |
+| `converters.json.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.jsonl.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.csv.delimiter` | `;` |
+| `converters.csv.enclosure` | `"` |
+| `converters.csv.escape` | Leere Zeichenfolge |
+| `converters.csv.line_ending` | `PHP_EOL` |
+
+## Siehe auch
+
+- [Installation](../installation.mdx)
+- [Generierung und Zeitplanung](../generation.mdx)
+- [Konfiguration des Eloquent-Modells](../eloquent.mdx)
+

@@ -1,0 +1,1404 @@
+{
+    "version": 1,
+    "routes": [
+        {
+            "route": "/",
+            "source": "src/pages/index.tsx",
+            "aliases": [
+                "/introduction.html"
+            ],
+            "title": "Laravel Feeds documentation",
+            "description": "Export large Laravel datasets to XML, JSON, JSON Lines, CSV, RSS, and marketplace feeds.",
+            "type": "guide",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "Laravel",
+                "feeds",
+                "data export",
+                "documentation"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "",
+                    "text": "Export large datasets without loading them all into memory"
+                },
+                {
+                    "level": 2,
+                    "id": "paths-title",
+                    "text": "Start with a task, then use the reference"
+                }
+            ]
+        },
+        {
+            "route": "/api/",
+            "source": "api/index.mdx",
+            "aliases": [],
+            "title": "API reference",
+            "description": "Reference map for Laravel Feeds public classes, contracts, data objects, events, and exceptions",
+            "type": "reference",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "API",
+                "reference",
+                "Feed",
+                "FeedItem",
+                "FeedInfo"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "api-reference",
+                    "text": "API reference"
+                },
+                {
+                    "level": 2,
+                    "id": "extension-points",
+                    "text": "Extension points"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/api/configuration/",
+            "source": "api/configuration.mdx",
+            "aliases": [],
+            "title": "Configuration reference",
+            "description": "Reference for every Laravel Feeds configuration section and environment variable",
+            "type": "reference",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "configuration",
+                "environment",
+                "queue",
+                "schedule",
+                "converters"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "configuration-reference",
+                    "text": "Configuration reference"
+                },
+                {
+                    "level": 2,
+                    "id": "core-settings",
+                    "text": "Core settings"
+                },
+                {
+                    "level": 2,
+                    "id": "scheduling-and-queues",
+                    "text": "Scheduling and queues"
+                },
+                {
+                    "level": 2,
+                    "id": "transformers",
+                    "text": "Transformers"
+                },
+                {
+                    "level": 2,
+                    "id": "converter-settings",
+                    "text": "Converter settings"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/api/events-exceptions/",
+            "source": "api/events-exceptions.mdx",
+            "aliases": [],
+            "title": "Events and exceptions",
+            "description": "Reference for feed generation lifecycle events and public exception types",
+            "type": "reference",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "events",
+                "exceptions",
+                "FeedStartingEvent",
+                "FeedFinishedEvent"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "events-and-exceptions",
+                    "text": "Events and exceptions"
+                },
+                {
+                    "level": 2,
+                    "id": "lifecycle-events",
+                    "text": "Lifecycle events"
+                },
+                {
+                    "level": 2,
+                    "id": "input-and-lookup-failures",
+                    "text": "Input and lookup failures"
+                },
+                {
+                    "level": 2,
+                    "id": "serialization-and-storage-failures",
+                    "text": "Serialization and storage failures"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/api/feed/",
+            "source": "api/feed.mdx",
+            "aliases": [],
+            "title": "Feeds and data",
+            "description": "Public contracts for Feed, FeedItem, FeedInfo, ElementData, and generation results",
+            "type": "reference",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "Feed",
+                "FeedItem",
+                "FeedInfo",
+                "ElementData",
+                "GenerationResultData"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "feeds-and-data",
+                    "text": "Feeds and data"
+                },
+                {
+                    "level": 2,
+                    "id": "feed",
+                    "text": "Feed"
+                },
+                {
+                    "level": 2,
+                    "id": "feed-item-and-feed-info",
+                    "text": "FeedItem and FeedInfo"
+                },
+                {
+                    "level": 2,
+                    "id": "element-data",
+                    "text": "ElementData"
+                },
+                {
+                    "level": 2,
+                    "id": "generation-result",
+                    "text": "Generation result"
+                },
+                {
+                    "level": 2,
+                    "id": "feed-format-enum",
+                    "text": "FeedFormatEnum"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/api/runtime/",
+            "source": "api/runtime.mdx",
+            "aliases": [],
+            "title": "Runtime services and contracts",
+            "description": "Public generation, registration, scheduling, transformation, and optional-value APIs",
+            "type": "reference",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "GeneratorService",
+                "FeedQuery",
+                "ScheduleFeedHelper",
+                "Transformer",
+                "OptionalData"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "runtime-services-and-contracts",
+                    "text": "Runtime services and contracts"
+                },
+                {
+                    "level": 2,
+                    "id": "generator-service",
+                    "text": "GeneratorService"
+                },
+                {
+                    "level": 2,
+                    "id": "feed-query",
+                    "text": "FeedQuery"
+                },
+                {
+                    "level": 2,
+                    "id": "schedule-feed-helper",
+                    "text": "ScheduleFeedHelper"
+                },
+                {
+                    "level": 2,
+                    "id": "transformer",
+                    "text": "Transformer"
+                },
+                {
+                    "level": 2,
+                    "id": "optional-data",
+                    "text": "OptionalData"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/compatibility/",
+            "source": "compatibility.mdx",
+            "aliases": [],
+            "title": "Compatibility",
+            "description": "Supported PHP, Laravel, storage, queue, and output format contracts for Laravel Feeds 1.x",
+            "type": "project",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "compatibility",
+                "PHP",
+                "Laravel",
+                "Flysystem",
+                "formats"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "compatibility",
+                    "text": "Compatibility"
+                },
+                {
+                    "level": 2,
+                    "id": "runtime-matrix",
+                    "text": "Runtime matrix"
+                },
+                {
+                    "level": 2,
+                    "id": "output-formats",
+                    "text": "Output formats"
+                },
+                {
+                    "level": 2,
+                    "id": "optional-integrations",
+                    "text": "Optional integrations"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/contributions/",
+            "source": "contributions.mdx",
+            "aliases": [
+                "/contributions.html"
+            ],
+            "title": "Contribution guide",
+            "description": "Instructions for Laravel Feeds project developers",
+            "type": "project",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "contributing",
+                "code style",
+                "code of conduct"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "contribution-guide",
+                    "text": "Contribution guide"
+                },
+                {
+                    "level": 2,
+                    "id": "code_style",
+                    "text": "Code Style"
+                },
+                {
+                    "level": 2,
+                    "id": "code_of_conduct",
+                    "text": "Code of Conduct"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/create-feeds/",
+            "source": "create-feeds.mdx",
+            "aliases": [
+                "/create-feeds.html"
+            ],
+            "title": "Create feeds",
+            "description": "Instructions for creating and populating the feed, feed item, and feed info classes",
+            "type": "guide",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "feed",
+                "FeedItem",
+                "FeedInfo",
+                "make:feed"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "create-feeds",
+                    "text": "Create feeds"
+                },
+                {
+                    "level": 2,
+                    "id": "fill_feeds",
+                    "text": "Populating feeds"
+                },
+                {
+                    "level": 3,
+                    "id": "feed",
+                    "text": "Feed"
+                },
+                {
+                    "level": 4,
+                    "id": "feed_item",
+                    "text": "Feed item"
+                },
+                {
+                    "level": 5,
+                    "id": "optional_values",
+                    "text": "Optional values"
+                },
+                {
+                    "level": 2,
+                    "id": "file_format",
+                    "text": "File format"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/directives/",
+            "source": "directives.mdx",
+            "aliases": [
+                "/directives.html"
+            ],
+            "title": "Directives",
+            "description": "Built-in XML directives for feed output",
+            "type": "reference",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "XML",
+                "directives",
+                "attributes",
+                "CDATA"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "directives",
+                    "text": "Directives"
+                },
+                {
+                    "level": 2,
+                    "id": "_attributes",
+                    "text": "@attributes"
+                },
+                {
+                    "level": 2,
+                    "id": "_value",
+                    "text": "@value"
+                },
+                {
+                    "level": 2,
+                    "id": "_cdata",
+                    "text": "@cdata"
+                },
+                {
+                    "level": 2,
+                    "id": "_mixed",
+                    "text": "@mixed"
+                },
+                {
+                    "level": 2,
+                    "id": "_custom",
+                    "text": "@custom"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/elements/",
+            "source": "elements.mdx",
+            "aliases": [
+                "/elements.html"
+            ],
+            "title": "Elements",
+            "description": "Configure feed structure: root element, info block, headers/footers, and attributes",
+            "type": "reference",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "elements",
+                "FeedInfo",
+                "attributes",
+                "split files"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "elements",
+                    "text": "Elements"
+                },
+                {
+                    "level": 2,
+                    "id": "root_element",
+                    "text": "Root element"
+                },
+                {
+                    "level": 2,
+                    "id": "information",
+                    "text": "Information"
+                },
+                {
+                    "level": 2,
+                    "id": "header_and_footer",
+                    "text": "Header & footer"
+                },
+                {
+                    "level": 2,
+                    "id": "attributes",
+                    "text": "Attributes"
+                },
+                {
+                    "level": 2,
+                    "id": "split_files",
+                    "text": "Split files"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/eloquent/",
+            "source": "eloquent.mdx",
+            "aliases": [
+                "/eloquent.html"
+            ],
+            "title": "Eloquent",
+            "description": "Configure feed registration models and feed query chunk size.",
+            "type": "guide",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "Eloquent",
+                "model",
+                "FeedQuery",
+                "chunk size"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "eloquent",
+                    "text": "Eloquent"
+                },
+                {
+                    "level": 2,
+                    "id": "custom_feed_model",
+                    "text": "Custom feed registration model"
+                },
+                {
+                    "level": 2,
+                    "id": "chunk_size",
+                    "text": "Chunk size"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/events/",
+            "source": "events.mdx",
+            "aliases": [
+                "/events.html"
+            ],
+            "title": "Events",
+            "description": "Events dispatched during feed generation",
+            "type": "reference",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "events",
+                "FeedStartingEvent",
+                "FeedFinishedEvent"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "events",
+                    "text": "Events"
+                },
+                {
+                    "level": 2,
+                    "id": "finished_event_contract",
+                    "text": "Finished event contract"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/extending-functionality/",
+            "source": "extending-functionality.mdx",
+            "aliases": [],
+            "title": "Extending functionality",
+            "description": "Extend feeds with conditional clauses, macros, and custom transformers.",
+            "type": "guide",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "extensions",
+                "macros",
+                "transformers",
+                "conditional clauses"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "extending-functionality",
+                    "text": "Extending functionality"
+                },
+                {
+                    "level": 2,
+                    "id": "conditional_clauses",
+                    "text": "Conditional clauses"
+                },
+                {
+                    "level": 2,
+                    "id": "macroable",
+                    "text": "Macroable"
+                },
+                {
+                    "level": 2,
+                    "id": "custom_transformers",
+                    "text": "Custom transformers"
+                },
+                {
+                    "level": 3,
+                    "id": "prepend_transformers",
+                    "text": "Prepending feed transformers"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/faq/",
+            "source": "faq.mdx",
+            "aliases": [],
+            "title": "Frequently asked questions",
+            "description": "Short answers to common Laravel Feeds setup, generation, storage, and format questions",
+            "type": "guide",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "FAQ",
+                "generation",
+                "storage",
+                "formats",
+                "memory"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "frequently-asked-questions",
+                    "text": "Frequently asked questions"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/generation/",
+            "source": "generation.mdx",
+            "aliases": [
+                "/generation.html"
+            ],
+            "title": "Generation & schedule",
+            "description": "Information on generating feed files for later distribution",
+            "type": "guide",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "generation",
+                "schedule",
+                "queue",
+                "feed:generate"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "generation-schedule",
+                    "text": "Generation & schedule"
+                },
+                {
+                    "level": 2,
+                    "id": "single_feed",
+                    "text": "Single feed"
+                },
+                {
+                    "level": 2,
+                    "id": "ai_agent_output",
+                    "text": "AI agent output"
+                },
+                {
+                    "level": 2,
+                    "id": "queue",
+                    "text": "Queue"
+                },
+                {
+                    "level": 2,
+                    "id": "schedule",
+                    "text": "Schedule"
+                },
+                {
+                    "level": 3,
+                    "id": "automatic",
+                    "text": "Automatic"
+                },
+                {
+                    "level": 3,
+                    "id": "manual",
+                    "text": "Manual"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/installation/",
+            "source": "installation.mdx",
+            "aliases": [
+                "/installation.html"
+            ],
+            "title": "Installation & setup",
+            "description": "Information on installing and configuring Laravel Feeds",
+            "type": "guide",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "installation",
+                "Composer",
+                "configuration",
+                "migration"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "installation-setup",
+                    "text": "Installation & setup"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/introduction/",
+            "source": "introduction.mdx",
+            "aliases": [],
+            "title": "Getting started",
+            "description": "Install Laravel Feeds and generate your first feed in five minutes",
+            "type": "guide",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "getting started",
+                "Laravel",
+                "feeds",
+                "quick start"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "getting-started",
+                    "text": "Getting started"
+                },
+                {
+                    "level": 2,
+                    "id": "prerequisites",
+                    "text": "Prerequisites"
+                },
+                {
+                    "level": 2,
+                    "id": "install-and-prepare",
+                    "text": "Install and prepare"
+                },
+                {
+                    "level": 2,
+                    "id": "define-the-data-source",
+                    "text": "Define the data source"
+                },
+                {
+                    "level": 2,
+                    "id": "define-each-item",
+                    "text": "Define each item"
+                },
+                {
+                    "level": 2,
+                    "id": "generate-the-file",
+                    "text": "Generate the file"
+                },
+                {
+                    "level": 2,
+                    "id": "next-steps",
+                    "text": "Next steps"
+                }
+            ]
+        },
+        {
+            "route": "/license/",
+            "source": "license.mdx",
+            "aliases": [
+                "/license.html"
+            ],
+            "title": "MIT License",
+            "description": "Information about the license under which Laravel Feeds is distributed",
+            "type": "project",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "MIT",
+                "license",
+                "copyright"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "mit-license",
+                    "text": "MIT License"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/location/",
+            "source": "location.mdx",
+            "aliases": [
+                "/location.html"
+            ],
+            "title": "Location",
+            "description": "Configure storage disk and output filename for generated feeds",
+            "type": "guide",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "storage",
+                "filesystem",
+                "filename",
+                "publication"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "location",
+                    "text": "Location"
+                },
+                {
+                    "level": 2,
+                    "id": "supported_disks",
+                    "text": "Supported disks"
+                },
+                {
+                    "level": 2,
+                    "id": "path_contract",
+                    "text": "Path contract"
+                },
+                {
+                    "level": 2,
+                    "id": "publication_guarantees",
+                    "text": "Publication guarantees"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/machine-learning/",
+            "source": "machine-learning.mdx",
+            "aliases": [
+                "/machine-learning.html"
+            ],
+            "title": "Machine Learning",
+            "description": "Guidance for using the project with LLMs and a consolidated knowledge base",
+            "type": "project",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "LLM",
+                "llms.txt",
+                "machine learning",
+                "knowledge base"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "machine-learning",
+                    "text": "Machine Learning"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/performance/",
+            "source": "performance.mdx",
+            "aliases": [],
+            "title": "Large dataset performance",
+            "description": "Control memory, database load, file splitting, queues, and storage throughput for large feeds",
+            "type": "guide",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "performance",
+                "memory",
+                "chunks",
+                "large datasets",
+                "queues"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "large-dataset-performance",
+                    "text": "Large dataset performance"
+                },
+                {
+                    "level": 2,
+                    "id": "lazy-query",
+                    "text": "Keep the query lazy"
+                },
+                {
+                    "level": 2,
+                    "id": "chunk-size",
+                    "text": "Tune chunk size"
+                },
+                {
+                    "level": 2,
+                    "id": "split-output",
+                    "text": "Split output files"
+                },
+                {
+                    "level": 2,
+                    "id": "queue-long-running",
+                    "text": "Queue long-running feeds"
+                },
+                {
+                    "level": 2,
+                    "id": "measure",
+                    "text": "Measure the whole path"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/presets/",
+            "source": "presets.mdx",
+            "aliases": [
+                "/presets.html"
+            ],
+            "title": "Presets",
+            "description": "Generate feeds quickly with built-in presets (Instagram, Yandex, Sitemap, RSS)",
+            "type": "reference",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "presets",
+                "Instagram",
+                "Yandex",
+                "Sitemap",
+                "RSS"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "presets",
+                    "text": "Presets"
+                },
+                {
+                    "level": 2,
+                    "id": "defaults",
+                    "text": "Defaults"
+                },
+                {
+                    "level": 3,
+                    "id": "instagram",
+                    "text": "Instagram"
+                },
+                {
+                    "level": 3,
+                    "id": "yandex",
+                    "text": "Yandex"
+                },
+                {
+                    "level": 3,
+                    "id": "sitemap",
+                    "text": "Sitemap"
+                },
+                {
+                    "level": 3,
+                    "id": "rss",
+                    "text": "RSS"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/receipt-instagram/",
+            "source": "receipt-instagram.mdx",
+            "aliases": [
+                "/receipt-instagram.html"
+            ],
+            "title": "Instagram",
+            "description": "Feed generation recipe for Instagram",
+            "type": "recipe",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "Instagram",
+                "product feed",
+                "recipe",
+                "XML"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "instagram",
+                    "text": "Instagram"
+                },
+                {
+                    "level": 2,
+                    "id": "create_files",
+                    "text": "Create the files"
+                },
+                {
+                    "level": 2,
+                    "id": "filling_the_feed",
+                    "text": "Populate the feed"
+                },
+                {
+                    "level": 2,
+                    "id": "activate",
+                    "text": "Activate"
+                },
+                {
+                    "level": 2,
+                    "id": "generate_feed",
+                    "text": "Generate feed"
+                },
+                {
+                    "level": 2,
+                    "id": "result",
+                    "text": "Result"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/receipt-rss-atom/",
+            "source": "receipt-rss-atom.mdx",
+            "aliases": [
+                "/receipt-rss-atom.html"
+            ],
+            "title": "RSS Atom",
+            "description": "Feed generation recipe for RSS Atom",
+            "type": "recipe",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "RSS",
+                "Atom",
+                "recipe",
+                "XML"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "rss-atom",
+                    "text": "RSS Atom"
+                },
+                {
+                    "level": 2,
+                    "id": "create_files",
+                    "text": "Create the files"
+                },
+                {
+                    "level": 2,
+                    "id": "filling_the_feed",
+                    "text": "Populate the feed"
+                },
+                {
+                    "level": 2,
+                    "id": "activate",
+                    "text": "Activate"
+                },
+                {
+                    "level": 2,
+                    "id": "generate_feed",
+                    "text": "Generate feed"
+                },
+                {
+                    "level": 2,
+                    "id": "result",
+                    "text": "Result"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/receipt-sitemap/",
+            "source": "receipt-sitemap.mdx",
+            "aliases": [
+                "/receipt-sitemap.html"
+            ],
+            "title": "Sitemap",
+            "description": "Step-by-step guide to creating a product sitemap feed",
+            "type": "recipe",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "Sitemap",
+                "recipe",
+                "SEO",
+                "XML"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "sitemap",
+                    "text": "Sitemap"
+                },
+                {
+                    "level": 2,
+                    "id": "create_files",
+                    "text": "Create the files"
+                },
+                {
+                    "level": 2,
+                    "id": "filling_the_feed",
+                    "text": "Populate the feed"
+                },
+                {
+                    "level": 2,
+                    "id": "activate",
+                    "text": "Activate"
+                },
+                {
+                    "level": 2,
+                    "id": "links",
+                    "text": "Links"
+                },
+                {
+                    "level": 2,
+                    "id": "generate_feed",
+                    "text": "Generate feed"
+                },
+                {
+                    "level": 2,
+                    "id": "adding_a_link_to_the_general_sitemap_xml_file",
+                    "text": "Add a link to the root sitemap.xml"
+                },
+                {
+                    "level": 2,
+                    "id": "result",
+                    "text": "Result"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/receipt-yandex/",
+            "source": "receipt-yandex.mdx",
+            "aliases": [
+                "/receipt-yandex.html"
+            ],
+            "title": "Yandex",
+            "description": "Feed generation recipe for Yandex",
+            "type": "recipe",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "Yandex",
+                "marketplace",
+                "recipe",
+                "XML"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "yandex",
+                    "text": "Yandex"
+                },
+                {
+                    "level": 2,
+                    "id": "create_files",
+                    "text": "Create the files"
+                },
+                {
+                    "level": 2,
+                    "id": "filling_the_feed",
+                    "text": "Populate the feed"
+                },
+                {
+                    "level": 2,
+                    "id": "custom_category_structure",
+                    "text": "Custom category structure"
+                },
+                {
+                    "level": 2,
+                    "id": "activate",
+                    "text": "Activate"
+                },
+                {
+                    "level": 2,
+                    "id": "generate_feed",
+                    "text": "Generate feed"
+                },
+                {
+                    "level": 2,
+                    "id": "result",
+                    "text": "Result"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/supported-formats/",
+            "source": "supported-formats.mdx",
+            "aliases": [
+                "/supported-formats.html"
+            ],
+            "title": "Supported formats",
+            "description": "List of supported feed export formats",
+            "type": "reference",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "XML",
+                "JSON",
+                "JSONL",
+                "CSV",
+                "RSS"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "supported-formats",
+                    "text": "Supported formats"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/troubleshooting/",
+            "source": "troubleshooting.mdx",
+            "aliases": [],
+            "title": "Troubleshooting",
+            "description": "Diagnose Laravel Feeds configuration, generation, storage, queue, and output failures",
+            "type": "guide",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "troubleshooting",
+                "errors",
+                "queue",
+                "storage",
+                "diagnostics"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "troubleshooting",
+                    "text": "Troubleshooting"
+                },
+                {
+                    "level": 2,
+                    "id": "feed-class-not-found",
+                    "text": "The feed class is not found"
+                },
+                {
+                    "level": 2,
+                    "id": "high-memory",
+                    "text": "Generation uses too much memory"
+                },
+                {
+                    "level": 2,
+                    "id": "queue-job",
+                    "text": "A queue job never runs"
+                },
+                {
+                    "level": 2,
+                    "id": "storage-disk",
+                    "text": "The storage disk is rejected"
+                },
+                {
+                    "level": 2,
+                    "id": "xml-failure",
+                    "text": "XML generation fails"
+                },
+                {
+                    "level": 2,
+                    "id": "csv-schema",
+                    "text": "CSV rows fail after the first item"
+                },
+                {
+                    "level": 2,
+                    "id": "publication",
+                    "text": "Published files are incomplete or stale"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/upgrade-guide/",
+            "source": "upgrade-guide.mdx",
+            "aliases": [],
+            "title": "Upgrade guide",
+            "description": "Safe process for upgrading Laravel Feeds within the supported 1.x release line",
+            "type": "project",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "upgrade",
+                "Composer",
+                "migration",
+                "rollback",
+                "compatibility"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "upgrade-guide",
+                    "text": "Upgrade guide"
+                },
+                {
+                    "level": 2,
+                    "id": "before-upgrading",
+                    "text": "Before upgrading"
+                },
+                {
+                    "level": 2,
+                    "id": "apply-update",
+                    "text": "Apply the update"
+                },
+                {
+                    "level": 2,
+                    "id": "verify",
+                    "text": "Verify"
+                },
+                {
+                    "level": 2,
+                    "id": "rollback",
+                    "text": "Rollback"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        }
+    ]
+}

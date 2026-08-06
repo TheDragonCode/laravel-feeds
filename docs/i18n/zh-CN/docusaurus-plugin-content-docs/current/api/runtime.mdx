@@ -1,0 +1,80 @@
+---
+title: "运行时服务与契约"
+description: "公共生成、注册、调度、转换和可选值 API"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+---
+
+# 运行时服务与契约
+
+<PageLead>
+这些入口支持编程式生成、Feed 注册、调度器集成、标量转换和可选字段。
+</PageLead>
+
+## GeneratorService {/* #generator-service */}
+
+`DragonCode\LaravelFeed\Services\GeneratorService` 生成并发布一个 Feed。
+
+<ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
+
+该方法将所有分片作为一个操作发布，更新注册记录的最后活动时间，分发生命周期事件，并返回路径以及每个文件的记录数。生成失败会包装为 `FeedGenerationException`，原始异常作为其前一个 throwable 保留。
+
+应通过 Laravel 容器解析该服务，不要自行构造其内部协作对象。
+
+```php
+use App\Feeds\UserFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+
+$result = app(GeneratorService::class)->feed(app(UserFeed::class));
+
+foreach ($result->records as $path => $count) {
+    processFeedResult($path, $count);
+}
+```
+
+## FeedQuery {/* #feed-query */}
+
+`DragonCode\LaravelFeed\Queries\FeedQuery` 管理持久化的 Feed 注册记录。
+
+| 方法 | 结果 |
+| --- | --- |
+| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | 创建注册记录。 |
+| `find(int $id): Feed` | 返回注册记录，找不到时抛出 `FeedNotFoundException`。 |
+| `all(): Builder` | 返回按 ID 排序的所有注册记录。 |
+| `active(): Builder` | 返回按 ID 排序的已启用注册记录。 |
+| `setLastActivity(string $class): void` | 更新 Feed 类的 `last_activity`。 |
+| `delete(int $id): void` | 按 ID 软删除注册记录。 |
+| `deleteByClass(string $class): void` | 永久删除指定类的注册记录，包括已软删除的行。 |
+| `restore(int $id): void` | 恢复软删除的注册记录。 |
+
+常规注册变更应使用生成的迁移或部署操作，以便在不同环境中重现。
+
+## ScheduleFeedHelper {/* #schedule-feed-helper */}
+
+`DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper::register()` 将已启用的注册记录添加到 Laravel 调度器。每条注册记录使用其存储的 cron 表达式和防重叠锁。后台执行和锁的有效期取自 `feeds.schedule` 配置。
+
+配置的 Feed 表不存在时，会安全跳过注册。
+
+## Transformer {/* #transformer */}
+
+实现 `DragonCode\LaravelFeed\Contracts\Transformer`，以便在序列化前转换支持的值。
+
+<ApiSignature>public function allow(mixed $value): bool</ApiSignature>
+
+<ApiSignature>public function transform(mixed $value): string</ApiSignature>
+
+`allow()` 判断转换器是否接受该值。`transform()` 返回其序列化后的标量表示。通过 `Feed::transformers()` 或 `feeds.transformers` 添加该类。
+
+## OptionalData {/* #optional-data */}
+
+字段无值时，如需省略它，请返回新的 `DragonCode\LaravelFeed\Data\OptionalData`。XML、RSS、JSON 和 JSON Lines 会省略该字段。CSV 会保留列并写入空字段。
+
+## 另请参阅
+
+- [Feed 与数据](./feed.mdx)
+- [配置](./configuration.mdx)
+- [事件与异常](./events-exceptions.mdx)
+- [生成与调度](../generation.mdx)
+

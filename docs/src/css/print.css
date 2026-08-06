@@ -1,0 +1,37 @@
+@media print {
+    .navbar,
+    .theme-doc-sidebar-container,
+    .theme-doc-toc-desktop,
+    .theme-doc-footer,
+    .footer,
+    .pagination-nav {
+        display: none !important;
+    }
+
+    body,
+    .main-wrapper,
+    .theme-doc-markdown,
+    .theme-code-block,
+    .theme-doc-markdown table,
+    .theme-doc-markdown table thead {
+        background: none !important;
+        box-shadow: none !important;
+    }
+
+    .theme-doc-markdown {
+        max-inline-size: none;
+        color: var(--color-print-text);
+        font-size: 11pt;
+    }
+
+    a {
+        color: inherit;
+        text-decoration: underline;
+    }
+
+    pre,
+    table,
+    blockquote {
+        break-inside: avoid;
+    }
+}

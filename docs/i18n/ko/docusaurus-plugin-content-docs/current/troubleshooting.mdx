@@ -1,0 +1,55 @@
+---
+title: "문제 해결"
+description: "Laravel Feeds 구성, 생성, 저장소, 큐 및 출력 오류 진단"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["troubleshooting", "errors", "queue", "storage", "diagnostics"]
+---
+
+# 문제 해결
+
+<PageLead>
+등록, 쿼리, 변환, 저장소 또는 전달 중 처음 실패한 경계부터 확인하십시오. 원래 예외에는 피드 클래스와 출력 맥락이 있으므로 유지하십시오.
+</PageLead>
+
+## 피드 클래스를 찾을 수 없음 {/* #feed-class-not-found */}
+
+등록 정보에 전체 클래스 이름이 있는지, Composer 오토로딩이 해석할 수 있는지, 클래스가 `DragonCode\LaravelFeed\Feeds\Feed` 또는 프리셋을 확장하는지 확인하십시오. 클래스를 이동한 후 `composer dump-autoload`를 실행하십시오.
+
+## 생성에 너무 많은 메모리 사용 {/* #high-memory */}
+
+- `builder()`에서 Eloquent `Builder`를 반환하십시오.
+- 전체 데이터셋에 `get()`, `all()` 또는 `toArray()`를 호출하지 마십시오.
+- `chunkSize()`를 낮추고 다시 측정하십시오.
+- `perFile()`로 대규모 출력을 분할하십시오.
+- 피드 자체가 스트리밍을 유지한 다음 비동기 큐로 작업을 옮기십시오.
+
+[성능](./performance.mdx)을 참고하십시오.
+
+## 큐 작업이 실행되지 않음 {/* #queue-job */}
+
+`FEED_QUEUE_CONNECTION`, `FEED_QUEUE_NAME` 및 워커 명령을 확인하십시오. `sync` 연결은 즉시 실행되므로 비동기 전달을 검증하지 않습니다. 고유성 잠금은 `FEED_QUEUE_UNIQUE_TTL`이 만료될 때까지 같은 피드의 다른 작업을 막을 수 있습니다.
+
+## 저장소 디스크가 거부됨 {/* #storage-disk */}
+
+디스크는 `Illuminate\Filesystem\FilesystemAdapter`로 해석되어야 하며 쓰기 스트림, 이동, 디렉터리 관리, 목록 및 삭제를 지원해야 합니다. 읽기 전용 디스크와 계약만 구현한 사용자 지정 디스크는 데이터베이스 쿼리 전에 실패합니다.
+
+## XML 생성 실패 {/* #xml-failure */}
+
+`@mixed`로 전달한 원시 XML을 검증하고 CDATA 내용이 유효한지 확인하십시오. 디렉티브 값은 문서화된 스칼라 또는 배열 계약을 따라야 합니다. 원시 XML이 꼭 필요하지 않다면 일반 이스케이프 값을 사용하십시오.
+
+## 첫 항목 이후 CSV 행 실패 {/* #csv-schema */}
+
+CSV는 출력 스키마에서 열을 확정합니다. 모든 항목이 같은 키를 만들어야 합니다. 선택적 값은 열을 제거하지 않고 빈 열로 유지합니다.
+
+## 게시된 파일이 불완전하거나 오래됨 {/* #publication */}
+
+원래 저장소 예외와 디스크 권한을 확인하십시오. 원격 디스크에서는 eventual consistency와 비원자적 복사-삭제 이동을 고려하십시오. 여러 호스트에서 같은 대상을 게시할 수 있다면 외부 분산 잠금이 필요합니다.
+
+## 관련 문서
+
+- [이벤트 및 예외](./api/events-exceptions.mdx)
+- [저장 위치](./location.mdx)
+- [자주 묻는 질문](./faq.mdx)
+

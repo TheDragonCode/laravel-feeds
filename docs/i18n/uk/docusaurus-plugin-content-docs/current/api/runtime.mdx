@@ -1,0 +1,80 @@
+---
+title: "Служби та контракти виконання"
+description: "Публічні API генерування, реєстрації, планування, перетворення та необов'язкових значень"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+---
+
+# Служби та контракти виконання
+
+<PageLead>
+Ці точки входу підтримують програмне генерування, реєстрацію фідів, інтеграцію з планувальником, перетворення скалярних значень і необов'язкові поля.
+</PageLead>
+
+## GeneratorService {/* #generator-service */}
+
+`DragonCode\LaravelFeed\Services\GeneratorService` генерує та публікує один фід.
+
+<ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
+
+Метод публікує всі частини як одну операцію, оновлює останню активність реєстрації, надсилає події життєвого циклу та повертає шляхи з кількістю записів для кожного файлу. Помилки генерування обгортаються у `FeedGenerationException`, а початковий виняток передається як попередній.
+
+Визначайте службу через контейнер Laravel, а не створюйте її внутрішні залежності самостійно.
+
+```php
+use App\Feeds\UserFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+
+$result = app(GeneratorService::class)->feed(app(UserFeed::class));
+
+foreach ($result->records as $path => $count) {
+    processFeedResult($path, $count);
+}
+```
+
+## FeedQuery {/* #feed-query */}
+
+`DragonCode\LaravelFeed\Queries\FeedQuery` керує збереженими реєстраціями фідів.
+
+| Метод | Результат |
+| --- | --- |
+| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Створює реєстрацію. |
+| `find(int $id): Feed` | Повертає реєстрацію або створює виняток `FeedNotFoundException`. |
+| `all(): Builder` | Повертає всі реєстрації, упорядковані за ID. |
+| `active(): Builder` | Повертає активні реєстрації, упорядковані за ID. |
+| `setLastActivity(string $class): void` | Оновлює `last_activity` для класу фіду. |
+| `delete(int $id): void` | М'яко видаляє реєстрацію за ID. |
+| `deleteByClass(string $class): void` | Остаточно видаляє реєстрації класу, зокрема вже м'яко видалені рядки. |
+| `restore(int $id): void` | Відновлює м'яко видалену реєстрацію. |
+
+Для звичайних змін реєстрації використовуйте згенеровану міграцію або операцію розгортання, щоб їх можна було відтворити в усіх середовищах.
+
+## ScheduleFeedHelper {/* #schedule-feed-helper */}
+
+`DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper::register()` додає активні реєстрації до планувальника Laravel. Кожна реєстрація використовує збережений cron-вираз і блокування від накладання. Фонове виконання та час дії блокування беруться з конфігурації `feeds.schedule`.
+
+Реєстрація безпечно пропускається, якщо налаштованої таблиці фідів не існує.
+
+## Transformer {/* #transformer */}
+
+Реалізуйте `DragonCode\LaravelFeed\Contracts\Transformer`, щоб перетворювати підтримувані значення до серіалізації.
+
+<ApiSignature>public function allow(mixed $value): bool</ApiSignature>
+
+<ApiSignature>public function transform(mixed $value): string</ApiSignature>
+
+`allow()` визначає, чи приймає перетворювач значення. `transform()` повертає його серіалізоване скалярне представлення. Додайте клас через `Feed::transformers()` або `feeds.transformers`.
+
+## OptionalData {/* #optional-data */}
+
+Поверніть новий `DragonCode\LaravelFeed\Data\OptionalData` для поля, яке потрібно пропустити за відсутності значення. XML, RSS, JSON і JSON Lines пропускають його. CSV зберігає стовпець і записує порожнє поле.
+
+## Дивіться також
+
+- [Фіди та дані](./feed.mdx)
+- [Конфігурація](./configuration.mdx)
+- [Події та винятки](./events-exceptions.mdx)
+- [Генерування й розклад](../generation.mdx)
+

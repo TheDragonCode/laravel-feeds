@@ -105,14 +105,23 @@ const neutralTerms = [
     "The Dragon Code",
     "FeedInfo",
     "FeedItem",
+    "ElementData",
+    "FeedFormatEnum",
+    "GeneratorService",
+    "FeedQuery",
+    "ScheduleFeedHelper",
+    "Transformer",
+    "OptionalData",
     "Macroable",
     "PhpStorm",
     "Composer",
+    "Configuration",
     "Copyright",
     "Directives",
     "Eloquent",
     "GitHub",
     "Instagram",
+    "Installation",
     "JSONL",
     "Laravel",
     "License",
@@ -166,6 +175,7 @@ const translatableLines = (content) => {
                 line &&
                 line !== "---" &&
                 line !== "slug: /" &&
+                !/^(?:slug|type|status|since|keywords):/.test(line) &&
                 !line.startsWith("import ") &&
                 !line.startsWith("export ") &&
                 !line.startsWith("alt=") &&

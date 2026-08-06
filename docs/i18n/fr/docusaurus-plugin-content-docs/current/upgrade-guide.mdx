@@ -1,0 +1,48 @@
+---
+title: "Guide de mise à niveau"
+description: "Procédure sûre de mise à niveau de Laravel Feeds dans la série 1.x prise en charge"
+type: project
+status: stable
+since: "1.0"
+keywords: ["upgrade", "Composer", "migration", "rollback", "compatibility"]
+---
+
+# Guide de mise à niveau
+
+<PageLead>
+Cette documentation couvre actuellement la série `1.x`. Consultez les notes de version et le verrou des dépendances avant chaque mise à jour.
+</PageLead>
+
+## Avant la mise à niveau {/* #before-upgrading */}
+
+1. Vérifiez que la version cible prend en charge les versions PHP et Laravel de l’application.
+2. Validez `composer.lock` et le fichier `config/feeds.php` actuellement publié.
+3. Notez les enregistrements actifs et les destinations des fichiers générés.
+4. Exécutez les tests de génération ou produisez des flux représentatifs hors production.
+
+## Appliquer la mise à jour {/* #apply-update */}
+
+```bash
+composer update dragon-code/laravel-feeds --with-all-dependencies
+php artisan migrate
+```
+
+Comparez le fichier `config/feeds.php` du paquet installé à la copie publiée et fusionnez les nouvelles clés manuellement. Ne republiez pas avec `--force` : cela écrase les valeurs propres à l’application.
+
+## Vérifier {/* #verify */}
+
+- Générez un flux pour chaque format utilisé.
+- Vérifiez le nombre et le nom des fichiers fractionnés.
+- Vérifiez la génération planifiée et en file d’attente.
+- Vérifiez les modèles, transformateurs, macros et sous-classes de préréglage personnalisés.
+- Comparez une sortie représentative avec la version précédente.
+
+## Revenir en arrière {/* #rollback */}
+
+Restaurez les anciens `composer.lock` et configuration, exécutez `composer install`, puis appliquez la politique d’annulation des migrations de l’application. Les fichiers générés sont des artefacts de déploiement ; restaurez-les ou régénérez-les selon le plan de reprise du stockage.
+
+## Voir aussi
+
+- [Compatibilité](./compatibility.mdx)
+- [Référence de configuration](./api/configuration.mdx)
+- [Guide de contribution](./contributions.mdx)

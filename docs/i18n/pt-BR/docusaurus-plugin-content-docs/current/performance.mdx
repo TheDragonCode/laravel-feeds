@@ -1,0 +1,71 @@
+---
+title: "Desempenho com grandes conjuntos de dados"
+description: "Controle memória, carga do banco, divisão de arquivos, filas e armazenamento em feeds grandes"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["performance", "memory", "chunks", "large datasets", "queues"]
+---
+
+# Desempenho com grandes conjuntos de dados
+
+<PageLead>
+O Laravel Feeds grava os registros gradualmente. O uso de memória só permanece limitado quando todas as etapas anteriores continuam lazy.
+</PageLead>
+
+## Mantenha a consulta lazy {/* #lazy-query */}
+
+Retorne um `Builder` do Eloquent diretamente:
+
+```php
+public function builder(): Builder
+{
+    return Product::query()
+        ->select(['id', 'title', 'updated_at'])
+        ->where('is_exportable', true);
+}
+```
+
+Não materialize o resultado completo antes da geração. Selecione apenas as colunas necessárias e carregue somente os relacionamentos usados por `item()` para evitar consultas N+1.
+
+## Ajuste o tamanho do lote {/* #chunk-size */}
+
+O padrão é `1000` registros. Valores menores reduzem o pico de memória dos modelos e aumentam as consultas. Valores maiores reduzem o custo das consultas e aumentam a memória. Meça com linhas próximas às de produção.
+
+```php
+public function chunkSize(): int
+{
+    return 500;
+}
+```
+
+## Divida os arquivos de saída {/* #split-output */}
+
+Use `perFile()` quando o consumidor aceitar vários arquivos ou quando uma saída única for difícil de publicar e repetir.
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+
+public function maxFiles(): int
+{
+    return 20;
+}
+```
+
+## Envie feeds longos para a fila {/* #queue-long-running */}
+
+O modo de fila tira a geração do processo do console, mas não reduz a memória usada pelo feed. Use conexão assíncrona, workers com limites adequados e um TTL de unicidade maior que o tempo esperado de geração.
+
+## Meça todo o caminho {/* #measure */}
+
+Meça separadamente banco de dados, hidratação dos modelos, transformação, serialização e publicação. Um disco remoto pode ser o maior custo mesmo quando a geração é rápida.
+
+## Veja também
+
+- [Tamanho do lote do Eloquent](./eloquent.mdx#chunk_size)
+- [Filas de geração](./generation.mdx#queue)
+- [Garantias de publicação](./location.mdx#publication_guarantees)
+

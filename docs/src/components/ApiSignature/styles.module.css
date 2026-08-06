@@ -1,0 +1,13 @@
+.signature {
+    display: block;
+    inline-size: 100%;
+    margin-block: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-code-bg);
+    color: var(--color-text);
+    font-size: 0.875rem;
+    line-height: 1.65;
+}

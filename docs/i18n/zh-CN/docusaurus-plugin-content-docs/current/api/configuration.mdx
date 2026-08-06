@@ -1,0 +1,63 @@
+---
+title: "配置参考"
+description: "Laravel Feeds 所有配置部分和环境变量的参考资料"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["configuration", "environment", "queue", "schedule", "converters"]
+---
+
+# 配置参考
+
+<PageLead>
+使用 `php artisan vendor:publish --tag="feeds"` 发布 `config/feeds.php`。Laravel 构建配置缓存时会读取环境值。
+</PageLead>
+
+## 核心设置 {/* #core-settings */}
+
+| 键 | 默认值 | 用途 |
+| --- | --- | --- |
+| `model` | `DragonCode\LaravelFeed\Models\Feed` | 用于 Feed 注册的 Eloquent 模型。替代模型必须继承软件包模型。 |
+| `pretty` | `false` | 启用格式化的 XML 和 JSON 输出。 |
+| `date.format` | `DATE_ATOM` | 日期转换器使用的 PHP 日期格式。 |
+| `date.timezone` | `UTC` | 序列化日期时使用的时区。 |
+| `table.connection` | `DB_CONNECTION`，然后是 `sqlite` | Feed 注册使用的数据库连接。 |
+| `table.table` | `feeds` | Feed 注册表名。 |
+
+## 调度与队列 {/* #scheduling-and-queues */}
+
+| 环境变量 | 默认值 | 用途 |
+| --- | --- | --- |
+| `FEED_SCHEDULE_TTL` | `1440` | 调度锁的有效期，单位为分钟。 |
+| `FEED_SCHEDULE_RUN_BACKGROUND` | `true` | 在后台运行计划的 Feed 命令。 |
+| `FEED_QUEUE_ENABLED` | `false` | 通过 Laravel Queue 分派生成任务。 |
+| `FEED_QUEUE_CONNECTION` | `QUEUE_CONNECTION`，然后是 `database` | Feed 任务使用的队列连接。 |
+| `FEED_QUEUE_NAME` | 连接的默认队列 | 队列名称。 |
+| `FEED_QUEUE_UNIQUE_TTL` | `3600` | 唯一任务锁的有效期，单位为秒。 |
+| `FEED_CONSOLE_PROGRESS_BAR_ENABLED` | `false` | 显示控制台进度条。 |
+
+当所选连接为异步连接时，队列模式需要工作进程。`sync` 连接仍会在命令进程中运行生成任务。
+
+## 转换器 {/* #transformers */}
+
+默认管道按顺序包含 `BoolTransformer`、`DateTimeTransformer` 和 `EnumTransformer`。每个匹配的转换器都会接收前一个转换器返回的值。
+
+实现 `DragonCode\LaravelFeed\Contracts\Transformer` 后，将自定义类添加到 `transformers`。Laravel 会通过服务容器解析该类。
+
+## 转换程序设置 {/* #converter-settings */}
+
+| 键 | 默认值 |
+| --- | --- |
+| `converters.json.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.jsonl.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.csv.delimiter` | `;` |
+| `converters.csv.enclosure` | `"` |
+| `converters.csv.escape` | 空字符串 |
+| `converters.csv.line_ending` | `PHP_EOL` |
+
+## 另请参阅
+
+- [安装](../installation.mdx)
+- [生成与调度](../generation.mdx)
+- [Eloquent 模型配置](../eloquent.mdx)
+

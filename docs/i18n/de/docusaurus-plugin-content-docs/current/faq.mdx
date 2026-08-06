@@ -1,0 +1,69 @@
+---
+title: "Häufig gestellte Fragen"
+description: "Kurze Antworten auf häufige Fragen zu Einrichtung, Generierung, Speicher und Formaten von Laravel Feeds"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["FAQ", "generation", "storage", "formats", "memory"]
+---
+
+# Häufig gestellte Fragen
+
+<PageLead>
+Kurze Antworten auf häufige Fragen zu Einrichtung, Generierung, Speicher, Formaten und Arbeitsspeicher.
+</PageLead>
+
+<details className="faqItem" id="large-datasets">
+<summary>Kann Laravel Feeds Millionen von Datensätzen exportieren?</summary>
+
+Ja. Das Paket liest Eloquent-Ergebnisse in Chunks und schreibt die Ausgabe schrittweise. Halten Sie `builder()` lazy, rufen Sie nicht `get()` oder `toArray()` für das vollständige Ergebnis auf und passen Sie `chunkSize()` nach Messungen von Arbeitsspeicher und Datenbanklast an.
+
+Siehe [Leistung bei großen Datenmengen](./performance.mdx).
+</details>
+
+<details className="faqItem" id="choose-format">
+<summary>Welches Format sollte ich verwenden?</summary>
+
+Verwenden Sie den vom Abnehmer geforderten Vertrag. XML und RSS unterstützen hierarchische Direktiven, JSON erhält verschachtelte Daten, JSON Lines eignet sich für zeilenweise Verarbeitung und CSV benötigt ein stabiles Spaltenschema.
+
+Siehe [Unterstützte Formate](./supported-formats.mdx).
+</details>
+
+<details className="faqItem" id="split-files">
+<summary>Kann ein Feed mehrere Dateien erzeugen?</summary>
+
+Ja. Überschreiben Sie `perFile()`, um die Anzahl der Datensätze pro Datei festzulegen, und `maxFiles()`, um die Anzahl bei Bedarf zu begrenzen. Aufgeteilte Dateien erhalten fortlaufende Suffixe.
+
+Siehe [Dateien aufteilen](./elements.mdx#split_files).
+</details>
+
+<details className="faqItem" id="remote-storage">
+<summary>Kann ich Feeds auf S3 oder einem anderen entfernten Datenträger speichern?</summary>
+
+Ja, wenn der konfigurierte Laravel-Datenträger zu einem beschreibbaren `FilesystemAdapter` aufgelöst wird. Entfernte Verschiebungen können als Kopieren und Löschen umgesetzt sein, sodass ein atomarer Austausch nicht garantiert ist.
+
+Siehe [Unterstützte Datenträger](./location.mdx#supported_disks).
+</details>
+
+<details className="faqItem" id="disabled-feed">
+<summary>Warum wurde ein deaktivierter Feed ausgeführt?</summary>
+
+Wenn Sie eine Feed-ID an `feed:generate` übergeben, wird dieser Feed auch bei inaktiver Registrierung ausgeführt. Ohne ID überspringt der Befehl inaktive Registrierungen.
+
+Siehe [Einzelner Feed](./generation.mdx#single_feed).
+</details>
+
+<details className="faqItem" id="optional-field">
+<summary>Wie lasse ich ein optionales Feld aus?</summary>
+
+Geben Sie `DragonCode\LaravelFeed\Data\OptionalData` oder `Spatie\LaravelData\Optional` als Feldwert zurück. CSV behält die Spalte bei und schreibt einen leeren Wert; Objektformate und XML lassen das Feld aus.
+
+Siehe [Optionale Werte](./create-feeds.mdx#optional_values).
+</details>
+
+## Siehe auch
+
+- [Fehlerbehebung](./troubleshooting.mdx)
+- [Konfigurationsreferenz](./api/configuration.mdx)
+- [API-Referenz](./api/index.mdx)
+

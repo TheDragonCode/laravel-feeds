@@ -1,0 +1,69 @@
+---
+title: "Частыя пытанні"
+description: "Кароткія адказы на частыя пытанні пра наладжванне, генерацыю, сховішча і фарматы Laravel Feeds"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["FAQ", "generation", "storage", "formats", "memory"]
+---
+
+# Частыя пытанні
+
+<PageLead>
+Кароткія адказы на частыя пытанні пра наладжванне, генерацыю, сховішча, фарматы і памяць.
+</PageLead>
+
+<details className="faqItem" id="large-datasets">
+<summary>Ці можа Laravel Feeds экспартаваць мільёны запісаў?</summary>
+
+Так. Пакет чытае вынікі Eloquent блокамі і запісвае вывад паступова. Пакідайце `builder()` лянівым, не выклікайце `get()` або `toArray()` для ўсяго выніку і наладжвайце `chunkSize()` пасля вымярэння памяці і нагрузкі на базу даных.
+
+Глядзіце [прадукцыйнасць на вялікіх наборах даных](./performance.mdx).
+</details>
+
+<details className="faqItem" id="choose-format">
+<summary>Які фармат выбраць?</summary>
+
+Выкарыстоўвайце кантракт, якога патрабуе спажывец. XML і RSS падтрымліваюць іерархічныя дырэктывы, JSON захоўвае ўкладзеныя даныя, JSON Lines падыходзіць для апрацоўкі па радках, а CSV патрабуе стабільнай схемы слупкоў.
+
+Глядзіце [падтрыманыя фарматы](./supported-formats.mdx).
+</details>
+
+<details className="faqItem" id="split-files">
+<summary>Ці можа адна стужка стварыць некалькі файлаў?</summary>
+
+Так. Перавызначце `perFile()`, каб задаць колькасць запісаў у файле, і `maxFiles()`, каб пры неабходнасці абмежаваць колькасць файлаў. Падзеленыя файлы атрымліваюць паслядоўныя суфіксы.
+
+Глядзіце [падзел файлаў](./elements.mdx#split_files).
+</details>
+
+<details className="faqItem" id="remote-storage">
+<summary>Ці можна захоўваць стужкі ў S3 або на іншым аддаленым дыску?</summary>
+
+Так, калі наладжаны дыск Laravel вяртае даступны для запісу `FilesystemAdapter`. Аддаленае перамяшчэнне можа быць рэалізавана як капіяванне і выдаленне, таму атамарная замена не гарантуецца.
+
+Глядзіце [падтрыманыя дыскі](./location.mdx#supported_disks).
+</details>
+
+<details className="faqItem" id="disabled-feed">
+<summary>Чаму адключаная стужка была выканана?</summary>
+
+Перадача ідэнтыфікатара стужкі ў `feed:generate` запускае яе нават пры неактыўнай рэгістрацыі. Каманда без ідэнтыфікатара прапускае неактыўныя рэгістрацыі.
+
+Глядзіце [генерацыю адной стужкі](./generation.mdx#single_feed).
+</details>
+
+<details className="faqItem" id="optional-field">
+<summary>Як прапусціць неабавязковае поле?</summary>
+
+Вярніце для поля `DragonCode\LaravelFeed\Data\OptionalData` або `Spatie\LaravelData\Optional`. CSV захоўвае слупок і запісвае пустое значэнне; аб'ектныя фарматы і XML прапускаюць поле.
+
+Глядзіце [неабавязковыя значэнні](./create-feeds.mdx#optional_values).
+</details>
+
+## Глядзіце таксама
+
+- [Вырашэнне праблем](./troubleshooting.mdx)
+- [Даведнік па канфігурацыі](./api/configuration.mdx)
+- [Даведнік API](./api/index.mdx)
+

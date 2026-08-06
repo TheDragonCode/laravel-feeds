@@ -1,0 +1,160 @@
+import Translate, { translate } from "@docusaurus/Translate";
+import Link from "@docusaurus/Link";
+import clsx from "clsx";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+import manifest from "@site/routes.json";
+
+import styles from "./styles.module.css";
+
+type DocSearchProps = {
+    className?: string;
+    mobile?: boolean;
+};
+
+const searchableRoutes = manifest.routes.map((route) => ({
+    ...route,
+    searchText: [
+        route.title,
+        route.description,
+        ...route.keywords,
+        ...route.headings.map((heading) => heading.text),
+    ]
+        .join(" ")
+        .toLocaleLowerCase("en-US"),
+}));
+
+export default function DocSearch({ className, mobile = false }: DocSearchProps) {
+    const dialogRef = useRef<HTMLDialogElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+    const [isReady, setIsReady] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    const results = useMemo(() => {
+        const normalizedQuery = query.trim().toLocaleLowerCase("en-US");
+
+        return searchableRoutes
+            .filter(
+                (route) =>
+                    normalizedQuery === "" ||
+                    route.searchText.includes(normalizedQuery),
+            )
+            .slice(0, 8);
+    }, [query]);
+
+    useEffect(() => {
+        setIsReady(true);
+    }, []);
+
+    useEffect(() => {
+        if (!isOpen) {
+            return;
+        }
+
+        dialogRef.current?.showModal();
+        inputRef.current?.focus();
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (mobile) {
+            return;
+        }
+
+        const handleShortcut = (event: KeyboardEvent) => {
+            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+                event.preventDefault();
+                setIsOpen(true);
+            }
+        };
+
+        window.addEventListener("keydown", handleShortcut);
+
+        return () => window.removeEventListener("keydown", handleShortcut);
+    }, [mobile]);
+
+    const close = () => {
+        dialogRef.current?.close();
+        setIsOpen(false);
+        setQuery("");
+    };
+
+    return (
+        <>
+            <button
+                className={clsx(
+                    mobile ? "menu__link" : "navbar__item navbar__link",
+                    styles.trigger,
+                    className,
+                )}
+                data-doc-search-trigger
+                data-search-ready={isReady}
+                onClick={() => setIsOpen(true)}
+                type="button"
+            >
+                <span>
+                    <Translate id="search.trigger">Search</Translate>
+                </span>
+                {!mobile && <kbd>Ctrl K</kbd>}
+            </button>
+
+            <dialog
+                aria-label={translate({
+                    id: "search.dialog.label",
+                    message: "Search documentation",
+                })}
+                className={styles.dialog}
+                onCancel={(event) => {
+                    event.preventDefault();
+                    close();
+                }}
+                onClick={(event) => {
+                    if (event.target === event.currentTarget) {
+                        close();
+                    }
+                }}
+                ref={dialogRef}
+            >
+                <div className={styles.panel}>
+                    <div className={styles.searchRow}>
+                        <label className={styles.visuallyHidden} htmlFor={`doc-search-${mobile ? "mobile" : "desktop"}`}>
+                            <Translate id="search.input.label">
+                                Search documentation
+                            </Translate>
+                        </label>
+                        <input
+                            id={`doc-search-${mobile ? "mobile" : "desktop"}`}
+                            onChange={(event) => setQuery(event.target.value)}
+                            placeholder={translate({
+                                id: "search.input.placeholder",
+                                message: "Search guides, API, and troubleshooting",
+                            })}
+                            ref={inputRef}
+                            type="search"
+                            value={query}
+                        />
+                        <button onClick={close} type="button">
+                            <Translate id="search.close">Close</Translate>
+                        </button>
+                    </div>
+
+                    <div aria-live="polite" className={styles.results}>
+                        {results.length > 0 ? (
+                            results.map((route) => (
+                                <Link key={route.route} onClick={close} to={route.route}>
+                                    <strong>{route.title}</strong>
+                                    <span>{route.description}</span>
+                                </Link>
+                            ))
+                        ) : (
+                            <p>
+                                <Translate id="search.empty">
+                                    No matching documentation found.
+                                </Translate>
+                            </p>
+                        )}
+                    </div>
+                </div>
+            </dialog>
+        </>
+    );
+}

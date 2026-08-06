@@ -325,5 +325,98 @@
   "theme.tags.tagsPageTitle": {
     "message": "Теги",
     "description": "Заголовок страницы со списком тегов"
+  },
+  "homepage.install.copied": {
+    "message": "Скопировано"
+  },
+  "homepage.install.copy": {
+    "message": "Скопировать"
+  },
+  "homepage.install.copySuccess": {
+    "message": "Команда установки скопирована в буфер обмена."
+  },
+  "homepage.install.copyFailure": {
+    "message": "Не удалось скопировать. Выделите команду вручную."
+  },
+  "homepage.meta.title": {
+    "message": "Документация Laravel Feeds"
+  },
+  "homepage.meta.description": {
+    "message": "Экспортируйте большие наборы данных Laravel в XML, JSON, JSON Lines, CSV, RSS и фиды маркетплейсов."
+  },
+  "homepage.eyebrow": {
+    "message": "Пакет Laravel · Документация 1.x"
+  },
+  "homepage.title": {
+    "message": "Экспортируйте большие наборы данных без полной загрузки в память"
+  },
+  "homepage.summary": {
+    "message": "Генерируйте фиды XML, JSON, JSON Lines, CSV, RSS, Sitemap, Instagram и Yandex в потоковом процессе Laravel."
+  },
+  "homepage.action.start": {
+    "message": "Начать за 5 минут"
+  },
+  "homepage.action.formats": {
+    "message": "Выбрать формат"
+  },
+  "homepage.example.php": {
+    "message": "ProductFeed.php"
+  },
+  "homepage.example.output": {
+    "message": "Сгенерированный XML"
+  },
+  "homepage.paths.eyebrow": {
+    "message": "Выберите свой путь"
+  },
+  "homepage.paths.title": {
+    "message": "Начните с задачи, затем используйте справочник"
+  },
+  "homepage.card.quick.description": {
+    "message": "Установите пакет и сгенерируйте первый фид."
+  },
+  "homepage.card.quick.title": {
+    "message": "Быстрый старт"
+  },
+  "homepage.card.performance.description": {
+    "message": "Управляйте блоками, памятью, очередями и разделением файлов."
+  },
+  "homepage.card.performance.title": {
+    "message": "Большие наборы данных"
+  },
+  "homepage.card.recipes.description": {
+    "message": "Используйте готовые шаблоны для Sitemap, RSS, Instagram и Yandex."
+  },
+  "homepage.card.recipes.title": {
+    "message": "Форматы и рецепты"
+  },
+  "homepage.card.api.description": {
+    "message": "Находите точные методы, ключи конфигурации, события и ошибки."
+  },
+  "homepage.card.api.title": {
+    "message": "Справочник API"
+  },
+  "homepage.support.label": {
+    "message": "Совместимость"
+  },
+  "homepage.support.details": {
+    "message": "Подробнее о совместимости"
+  },
+  "search.trigger": {
+    "message": "Поиск"
+  },
+  "search.dialog.label": {
+    "message": "Поиск по документации"
+  },
+  "search.input.label": {
+    "message": "Поиск по документации"
+  },
+  "search.input.placeholder": {
+    "message": "Поиск руководств, API и решений проблем"
+  },
+  "search.close": {
+    "message": "Закрыть"
+  },
+  "search.empty": {
+    "message": "Подходящая документация не найдена."
   }
 }

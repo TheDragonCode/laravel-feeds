@@ -1,0 +1,253 @@
+.hero {
+    padding: clamp(3rem, 8vw, 6rem) var(--space-4) var(--space-16);
+    background:
+        radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--color-action) 15%, transparent), transparent 34rem),
+        linear-gradient(145deg, var(--color-surface-muted), var(--color-bg) 62%);
+    border-block-end: 1px solid var(--color-border);
+}
+
+.heroInner,
+.paths,
+.support {
+    inline-size: min(100%, var(--content-wide));
+    margin-inline: auto;
+}
+
+.heroInner {
+    display: grid;
+    gap: var(--space-12);
+    align-items: center;
+}
+
+.heroCopy {
+    max-inline-size: 44rem;
+}
+
+.eyebrow,
+.sectionHeading > p {
+    margin-block-end: var(--space-3);
+    color: var(--color-action);
+    font-size: 0.8125rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.hero h1 {
+    max-inline-size: 18ch;
+    margin-block-end: var(--space-6);
+    font-size: clamp(2.5rem, 2rem + 3vw, 4.75rem);
+    letter-spacing: -0.055em;
+    line-height: 1.02;
+}
+
+.summary {
+    max-inline-size: 62ch;
+    color: var(--color-text-muted);
+    font-size: clamp(1.05rem, 0.98rem + 0.35vw, 1.25rem);
+    line-height: 1.65;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block: var(--space-8) var(--space-4);
+}
+
+.actions > a {
+    min-block-size: 2.75rem;
+}
+
+.installCommand {
+    display: flex;
+    max-inline-size: 34rem;
+    align-items: stretch;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.installCommand code {
+    flex: 1;
+    padding: var(--space-3) var(--space-4);
+    overflow-x: auto;
+    background: transparent;
+    color: var(--color-text);
+    font-size: 0.8125rem;
+    white-space: nowrap;
+}
+
+.installCommand button {
+    min-block-size: 2.75rem;
+    padding-inline: var(--space-4);
+    border: 0;
+    border-inline-start: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+    color: var(--color-action);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.installCommand button:hover {
+    background: color-mix(in srgb, var(--color-action) 9%, var(--color-surface));
+}
+
+.codePreview {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+}
+
+.codePreview > div + div {
+    border-block-start: 1px solid var(--color-border);
+}
+
+.codePreview span {
+    display: block;
+    padding: var(--space-2) var(--space-4);
+    border-block-end: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.codePreview pre {
+    min-block-size: 100%;
+    margin: 0;
+    padding: var(--space-4);
+    overflow: auto;
+    border-radius: 0;
+    background: var(--color-code-bg);
+    color: var(--color-text);
+    font-size: 0.8125rem;
+    line-height: 1.65;
+}
+
+.paths {
+    padding: var(--space-16) var(--space-4);
+}
+
+.sectionHeading {
+    max-inline-size: 46rem;
+    margin-block-end: var(--space-8);
+}
+
+.sectionHeading h2 {
+    margin: 0;
+    font-size: clamp(1.9rem, 1.6rem + 1.2vw, 2.75rem);
+    letter-spacing: -0.035em;
+}
+
+.featureGrid {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.featureCard {
+    display: flex;
+    min-block-size: 9rem;
+    flex-direction: column;
+    gap: var(--space-2);
+    justify-content: center;
+    padding: var(--space-6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    text-decoration: none;
+    transition:
+        border-color var(--duration-normal) ease,
+        transform var(--duration-normal) ease;
+}
+
+.featureCard:hover {
+    border-color: var(--color-action);
+    color: var(--color-text);
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+.featureCard strong {
+    color: var(--color-heading);
+    font-size: 1.125rem;
+}
+
+.featureCard span {
+    color: var(--color-text-muted);
+    line-height: 1.6;
+}
+
+.support {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
+    align-items: center;
+    padding: var(--space-6) var(--space-4) var(--space-12);
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+}
+
+.support a {
+    margin-inline-start: auto;
+    font-weight: 700;
+}
+
+.visuallyHidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+    white-space: nowrap;
+}
+
+@media (min-width: 48rem) {
+    .codePreview,
+    .featureGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .codePreview > div + div {
+        border-block-start: 0;
+        border-inline-start: 1px solid var(--color-border);
+    }
+}
+
+@media (min-width: 62rem) {
+    .heroInner {
+        grid-template-columns: minmax(0, 1.05fr) minmax(28rem, 0.95fr);
+    }
+
+    .featureGrid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 35rem) {
+    .actions > a,
+    .support a {
+        inline-size: 100%;
+        margin-inline-start: 0;
+        text-align: center;
+    }
+
+    .installCommand {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .installCommand button {
+        border-block-start: 1px solid var(--color-border);
+        border-inline-start: 0;
+    }
+}

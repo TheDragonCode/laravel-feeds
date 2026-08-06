@@ -1,0 +1,57 @@
+---
+title: "Ereignisse und Ausnahmen"
+description: "Referenz für Lebenszyklusereignisse der Feed-Generierung und öffentliche Ausnahmetypen"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+---
+
+# Ereignisse und Ausnahmen
+
+<PageLead>
+Verwenden Sie Lebenszyklusereignisse für die Anwendungsintegration und Ausnahmetypen für die Wiederherstellung an einer Grenze, die den Fehler behandeln kann.
+</PageLead>
+
+## Lebenszyklusereignisse {/* #lifecycle-events */}
+
+| Ereignis | Öffentliche Daten | Auslösezeitpunkt |
+| --- | --- | --- |
+| `FeedStartingEvent` | `feed` | Unmittelbar vor dem Erstellen der Entwurfsdatei. |
+| `FeedFinishedEvent` | `feed`, `path`, `paths` | Nachdem alle erzeugten Dateien erfolgreich veröffentlicht wurden. |
+
+`FeedFinishedEvent::$paths` enthält alle veröffentlichten Pfade in ihrer Reihenfolge. `$path` bleibt aus Kompatibilitätsgründen erhalten und enthält immer den ersten Pfad.
+
+## Eingabe- und Suchfehler {/* #input-and-lookup-failures */}
+
+| Ausnahme | Bedeutung |
+| --- | --- |
+| `InvalidFeedArgumentException` | Eine Feed-ID in der Konsole ist ungültig. |
+| `FeedNotFoundException` | Für die angeforderte Feed-ID existiert keine Registrierung. |
+| `InvalidExpressionException` | Ein Zeitplanausdruck ist ungültig. |
+| `UnknownFeedClassException` | Eine konfigurierte Feed-Klasse kann nicht aufgelöst werden. |
+| `UnexpectedClassException` | Eine aufgelöste Klasse erfüllt den erwarteten Vertrag nicht. |
+
+## Serialisierungs- und Speicherfehler {/* #serialization-and-storage-failures */}
+
+| Ausnahme | Bedeutung |
+| --- | --- |
+| `InvalidCsvRowException` | Eine CSV-Zeile entspricht nicht dem festgelegten Spaltenschema. |
+| `InvalidCsvValueException` | Ein CSV-Feld kann nicht als skalarer Wert serialisiert werden. |
+| `InvalidXmlCDataException` | Ein CDATA-Wert ist ungültig. |
+| `InvalidXmlFragmentException` | Ein unformatiertes XML-Fragment ist ungültig. |
+| `UnsupportedStorageDiskException` | Der ausgewählte Laravel-Datenträger ist kein beschreibbarer `FilesystemAdapter`. |
+| `OpenFeedException` | Eine Entwurfsressource kann nicht geöffnet werden. |
+| `WriteFeedException` | Die vollständige Ausgabe kann nicht geschrieben werden. |
+| `CloseFeedException` | Die Ausgaberessource kann nicht geschlossen werden. |
+| `ResourceMetaException` | Erforderliche Stream-Metadaten sind nicht verfügbar. |
+| `FeedGenerationException` | Die Generierung ist für eine bestimmte Feed-Klasse fehlgeschlagen. |
+
+Fangen Sie Ausnahmen nur dort ab, wo die Anwendung Wiederherstellung oder verständlichen Kontext ergänzen kann. Nicht behebbare Generierungsfehler sollte Laravel melden.
+
+## Siehe auch
+
+- [Ereignisleitfaden](../events.mdx)
+- [Fehlerbehebung](../troubleshooting.mdx)
+- [Speichergarantien](../location.mdx#publication_guarantees)
+

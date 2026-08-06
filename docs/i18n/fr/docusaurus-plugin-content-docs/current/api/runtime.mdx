@@ -1,0 +1,80 @@
+---
+title: "Services et contrats d’exécution"
+description: "API publiques de génération, d’enregistrement, de planification, de transformation et de valeurs facultatives"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+---
+
+# Services et contrats d’exécution
+
+<PageLead>
+Ces points d’entrée couvrent la génération programmée, l’enregistrement des flux, l’intégration au planificateur, la transformation scalaire et les champs facultatifs.
+</PageLead>
+
+## GeneratorService {/* #generator-service */}
+
+`DragonCode\LaravelFeed\Services\GeneratorService` génère et publie un flux.
+
+<ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
+
+La méthode publie toutes les parties comme une seule opération, met à jour la dernière activité de l’enregistrement, émet les événements du cycle de vie et renvoie les chemins avec le nombre d’enregistrements de chaque fichier. Les échecs sont enveloppés dans `FeedGenerationException`, avec l’exception d’origine comme exception précédente.
+
+Résolvez le service via le conteneur Laravel au lieu de construire ses dépendances internes.
+
+```php
+use App\Feeds\UserFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+
+$result = app(GeneratorService::class)->feed(app(UserFeed::class));
+
+foreach ($result->records as $path => $count) {
+    processFeedResult($path, $count);
+}
+```
+
+## FeedQuery {/* #feed-query */}
+
+`DragonCode\LaravelFeed\Queries\FeedQuery` gère les enregistrements persistants des flux.
+
+| Méthode | Résultat |
+| --- | --- |
+| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Crée un enregistrement. |
+| `find(int $id): Feed` | Renvoie un enregistrement ou lève `FeedNotFoundException`. |
+| `all(): Builder` | Renvoie tous les enregistrements triés par identifiant. |
+| `active(): Builder` | Renvoie les enregistrements actifs triés par identifiant. |
+| `setLastActivity(string $class): void` | Met à jour `last_activity` pour une classe de flux. |
+| `delete(int $id): void` | Supprime temporairement un enregistrement par identifiant. |
+| `deleteByClass(string $class): void` | Supprime définitivement les enregistrements d’une classe, y compris ceux déjà supprimés. |
+| `restore(int $id): void` | Restaure un enregistrement supprimé temporairement. |
+
+Utilisez la migration ou l’opération de déploiement générée pour les changements habituels afin de les reproduire dans tous les environnements.
+
+## ScheduleFeedHelper {/* #schedule-feed-helper */}
+
+`DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper::register()` ajoute les enregistrements actifs au planificateur Laravel. Chacun utilise son expression cron et un verrou anti-chevauchement. L’exécution en arrière-plan et la durée du verrou viennent de `feeds.schedule`.
+
+L’enregistrement est ignoré sans erreur lorsque la table configurée n’existe pas.
+
+## Transformer {/* #transformer */}
+
+Implémentez `DragonCode\LaravelFeed\Contracts\Transformer` pour convertir les valeurs prises en charge avant leur sérialisation.
+
+<ApiSignature>public function allow(mixed $value): bool</ApiSignature>
+
+<ApiSignature>public function transform(mixed $value): string</ApiSignature>
+
+`allow()` indique si le transformateur accepte une valeur. `transform()` renvoie sa représentation scalaire sérialisée. Ajoutez la classe via `Feed::transformers()` ou `feeds.transformers`.
+
+## OptionalData {/* #optional-data */}
+
+Renvoyez un nouvel objet `DragonCode\LaravelFeed\Data\OptionalData` pour un champ à omettre en l’absence de valeur. XML, RSS, JSON et JSON Lines l’omettent. CSV conserve la colonne et écrit un champ vide.
+
+## Voir aussi
+
+- [Flux et données](./feed.mdx)
+- [Configuration](./configuration.mdx)
+- [Événements et exceptions](./events-exceptions.mdx)
+- [Génération et planification](../generation.mdx)
+

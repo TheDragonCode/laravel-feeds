@@ -1,0 +1,70 @@
+---
+title: "Large dataset performance"
+description: "Control memory, database load, file splitting, queues, and storage throughput for large feeds"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["performance", "memory", "chunks", "large datasets", "queues"]
+---
+
+# Large dataset performance
+
+<PageLead>
+Laravel Feeds is designed to write records incrementally. Memory stays bounded only when the application keeps every upstream step lazy.
+</PageLead>
+
+## Keep the query lazy {/* #lazy-query */}
+
+Return an Eloquent `Builder` directly:
+
+```php
+public function builder(): Builder
+{
+    return Product::query()
+        ->select(['id', 'title', 'updated_at'])
+        ->where('is_exportable', true);
+}
+```
+
+Do not materialize the complete result before generation. Select only required columns and eager-load only relationships used by `item()` to avoid N+1 queries.
+
+## Tune chunk size {/* #chunk-size */}
+
+The default is `1000` records. Lower values reduce peak model memory and increase query count. Higher values reduce query overhead and increase memory. Measure with production-like row sizes.
+
+```php
+public function chunkSize(): int
+{
+    return 500;
+}
+```
+
+## Split output files {/* #split-output */}
+
+Use `perFile()` when consumers accept multiple files or one output would become difficult to publish and retry.
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+
+public function maxFiles(): int
+{
+    return 20;
+}
+```
+
+## Queue long-running feeds {/* #queue-long-running */}
+
+Queue mode moves generation out of the console request, but it does not reduce the memory used by a feed. Use an asynchronous connection, run workers with suitable timeout and memory limits, and keep the uniqueness TTL longer than the expected generation time.
+
+## Measure the whole path {/* #measure */}
+
+Measure database time, model hydration, transformation, serialization, and storage publication separately. Remote disks can make publication the dominant cost even when generation is fast.
+
+## See Also
+
+- [Eloquent chunk size](./eloquent.mdx#chunk_size)
+- [Generation queues](./generation.mdx#queue)
+- [Storage publication guarantees](./location.mdx#publication_guarantees)

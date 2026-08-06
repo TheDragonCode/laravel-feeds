@@ -1,0 +1,71 @@
+---
+title: "대규모 데이터셋 성능"
+description: "대규모 피드의 메모리, 데이터베이스 부하, 파일 분할, 큐 및 저장소 처리량 제어"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["performance", "memory", "chunks", "large datasets", "queues"]
+---
+
+# 대규모 데이터셋 성능
+
+<PageLead>
+Laravel Feeds는 레코드를 점진적으로 기록합니다. 애플리케이션의 모든 상위 단계가 지연 평가를 유지해야 메모리 사용량을 제한할 수 있습니다.
+</PageLead>
+
+## 쿼리를 지연 상태로 유지 {/* #lazy-query */}
+
+Eloquent `Builder`를 직접 반환하십시오.
+
+```php
+public function builder(): Builder
+{
+    return Product::query()
+        ->select(['id', 'title', 'updated_at'])
+        ->where('is_exportable', true);
+}
+```
+
+생성 전에 전체 결과를 구체화하지 마십시오. 필요한 열만 선택하고 `item()`에서 사용하는 관계만 미리 로드하여 N+1 쿼리를 방지하십시오.
+
+## 청크 크기 조정 {/* #chunk-size */}
+
+기본값은 `1000`개 레코드입니다. 값이 작으면 모델 메모리 정점은 낮아지고 쿼리 수는 늘어납니다. 값이 크면 쿼리 오버헤드는 줄고 메모리 사용량은 늘어납니다. 프로덕션과 비슷한 행 크기로 측정하십시오.
+
+```php
+public function chunkSize(): int
+{
+    return 500;
+}
+```
+
+## 출력 파일 분할 {/* #split-output */}
+
+소비자가 여러 파일을 허용하거나 하나의 출력이 게시 및 재시도하기 어려울 때 `perFile()`을 사용하십시오.
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+
+public function maxFiles(): int
+{
+    return 20;
+}
+```
+
+## 장시간 실행 피드를 큐로 이동 {/* #queue-long-running */}
+
+큐 모드는 생성을 콘솔 명령 밖으로 옮기지만 피드의 메모리 사용량을 줄이지는 않습니다. 비동기 연결과 적절한 시간 및 메모리 제한의 워커를 사용하고, 고유성 TTL을 예상 생성 시간보다 길게 설정하십시오.
+
+## 전체 경로 측정 {/* #measure */}
+
+데이터베이스 시간, 모델 hydration, 변환, 직렬화 및 저장소 게시를 따로 측정하십시오. 생성이 빨라도 원격 디스크 게시가 가장 큰 비용일 수 있습니다.
+
+## 관련 문서
+
+- [Eloquent 청크 크기](./eloquent.mdx#chunk_size)
+- [생성 큐](./generation.mdx#queue)
+- [저장소 게시 보장](./location.mdx#publication_guarantees)
+

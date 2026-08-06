@@ -1,0 +1,62 @@
+---
+title: "Configuration reference"
+description: "Reference for every Laravel Feeds configuration section and environment variable"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["configuration", "environment", "queue", "schedule", "converters"]
+---
+
+# Configuration reference
+
+<PageLead>
+Publish `config/feeds.php` with `php artisan vendor:publish --tag="feeds"`. Environment values are read when Laravel builds the configuration cache.
+</PageLead>
+
+## Core settings {/* #core-settings */}
+
+| Key | Default | Purpose |
+| --- | --- | --- |
+| `model` | `DragonCode\LaravelFeed\Models\Feed` | Eloquent model used for feed registrations. A replacement must extend the package model. |
+| `pretty` | `false` | Enables formatted XML and JSON output. |
+| `date.format` | `DATE_ATOM` | PHP date format used by the date transformer. |
+| `date.timezone` | `UTC` | Timezone used while serializing dates. |
+| `table.connection` | `DB_CONNECTION`, then `sqlite` | Database connection for feed registrations. |
+| `table.table` | `feeds` | Feed registration table name. |
+
+## Scheduling and queues {/* #scheduling-and-queues */}
+
+| Environment variable | Default | Purpose |
+| --- | --- | --- |
+| `FEED_SCHEDULE_TTL` | `1440` | Schedule lock lifetime in minutes. |
+| `FEED_SCHEDULE_RUN_BACKGROUND` | `true` | Runs scheduled feed commands in the background. |
+| `FEED_QUEUE_ENABLED` | `false` | Dispatches generation through Laravel Queue. |
+| `FEED_QUEUE_CONNECTION` | `QUEUE_CONNECTION`, then `database` | Queue connection for feed jobs. |
+| `FEED_QUEUE_NAME` | Connection default | Queue name. |
+| `FEED_QUEUE_UNIQUE_TTL` | `3600` | Unique job lock lifetime in seconds. |
+| `FEED_CONSOLE_PROGRESS_BAR_ENABLED` | `false` | Displays the console progress bar. |
+
+Queue mode requires a worker when the selected connection is asynchronous. The `sync` connection still runs generation in the command process.
+
+## Transformers {/* #transformers */}
+
+The default pipeline contains `BoolTransformer`, `DateTimeTransformer`, and `EnumTransformer` in that order. Each matching transformer receives the value returned by the previous transformer.
+
+Add a custom class to `transformers` after implementing `DragonCode\LaravelFeed\Contracts\Transformer`. Laravel resolves the class through the service container.
+
+## Converter settings {/* #converter-settings */}
+
+| Key | Default |
+| --- | --- |
+| `converters.json.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.jsonl.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.csv.delimiter` | `;` |
+| `converters.csv.enclosure` | `"` |
+| `converters.csv.escape` | Empty string |
+| `converters.csv.line_ending` | `PHP_EOL` |
+
+## See Also
+
+- [Installation](../installation.mdx)
+- [Generation and schedule](../generation.mdx)
+- [Eloquent model configuration](../eloquent.mdx)
