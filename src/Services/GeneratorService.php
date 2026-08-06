@@ -37,9 +37,18 @@ class GeneratorService
 
     public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData
     {
-        $class   = get_class($feed);
-        $storage = $feed->storage();
-        $path    = $feed->path();
+        $class = get_class($feed);
+
+        try {
+            $storage = $feed->storage();
+            $path    = $feed->path();
+        } catch (Throwable $e) {
+            if (! $feed instanceof HasFeedTargets) {
+                throw $e;
+            }
+
+            throw new FeedGenerationException($class, $e, $this->feedTargetKey($feed));
+        }
 
         $this->debug($output, 'Generation started.', [
             'feed' => $class,

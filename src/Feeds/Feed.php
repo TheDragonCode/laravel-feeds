@@ -35,7 +35,7 @@ abstract class Feed
 
     protected ?string $filename = null;
 
-    protected ?FeedTarget $target = null;
+    private ?FeedTarget $feedTarget = null;
 
     public function __construct(
         protected Application $laravel
@@ -45,15 +45,15 @@ abstract class Feed
     {
         $feed = clone $this;
 
-        $feed->target   = $target;
-        $feed->filename = null;
+        $feed->feedTarget = $target;
+        $feed->filename   = null;
 
         return $feed;
     }
 
     public function target(): FeedTarget
     {
-        return $this->target
+        return $this->feedTarget
             ?? throw new LogicException(sprintf('Feed [%s] has no target.', static::class));
     }
 

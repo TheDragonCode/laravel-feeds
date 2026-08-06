@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Foundation\Application;
 use Tests\Support\TargetedFeed;
 
 test('configures a cloned feed without mutating the definition', function () {
@@ -29,6 +30,24 @@ test('throws when a feed has no target', function () {
             LogicException::class,
             'Feed [Tests\Support\TargetedFeed] has no target.'
         );
+});
+
+test('preserves subclass properties named target', function () {
+    $feed = new class (app(Application::class)) extends TargetedFeed {
+        protected string $target = 'custom';
+
+        public function customTarget(): string
+        {
+            return $this->target;
+        }
+    };
+
+    $configured = $feed->forTarget(new FeedTarget('42'));
+
+    expect($configured->customTarget())
+        ->toBe('custom')
+        ->and($configured->target()->key)
+        ->toBe('42');
 });
 
 test('resets the memoized filename for each target clone', function () {

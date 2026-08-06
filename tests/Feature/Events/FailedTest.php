@@ -71,6 +71,10 @@ final class FailedTargetedFeed extends BaseFeed implements HasFeedTargets
 
     public function filename(): string
     {
+        if ($this->target()->key === 'invalid') {
+            throw new RuntimeException('Target filename failed.');
+        }
+
         return "failed-targets/{$this->target()->key}.xml";
     }
 
@@ -167,3 +171,18 @@ test('failed targeted generation keeps feed and target context', function () {
         throw $exception;
     }
 })->throws(FeedGenerationException::class, 'Generation failed after opening a draft.');
+
+test('failed targeted setup keeps feed and target context', function () {
+    $feed = app(FailedTargetedFeed::class)->forTarget(new FeedTarget('invalid'));
+
+    try {
+        app(GeneratorService::class)->feed($feed);
+    } catch (FeedGenerationException $exception) {
+        expect($exception->getFeed())
+            ->toBe(FailedTargetedFeed::class)
+            ->and($exception->getTarget())
+            ->toBe('invalid');
+
+        throw $exception;
+    }
+})->throws(FeedGenerationException::class, 'Target filename failed.');
