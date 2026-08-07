@@ -10,6 +10,8 @@ use function array_values;
 
 final class FeedFinishedEvent
 {
+    public ?string $target = null;
+
     /**
      * Create a new event instance.
      *
@@ -21,9 +23,10 @@ final class FeedFinishedEvent
         public string $feed,
         public string $path,
         public array $paths = [],
-        public ?string $target = null,
+        ?string $target = null,
     ) {
-        $this->paths = array_values($this->paths === [] ? [$this->path] : $this->paths);
-        $this->path  = $this->paths[0];
+        $this->paths  = array_values($this->paths === [] ? [$this->path] : $this->paths);
+        $this->path   = $this->paths[0];
+        $this->target = $target;
     }
 }
