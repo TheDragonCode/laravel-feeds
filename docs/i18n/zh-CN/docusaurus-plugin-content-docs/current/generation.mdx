@@ -4,7 +4,7 @@ description: "生成 Feed 文件以供后续分发的说明"
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "targets", "feed:generate"]
 ---
 
 [← 上一页](./create-feeds.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./supported-formats.mdx)
@@ -36,6 +36,29 @@ php artisan feed:generate
 ```bash
 php artisan feed:generate 123
 ```
+
+## 目标选择 {/* #target_selection */}
+
+对于[目标 Feed](./create-feeds.mdx#targeted_feeds)，注册 ID 用于选择 Feed 类，目标键用于选择一个输出。
+
+不传入 `--target` 运行该 Feed 时，会惰性消费 `targets()` 并生成全部目标：
+
+```bash
+php artisan feed:generate 123
+```
+
+重复传入 `--target` 选项可仅生成所选目标：
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+显式键使用 `findTarget()`，不会枚举 `targets()`。重复键只处理一次，并保留第一次出现的顺序。生成开始前会先解析全部请求键。
+
+使用 `--target` 时必须提供一个 Feed 注册 ID。空键、未知键，以及对未实现 `HasFeedTargets` 的 Feed 选择目标都会被命令拒绝。
+
+完整目标枚举采用流式处理，并非原子操作。如果 `targets()` 在生成若干值后失败，先前的目标可能已经生成或进入队列。空的可迭代对象不会生成任何内容，也不会创建隐式默认目标。
 
 ## AI 代理输出 {/* #ai_agent_output */}
 
@@ -74,6 +97,8 @@ php artisan feed:generate 123
 | `queued` | 已启用队列模式，并为代理同步执行了 Feed 任务。 | 无 |
 | `skipped` | Feed 未启用，并且命令运行时未传入 Feed ID。 | 无 |
 
+每个目标 Feed 的 `generated` 或 `queued` 条目还包含 `target` 字段，其值为所选目标键。
+
 :::note
 在队列模式下，代理专用执行路径会先同步运行每个已启用的任务，再返回 JSON 结果。面向人工阅读的常规执行路径仍会通过配置的队列连接分派任务。
 :::
@@ -91,11 +116,11 @@ FEED_QUEUE_NAME=feeds
 FEED_QUEUE_UNIQUE_TTL=3600
 ```
 
-启用队列模式后，`feed:generate` 会为每个已启用的 Feed 分派一个任务，而不是直接生成文件。使用异步连接时，任务分派完成后命令便会返回。请为所选连接和队列启动[队列工作进程](https://laravel.com/docs/queues#running-the-queue-worker)来处理这些任务。
+启用队列模式后，`feed:generate` 会为每个已启用的普通 Feed 分派一个任务，并为目标 Feed 的每个所选目标分派一个任务。使用异步连接时，任务分派完成后命令便会返回。请为所选连接和队列启动[队列工作进程](https://laravel.com/docs/queues#running-the-queue-worker)来处理这些任务。
 
 - `FEED_QUEUE_CONNECTION` 选择队列连接。未设置时依次回退到 `QUEUE_CONNECTION` 和 `database`。
 - `FEED_QUEUE_NAME` 选择该连接上的队列。留空时使用连接的默认队列。
-- `FEED_QUEUE_UNIQUE_TTL` 设置唯一性锁的最长有效时间，单位为秒。该锁有效期间，同一 Feed 的第二个任务不会进入队列。
+- `FEED_QUEUE_UNIQUE_TTL` 设置唯一性锁的最长有效时间，单位为秒。普通任务按 Feed 类保持唯一；目标任务按 Feed 类和目标键保持唯一，目标参数不会改变该标识。
 
 :::note
 `sync` 连接会在控制台进程中立即执行每个任务。选择异步连接可将生成任务交给工作进程。设置 `FEED_QUEUE_ENABLED=false` 可直接生成 Feed，而不分派任务。
@@ -118,7 +143,7 @@ Schedule::call(function () {
 })->everySecond();
 ```
 
-这样会根据数据库 `expression` 列中指定的计划，为所有已启用的 Feed 注册调用。
+这会根据数据库 `expression` 列中的计划注册所有已启用的 Feed。已调度的目标 Feed 会生成 `targets()` 返回的每个值。
 
 ### 手动调度 {/* #manual */}
 

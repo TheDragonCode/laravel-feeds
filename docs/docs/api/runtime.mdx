@@ -4,7 +4,7 @@ description: "Public generation, registration, scheduling, transformation, and o
 type: reference
 status: stable
 since: "1.0"
-keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+keywords: ["GeneratorService", "FeedTarget", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
 ---
 
 # Runtime services and contracts
@@ -19,7 +19,7 @@ These entry points support programmatic generation, feed registration, scheduler
 
 <ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
 
-The method publishes all parts as one operation, updates the registration's last activity, dispatches lifecycle events, and returns paths with per-file record counts. Storage resolution and output path lookup happen before generation starts; exceptions raised during this preflight, including `UnsupportedStorageDiskException`, are thrown directly. After preflight succeeds, generation failures are wrapped in `FeedGenerationException`, with the original exception as its previous throwable.
+The method publishes all parts as one operation, updates the registration's last activity, dispatches lifecycle events, and returns paths with per-file record counts. Storage resolution and output path lookup happen before generation starts. For an ordinary feed, exceptions raised during this preflight, including `UnsupportedStorageDiskException`, are thrown directly. For a configured feed that implements `HasFeedTargets`, preflight failures are wrapped in `FeedGenerationException` so the target key remains available. After preflight succeeds, generation failures are wrapped for every feed, with the original exception as the previous throwable.
 
 Resolve the service through Laravel's container instead of constructing its internal collaborators.
 
@@ -32,6 +32,22 @@ $result = app(GeneratorService::class)->feed(app(UserFeed::class));
 foreach ($result->records as $path => $count) {
     processFeedResult($path, $count);
 }
+```
+
+`GeneratorService` generates one configured feed and does not enumerate targets. Resolve a target first when calling it directly:
+
+```php
+use App\Feeds\PartnerFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+use RuntimeException;
+
+$feed = app(PartnerFeed::class);
+$target = $feed->findTarget('42')
+    ?? throw new RuntimeException('Feed target [42] not found.');
+
+$result = app(GeneratorService::class)->feed(
+    $feed->forTarget($target),
+);
 ```
 
 ## FeedQuery {/* #feed-query */}

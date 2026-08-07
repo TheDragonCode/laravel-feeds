@@ -1,10 +1,10 @@
 ---
 title: "Фиды и данные"
-description: "Публичные контракты Feed, FeedItem, FeedInfo, ElementData и результатов генерации"
+description: "Публичные контракты для Feed, целей фида, FeedItem, FeedInfo, ElementData и результатов генерации"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
 ---
 
 # Фиды и данные
@@ -38,6 +38,23 @@ keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"
 | `format(): FeedFormatEnum` | `Xml` | Возвращает настроенный формат вывода. |
 
 `Feed` использует Laravel `Conditionable` и `Macroable`.
+
+## Цели фида {/* #feed-targets */}
+
+`DragonCode\LaravelFeed\Feeds\FeedTarget` определяет один независимо генерируемый вывод. Его конструктор принимает непустой строковый ключ и необязательный массив параметров:
+
+<ApiSignature>public function __construct(public readonly string $key, public readonly array $parameters = [])</ApiSignature>
+
+Реализуйте `DragonCode\LaravelFeed\Contracts\HasFeedTargets` в классе фида, которому нужна эта возможность. Необязательный трейт `DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets` реализует `forTarget()` и `target()`, а класс фида реализует поиск:
+
+| Метод | Контракт |
+| --- | --- |
+| `targets(): iterable` | Лениво возвращает все доступные `FeedTarget` для полного запуска командой или по расписанию. |
+| `findTarget(string $key): ?FeedTarget` | Напрямую разрешает одну явно указанную в команде цель с тем же ключом или возвращает `null`. |
+| `forTarget(FeedTarget $target): static` | Возвращает настроенный клон и сбрасывает сохранённое в памяти имя файла. |
+| `target(): FeedTarget` | Возвращает настроенную цель или выбрасывает `LogicException`, если цель не задана. |
+
+Конструктор отклоняет пустые ключи и ключи только из пробелов, но не нормализует и не очищает остальные значения. Параметры цели непрозрачны для пакета и сериализуются как снимок задания очереди. Ключ идентифицирует цель, поэтому должен быть стабильным и уникальным в пределах класса фида. См. [настройку целевого фида](../create-feeds.mdx#targeted_feeds) и [выбор цели в команде](../generation.mdx#target_selection).
 
 ## FeedItem и FeedInfo {/* #feed-item-and-feed-info */}
 

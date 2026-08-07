@@ -1,10 +1,10 @@
 ---
 title: "Стужкі і даныя"
-description: "Публічныя кантракты Feed, FeedItem, FeedInfo, ElementData і вынікаў генерацыі"
+description: "Публічныя кантракты Feed, мэт стужкі, FeedItem, FeedInfo, ElementData і вынікаў генерацыі"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
 ---
 
 # Стужкі і даныя
@@ -38,6 +38,23 @@ keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"
 | `format(): FeedFormatEnum` | `Xml` | Вяртае наладжаны фармат вываду. |
 
 `Feed` выкарыстоўвае Laravel `Conditionable` і `Macroable`.
+
+## Мэты стужкі {/* #feed-targets */}
+
+`DragonCode\LaravelFeed\Feeds\FeedTarget` вызначае адзін незалежна згенераваны вынік. Яго канструктар прымае непусты радковы ключ і неабавязковы масіў параметраў:
+
+<ApiSignature>public function __construct(public readonly string $key, public readonly array $parameters = [])</ApiSignature>
+
+Рэалізуйце `DragonCode\LaravelFeed\Contracts\HasFeedTargets` у класе стужкі, які яўна падтрымлівае мэты. Неабавязковы трэйт `DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets` рэалізуе `forTarget()` і `target()`, а клас стужкі рэалізуе выяўленне мэт:
+
+| Метад | Кантракт |
+| --- | --- |
+| `targets(): iterable` | Ляніва вяртае кожны даступны `FeedTarget` для поўных запускаў каманды і раскладу. |
+| `findTarget(string $key): ?FeedTarget` | Непасрэдна вызначае адну яўна ўказаную ў камандзе мэту з тым жа ключом або вяртае `null`. |
+| `forTarget(FeedTarget $target): static` | Вяртае наладжаную копію і скідае запомненае імя файла. |
+| `target(): FeedTarget` | Вяртае наладжаную мэту або кідае `LogicException`, калі мэта не зададзена. |
+
+Канструктар адхіляе пустыя ключы і ключы толькі з прабельных сімвалаў, але не нармалізуе і не ачышчае іншыя значэнні. Параметры мэты непразрыстыя для пакета і серыялізуюцца як здымак задачы чаргі. Ключ з'яўляецца ідэнтычнасцю мэты, таму ён павінен быць стабільным і ўнікальным у межах класа стужкі. Глядзіце [наладжванне мэтавай стужкі](../create-feeds.mdx#targeted_feeds) і [выбар у камандзе](../generation.mdx#target_selection).
 
 ## FeedItem і FeedInfo {/* #feed-item-and-feed-info */}
 

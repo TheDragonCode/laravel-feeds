@@ -117,7 +117,7 @@
             "source": "api/events-exceptions.mdx",
             "aliases": [],
             "title": "Events and exceptions",
-            "description": "Reference for feed generation lifecycle events and public exception types",
+            "description": "Reference for feed and target generation lifecycle events and public exception types",
             "type": "reference",
             "status": "stable",
             "since": "1.0",
@@ -125,7 +125,8 @@
                 "events",
                 "exceptions",
                 "FeedStartingEvent",
-                "FeedFinishedEvent"
+                "FeedFinishedEvent",
+                "target"
             ],
             "headings": [
                 {
@@ -160,12 +161,14 @@
             "source": "api/feed.mdx",
             "aliases": [],
             "title": "Feeds and data",
-            "description": "Public contracts for Feed, FeedItem, FeedInfo, ElementData, and generation results",
+            "description": "Public contracts for Feed, feed targets, FeedItem, FeedInfo, ElementData, and generation results",
             "type": "reference",
             "status": "stable",
             "since": "1.0",
             "keywords": [
                 "Feed",
+                "FeedTarget",
+                "HasFeedTargets",
                 "FeedItem",
                 "FeedInfo",
                 "ElementData",
@@ -181,6 +184,11 @@
                     "level": 2,
                     "id": "feed",
                     "text": "Feed"
+                },
+                {
+                    "level": 2,
+                    "id": "feed-targets",
+                    "text": "Feed targets"
                 },
                 {
                     "level": 2,
@@ -220,6 +228,7 @@
             "since": "1.0",
             "keywords": [
                 "GeneratorService",
+                "FeedTarget",
                 "FeedQuery",
                 "ScheduleFeedHelper",
                 "Transformer",
@@ -361,6 +370,7 @@
                 "feed",
                 "FeedItem",
                 "FeedInfo",
+                "FeedTarget",
                 "make:feed"
             ],
             "headings": [
@@ -388,6 +398,11 @@
                     "level": 5,
                     "id": "optional_values",
                     "text": "Optional values"
+                },
+                {
+                    "level": 2,
+                    "id": "targeted_feeds",
+                    "text": "Targeted feeds"
                 },
                 {
                     "level": 2,
@@ -565,7 +580,8 @@
             "keywords": [
                 "events",
                 "FeedStartingEvent",
-                "FeedFinishedEvent"
+                "FeedFinishedEvent",
+                "target"
             ],
             "headings": [
                 {
@@ -677,6 +693,7 @@
                 "generation",
                 "schedule",
                 "queue",
+                "targets",
                 "feed:generate"
             ],
             "headings": [
@@ -689,6 +706,11 @@
                     "level": 2,
                     "id": "single_feed",
                     "text": "Single feed"
+                },
+                {
+                    "level": 2,
+                    "id": "target_selection",
+                    "text": "Target selection"
                 },
                 {
                     "level": 2,

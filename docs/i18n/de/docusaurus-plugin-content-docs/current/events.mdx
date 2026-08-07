@@ -4,7 +4,7 @@ description: "Während der Feed-Generierung ausgelöste Ereignisse"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 [← Zurück](./presets.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./extending-functionality.mdx)
@@ -16,11 +16,12 @@ Feeds lösen beim Ausführen des Befehls zwei Ereignisse aus:
 - **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — Das `FeedStartingEvent` wird nach der Vorabprüfung von Speicher und Pfad, vor der Converter-Auflösung und dem Staging ausgelöst. Dies bedeutet nicht, dass bereits eine Entwurfsdatei existiert.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — Das `FeedFinishedEvent` wird ausgelöst, nachdem jede erzeugte Datei erfolgreich veröffentlicht wurde. Bei einer fehlgeschlagenen Generierung wird dieses Ereignis nicht ausgelöst.
 
+Beide Ereignisse stellen `$feed` mit der erzeugten Feed-Klasse und `$target` mit dem Zielschlüssel oder `null` bereit. Bei einem normalen Feed ist `$target` gleich `null`.
+
 ## Vertrag des Abschlussereignisses {/* #finished_event_contract */}
 
 Das Abschlussereignis stellt folgende öffentliche Eigenschaften bereit:
 
-- `$feed` enthält die erzeugte Feed-Klasse.
 - `$paths` enthält alle veröffentlichten Dateipfade in Ausgabereihenfolge.
 - `$path` bleibt aus Gründen der Abwärtskompatibilität verfügbar und enthält den ersten veröffentlichten Pfad. Verwenden Sie `$paths`, wenn ein Feed auf mehrere Dateien aufgeteilt werden kann.
 

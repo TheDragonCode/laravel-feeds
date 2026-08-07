@@ -1,10 +1,10 @@
 ---
 title: "События и исключения"
-description: "Справочник по событиям жизненного цикла генерации и публичным типам исключений"
+description: "Справочник по событиям жизненного цикла генерации обычных и целевых фидов и публичным типам исключений"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 # События и исключения
@@ -17,10 +17,10 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 
 | Событие | Публичные данные | Момент отправки |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | После предварительной проверки хранилища и пути, до разрешения конвертера и подготовки файлов. |
-| `FeedFinishedEvent` | `feed`, `path`, `paths` | После успешной публикации всех сгенерированных файлов. |
+| `FeedStartingEvent` | `feed`, `target` | После предварительной проверки хранилища и пути, до разрешения конвертера и подготовки файлов. |
+| `FeedFinishedEvent` | `feed`, `target`, `path`, `paths` | После успешной публикации всех сгенерированных файлов. |
 
-`FeedFinishedEvent::$paths` содержит все опубликованные пути по порядку. `$path` сохранено для совместимости и всегда содержит первый путь.
+`$target` содержит ключ цели для целевой генерации и `null` для обычного фида. `FeedFinishedEvent::$paths` содержит все опубликованные пути по порядку. `$path` сохранено для совместимости и всегда содержит первый путь.
 
 ## Ошибки ввода и поиска {/* #input-and-lookup-failures */}
 
@@ -31,6 +31,8 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 | `InvalidExpressionException` | Выражение расписания некорректно. |
 | `UnknownFeedClassException` | Настроенный класс фида невозможно получить. |
 | `UnexpectedClassException` | Полученный класс не соответствует ожидаемому контракту. |
+
+При выборе цели используются исключения SPL. `feed:generate --target` выбрасывает `InvalidArgumentException`, если отсутствует идентификатор фида или ключ, ключ пуст либо фид не реализует `HasFeedTargets`. Если `findTarget()` возвращает `null`, выбрасывается `UnexpectedValueException`.
 
 ## Ошибки сериализации и хранилища {/* #serialization-and-storage-failures */}
 
@@ -47,6 +49,8 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 | `ResourceMetaException` | Обязательные метаданные потока недоступны. |
 | `FeedGenerationException` | Генерация конкретного класса фида завершилась ошибкой. |
 
+`FeedGenerationException::getFeed()` возвращает класс фида. `getFeedTarget()` возвращает ключ цели для целевой генерации и `null` для обычного фида. Исходная ошибка доступна через `getPrevious()`.
+
 Перехватывайте исключения только там, где приложение может добавить восстановление или понятный контекст. Неисправимые ошибки генерации должен сообщать Laravel.
 
 ## Смотрите также
@@ -54,4 +58,3 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 - [Руководство по событиям](../events.mdx)
 - [Решение проблем](../troubleshooting.mdx)
 - [Гарантии хранилища](../location.mdx#publication_guarantees)
-

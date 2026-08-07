@@ -4,7 +4,7 @@ description: "피드, 피드 항목 및 피드 정보 클래스를 생성하고 
 type: guide
 status: stable
 since: "1.0"
-keywords: ["feed", "FeedItem", "FeedInfo", "make:feed"]
+keywords: ["feed", "FeedItem", "FeedInfo", "FeedTarget", "make:feed"]
 ---
 
 import ThemedImage from '@theme/ThemedImage';
@@ -157,6 +157,78 @@ use Spatie\LaravelData\Optional;
 
 'updatedAt' => $this->model->updated_at ?? Optional::create(),
 ```
+
+## 대상별 피드 {/* #targeted_feeds */}
+
+등록된 피드 클래스 하나에서 파트너, 스토어, 로케일 또는 애플리케이션이 정의한 다른 대상마다 독립적인 출력을 생성해야 할 때 대상별 피드를 사용하십시오. `feeds` 테이블에는 해당 피드 클래스의 행이 하나만 유지됩니다.
+
+`HasFeedTargets`를 구현하십시오. 패키지에 포함된 `InteractsWithFeedTargets` 트레이트는 표준 `forTarget()` 및 `target()` 동작을 제공하며, 피드 클래스는 지연 열거와 직접 조회를 구현합니다.
+
+```php source="docs/snippets/targeted-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        return $partner ? $this->makeTarget($partner) : null;
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+- `targets()`는 설정되지 않은 피드 정의에서 호출되며, 명령이나 스케줄이 모든 대상을 생성할 때 지연 방식으로 소비됩니다.
+- `findTarget()`은 명시적인 각 `--target` 키를 대소문자를 구분하여 조회합니다. 키가 없으면 `null`을 반환하고, 있으면 요청한 키를 가진 대상을 반환하십시오.
+- `FeedTarget::$key`는 비어 있지 않고 안정적이며 피드 클래스 안에서 고유해야 하고 외부에 노출해도 안전해야 합니다. 키는 정규화되거나 정제되지 않으며 콘솔 출력, 에이전트 JSON, 이벤트 및 오류 컨텍스트에 나타납니다.
+- `FeedTarget::$parameters`는 큐 작업에 저장되는 애플리케이션 소유의 스냅샷입니다. 패키지는 이 값을 해석하지 않습니다. 작고 직렬화 가능하게 유지하고 비밀 정보를 넣지 마십시오. Eloquent 모델 대신 식별자를 저장하십시오.
+- `target()`은 `builder()`, `filename()` 및 기타 실행 훅 안에서 활성 대상을 반환합니다. 피드가 `forTarget()`으로 설정되기 전에는 `LogicException`을 발생시킵니다.
+
+:::warning
+각 대상은 서로 다른 출력 파일 이름으로 해석되어야 합니다. 그렇지 않으면 나중 대상이 앞선 대상의 출력을 덮어씁니다. 애플리케이션이 형식을 제어하는 경우에만 경로에 대상 키를 사용하십시오.
+:::
+
+일반적인 파일 분할은 대상마다 따로 적용됩니다. 예를 들어 `partners/42.xml`은 `partners/42-1.xml`, `partners/42-2.xml` 등의 파일이 됩니다.
+
+일반 피드 클래스는 `HasFeedTargets`를 구현하지 않으며 변경할 필요가 없습니다.
 
 ## 파일 형식 {/* #file_format */}
 

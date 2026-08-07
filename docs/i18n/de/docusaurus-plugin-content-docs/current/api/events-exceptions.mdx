@@ -1,10 +1,10 @@
 ---
 title: "Ereignisse und Ausnahmen"
-description: "Referenz für Lebenszyklusereignisse der Feed-Generierung und öffentliche Ausnahmetypen"
+description: "Referenz für Lebenszyklusereignisse der Feed- und Zielgenerierung sowie öffentliche Ausnahmetypen"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 # Ereignisse und Ausnahmen
@@ -17,10 +17,10 @@ Verwenden Sie Lebenszyklusereignisse für die Anwendungsintegration und Ausnahme
 
 | Ereignis | Öffentliche Daten | Auslösezeitpunkt |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | Nach der Vorabprüfung von Speicher und Pfad, vor der Converter-Auflösung und dem Staging. |
-| `FeedFinishedEvent` | `feed`, `path`, `paths` | Nachdem alle erzeugten Dateien erfolgreich veröffentlicht wurden. |
+| `FeedStartingEvent` | `feed`, `target` | Nach der Vorabprüfung von Speicher und Pfad, vor der Converter-Auflösung und dem Staging. |
+| `FeedFinishedEvent` | `feed`, `target`, `path`, `paths` | Nachdem alle erzeugten Dateien erfolgreich veröffentlicht wurden. |
 
-`FeedFinishedEvent::$paths` enthält alle veröffentlichten Pfade in ihrer Reihenfolge. `$path` bleibt aus Kompatibilitätsgründen erhalten und enthält immer den ersten Pfad.
+`$target` enthält bei einer zielbezogenen Generierung den Zielschlüssel und bei einem normalen Feed `null`. `FeedFinishedEvent::$paths` enthält alle veröffentlichten Pfade in ihrer Reihenfolge. `$path` bleibt aus Kompatibilitätsgründen erhalten und enthält immer den ersten Pfad.
 
 ## Eingabe- und Suchfehler {/* #input-and-lookup-failures */}
 
@@ -31,6 +31,8 @@ Verwenden Sie Lebenszyklusereignisse für die Anwendungsintegration und Ausnahme
 | `InvalidExpressionException` | Ein Zeitplanausdruck ist ungültig. |
 | `UnknownFeedClassException` | Eine konfigurierte Feed-Klasse kann nicht aufgelöst werden. |
 | `UnexpectedClassException` | Eine aufgelöste Klasse erfüllt den erwarteten Vertrag nicht. |
+
+Die Zielauswahl verwendet SPL-Ausnahmen. `feed:generate --target` löst eine `InvalidArgumentException` aus, wenn die Feed-ID oder der Schlüssel fehlt, der Schlüssel leer ist oder der Feed `HasFeedTargets` nicht implementiert. Der Befehl löst eine `UnexpectedValueException` aus, wenn `findTarget()` `null` zurückgibt.
 
 ## Serialisierungs- und Speicherfehler {/* #serialization-and-storage-failures */}
 
@@ -47,6 +49,8 @@ Verwenden Sie Lebenszyklusereignisse für die Anwendungsintegration und Ausnahme
 | `ResourceMetaException` | Erforderliche Stream-Metadaten sind nicht verfügbar. |
 | `FeedGenerationException` | Die Generierung ist für eine bestimmte Feed-Klasse fehlgeschlagen. |
 
+`FeedGenerationException::getFeed()` gibt die Feed-Klasse zurück. `getFeedTarget()` gibt bei einer zielbezogenen Generierung den Zielschlüssel und bei einem normalen Feed `null` zurück. Der ursprüngliche Fehler bleibt über `getPrevious()` verfügbar.
+
 Fangen Sie Ausnahmen nur dort ab, wo die Anwendung Wiederherstellung oder verständlichen Kontext ergänzen kann. Nicht behebbare Generierungsfehler sollte Laravel melden.
 
 ## Siehe auch
@@ -54,4 +58,3 @@ Fangen Sie Ausnahmen nur dort ab, wo die Anwendung Wiederherstellung oder verst�
 - [Ereignisleitfaden](../events.mdx)
 - [Fehlerbehebung](../troubleshooting.mdx)
 - [Speichergarantien](../location.mdx#publication_guarantees)
-

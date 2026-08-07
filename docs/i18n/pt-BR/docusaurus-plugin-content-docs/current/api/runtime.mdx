@@ -4,7 +4,7 @@ description: "APIs públicas de geração, registro, agendamento, transformaçã
 type: reference
 status: stable
 since: "1.0"
-keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+keywords: ["GeneratorService", "FeedTarget", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
 ---
 
 # Serviços e contratos de execução
@@ -19,7 +19,7 @@ Esses pontos de entrada cobrem geração programática, registro de feeds, integ
 
 <ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
 
-O método publica todas as partes como uma operação, atualiza a última atividade do registro, dispara eventos do ciclo de vida e retorna os caminhos com a quantidade de registros por arquivo. A resolução do disco e do caminho de saída ocorre antes do início da geração; as exceções dessa verificação prévia, incluindo `UnsupportedStorageDiskException`, são lançadas diretamente. Depois que a verificação prévia é concluída, as falhas de geração são envolvidas em `FeedGenerationException`, mantendo a exceção original como anterior.
+O método publica todas as partes como uma operação, atualiza a última atividade do registro, dispara eventos do ciclo de vida e retorna os caminhos com a quantidade de registros por arquivo. A resolução do disco e do caminho de saída ocorre antes do início da geração. Para um feed comum, as exceções dessa verificação prévia, incluindo `UnsupportedStorageDiskException`, são lançadas diretamente. Para um feed configurado que implementa `HasFeedTargets`, as falhas da verificação prévia são envolvidas em `FeedGenerationException` para manter a chave do alvo disponível. Depois que a verificação prévia é concluída, as falhas de geração são envolvidas para todos os feeds, mantendo a exceção original como exceção anterior.
 
 Resolva o serviço pelo contêiner do Laravel em vez de construir suas dependências internas.
 
@@ -32,6 +32,22 @@ $result = app(GeneratorService::class)->feed(app(UserFeed::class));
 foreach ($result->records as $path => $count) {
     processFeedResult($path, $count);
 }
+```
+
+`GeneratorService` gera um único feed configurado e não enumera alvos. Resolva primeiro um alvo ao chamar o serviço diretamente:
+
+```php
+use App\Feeds\PartnerFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+use RuntimeException;
+
+$feed = app(PartnerFeed::class);
+$target = $feed->findTarget('42')
+    ?? throw new RuntimeException('Feed target [42] not found.');
+
+$result = app(GeneratorService::class)->feed(
+    $feed->forTarget($target),
+);
 ```
 
 ## FeedQuery {/* #feed-query */}
@@ -77,4 +93,3 @@ Retorne um novo `DragonCode\LaravelFeed\Data\OptionalData` para um campo que dev
 - [Configuração](./configuration.mdx)
 - [Eventos e exceções](./events-exceptions.mdx)
 - [Geração e agendamento](../generation.mdx)
-

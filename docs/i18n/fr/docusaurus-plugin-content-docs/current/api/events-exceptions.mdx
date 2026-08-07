@@ -1,10 +1,10 @@
 ---
 title: "Événements et exceptions"
-description: "Référence des événements du cycle de génération et des types d’exception publics"
+description: "Référence des événements du cycle de vie de la génération des flux et des cibles, ainsi que des types d’exception publics"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 # Événements et exceptions
@@ -17,10 +17,10 @@ Utilisez les événements du cycle de vie pour intégrer l’application et les 
 
 | Événement | Données publiques | Moment d’émission |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | Après la vérification préalable du stockage et du chemin, avant la résolution du convertisseur et la préparation. |
-| `FeedFinishedEvent` | `feed`, `path`, `paths` | Après la publication réussie de tous les fichiers générés. |
+| `FeedStartingEvent` | `feed`, `target` | Après la vérification préalable du stockage et du chemin, avant la résolution du convertisseur et la préparation. |
+| `FeedFinishedEvent` | `feed`, `target`, `path`, `paths` | Après la publication réussie de tous les fichiers générés. |
 
-`FeedFinishedEvent::$paths` contient tous les chemins publiés dans l’ordre. `$path` est conservé pour la compatibilité et contient toujours le premier chemin.
+`$target` contient la clé de cible pour une génération ciblée et `null` pour un flux ordinaire. `FeedFinishedEvent::$paths` contient tous les chemins publiés dans l’ordre. `$path` est conservé pour la compatibilité et contient toujours le premier chemin.
 
 ## Échecs de saisie et de recherche {/* #input-and-lookup-failures */}
 
@@ -31,6 +31,8 @@ Utilisez les événements du cycle de vie pour intégrer l’application et les 
 | `InvalidExpressionException` | Une expression de planification est invalide. |
 | `UnknownFeedClassException` | Une classe de flux configurée ne peut pas être résolue. |
 | `UnexpectedClassException` | Une classe résolue ne respecte pas le contrat attendu. |
+
+La sélection de cible utilise des exceptions SPL. `feed:generate --target` lève une `InvalidArgumentException` si l’identifiant du flux ou la clé manque, si la clé est vide ou si le flux n’implémente pas `HasFeedTargets`. La commande lève une `UnexpectedValueException` lorsque `findTarget()` renvoie `null`.
 
 ## Échecs de sérialisation et de stockage {/* #serialization-and-storage-failures */}
 
@@ -47,6 +49,8 @@ Utilisez les événements du cycle de vie pour intégrer l’application et les 
 | `ResourceMetaException` | Les métadonnées requises du flux ne sont pas disponibles. |
 | `FeedGenerationException` | La génération a échoué pour une classe de flux donnée. |
 
+`FeedGenerationException::getFeed()` renvoie la classe du flux. `getFeedTarget()` renvoie la clé de cible pour une génération ciblée et `null` pour un flux ordinaire. L’échec d’origine reste disponible via `getPrevious()`.
+
 N’interceptez les exceptions que lorsque l’application peut ajouter une récupération ou un contexte utile. Laissez Laravel signaler les échecs de génération irrécupérables.
 
 ## Voir aussi
@@ -54,4 +58,3 @@ N’interceptez les exceptions que lorsque l’application peut ajouter une réc
 - [Guide des événements](../events.mdx)
 - [Dépannage](../troubleshooting.mdx)
 - [Garanties de stockage](../location.mdx#publication_guarantees)
-

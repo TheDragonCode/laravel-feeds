@@ -1,10 +1,10 @@
 ---
 title: "事件与异常"
-description: "Feed 生成生命周期事件和公共异常类型的参考资料"
+description: "Feed 与目标生成的生命周期事件及公共异常类型参考"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 # 事件与异常
@@ -17,10 +17,10 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 
 | 事件 | 公共数据 | 分发时机 |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | 存储和路径预检完成后、解析转换器和开始暂存之前。 |
-| `FeedFinishedEvent` | `feed`、`path`、`paths` | 所有生成文件成功发布之后。 |
+| `FeedStartingEvent` | `feed`、`target` | 存储和路径预检完成后、解析转换器和开始暂存之前。 |
+| `FeedFinishedEvent` | `feed`、`target`、`path`、`paths` | 所有生成文件成功发布之后。 |
 
-`FeedFinishedEvent::$paths` 按顺序包含所有已发布路径。为保持兼容性而保留的 `$path` 始终包含第一个路径。
+对于目标生成，`$target` 包含目标键；对于普通 Feed，其值为 `null`。`FeedFinishedEvent::$paths` 按顺序包含所有已发布路径。为保持兼容性而保留的 `$path` 始终包含第一个路径。
 
 ## 输入与查找失败 {/* #input-and-lookup-failures */}
 
@@ -31,6 +31,8 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 | `InvalidExpressionException` | 调度表达式无效。 |
 | `UnknownFeedClassException` | 无法解析配置的 Feed 类。 |
 | `UnexpectedClassException` | 解析出的类不符合预期契约。 |
+
+目标选择使用 SPL 异常。缺少 Feed ID 或目标键、目标键为空，或者 Feed 未实现 `HasFeedTargets` 时，`feed:generate --target` 会抛出 `InvalidArgumentException`。`findTarget()` 返回 `null` 时会抛出 `UnexpectedValueException`。
 
 ## 序列化与存储失败 {/* #serialization-and-storage-failures */}
 
@@ -47,6 +49,8 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 | `ResourceMetaException` | 所需的流元数据不可用。 |
 | `FeedGenerationException` | 指定 Feed 类生成失败。 |
 
+`FeedGenerationException::getFeed()` 返回 Feed 类。`getFeedTarget()` 为目标生成返回目标键，为普通 Feed 返回 `null`。可通过 `getPrevious()` 访问原始异常。
+
 只在应用能够添加恢复逻辑或面向用户的上下文时捕获异常。无法恢复的生成失败应交给 Laravel 报告。
 
 ## 另请参阅
@@ -54,4 +58,3 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 - [事件指南](../events.mdx)
 - [故障排除](../troubleshooting.mdx)
 - [存储保证](../location.mdx#publication_guarantees)
-

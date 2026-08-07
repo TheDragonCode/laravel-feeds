@@ -1,10 +1,10 @@
 ---
 title: "피드 및 데이터"
-description: "Feed, FeedItem, FeedInfo, ElementData 및 생성 결과의 public 계약"
+description: "Feed, 피드 대상, FeedItem, FeedInfo, ElementData 및 생성 결과의 public 계약"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
 ---
 
 # 피드 및 데이터
@@ -38,6 +38,23 @@ keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"
 | `format(): FeedFormatEnum` | `Xml` | 구성된 출력 형식을 반환합니다. |
 
 `Feed`는 Laravel의 `Conditionable`과 `Macroable`을 사용합니다.
+
+## 피드 대상 {/* #feed-targets */}
+
+`DragonCode\LaravelFeed\Feeds\FeedTarget`은 독립적으로 생성되는 하나의 출력을 식별합니다. 생성자는 비어 있지 않은 문자열 키와 선택적인 매개변수 배열을 받습니다.
+
+<ApiSignature>public function __construct(public readonly string $key, public readonly array $parameters = [])</ApiSignature>
+
+선택적으로 사용하는 피드 클래스에 `DragonCode\LaravelFeed\Contracts\HasFeedTargets`를 구현하십시오. 선택 사항인 `DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets` 트레이트는 `forTarget()`과 `target()`을 구현하며, 피드 클래스는 대상 검색을 구현합니다.
+
+| 메서드 | 계약 |
+| --- | --- |
+| `targets(): iterable` | 전체 명령 및 스케줄 실행에 사용할 모든 `FeedTarget`을 지연 방식으로 반환합니다. |
+| `findTarget(string $key): ?FeedTarget` | 명시적인 명령 대상을 같은 키로 직접 해석하거나 `null`을 반환합니다. |
+| `forTarget(FeedTarget $target): static` | 설정된 복제본을 반환하고 캐시된 파일 이름을 초기화합니다. |
+| `target(): FeedTarget` | 설정된 대상을 반환하며, 설정되지 않았으면 `LogicException`을 발생시킵니다. |
+
+생성자는 비어 있거나 공백만 있는 키를 거부하지만 다른 값은 정규화하거나 정제하지 않습니다. 대상 매개변수는 패키지에 불투명하며 큐 작업의 스냅샷으로 직렬화됩니다. 키는 대상의 식별자이므로 피드 클래스 안에서 안정적이고 고유해야 합니다. [대상별 피드 설정](../create-feeds.mdx#targeted_feeds)과 [명령 대상 선택](../generation.mdx#target_selection)을 참조하십시오.
 
 ## FeedItem 및 FeedInfo {/* #feed-item-and-feed-info */}
 

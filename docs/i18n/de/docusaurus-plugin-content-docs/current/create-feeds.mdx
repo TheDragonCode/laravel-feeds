@@ -4,7 +4,7 @@ description: "Anleitung zum Erstellen und Befüllen der Klassen für Feed, Feed-
 type: guide
 status: stable
 since: "1.0"
-keywords: ["feed", "FeedItem", "FeedInfo", "make:feed"]
+keywords: ["feed", "FeedItem", "FeedInfo", "FeedTarget", "make:feed"]
 ---
 
 import ThemedImage from '@theme/ThemedImage';
@@ -157,6 +157,78 @@ use Spatie\LaravelData\Optional;
 
 'updatedAt' => $this->model->updated_at ?? Optional::create(),
 ```
+
+## Zielbasierte Feeds {/* #targeted_feeds */}
+
+Verwenden Sie einen zielbasierten Feed, wenn eine registrierte Feed-Klasse für jeden Partner, Shop, jedes Gebietsschema oder ein anderes anwendungsdefiniertes Ziel eine eigenständige Ausgabe erzeugen soll. Die Tabelle `feeds` enthält weiterhin nur eine Zeile für die Feed-Klasse.
+
+Implementieren Sie `HasFeedTargets`. Der mitgelieferte Trait `InteractsWithFeedTargets` stellt das Standardverhalten für `forTarget()` und `target()` bereit; die Feed-Klasse übernimmt die verzögerte Aufzählung und direkte Suche:
+
+```php source="docs/snippets/targeted-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        return $partner ? $this->makeTarget($partner) : null;
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+- `targets()` wird für die nicht konfigurierte Feed-Definition aufgerufen und verzögert verarbeitet, wenn ein Befehl oder Zeitplan alle Ziele erzeugt.
+- `findTarget()` führt für jeden expliziten `--target`-Schlüssel eine Suche unter Beachtung der Groß-/Kleinschreibung aus. Geben Sie `null` zurück, wenn der Schlüssel nicht existiert; andernfalls ein Ziel mit dem angeforderten Schlüssel.
+- `FeedTarget::$key` darf nicht leer sein, muss stabil, innerhalb der Feed-Klasse eindeutig und für die Ausgabe geeignet sein. Schlüssel werden weder normalisiert noch bereinigt und erscheinen in der Konsolenausgabe, im Agenten-JSON, in Ereignissen und im Fehlerkontext.
+- `FeedTarget::$parameters` ist ein anwendungseigener Snapshot, der in Queue-Jobs gespeichert wird. Das Paket wertet ihn nicht aus. Halten Sie ihn klein, serialisierbar und frei von Geheimnissen; speichern Sie Kennungen statt Eloquent-Modellen.
+- `target()` gibt das aktive Ziel innerhalb von `builder()`, `filename()` und anderen Ausführungspunkten zurück. Bevor der Feed mit `forTarget()` konfiguriert wurde, löst die Methode eine `LogicException` aus.
+
+:::warning
+Jedes Ziel muss einen eigenen Ausgabedateinamen ergeben. Andernfalls überschreiben spätere Ziele frühere Ausgaben. Verwenden Sie einen Zielschlüssel nur dann in einem Pfad, wenn die Anwendung sein Format kontrolliert.
+:::
+
+Die normale Dateiaufteilung gilt weiterhin getrennt für jedes Ziel. Beispielsweise wird `partners/42.xml` zu `partners/42-1.xml`, `partners/42-2.xml` und so weiter.
+
+Normale Feed-Klassen implementieren `HasFeedTargets` nicht und müssen nicht geändert werden.
 
 ## Dateiformat {/* #file_format */}
 

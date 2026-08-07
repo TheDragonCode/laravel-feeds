@@ -1,10 +1,10 @@
 ---
 title: "Flux et données"
-description: "Contrats publics de Feed, FeedItem, FeedInfo, ElementData et des résultats de génération"
+description: "Contrats publics pour Feed, les cibles de flux, FeedItem, FeedInfo, ElementData et les résultats de génération"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
 ---
 
 # Flux et données
@@ -38,6 +38,23 @@ L’API principale sépare la source de données, le mappage des éléments, les
 | `format(): FeedFormatEnum` | `Xml` | Renvoie le format de sortie configuré. |
 
 `Feed` utilise `Conditionable` et `Macroable` de Laravel.
+
+## Cibles de flux {/* #feed-targets */}
+
+`DragonCode\LaravelFeed\Feeds\FeedTarget` identifie une sortie générée indépendamment. Son constructeur accepte une clé non vide sous forme de chaîne et un tableau facultatif de paramètres :
+
+<ApiSignature>public function __construct(public readonly string $key, public readonly array $parameters = [])</ApiSignature>
+
+Implémentez `DragonCode\LaravelFeed\Contracts\HasFeedTargets` sur une classe de flux qui active explicitement les cibles. Le trait facultatif `DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets` implémente `forTarget()` et `target()` ; la classe du flux implémente la découverte des cibles :
+
+| Méthode | Contrat |
+| --- | --- |
+| `targets(): iterable` | Renvoie de manière différée chaque `FeedTarget` disponible pour les exécutions complètes de la commande et de la planification. |
+| `findTarget(string $key): ?FeedTarget` | Résout directement une cible explicite de la commande avec la même clé ou renvoie `null`. |
+| `forTarget(FeedTarget $target): static` | Renvoie un clone configuré et réinitialise son nom de fichier mémorisé. |
+| `target(): FeedTarget` | Renvoie la cible configurée ou lève une `LogicException` lorsqu’aucune cible n’est définie. |
+
+Le constructeur rejette les clés vides ou composées uniquement de caractères d’espacement, mais ne normalise ni n’assainit les autres valeurs. Les paramètres de la cible sont opaques pour le paquet et sérialisés dans l’instantané d’un job de file d’attente. La clé constitue l’identité de la cible : elle doit donc être stable et unique dans la classe du flux. Consultez la [configuration d’un flux ciblé](../create-feeds.mdx#targeted_feeds) et la [sélection dans la commande](../generation.mdx#target_selection).
 
 ## FeedItem et FeedInfo {/* #feed-item-and-feed-info */}
 

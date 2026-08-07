@@ -4,7 +4,7 @@ description: "创建并填充 Feed、Feed 项和 Feed 信息类的说明"
 type: guide
 status: stable
 since: "1.0"
-keywords: ["feed", "FeedItem", "FeedInfo", "make:feed"]
+keywords: ["feed", "FeedItem", "FeedInfo", "FeedTarget", "make:feed"]
 ---
 
 import ThemedImage from '@theme/ThemedImage';
@@ -157,6 +157,78 @@ use Spatie\LaravelData\Optional;
 
 'updatedAt' => $this->model->updated_at ?? Optional::create(),
 ```
+
+## 目标 Feed {/* #targeted_feeds */}
+
+当一个已注册的 Feed 类需要为每个合作方、商店、语言区域或其他由应用定义的目标生成独立输出时，请使用目标 Feed。`feeds` 表中仍只为该 Feed 类保留一行记录。
+
+实现 `HasFeedTargets`。软件包提供的 `InteractsWithFeedTargets` trait 实现标准的 `forTarget()` 和 `target()` 行为；Feed 类负责惰性枚举和直接查找：
+
+```php source="docs/snippets/targeted-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        return $partner ? $this->makeTarget($partner) : null;
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+- 当命令或调度任务生成全部目标时，会在未配置的 Feed 定义上调用 `targets()`，并惰性消费其结果。
+- `findTarget()` 会针对每个显式传入的 `--target` 键执行区分大小写的查找。键不存在时返回 `null`；否则返回键与请求一致的目标。
+- `FeedTarget::$key` 必须非空、稳定、在 Feed 类内唯一，并且可以安全公开。键不会被规范化或清理，还会出现在控制台输出、代理 JSON、事件和失败上下文中。
+- `FeedTarget::$parameters` 是由应用管理并存储在队列任务中的快照。软件包不会解释它。请保持内容精简、可序列化且不包含机密信息；应存储标识符，而不是 Eloquent 模型。
+- `target()` 返回 `builder()`、`filename()` 和其他执行钩子中的当前目标。在通过 `forTarget()` 配置 Feed 之前调用它会抛出 `LogicException`。
+
+:::warning
+每个目标都必须解析为不同的输出文件名，否则后续目标会覆盖先前目标的输出。只有在应用能够控制目标键格式时，才能在路径中使用它。
+:::
+
+常规文件拆分仍会分别应用于每个目标。例如，`partners/42.xml` 会变为 `partners/42-1.xml`、`partners/42-2.xml`，依此类推。
+
+普通 Feed 类不实现 `HasFeedTargets`，无需更改。
 
 ## 文件格式 {/* #file_format */}
 

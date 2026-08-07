@@ -4,7 +4,7 @@ description: "Инструкции по созданию и заполнению
 type: guide
 status: stable
 since: "1.0"
-keywords: ["feed", "FeedItem", "FeedInfo", "make:feed"]
+keywords: ["feed", "FeedItem", "FeedInfo", "FeedTarget", "make:feed"]
 ---
 
 import ThemedImage from '@theme/ThemedImage';
@@ -157,6 +157,78 @@ use Spatie\LaravelData\Optional;
 
 'updatedAt' => $this->model->updated_at ?? Optional::create(),
 ```
+
+## Целевые фиды {/* #targeted_feeds */}
+
+Используйте целевой фид, когда один зарегистрированный класс фида должен создавать независимый вывод для каждого партнёра, магазина, локали или другой цели, определённой приложением. В таблице `feeds` по-прежнему хранится одна строка для класса фида.
+
+Реализуйте `HasFeedTargets`. Встроенный трейт `InteractsWithFeedTargets` предоставляет стандартное поведение `forTarget()` и `target()`, а класс фида реализует ленивое перечисление и прямой поиск:
+
+```php source="docs/snippets/targeted-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        return $partner ? $this->makeTarget($partner) : null;
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+- `targets()` вызывается у ненастроенного определения фида и лениво обрабатывается, когда команда или расписание генерирует все цели.
+- `findTarget()` выполняет чувствительный к регистру поиск для каждого явно указанного ключа `--target`. Верните `null`, если ключ не существует. В противном случае верните цель с запрошенным ключом.
+- `FeedTarget::$key` должен быть непустым, стабильным, уникальным в пределах класса фида и безопасным для вывода. Ключи не нормализуются и не очищаются. Они отображаются в консоли, JSON для агента, событиях и контексте ошибки.
+- `FeedTarget::$parameters` — управляемый приложением снимок данных, который сохраняется в заданиях очереди. Пакет не интерпретирует эти данные. Они должны быть небольшими, сериализуемыми и не содержать секретов. Храните идентификаторы вместо моделей Eloquent.
+- `target()` возвращает активную цель внутри `builder()`, `filename()` и других хуков выполнения. До настройки фида через `forTarget()` метод выбрасывает `LogicException`.
+
+:::warning
+Каждая цель должна разрешаться в отдельное имя выходного файла. Иначе следующая цель перезапишет вывод предыдущей. Используйте ключ цели в пути, только если приложение контролирует его формат.
+:::
+
+Обычное разделение файлов применяется отдельно для каждой цели. Например, `partners/42.xml` превращается в `partners/42-1.xml`, `partners/42-2.xml` и так далее.
+
+Обычные классы фидов не реализуют `HasFeedTargets` и не требуют изменений.
 
 ## Формат файла {/* #file_format */}
 

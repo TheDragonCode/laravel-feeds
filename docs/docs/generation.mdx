@@ -4,7 +4,7 @@ description: "Information on generating feed files for later distribution"
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "targets", "feed:generate"]
 ---
 
 [← Previous](./create-feeds.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./supported-formats.mdx)
@@ -36,6 +36,29 @@ To generate a specific feed, call the `feed:generate` console command, passing t
 ```bash
 php artisan feed:generate 123
 ```
+
+## Target selection {/* #target_selection */}
+
+For a [targeted feed](./create-feeds.mdx#targeted_feeds), the registration ID selects the feed class and the target key selects one output.
+
+Running the feed without `--target` consumes `targets()` lazily and generates every target:
+
+```bash
+php artisan feed:generate 123
+```
+
+Pass the repeatable `--target` option to generate only selected targets:
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+Explicit keys use `findTarget()` instead of enumerating `targets()`. Duplicate keys are processed once, in first-seen order. All requested keys are resolved before generation starts.
+
+`--target` requires one feed registration ID. The command rejects empty or unknown keys and rejects target selection for a feed that does not implement `HasFeedTargets`.
+
+Full target enumeration is streamed rather than atomic. If `targets()` fails after yielding some values, earlier targets may already be generated or queued. An empty iterable generates nothing and does not create an implicit default target.
 
 ## AI agent output {/* #ai_agent_output */}
 
@@ -74,6 +97,8 @@ The command emits compact JSON on one line. The example is formatted only for re
 | `queued` | Queue mode is enabled and the feed job was dispatched synchronously for the agent. | None |
 | `skipped` | The feed is inactive and the command was run without a feed ID. | None |
 
+Each targeted `generated` or `queued` entry also contains a `target` field with the selected key.
+
 :::note
 In queue mode, the agent-aware path runs each enabled job synchronously before returning the JSON result. The regular human-oriented path continues to dispatch jobs through the configured queue connection.
 :::
@@ -91,11 +116,11 @@ FEED_QUEUE_NAME=feeds
 FEED_QUEUE_UNIQUE_TTL=3600
 ```
 
-When queue mode is enabled, `feed:generate` dispatches one job for every active feed instead of generating the files directly. With an asynchronous connection, the command returns after the jobs have been dispatched. Start a [queue worker](https://laravel.com/docs/queues#running-the-queue-worker) for the selected connection and queue to process those jobs.
+When queue mode is enabled, `feed:generate` dispatches one job for every ordinary active feed and one job for every selected target of a targeted feed. With an asynchronous connection, the command returns after the jobs have been dispatched. Start a [queue worker](https://laravel.com/docs/queues#running-the-queue-worker) for the selected connection and queue to process those jobs.
 
 - `FEED_QUEUE_CONNECTION` selects the queue connection. It falls back to `QUEUE_CONNECTION` and then to `database`.
 - `FEED_QUEUE_NAME` selects a queue on that connection. Leave it unset to use the connection's default queue.
-- `FEED_QUEUE_UNIQUE_TTL` sets the maximum lifetime of the uniqueness lock in seconds. A second job for the same feed is not queued while that lock is active.
+- `FEED_QUEUE_UNIQUE_TTL` sets the maximum lifetime of the uniqueness lock in seconds. Ordinary jobs are unique by feed class. Targeted jobs are unique by feed class and target key; target parameters do not change that identity.
 
 :::note
 The `sync` connection executes each job immediately in the console process. Select an asynchronous connection to move generation to a worker. Set `FEED_QUEUE_ENABLED=false` to generate feeds directly without dispatching jobs.
@@ -118,7 +143,7 @@ Schedule::call(function () {
 })->everySecond();
 ```
 
-This will enable you to register calls to all active feeds according to the schedule you specified in the `expression` column of the database.
+This registers all active feeds according to the schedule in the database `expression` column. A scheduled targeted feed generates every value returned by `targets()`.
 
 ### Manual {/* #manual */}
 

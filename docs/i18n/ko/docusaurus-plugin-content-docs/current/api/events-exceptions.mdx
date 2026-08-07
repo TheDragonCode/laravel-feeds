@@ -1,10 +1,10 @@
 ---
 title: "이벤트 및 예외"
-description: "피드 생성 수명 주기 이벤트와 public 예외 타입 참조"
+description: "피드 및 대상 생성 수명 주기 이벤트와 public 예외 타입 참조"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 # 이벤트 및 예외
@@ -17,10 +17,10 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 
 | 이벤트 | Public 데이터 | 전달 시점 |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | 저장소와 경로 사전 검사가 끝난 뒤, 컨버터 해석과 스테이징 전입니다. |
-| `FeedFinishedEvent` | `feed`, `path`, `paths` | 생성된 모든 파일을 성공적으로 게시한 후입니다. |
+| `FeedStartingEvent` | `feed`, `target` | 저장소와 경로 사전 검사가 끝난 뒤, 컨버터 해석과 스테이징 전입니다. |
+| `FeedFinishedEvent` | `feed`, `target`, `path`, `paths` | 생성된 모든 파일을 성공적으로 게시한 후입니다. |
 
-`FeedFinishedEvent::$paths`에는 게시된 모든 경로가 순서대로 들어 있습니다. `$path`는 호환성을 위해 유지되며 항상 첫 번째 경로를 담습니다.
+`$target`에는 대상별 생성의 대상 키가 들어가며 일반 피드에서는 `null`입니다. `FeedFinishedEvent::$paths`에는 게시된 모든 경로가 순서대로 들어 있습니다. `$path`는 호환성을 위해 유지되며 항상 첫 번째 경로를 담습니다.
 
 ## 입력 및 조회 오류 {/* #input-and-lookup-failures */}
 
@@ -31,6 +31,8 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 | `InvalidExpressionException` | 스케줄 표현식이 유효하지 않습니다. |
 | `UnknownFeedClassException` | 구성된 피드 클래스를 해석할 수 없습니다. |
 | `UnexpectedClassException` | 해석된 클래스가 예상 계약을 충족하지 않습니다. |
+
+대상 선택에는 SPL 예외가 사용됩니다. 피드 ID나 키가 누락되었거나, 키가 비어 있거나, 피드가 `HasFeedTargets`를 구현하지 않으면 `feed:generate --target`이 `InvalidArgumentException`을 발생시킵니다. `findTarget()`이 `null`을 반환하면 `UnexpectedValueException`을 발생시킵니다.
 
 ## 직렬화 및 저장소 오류 {/* #serialization-and-storage-failures */}
 
@@ -47,6 +49,8 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 | `ResourceMetaException` | 필요한 스트림 메타데이터를 사용할 수 없습니다. |
 | `FeedGenerationException` | 특정 피드 클래스의 생성에 실패했습니다. |
 
+`FeedGenerationException::getFeed()`는 피드 클래스를 반환합니다. `getFeedTarget()`은 대상별 생성에서는 대상 키를, 일반 피드에서는 `null`을 반환합니다. 원래 오류는 `getPrevious()`로 확인할 수 있습니다.
+
 애플리케이션에서 복구하거나 사용자에게 맥락을 제공할 수 있는 곳에서만 예외를 잡으십시오. 복구할 수 없는 생성 오류는 Laravel이 보고하도록 두십시오.
 
 ## 관련 문서
@@ -54,4 +58,3 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 - [이벤트 가이드](../events.mdx)
 - [문제 해결](../troubleshooting.mdx)
 - [저장소 보장](../location.mdx#publication_guarantees)
-

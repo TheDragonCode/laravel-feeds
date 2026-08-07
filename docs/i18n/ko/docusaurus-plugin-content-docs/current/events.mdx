@@ -4,7 +4,7 @@ description: "피드 생성 중 전달되는 이벤트"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 [← 이전](./presets.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./extending-functionality.mdx)
@@ -16,11 +16,12 @@ keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 - **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — `FeedStartingEvent`는 저장소와 경로 사전 검사가 끝난 뒤, 컨버터 해석과 스테이징 전에 전달됩니다. 이 시점에는 초안 파일이 존재한다고 보장되지 않습니다.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — `FeedFinishedEvent`는 생성된 모든 파일이 성공적으로 게시된 후 전달됩니다. 생성에 실패하면 이 이벤트가 전달되지 않습니다.
 
+두 이벤트 모두 생성된 피드 클래스를 담은 `$feed`와 대상 키를 담는 `null` 허용 `$target`을 제공합니다. 일반 피드에서는 `$target`이 `null`입니다.
+
 ## 완료 이벤트 계약 {/* #finished_event_contract */}
 
 완료 이벤트는 다음 public 속성을 제공합니다.
 
-- `$feed`에는 생성된 피드 클래스가 들어 있습니다.
 - `$paths`에는 게시된 모든 파일 경로가 출력 순서대로 들어 있습니다.
 - `$path`는 하위 호환성을 위해 유지되며 첫 번째 게시 경로를 담습니다. 피드가 여러 파일로 분할될 수 있으면 `$paths`를 사용하십시오.
 

@@ -4,7 +4,7 @@ description: "Informações sobre a geração de arquivos de feed para distribui
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "targets", "feed:generate"]
 ---
 
 [← Anterior](./create-feeds.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./supported-formats.mdx)
@@ -36,6 +36,29 @@ Para gerar um feed específico, chame o comando `feed:generate` e passe como par
 ```bash
 php artisan feed:generate 123
 ```
+
+## Seleção de alvos {/* #target_selection */}
+
+Em um [feed direcionado](./create-feeds.mdx#targeted_feeds), o ID do registro seleciona a classe do feed e a chave do alvo seleciona uma saída.
+
+Executar o feed sem `--target` consome `targets()` sob demanda e gera todos os alvos:
+
+```bash
+php artisan feed:generate 123
+```
+
+Passe a opção repetível `--target` para gerar apenas os alvos selecionados:
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+As chaves explícitas usam `findTarget()` em vez de enumerar `targets()`. Chaves duplicadas são processadas uma única vez, na ordem em que aparecem pela primeira vez. Todas as chaves solicitadas são resolvidas antes do início da geração.
+
+`--target` exige um único ID de registro de feed. O comando rejeita chaves vazias ou desconhecidas e rejeita a seleção de alvos para um feed que não implementa `HasFeedTargets`.
+
+A enumeração completa dos alvos é processada como fluxo, não como uma operação atômica. Se `targets()` falhar depois de retornar alguns valores, os alvos anteriores já poderão ter sido gerados ou enfileirados. Um iterável vazio não gera nada nem cria um alvo padrão implícito.
 
 ## Saída para agentes de IA {/* #ai_agent_output */}
 
@@ -74,6 +97,8 @@ O comando emite um JSON compacto em uma única linha. O exemplo está formatado 
 | `queued` | O modo de fila está ativado e o job do feed foi executado de forma síncrona para o agente. | Nenhum |
 | `skipped` | O feed está inativo e o comando foi executado sem o ID de um feed. | Nenhum |
 
+Cada entrada `generated` ou `queued` de um feed direcionado também contém um campo `target` com a chave selecionada.
+
 :::note
 No modo de fila, o caminho específico do agente executa cada job ativo de forma síncrona antes de retornar o resultado JSON. O caminho normal, formatado para pessoas, continua despachando os jobs pela conexão de fila configurada.
 :::
@@ -91,11 +116,11 @@ FEED_QUEUE_NAME=feeds
 FEED_QUEUE_UNIQUE_TTL=3600
 ```
 
-Quando o modo de fila está ativado, `feed:generate` despacha um job para cada feed ativo em vez de gerar os arquivos diretamente. Com uma conexão assíncrona, o comando termina depois que os jobs são despachados. Inicie um [worker da fila](https://laravel.com/docs/queues#running-the-queue-worker) para a conexão e a fila selecionadas a fim de processar esses jobs.
+Quando o modo de fila está ativado, `feed:generate` despacha um job para cada feed comum ativo e um job para cada alvo selecionado de um feed direcionado. Com uma conexão assíncrona, o comando termina depois que os jobs são despachados. Inicie um [worker da fila](https://laravel.com/docs/queues#running-the-queue-worker) para a conexão e a fila selecionadas a fim de processar esses jobs.
 
 - `FEED_QUEUE_CONNECTION` seleciona a conexão da fila. Na ausência dela, são usadas `QUEUE_CONNECTION` e depois `database`.
 - `FEED_QUEUE_NAME` seleciona uma fila nessa conexão. Deixe a variável sem valor para usar a fila padrão da conexão.
-- `FEED_QUEUE_UNIQUE_TTL` define em segundos o tempo de vida máximo do bloqueio de exclusividade. Um segundo job para o mesmo feed não entra na fila enquanto o bloqueio estiver ativo.
+- `FEED_QUEUE_UNIQUE_TTL` define em segundos o tempo de vida máximo do bloqueio de exclusividade. Jobs comuns são exclusivos pela classe do feed. Jobs direcionados são exclusivos pela classe do feed e pela chave do alvo; os parâmetros do alvo não alteram essa identidade.
 
 :::note
 A conexão `sync` executa cada job imediatamente no processo do console. Selecione uma conexão assíncrona para transferir a geração para um worker. Defina `FEED_QUEUE_ENABLED=false` para gerar os feeds diretamente, sem despachar jobs.
@@ -118,7 +143,7 @@ Schedule::call(function () {
 })->everySecond();
 ```
 
-Isso permite registrar chamadas para todos os feeds ativos conforme o agendamento definido na coluna `expression` do banco de dados.
+Isso registra todos os feeds ativos conforme o agendamento definido na coluna `expression` do banco de dados. Um feed direcionado agendado gera todos os valores retornados por `targets()`.
 
 ### Manual {/* #manual */}
 

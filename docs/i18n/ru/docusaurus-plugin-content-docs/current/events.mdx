@@ -4,7 +4,7 @@ description: "События, отправляемые во время гене�
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 [← Предыдущая](./presets.mdx) · [Назад к README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Следующая →](./extending-functionality.mdx)
@@ -16,11 +16,12 @@ keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 - **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — событие `FeedStartingEvent` отправляется после предварительной проверки хранилища и пути, до разрешения конвертера и подготовки файлов. Это не означает, что черновой файл уже существует.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — событие `FeedFinishedEvent` отправляется после успешной публикации всех сгенерированных файлов. Если генерация завершилась ошибкой, это событие не отправляется.
 
+Оба события предоставляют `$feed` с классом сгенерированного фида и допускающее `null` свойство `$target` с ключом цели. Для обычного фида `$target` равно `null`.
+
 ## Контракт события завершения {/* #finished_event_contract */}
 
 Событие завершения предоставляет следующие публичные свойства:
 
-- `$feed` содержит класс сгенерированного фида.
 - `$paths` содержит все пути опубликованных файлов в порядке вывода.
 - `$path` остаётся доступным для обратной совместимости и содержит путь к первому опубликованному файлу. Используйте `$paths`, если фид может быть разделён на несколько файлов.
 

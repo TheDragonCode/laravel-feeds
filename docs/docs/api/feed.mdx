@@ -1,10 +1,10 @@
 ---
 title: "Feeds and data"
-description: "Public contracts for Feed, FeedItem, FeedInfo, ElementData, and generation results"
+description: "Public contracts for Feed, feed targets, FeedItem, FeedInfo, ElementData, and generation results"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
 ---
 
 # Feeds and data
@@ -38,6 +38,23 @@ The core API separates the data source, item mapping, feed-level metadata, outpu
 | `format(): FeedFormatEnum` | `Xml` | Returns the configured output format. |
 
 `Feed` uses Laravel `Conditionable` and `Macroable`.
+
+## Feed targets {/* #feed-targets */}
+
+`DragonCode\LaravelFeed\Feeds\FeedTarget` identifies one independently generated output. Its constructor accepts a non-empty string key and an optional parameter array:
+
+<ApiSignature>public function __construct(public readonly string $key, public readonly array $parameters = [])</ApiSignature>
+
+Implement `DragonCode\LaravelFeed\Contracts\HasFeedTargets` on an opt-in feed class. The optional `DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets` trait implements `forTarget()` and `target()`; the feed class implements discovery:
+
+| Method | Contract |
+| --- | --- |
+| `targets(): iterable` | Lazily returns every available `FeedTarget` for full command and scheduled runs. |
+| `findTarget(string $key): ?FeedTarget` | Directly resolves one explicit command target with the same key or returns `null`. |
+| `forTarget(FeedTarget $target): static` | Returns a configured clone and resets its memoized filename. |
+| `target(): FeedTarget` | Returns the configured target or throws `LogicException` when none is set. |
+
+The constructor rejects empty and whitespace-only keys but does not normalize or sanitize other values. Target parameters are opaque to the package and serialized as a queue-job snapshot. The key is the target identity, so it must be stable and unique within the feed class. See [targeted feed setup](../create-feeds.mdx#targeted_feeds) and [command selection](../generation.mdx#target_selection).
 
 ## FeedItem and FeedInfo {/* #feed-item-and-feed-info */}
 
