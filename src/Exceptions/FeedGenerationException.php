@@ -30,7 +30,7 @@ class FeedGenerationException extends RuntimeException
         return $this->feed;
     }
 
-    public function getTarget(): ?string
+    public function getFeedTarget(): ?string
     {
         return $this->feedTarget;
     }

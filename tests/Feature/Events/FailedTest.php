@@ -168,7 +168,7 @@ test('failed targeted generation keeps feed and target context', function () {
     } catch (FeedGenerationException $exception) {
         expect($exception->getFeed())
             ->toBe(FailedTargetedFeed::class)
-            ->and($exception->getTarget())
+            ->and($exception->getFeedTarget())
             ->toBe('42');
 
         throw $exception;
@@ -183,7 +183,7 @@ test('failed targeted setup keeps feed and target context', function () {
     } catch (FeedGenerationException $exception) {
         expect($exception->getFeed())
             ->toBe(FailedTargetedFeed::class)
-            ->and($exception->getTarget())
+            ->and($exception->getFeedTarget())
             ->toBe('invalid');
 
         throw $exception;
