@@ -1,0 +1,16 @@
+.scroller {
+    max-inline-size: 100%;
+    margin-block: var(--space-6);
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overscroll-behavior-inline: contain;
+}
+
+.scroller table {
+    inline-size: 100%;
+    min-inline-size: 38rem;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+}

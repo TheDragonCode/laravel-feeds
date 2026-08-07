@@ -325,5 +325,98 @@
   "theme.tags.tagsPageTitle": {
     "message": "태그",
     "description": "태그 목록 페이지의 제목"
+  },
+  "homepage.install.copied": {
+    "message": "복사했습니다"
+  },
+  "homepage.install.copy": {
+    "message": "복사"
+  },
+  "homepage.install.copySuccess": {
+    "message": "설치 명령을 클립보드에 복사했습니다."
+  },
+  "homepage.install.copyFailure": {
+    "message": "복사하지 못했습니다. 명령을 직접 선택하십시오."
+  },
+  "homepage.meta.title": {
+    "message": "Laravel Feeds 문서"
+  },
+  "homepage.meta.description": {
+    "message": "대규모 Laravel 데이터셋을 XML, JSON, JSON Lines, CSV, RSS 및 마켓플레이스 피드로 내보냅니다."
+  },
+  "homepage.eyebrow": {
+    "message": "Laravel 패키지 · 문서 1.x"
+  },
+  "homepage.title": {
+    "message": "전체 데이터를 메모리에 올리지 않고 대규모 데이터셋 내보내기"
+  },
+  "homepage.summary": {
+    "message": "스트리밍 Laravel 워크플로로 XML, JSON, JSON Lines, CSV, RSS, Sitemap, Instagram 및 Yandex 피드를 생성합니다."
+  },
+  "homepage.action.start": {
+    "message": "5분 만에 시작"
+  },
+  "homepage.action.formats": {
+    "message": "형식 선택"
+  },
+  "homepage.example.php": {
+    "message": "ProductFeed.php"
+  },
+  "homepage.example.output": {
+    "message": "생성된 XML"
+  },
+  "homepage.paths.eyebrow": {
+    "message": "필요한 경로 찾기"
+  },
+  "homepage.paths.title": {
+    "message": "작업부터 시작하고 참조 문서로 세부 정보 확인"
+  },
+  "homepage.card.quick.description": {
+    "message": "패키지를 설치하고 첫 번째 피드를 생성합니다."
+  },
+  "homepage.card.quick.title": {
+    "message": "빠른 시작"
+  },
+  "homepage.card.performance.description": {
+    "message": "청크, 메모리, 큐 및 파일 분할을 제어합니다."
+  },
+  "homepage.card.performance.title": {
+    "message": "대규모 데이터셋"
+  },
+  "homepage.card.recipes.description": {
+    "message": "Sitemap, RSS, Instagram 및 Yandex용 패턴을 사용합니다."
+  },
+  "homepage.card.recipes.title": {
+    "message": "형식 및 레시피"
+  },
+  "homepage.card.api.description": {
+    "message": "정확한 메서드, 구성 키, 이벤트 및 오류를 찾습니다."
+  },
+  "homepage.card.api.title": {
+    "message": "API 참조"
+  },
+  "homepage.support.label": {
+    "message": "호환성"
+  },
+  "homepage.support.details": {
+    "message": "호환성 세부 정보"
+  },
+  "search.trigger": {
+    "message": "검색"
+  },
+  "search.dialog.label": {
+    "message": "문서 검색"
+  },
+  "search.input.label": {
+    "message": "문서 검색"
+  },
+  "search.input.placeholder": {
+    "message": "가이드, API 및 문제 해결 검색"
+  },
+  "search.close": {
+    "message": "닫기"
+  },
+  "search.empty": {
+    "message": "일치하는 문서를 찾지 못했습니다."
   }
 }

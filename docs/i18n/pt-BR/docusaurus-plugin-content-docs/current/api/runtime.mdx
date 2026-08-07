@@ -1,0 +1,80 @@
+---
+title: "Serviços e contratos de execução"
+description: "APIs públicas de geração, registro, agendamento, transformação e valores opcionais"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+---
+
+# Serviços e contratos de execução
+
+<PageLead>
+Esses pontos de entrada cobrem geração programática, registro de feeds, integração com o agendador, transformação escalar e campos opcionais.
+</PageLead>
+
+## GeneratorService {/* #generator-service */}
+
+`DragonCode\LaravelFeed\Services\GeneratorService` gera e publica um feed.
+
+<ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
+
+O método publica todas as partes como uma operação, atualiza a última atividade do registro, dispara eventos do ciclo de vida e retorna os caminhos com a quantidade de registros por arquivo. A resolução do disco e do caminho de saída ocorre antes do início da geração; as exceções dessa verificação prévia, incluindo `UnsupportedStorageDiskException`, são lançadas diretamente. Depois que a verificação prévia é concluída, as falhas de geração são envolvidas em `FeedGenerationException`, mantendo a exceção original como anterior.
+
+Resolva o serviço pelo contêiner do Laravel em vez de construir suas dependências internas.
+
+```php
+use App\Feeds\UserFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+
+$result = app(GeneratorService::class)->feed(app(UserFeed::class));
+
+foreach ($result->records as $path => $count) {
+    processFeedResult($path, $count);
+}
+```
+
+## FeedQuery {/* #feed-query */}
+
+`DragonCode\LaravelFeed\Queries\FeedQuery` gerencia registros persistidos de feeds.
+
+| Método | Resultado |
+| --- | --- |
+| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Cria um registro. |
+| `find(int $id): Feed` | Retorna um registro ou lança `FeedNotFoundException`. |
+| `all(): Builder` | Retorna todos os registros ordenados por ID. |
+| `active(): Builder` | Retorna registros ativos ordenados por ID. |
+| `setLastActivity(string $class): void` | Atualiza `last_activity` de uma classe de feed. |
+| `delete(int $id): void` | Exclui logicamente um registro pelo ID. |
+| `deleteByClass(string $class): void` | Remove definitivamente registros da classe, inclusive os excluídos. |
+| `restore(int $id): void` | Restaura um registro excluído logicamente. |
+
+Use a migration ou a operação de implantação gerada para alterações comuns, mantendo-as reproduzíveis entre ambientes.
+
+## ScheduleFeedHelper {/* #schedule-feed-helper */}
+
+`DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper::register()` adiciona registros ativos ao agendador do Laravel. Cada registro usa sua expressão cron e um bloqueio contra sobreposição. Execução em segundo plano e TTL vêm de `feeds.schedule`.
+
+O registro é ignorado com segurança quando a tabela configurada não existe.
+
+## Transformer {/* #transformer */}
+
+Implemente `DragonCode\LaravelFeed\Contracts\Transformer` para converter valores compatíveis antes da serialização.
+
+<ApiSignature>public function allow(mixed $value): bool</ApiSignature>
+
+<ApiSignature>public function transform(mixed $value): string</ApiSignature>
+
+`allow()` decide se o transformador aceita o valor. `transform()` retorna sua representação escalar serializada. Adicione a classe por `Feed::transformers()` ou `feeds.transformers`.
+
+## OptionalData {/* #optional-data */}
+
+Retorne um novo `DragonCode\LaravelFeed\Data\OptionalData` para um campo que deve ser omitido quando não houver valor. XML, RSS, JSON e JSON Lines o omitem. CSV mantém a coluna e grava um campo vazio.
+
+## Veja também
+
+- [Feeds e dados](./feed.mdx)
+- [Configuração](./configuration.mdx)
+- [Eventos e exceções](./events-exceptions.mdx)
+- [Geração e agendamento](../generation.mdx)
+

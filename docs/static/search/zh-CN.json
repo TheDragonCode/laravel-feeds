@@ -1,0 +1,593 @@
+[
+    {
+        "route": "/zh-CN/",
+        "title": "Laravel Feeds 文档",
+        "description": "将大型 Laravel 数据集导出为 XML、JSON、JSON Lines、CSV、RSS 和市场平台 Feed。",
+        "keywords": [
+            "Laravel",
+            "feeds",
+            "data export",
+            "documentation"
+        ],
+        "headings": [
+            "无需将全部数据加载到内存即可导出大型数据集",
+            "从任务开始，再查阅参考资料"
+        ],
+        "content": ""
+    },
+    {
+        "route": "/zh-CN/api/",
+        "title": "API 参考",
+        "description": "Laravel Feeds 公共类、契约、数据对象、事件和异常的参考索引",
+        "keywords": [
+            "API",
+            "reference",
+            "Feed",
+            "FeedItem",
+            "FeedInfo"
+        ],
+        "headings": [
+            "API 参考",
+            "扩展点",
+            "另请参阅"
+        ],
+        "content": "API 参考 当你已了解工作流程，需要查找准确的类、方法、配置键、事件或失败契约时，请使用本节。 领域 主要入口 参考资料 --- --- --- 配置 config/feeds.php 配置 Feed 类 Feed 、 FeedItem 、 FeedInfo Feed 与数据 输出结构 ElementData 、XML 指令 元素、指令 格式 FeedFormatEnum 、转换程序 支持的格式 运行时 GeneratorService 、 FeedQuery 、 ScheduleFeedHelper 运行时服务与契约 生命周期 开始和完成事件 事件与异常 预设 Sitemap、RSS、Instagram、Yandex 预设 扩展点 - 继承 Feed 或预设，以定义数据源和输出契约。 - 继承 FeedItem 和 FeedInfo ，以控制序列化数据。 - 实现 DragonCode\\LaravelFeed\\Contracts\\Transformer ，以自定义标量转换。 - 需要省略字段时，返回 DragonCode\\LaravelFeed\\Data\\OptionalData 。 - 在 Feed 、 FeedItem 或 FeedInfo 上注册宏，以添加应用级辅助方法。 另请参阅 - 创建 Feed - 扩展功能 - 故障排除"
+    },
+    {
+        "route": "/zh-CN/api/configuration/",
+        "title": "配置参考",
+        "description": "Laravel Feeds 所有配置部分和环境变量的参考资料",
+        "keywords": [
+            "configuration",
+            "environment",
+            "queue",
+            "schedule",
+            "converters"
+        ],
+        "headings": [
+            "配置参考",
+            "核心设置",
+            "调度与队列",
+            "转换器",
+            "转换程序设置",
+            "另请参阅"
+        ],
+        "content": "配置参考 使用 php artisan vendor:publish --tag=\"feeds\" 发布 config/feeds.php 。Laravel 构建配置缓存时会读取环境值。 核心设置 键 默认值 用途 --- --- --- model DragonCode\\LaravelFeed\\Models\\Feed 用于 Feed 注册的 Eloquent 模型。替代模型必须继承软件包模型。 pretty / FEED_PRETTY false 启用格式化的 XML 和 JSON 输出。 date.format DATE_ATOM 日期转换器使用的 PHP 日期格式。 date.timezone / FEED_TIMEZONE UTC 序列化日期时使用的时区。 table.connection DB_CONNECTION ，然后是 sqlite Feed 注册使用的数据库连接。 table.table / FEED_TABLE feeds Feed 注册表名。 调度与队列 环境变量 默认值 用途 --- --- --- FEED_SCHEDULE_TTL 1440 调度锁的有效期，单位为分钟。 FEED_SCHEDULE_RUN_BACKGROUND true 在后台运行计划的 Feed 命令。 FEED_QUEUE_ENABLED false 通过 Laravel Queue 分派生成任务。 FEED_QUEUE_CONNECTION QUEUE_CONNECTION ，然后是 database Feed 任务使用的队列连接。 FEED_QUEUE_NAME 连接的默认队列 队列名称。 FEED_QUEUE_UNIQUE_TTL 3600 唯一任务锁的有效期，单位为秒。 FEED_CONSOLE_PROGRESS_BAR_ENABLED false 显示控制台进度条。 当所选连接为异步连接时，队列模式需要工作进程。 sync 连接仍会在命令进程中运行生成任务。 转换器 默认管道按顺序包含 BoolTransformer 、 DateTimeTransformer 和 EnumTransformer 。每个匹配的转换器都会接收前一个转换器返回的值。 实现 DragonCode\\LaravelFeed\\Contracts\\Transformer 后，将自定义类添加到 transformers 。Laravel 会通过服务容器解析该类。 转换程序设置 键 默认值 --- --- converters.json.options JSON_UNESCAPED_SLASHES JSON_UNESCAPED_UNICODE converters.jsonl.options JSON_UNESCAPED_SLASHES JSON_UNESCAPED_UNICODE converters.csv.delimiter ; converters.csv.enclosure \" converters.csv.escape 空字符串 converters.csv.line_ending PHP_EOL 另请参阅 - 安装 - 生成与调度 - Eloquent 模型配置"
+    },
+    {
+        "route": "/zh-CN/api/events-exceptions/",
+        "title": "事件与异常",
+        "description": "Feed 生成生命周期事件和公共异常类型的参考资料",
+        "keywords": [
+            "events",
+            "exceptions",
+            "FeedStartingEvent",
+            "FeedFinishedEvent"
+        ],
+        "headings": [
+            "事件与异常",
+            "生命周期事件",
+            "输入与查找失败",
+            "序列化与存储失败",
+            "另请参阅"
+        ],
+        "content": "事件与异常 使用生命周期事件与应用集成，并在能够处理失败的边界使用异常类型进行恢复。 生命周期事件 事件 公共数据 分发时机 --- --- --- FeedStartingEvent feed 存储和路径预检完成后、解析转换器和开始暂存之前。 FeedFinishedEvent feed 、 path 、 paths 所有生成文件成功发布之后。 FeedFinishedEvent::$paths 按顺序包含所有已发布路径。为保持兼容性而保留的 $path 始终包含第一个路径。 输入与查找失败 异常 含义 --- --- InvalidFeedArgumentException 控制台 Feed ID 无效。 FeedNotFoundException 请求的 Feed ID 没有对应注册记录。 InvalidExpressionException 调度表达式无效。 UnknownFeedClassException 无法解析配置的 Feed 类。 UnexpectedClassException 解析出的类不符合预期契约。 序列化与存储失败 异常 含义 --- --- InvalidCsvRowException CSV 行不符合已建立的列结构。 InvalidCsvValueException CSV 字段无法序列化为标量值。 InvalidXmlCDataException CDATA 值无效。 InvalidXmlFragmentException 原始 XML 片段无效。 UnsupportedStorageDiskException 所选 Laravel 磁盘无法解析为 FilesystemAdapter 。 OpenFeedException 无法打开草稿输出资源。 WriteFeedException 无法写入完整输出。 CloseFeedException 无法关闭输出资源。 ResourceMetaException 所需的流元数据不可用。 FeedGenerationException 指定 Feed 类生成失败。 只在应用能够添加恢复逻辑或面向用户的上下文时捕获异常。无法恢复的生成失败应交给 Laravel 报告。 另请参阅 - 事件指南 - 故障排除 - 存储保证"
+    },
+    {
+        "route": "/zh-CN/api/feed/",
+        "title": "Feed 与数据",
+        "description": "Feed、FeedItem、FeedInfo、ElementData 和生成结果的公共契约",
+        "keywords": [
+            "Feed",
+            "FeedItem",
+            "FeedInfo",
+            "ElementData",
+            "GenerationResultData"
+        ],
+        "headings": [
+            "Feed 与数据",
+            "Feed",
+            "FeedItem 与 FeedInfo",
+            "ElementData",
+            "生成结果",
+            "FeedFormatEnum",
+            "另请参阅"
+        ],
+        "content": "Feed 与数据 核心 API 将数据源、Feed 项映射、Feed 级元数据、输出结构和生成结果分开处理。 Feed DragonCode\\LaravelFeed\\Feeds\\Feed 是导出的基类。实现 builder() ，并且只覆盖 Feed 所需的输出钩子。 abstract public function builder(): Builder 方法 默认值 契约 --- --- --- builder(): Builder 抽象方法 返回用作数据源的 Eloquent 查询。 item(Model $model): FeedItem 新的基础 FeedItem 将一个模型映射为输出项。 transformers(): array [] 前置该 Feed 使用的转换器类名。 chunkSize(): int 1000 数据库查询分块大小。 perFile(): int 0 每个文件的记录数。零表示不按数量拆分。 maxFiles(): int 0 输出文件的最大数量。零表示不限制。 header(): string XML/RSS 使用 XML 声明 写入根元素和 Feed 项之前的内容。 footer(): string 空字符串 写入根元素和 Feed 项之后的内容。 root(): ElementData 从类名派生的元素名 定义根元素及其属性。 info(): FeedInfo 空的 FeedInfo 定义 Feed 级信息。 filename(): string 从类名派生的文件名 返回相对于磁盘的输出文件名。 path($suffix): string 适配器解析的路径 返回本地路径或适配器解析的路径。 storagePath($suffix): string 相对于磁盘的文件名 返回存储操作使用的路径。 storage(): FilesystemAdapter public 磁盘 解析并验证 Laravel 文件系统磁盘。 format(): FeedFormatEnum Xml 返回配置的输出格式。 Feed 使用 Laravel 的 Conditionable 和 Macroable 。 FeedItem 与 FeedInfo FeedItem 接收当前 Eloquent 模型。其默认行为如下： - name() 返回 kebab case 格式的模型类基本名称； - attributes() 返回空数组； - toArray() 返回模型数组。 FeedInfo::toArray() 返回空数组。这两个类都使用 Conditionable 和 Macroable ；输出需要显式结构时，请继承它们。 ElementData ElementData 是一个只读对象，具有三个构造函数属性： 属性 类型 默认值 --- --- --- name ?string null attributes array [] beforeInfo bool true 将 name 设为 null 或空字符串可隐藏根元素。将 beforeInfo 设为 false 可在根元素之前写入 Feed 信息。 生成结果 GeneratorService::feed() 返回 GenerationResultData 。其只读 paths 属性按输出顺序包含已发布文件。其只读 records 属性将每个路径映射到写入该文件的记录数。 编程式生成和注册方法列在运行时服务与契约中。 FeedFormatEnum 枚举项 值 --- --- Xml xml Json json JsonLines jsonl Csv csv Rss rss 另请参阅 - 创建 Feed - 元素 - 存储位置 - 运行时服务与契约"
+    },
+    {
+        "route": "/zh-CN/api/runtime/",
+        "title": "运行时服务与契约",
+        "description": "公共生成、注册、调度、转换和可选值 API",
+        "keywords": [
+            "GeneratorService",
+            "FeedQuery",
+            "ScheduleFeedHelper",
+            "Transformer",
+            "OptionalData"
+        ],
+        "headings": [
+            "运行时服务与契约",
+            "GeneratorService",
+            "FeedQuery",
+            "ScheduleFeedHelper",
+            "Transformer",
+            "OptionalData",
+            "另请参阅"
+        ],
+        "content": "运行时服务与契约 这些入口支持编程式生成、Feed 注册、调度器集成、标量转换和可选字段。 GeneratorService DragonCode\\LaravelFeed\\Services\\GeneratorService 生成并发布一个 Feed。 public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData 该方法将所有分片作为一个操作发布，更新注册记录的最后活动时间，分发生命周期事件，并返回路径以及每个文件的记录数。系统会在生成开始前解析存储磁盘并查找输出路径；此前置检查中发生的异常（包括 UnsupportedStorageDiskException ）会直接抛出。前置检查成功后，生成失败会包装为 FeedGenerationException ，原始异常作为其前一个 throwable 保留。 应通过 Laravel 容器解析该服务，不要自行构造其内部协作对象。 FeedQuery DragonCode\\LaravelFeed\\Queries\\FeedQuery 管理持久化的 Feed 注册记录。 方法 结果 --- --- create(string $class, string $title, string $expression = '0 ', bool $isActive = true, array $extra = []): Feed 创建注册记录。 find(int $id): Feed 返回注册记录，找不到时抛出 FeedNotFoundException 。 all(): Builder 返回按 ID 排序的所有注册记录。 active(): Builder 返回按 ID 排序的已启用注册记录。 setLastActivity(string $class): void 更新 Feed 类的 last_activity 。 delete(int $id): void 按 ID 软删除注册记录。 deleteByClass(string $class): void 永久删除指定类的注册记录，包括已软删除的行。 restore(int $id): void 恢复软删除的注册记录。 常规注册变更应使用生成的迁移或部署操作，以便在不同环境中重现。 ScheduleFeedHelper DragonCode\\LaravelFeed\\Helpers\\ScheduleFeedHelper::register() 将已启用的注册记录添加到 Laravel 调度器。每条注册记录使用其存储的 cron 表达式和防重叠锁。后台执行和锁的有效期取自 feeds.schedule 配置。 配置的 Feed 表不存在时，会安全跳过注册。 Transformer 实现 DragonCode\\LaravelFeed\\Contracts\\Transformer ，以便在序列化前转换支持的值。 public function allow(mixed $value): bool public function transform(mixed $value): string allow() 判断转换器是否接受该值。 transform() 返回其序列化后的标量表示。通过 Feed::transformers() 或 feeds.transformers 添加该类。 OptionalData 字段无值时，如需省略它，请返回新的 DragonCode\\LaravelFeed\\Data\\OptionalData 。XML、RSS、JSON 和 JSON Lines 会省略该字段。CSV 会保留列并写入空字段。 另请参阅 - Feed 与数据 - 配置 - 事件与异常 - 生成与调度"
+    },
+    {
+        "route": "/zh-CN/compatibility/",
+        "title": "兼容性",
+        "description": "Laravel Feeds 1.x 支持的 PHP、Laravel、存储、队列和输出格式契约",
+        "keywords": [
+            "compatibility",
+            "PHP",
+            "Laravel",
+            "Flysystem",
+            "formats"
+        ],
+        "headings": [
+            "兼容性",
+            "运行时矩阵",
+            "输出格式",
+            "可选集成",
+            "另请参阅"
+        ],
+        "content": "兼容性 对于具体应用，请以 Composer 解析出的依赖关系图作为最终兼容性检查依据。 运行时矩阵 组件 支持的版本 --- --- PHP 8.2 以及已安装软件包约束允许的更高 8.x 版本 Laravel 组件 11.x 、 12.x 、 13.x 数据库 配置的 Eloquent 模型和迁移支持的任意 Laravel 连接 文件系统 可写且解析为 FilesystemAdapter 的 Laravel 磁盘 对于具体应用，已安装的 composer.lock 是最终依据。Composer 会拒绝不支持的组合。 输出格式 格式 扩展名 嵌套数据 XML 指令 --- --- --- --- XML .xml 支持 支持 JSON .json 支持 不支持 JSON Lines .jsonl 每行一个 JSON 值 不支持 CSV .csv 不支持；需要稳定的标量列 不支持 RSS .rss 支持 支持 可选集成 - 仅在启用队列模式时需要 Laravel Queue。 - 安装 Laravel Deploy Operations 后， make:feed 会使用它；否则该命令会创建迁移。 - 安装 Spatie Laravel Data 后，可以识别其可选值。 另请参阅 - 安装 - 支持的格式 - 升级指南"
+    },
+    {
+        "route": "/zh-CN/contributions/",
+        "title": "贡献指南",
+        "description": "面向 Laravel Feeds 项目开发者的说明",
+        "keywords": [
+            "contributing",
+            "code style",
+            "code of conduct"
+        ],
+        "headings": [
+            "贡献指南",
+            "代码风格",
+            "行为准则",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 贡献指南 我们 欢迎 贡献，并会充分 注明 贡献者。 我们组织的所有项目都接受通过 Pull Request 提交的贡献。 代码风格 Laravel Feeds 遵循 PER-3 编码标准和 PSR-4 自动加载标准。 要应用代码风格格式化，请运行以下控制台命令： 行为准则 Laravel 行为准则源自 Contributor Covenant 行为准则。任何违反行为准则的情况都可以报告给 Andrey Helldar： - 参与者应包容不同意见。 - 参与者必须确保自己的言辞和行为不包含人身攻击或贬损性言论。 - 在理解他人的言辞和行为时，参与者应始终以善意为前提。 - 不容忍任何可合理认定为骚扰的行为。 另请参阅 - MIT 许可证 - 入门 - 机器学习"
+    },
+    {
+        "route": "/zh-CN/create-feeds/",
+        "title": "创建 Feed",
+        "description": "创建并填充 Feed、Feed 项和 Feed 信息类的说明",
+        "keywords": [
+            "feed",
+            "FeedItem",
+            "FeedInfo",
+            "make:feed"
+        ],
+        "headings": [
+            "创建 Feed",
+            "填充 Feed",
+            "Feed",
+            "Feed 项",
+            "可选值",
+            "文件格式",
+            "另请参阅"
+        ],
+        "content": "import ThemedImage from '@theme/ThemedImage'; ← 上一页 · 返回 README · 下一页 → 创建 Feed 创建所需类最方便的方法是使用 Laravel Idea 插件，并在 PhpStorm 中运行。 要创建 Feed 类，请使用 make:feed 控制台命令： 该命令会创建 Feed 文件，例如 app/Feeds/UserFeed.php 。 该控制台命令还可以在创建 Feed 类的同时创建项类和信息类。使用 --item 和 --info 选项即可。 也可以使用短选项： 创建 Feed 时，还会创建一个操作类或迁移，以便将它添加到数据库。 如果项目使用 Laravel Deploy Operations ，则会创建操作类；否则会创建迁移类。 这是在数据库中添加和管理 Feed 信息所必需的。 填充 Feed Feed 填充主 Feed 类。例如： Feed 项 填充 Feed 项类。例如： 可选值 当值不可用时，如需省略字段，请将 DragonCode\\LaravelFeed\\Data\\OptionalData 实例作为该字段的值返回： 可选字段会从 JSON 和 JSON Lines 对象以及 XML 和 RSS 元素中移除，普通嵌套字段也会被移除。CSV 会保留列位置并写入空字段。 如果应用使用 Spatie Laravel Data，也可以返回 Spatie\\LaravelData\\Optional 。这两种可选值类都会被自动处理。 文件格式 可在支持的格式页面查看可用格式列表。 可以生成不同格式的 Feed。Feed 类只能正确导出为其目标格式，这是由指令和其他格式特性决定的。 要应用所需格式，只需在 Feed 类中覆盖 $format 属性： 另请参阅 - 生成与调度 - 支持的格式 - 预设"
+    },
+    {
+        "route": "/zh-CN/directives/",
+        "title": "指令",
+        "description": "用于 Feed 输出的内置 XML 指令",
+        "keywords": [
+            "XML",
+            "directives",
+            "attributes",
+            "CDATA"
+        ],
+        "headings": [
+            "指令",
+            "@attributes",
+            "@value",
+            "@cdata",
+            "@mixed",
+            "@custom",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 指令 格式： XML [保留指令] - @attributes - @value - @cdata - @mixed - @custom 只有生成 XML 格式的 Feed 时才能使用这些指令。 @attributes 表示属性数组。 可以使用名为 @attributes 的键为节点添加属性： 该代码会生成： @value 表示直接使用指定值。 @value 字段的值必须是字符串。 可以使用名为 @value 的键为节点添加值： 该代码会生成： @cdata 允许使用未经转换的 XML 标记。 也可以将节点值包装在 CDATA 段中，从而使用保留字符。 可以使用名为 @cdata 的键为节点添加 CDATA： 该代码会生成： @mixed 允许在文档结构中直接使用 XML 标记。 要原样插入 XML 片段，请使用 @mixed 指令： 该代码会生成： @custom 用于列出具有相同键的元素数组。 有时需要放置一组名称相同的元素。 为此，请在键名开头添加 @ 符号： 该代码会生成： 另请参阅 - 元素 - 支持的格式 - Yandex 示例"
+    },
+    {
+        "route": "/zh-CN/elements/",
+        "title": "元素",
+        "description": "配置 Feed 结构：根元素、信息块、页眉和页脚以及属性",
+        "keywords": [
+            "elements",
+            "FeedInfo",
+            "attributes",
+            "split files"
+        ],
+        "headings": [
+            "元素",
+            "根元素",
+            "信息",
+            "页眉和页脚",
+            "属性",
+            "拆分文件",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 元素 根元素 格式： XML、RSS、JSON 默认情况下，根元素名称由 Feed 类的基本名称生成。 例如， App\\Feeds\\FooBarFeed 类对应的名称是 foo_bar 。 要添加根元素和／或其属性，请覆盖 root 方法： 要禁用根元素，请将其名称指定为空值，即 null 或 \"\" 。 该代码会生成： 信息 格式： XML、RSS、JSON、JSONL、CSV 要在根元素（如果存在）的开头添加信息，或在没有根元素时添加信息，请覆盖 Feed 类中的 info 方法，并创建一个继承 DragonCode\\LaravelFeed\\Feeds\\Info\\FeedInfo 类的对象： 该代码会生成： 如需更改根元素与信息块的输出顺序，请在 root 方法中设置 beforeInfo 参数： 该代码会生成： 页眉和页脚 格式： XML、RSS、JSON 要更改页眉和页脚，请覆盖 header 和 footer 方法： 该代码会生成： 属性 格式： XML、RSS 该代码会生成： 拆分文件 格式： XML、RSS、JSON、JSONL、CSV 如有需要，可以限制每个文件的输出行数以及文件总数。使用 perFile 和 maxFiles 函数进行设置。 这两个方法彼此独立。 拆分时，文件名会添加连续编号。例如： - attribute-1.xml - attribute-2.xml - attribute-3.xml 另请参阅 - 指令 - 支持的格式 - 存储位置"
+    },
+    {
+        "route": "/zh-CN/eloquent/",
+        "title": "Eloquent",
+        "description": "配置 Feed 注册模型和 Feed 查询分块大小",
+        "keywords": [
+            "Eloquent",
+            "model",
+            "FeedQuery",
+            "chunk size"
+        ],
+        "headings": [
+            "Eloquent",
+            "自定义 Feed 注册模型",
+            "分块大小",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → Eloquent 自定义 Feed 注册模型 当 Feed 注册记录需要额外的列、类型转换、关系或方法时，请将 feeds.model 设置为应用模型。自定义模型必须继承 DragonCode\\LaravelFeed\\Models\\Feed 。 在 config/feeds.php 中注册模型： 通过应用迁移向 Feed 表添加自定义列。所有允许批量赋值的属性都必须保留在 $fillable 中。 FeedQuery 使用配置的模型执行创建、查找、列表、更新、删除和恢复操作。创建记录时，通过 extra 传入应用专用值。这些值最后应用，因此可以覆盖方法参数： 应用模型也可以使用常规 Eloquent API： 配置的模型在运行时解析。静态分析会将 FeedQuery::create() 的结果视为包的基础模型。需要自动补全应用专用属性时，请使用 App\\Models\\Feed::create() 或显式的局部类型。 分块大小 数据库查询采用分块处理，默认每块包含 1000 项。可以通过覆盖 chunkSize 方法进行更改： 另请参阅 - 创建 Feed - 生成与调度 - 扩展功能"
+    },
+    {
+        "route": "/zh-CN/events/",
+        "title": "事件",
+        "description": "Feed 生成期间分发的事件",
+        "keywords": [
+            "events",
+            "FeedStartingEvent",
+            "FeedFinishedEvent"
+        ],
+        "headings": [
+            "事件",
+            "完成事件契约",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 事件 Feed 在运行命令时会分发两个事件： - DragonCode\\LaravelFeed\\Events\\FeedStartingEvent — FeedStartingEvent 在存储和路径预检完成后、解析转换器和开始暂存之前分发。此时不保证草稿文件已经存在。 - DragonCode\\LaravelFeed\\Events\\FeedFinishedEvent — FeedFinishedEvent 在所有生成的文件成功发布后分发。生成失败时不会分发此事件。 完成事件契约 完成事件公开以下 public 属性： - $feed 包含生成的 Feed 类。 - $paths 按输出顺序包含所有已发布文件的路径。 - $path 为保持向后兼容而保留，其中包含第一个发布路径。当 Feed 可能拆分为多个文件时，请使用 $paths 。 GeneratorService::feed() 返回一个 GenerationResultData 对象。其 $paths 属性包含相同顺序的路径， $records 属性将每个路径映射到写入该文件的记录数。 另请参阅 - 生成与调度 - 存储位置 - 扩展功能"
+    },
+    {
+        "route": "/zh-CN/extending-functionality/",
+        "title": "扩展功能",
+        "description": "使用条件子句、宏和自定义转换器扩展 Feed",
+        "keywords": [
+            "extensions",
+            "macros",
+            "transformers",
+            "conditional clauses"
+        ],
+        "headings": [
+            "扩展功能",
+            "条件子句",
+            "宏功能",
+            "自定义转换器",
+            "前置 Feed 转换器",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 扩展功能 条件子句 Feed 、 FeedInfo 和 FeedItem 类均可使用条件子句。 有时需要根据另一个条件决定是否向 Feed 应用某些子句。例如，只有给定输入值存在或另一个属性有值时，才应用 where 语句。可以使用 when 方法实现： when 方法只在第一个参数为 true 时执行给定闭包。如果第一个参数为 false ，闭包不会执行。因此在上面的示例中，只有模型存在 category 字段且其计算结果为 true 时，传给 when 方法的闭包才会运行。 可以将另一个闭包作为 when 方法的第三个参数。只有第一个参数的计算结果为 false 时，该闭包才会执行。以下示例用它配置模型标题后缀： 还可以使用反向方法 unless ，它的处理逻辑正好相反。 宏功能 Feed 、 FeedItem 和 FeedInfo 支持宏，因此可以在运行时为它们添加方法。 macro 方法接收一个闭包，调用宏时会执行该闭包。宏闭包可以通过 $this 访问 Feed 的其他方法，就像它是 Feed 类的真实方法一样。 例如，以下代码为 Feed 类添加 customFilename 方法： 以下是 FeedInfo 和 FeedItem 的示例： 自定义转换器 转换器会在转换程序序列化受支持的值之前对其进行转换。在 config/feeds.php 中注册转换器类名。Laravel 通过服务容器解析每个类，因此支持构造函数依赖和自定义容器绑定。 将转换器添加到配置列表中的内置转换器之后： 已配置的转换器按声明顺序运行。每次调用 allow() 都会接收当前值，包括之前转换器所做的更改；每个匹配的转换器都可以更新该值。容器解析完成后会移除重复项，并保留首次出现的位置。 转换程序只构建一次这个有序管道，并在该次 Feed 生成过程中对每个字段复用相同的转换器实例。 前置 Feed 转换器 覆盖 Feed 的 transformers() 方法可以为该 Feed 前置转换器。该方法返回转换器类名，Laravel 会像处理全局列表一样通过服务容器解析它们。 例如，定义一个使用 Feed 专用格式的日期转换器： 然后从 Feed 中返回该转换器： 前置列表不会替换 config/feeds.php 中的全局列表。转换器按以下顺序运行： 1. transformers() 返回的前置转换器。 2. config/feeds.php 中的全局转换器。 3. 所选输出格式所需的转换程序专用转换器。 因此，前置转换器可以先格式化日期。全局日期转换器收到生成的字符串后会跳过它，而其他全局转换器仍会处理匹配的字段。 另请参阅 - 创建 Feed - Eloquent - 指令"
+    },
+    {
+        "route": "/zh-CN/faq/",
+        "title": "常见问题",
+        "description": "Laravel Feeds 设置、生成、存储和格式常见问题的简短答案",
+        "keywords": [
+            "FAQ",
+            "generation",
+            "storage",
+            "formats",
+            "memory"
+        ],
+        "headings": [
+            "常见问题",
+            "另请参阅"
+        ],
+        "content": "常见问题 关于设置、生成、存储、格式和内存常见问题的简短答案。 Laravel Feeds 能否导出数百万条记录？ 可以。软件包分块读取 Eloquent 结果并增量写入输出。让 builder() 保持惰性，不要对完整结果调用 get() 或 toArray() ，并在测量内存和数据库负载后调整 chunkSize() 。 请参阅大型数据集性能。 应该使用哪种格式？ 使用数据使用方要求的契约。XML 和 RSS 支持层级指令，JSON 保留嵌套数据，JSON Lines 适合逐行处理，CSV 则要求稳定的列结构。 请参阅支持的格式。 一个 Feed 能否创建多个文件？ 可以。覆盖 perFile() 以设置每个文件的记录数，覆盖 maxFiles() 以设置可选上限。拆分文件会获得连续后缀。 请参阅拆分文件。 能否将 Feed 存储在 S3 或其他远程磁盘？ 可以，但配置的 Laravel 磁盘必须解析为可写的 FilesystemAdapter 。远程移动可能通过复制后删除实现，因此不保证原子替换。 请参阅支持的磁盘。 为什么已禁用的 Feed 仍然运行了？ 向 feed:generate 传入 Feed ID 会执行该 Feed，即使其注册记录未启用。不传 ID 运行命令时会跳过未启用的注册记录。 请参阅单个 Feed 生成。 如何省略可选字段？ 将 DragonCode\\LaravelFeed\\Data\\OptionalData 或 Spatie\\LaravelData\\Optional 作为字段值返回。CSV 会保留列并写入空值；对象格式和 XML 会省略该字段。 请参阅可选值。 另请参阅 - 故障排除 - 配置参考 - API 参考"
+    },
+    {
+        "route": "/zh-CN/generation/",
+        "title": "生成与调度",
+        "description": "生成 Feed 文件以供后续分发的说明",
+        "keywords": [
+            "generation",
+            "schedule",
+            "queue",
+            "feed:generate"
+        ],
+        "headings": [
+            "生成与调度",
+            "单个 Feed",
+            "AI 代理输出",
+            "队列",
+            "调度",
+            "自动调度",
+            "手动调度",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 生成与调度 要生成所有已启用的 Feed，请使用控制台命令： 执行后， feeds 表中所有已启用的 Feed（ is_active = true ）都会运行。也可以使用 config/feeds.php 文件中指定的表。 不带参数调用命令时，控制台会显示所有 Feed 的链接，包括 is_active 属性设为 false 的 Feed。 但这些 Feed 不会运行，而会被标记为 SKIP 状态。 单个 Feed 即使指定的 Feed 在数据库的 feeds 表中已禁用，它也 仍会运行 。 要生成指定 Feed，请调用 feed:generate 控制台命令，并将 feeds 表中的 Feed ID 作为参数传入： AI 代理输出 当 feed:generate 在 Laravel Agent Detector 识别到的 AI 编码代理中运行时，命令会自动输出单个 JSON 对象，而不是进度条和格式化状态行。不需要额外的命令选项。在未识别为代理的环境中，常规控制台输出保持不变。 直接生成时，每个已生成的 Feed 都会包含所有已发布文件及其记录数： 命令实际会在一行中输出紧凑的 JSON。上面的示例仅为便于阅读而进行了格式化。 状态 含义 附加字段 --- --- --- generated 直接生成了 Feed 文件。 files ，其中包含每个文件的 path 和 records queued 已启用队列模式，并为代理同步执行了 Feed 任务。 无 skipped Feed 未启用，并且命令运行时未传入 Feed ID。 无 在队列模式下，代理专用执行路径会先同步运行每个已启用的任务，再返回 JSON 结果。面向人工阅读的常规执行路径仍会通过配置的队列连接分派任务。 此 JSON 封装仅用于成功执行。如果生成过程抛出异常，Laravel 会照常处理命令错误，并且不会输出 JSON 错误封装。 队列 默认情况下，Feed 生成任务在控制台进程中运行。对于耗时较长或占用大量内存的 Feed，请在环境中启用 Laravel Queue 模式： 启用队列模式后， feed:generate 会为每个已启用的 Feed 分派一个任务，而不是直接生成文件。使用异步连接时，任务分派完成后命令便会返回。请为所选连接和队列启动队列工作进程来处理这些任务。 - FEED_QUEUE_CONNECTION 选择队列连接。未设置时依次回退到 QUEUE_CONNECTION 和 database 。 - FEED_QUEUE_NAME 选择该连接上的队列。留空时使用连接的默认队列。 - FEED_QUEUE_UNIQUE_TTL 设置唯一性锁的最长有效时间，单位为秒。该锁有效期间，同一 Feed 的第二个任务不会进入队列。 sync 连接会在控制台进程中立即执行每个任务。选择异步连接可将生成任务交给工作进程。设置 FEED_QUEUE_ENABLED=false 可直接生成 Feed，而不分派任务。 调度 自动调度 要自动生成 Feed，请使用任务调度。在 routes/console.php 文件中调用辅助类即可；除非已更改配置，否则这是默认路径： 这样会根据数据库 expression 列中指定的计划，为所有已启用的 Feed 注册调用。 手动调度 也可以按自定义规则直接指定计划。此时只会运行指定的 Feed。 另请参阅 - 创建 Feed - 事件 - 存储位置"
+    },
+    {
+        "route": "/zh-CN/installation/",
+        "title": "安装与设置",
+        "description": "安装和配置 Laravel Feeds 的说明",
+        "keywords": [
+            "installation",
+            "Composer",
+            "configuration",
+            "migration"
+        ],
+        "headings": [
+            "安装与设置",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 安装与设置 你可以通过 Composer 安装此软件包： 你应使用以下命令发布迁移和 config/feeds.php 配置文件： 运行迁移之前 ，请检查 config/feeds.php 文件中的数据库连接设置。 现在可以运行迁移并继续创建 Feed。 另请参阅 - 创建 Feed - 生成与调度 - 支持的格式"
+    },
+    {
+        "route": "/zh-CN/introduction/",
+        "title": "入门",
+        "description": "安装 Laravel Feeds，并在五分钟内生成第一个 Feed",
+        "keywords": [
+            "getting started",
+            "Laravel",
+            "feeds",
+            "quick start"
+        ],
+        "headings": [
+            "入门",
+            "前置条件",
+            "安装与准备",
+            "定义数据源",
+            "定义每个 Feed 项",
+            "生成文件",
+            "后续步骤"
+        ],
+        "content": "入门 安装软件包，定义 Eloquent 查询和 Feed 项结构，然后生成 Feed 文件。在现有 Laravel 应用中，创建首个可用导出大约需要五分钟。 前置条件 - PHP 8.2 或 Composer 接受的更高 8.x 版本 - Laravel 11.x 、 12.x 或 13.x - 已配置的数据库和文件系统磁盘 安装与准备 生成器会创建 Feed 类和 Feed 项类，还会创建用于注册 Feed 的数据库变更。如果该迁移是在前面的 migrate 命令之后生成的，请在首次生成前运行它。 定义数据源 使用 Eloquent 构建器，以便分块读取记录。 定义每个 Feed 项 生成文件 命令会显示每个 Feed 的状态；普通控制台输出不包含生成文件的路径。Feed 类默认使用 XML 格式和 public 磁盘。请在 Feed 类中修改相应值。 后续步骤 - 安装与设置 - 创建 Feed - 生成与调度 - 支持的格式"
+    },
+    {
+        "route": "/zh-CN/license/",
+        "title": "MIT 许可证",
+        "description": "Laravel Feeds 分发所依据的许可证信息",
+        "keywords": [
+            "MIT",
+            "license",
+            "copyright"
+        ],
+        "headings": [
+            "MIT 许可证",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README MIT 许可证 版权所有 (c) 2025-2026 Andrey Helldar 特此免费授予任何获得本软件及相关文档文件（以下简称“软件”）副本的人不受限制地处理本软件的权利，包括但不限于使用、复制、修改、合并、发布、分发、再许可和/或出售软件副本的权利，并允许向其提供软件的人这样做，但须符合以下条件： 上述版权声明和本许可声明应包含在软件的所有副本或主要部分中。 本软件按“原样”提供，不作任何明示或暗示的担保，包括但不限于对适销性、特定用途适用性和非侵权性的担保。在任何情况下，无论因合同、侵权或其他原因产生，作者或版权所有者均不对因软件或软件的使用或其他交易而产生、引起或与之相关的任何索赔、损害或其他责任承担责任。 另请参阅 - 贡献指南 - 入门 - 机器学习"
+    },
+    {
+        "route": "/zh-CN/location/",
+        "title": "存储位置",
+        "description": "配置生成 Feed 使用的存储磁盘和输出文件名",
+        "keywords": [
+            "storage",
+            "filesystem",
+            "filename",
+            "publication"
+        ],
+        "headings": [
+            "存储位置",
+            "支持的磁盘",
+            "路径约定",
+            "发布保证",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 存储位置 默认情况下，Feed 存储在 public 存储中。文件名会根据 App\\Feeds\\ 之后的 Feed 类名自动生成，并转换为 kebab-case 格式。例如： 可以通过覆盖 $storage 属性和 filename 方法更改这些值： 支持的磁盘 Feed 生成支持能够解析为 Illuminate\\Filesystem\\FilesystemAdapter 的 Laravel 磁盘。安装并配置相应的 Flysystem 适配器后，支持 local 、 s3 、 sftp 和 ftp 驱动。自定义适配器需要通过 Flysystem 提供可写流、文件移动、目录管理与列表以及删除功能。 不支持只读磁盘，也不支持仅实现 Illuminate\\Contracts\\Filesystem\\Filesystem 的自定义磁盘。无法解析为 Illuminate\\Filesystem\\FilesystemAdapter 的自定义磁盘会在 Feed 数据库查询开始前抛出 UnsupportedStorageDiskException 。Laravel 只读磁盘仍会解析为 FilesystemAdapter ，因此 Feed 查询和本地暂存会先完成，随后发布写入才会失败。 GeneratorService 会将该存储错误包装为 FeedGenerationException 。 路径约定 - storage() 返回已配置的 FilesystemAdapter 。 - storagePath() 返回用于存储操作的磁盘相对路径，其中包括可选的拆分文件后缀。 - path() 返回由 Laravel 适配器解析的路径。对于本地磁盘，它是绝对文件系统路径；对于远程磁盘，它是适配器解析后的路径。 发布保证 发布开始前，每个 Feed 分片都会完整生成。本地磁盘会在应用独占锁下通过文件系统移动来发布暂存文件。如果移动失败，Laravel Feeds 会尝试从暂存备份恢复所有旧文件。 在更改已发布对象前，远程磁盘会通过 Flysystem 流接收完整的暂存文件。发布时再将每个暂存对象移动到目标位置，失败时也会尝试回滚。 远程移动可能通过复制后删除实现，也可能仅保证最终一致性。因此，无法保证以原子方式替换单个对象或整个拆分 Feed。发布锁只在当前应用主机上有效。如果不同主机上的生成器可能并发发布同一个 Feed，则需要外部分布式锁。 另请参阅 - 生成与调度 - 元素 - 事件"
+    },
+    {
+        "route": "/zh-CN/machine-learning/",
+        "title": "机器学习",
+        "description": "将项目与 LLM 和统一知识库配合使用的指南",
+        "keywords": [
+            "LLM",
+            "llms.txt",
+            "machine learning",
+            "knowledge base"
+        ],
+        "headings": [
+            "机器学习",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 机器学习 你可以帮助 LLM 更好地理解此项目的结构和约定。 为此，请导入以下文件中的指南： llms.txt 。 此文件是一份统一的 Markdown 文档，包含该项目编译后的文档。它可用作 LLM 的知识库，例如系统提示词附件、检索语料库或自定义知识文件。 请保存该 URL，并随着项目演进定期重新导入，以获取更新。 另请参阅 - 入门 - 贡献指南 - MIT 许可证"
+    },
+    {
+        "route": "/zh-CN/performance/",
+        "title": "大型数据集性能",
+        "description": "控制大型 Feed 的内存、数据库负载、文件拆分、队列和存储吞吐量",
+        "keywords": [
+            "performance",
+            "memory",
+            "chunks",
+            "large datasets",
+            "queues"
+        ],
+        "headings": [
+            "大型数据集性能",
+            "保持查询惰性",
+            "调整分块大小",
+            "拆分输出文件",
+            "将长时间运行的 Feed 放入队列",
+            "测量整个路径",
+            "另请参阅"
+        ],
+        "content": "大型数据集性能 Laravel Feeds 会增量写入记录。只有应用的每个上游步骤都保持惰性，内存占用才会保持有限。 保持查询惰性 直接返回 Eloquent Builder ： 不要在生成前加载完整结果。只选择所需列，并且只预加载 item() 使用的关系，以避免 N+1 查询。 调整分块大小 默认值为 1000 条记录。较小的值会降低模型内存峰值，但增加查询次数。较大的值会降低查询开销，但增加内存占用。请使用接近生产环境的行大小进行测量。 拆分输出文件 当数据使用方接受多个文件，或单个输出难以发布和重试时，请使用 perFile() 。 如果必须导出所有匹配的记录，请保留 maxFiles() 的默认值 0 。当 perFile() 和 maxFiles() 都大于零时，Laravel Feeds 最多只会导出两者乘积数量的记录，并在不提示后续记录已被省略的情况下成功完成。仅在有意限制记录总数时设置 maxFiles() 。 将长时间运行的 Feed 放入队列 队列模式会将生成任务移出控制台请求，但不会减少 Feed 使用的内存。使用异步连接，以合适的超时和内存限制运行工作进程，并让唯一性锁的有效期长于预计生成时间。 测量整个路径 分别测量数据库时间、模型填充、转换、序列化和存储发布。即使生成很快，远程磁盘也可能使发布成为主要开销。 另请参阅 - Eloquent 分块大小 - 生成队列 - 存储发布保证"
+    },
+    {
+        "route": "/zh-CN/presets/",
+        "title": "预设",
+        "description": "使用内置预设快速生成 Feed（Instagram、Yandex、站点地图、RSS）",
+        "keywords": [
+            "presets",
+            "Instagram",
+            "Yandex",
+            "Sitemap",
+            "RSS"
+        ],
+        "headings": [
+            "预设",
+            "默认实现",
+            "Instagram",
+            "Yandex",
+            "站点地图",
+            "RSS",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 预设 可以使用开箱即用的预设快速创建 Feed： - DragonCode\\LaravelFeed\\Presets\\InstagramFeedPreset - DragonCode\\LaravelFeed\\Presets\\YandexFeedPreset - DragonCode\\LaravelFeed\\Presets\\SitemapFeedPreset - DragonCode\\LaravelFeed\\Presets\\RssFeedPreset 手动创建 Feed 类，或使用 php artisan make:feed 控制台命令创建，然后继承所需的预设。例如： 然后实现两个必需的方法： builder 和 item 。例如： 从技术上讲，预设类与基础 Feed 类相同，但它们还包含目标服务的专用逻辑，例如信息块和 Feed 项的构建方式。 默认实现 Instagram class InstagramFeedItem extends FeedItem Yandex class YandexFeedItem extends FeedItem 站点地图 class SitemapFeedItem extends FeedItem RSS class RssFeedItem extends FeedItem 另请参阅 - Instagram 示例 - Yandex 示例 - 站点地图示例"
+    },
+    {
+        "route": "/zh-CN/receipt-instagram/",
+        "title": "Instagram",
+        "description": "Instagram Feed 生成示例",
+        "keywords": [
+            "Instagram",
+            "product feed",
+            "recipe",
+            "XML"
+        ],
+        "headings": [
+            "Instagram",
+            "创建文件",
+            "填充 Feed",
+            "启用",
+            "生成 Feed",
+            "结果",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → Instagram 创建文件 填充 Feed 在生成的类中，将 extends Feed 替换为 extends InstagramFeedPreset ： 启用 检查生成的操作类或迁移文件，然后运行相应的控制台命令： 生成 Feed 运行以下控制台命令生成 Feed： 结果 另请参阅 - 预设 - Yandex 示例 - RSS Atom 示例"
+    },
+    {
+        "route": "/zh-CN/receipt-rss-atom/",
+        "title": "RSS Atom",
+        "description": "RSS Atom Feed 生成示例",
+        "keywords": [
+            "RSS",
+            "Atom",
+            "recipe",
+            "XML"
+        ],
+        "headings": [
+            "RSS Atom",
+            "创建文件",
+            "填充 Feed",
+            "启用",
+            "生成 Feed",
+            "结果",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → RSS Atom 创建文件 填充 Feed 在生成的类中，将 extends Feed 替换为 extends RssFeedPreset ： 启用 检查生成的操作类或迁移文件，然后运行相应的控制台命令： 生成 Feed 运行以下控制台命令生成 Feed： 结果 另请参阅 - 预设 - 站点地图示例 - Instagram 示例"
+    },
+    {
+        "route": "/zh-CN/receipt-sitemap/",
+        "title": "站点地图",
+        "description": "创建产品站点地图 Feed 的分步指南",
+        "keywords": [
+            "Sitemap",
+            "recipe",
+            "SEO",
+            "XML"
+        ],
+        "headings": [
+            "站点地图",
+            "创建文件",
+            "填充 Feed",
+            "启用",
+            "链接",
+            "生成 Feed",
+            "添加到根 sitemap.xml 的链接",
+            "结果",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 站点地图 本示例说明如何使用 Laravel Feeds 创建产品站点地图 Feed。你将完成以下操作： - 生成所需的类。 - 实现 Feed 逻辑。 - 通过文件系统公开文件。 - 可选：从根 sitemap.xml 文件引用生成的站点地图。 创建文件 使用以下控制台命令生成 Feed 及其项类： 填充 Feed 在生成的类中，将 extends Feed 替换为 extends SitemapFeedPreset ： FeedItem 类的可用方法： - url - 必须指定 - modifiedAt - 默认为 $model- updated_at - priority - 默认为 0.9 启用 检查生成的操作类或迁移文件，然后运行相应的控制台命令： 链接 在 config/filesystems.php 配置文件中添加一个文件系统磁盘，指向包含站点地图的目录： 然后创建公共符号链接，以便通过浏览器访问这些文件： 生成 Feed 运行以下控制台命令生成 Feed： 添加到根 sitemap.xml 的链接 如果根 sitemap.xml 文件引用其他站点地图，请添加如下条目： 结果 为产品生成的 sitemap.xml 如下所示： 另请参阅 - 预设 - Yandex 示例 - RSS Atom 示例"
+    },
+    {
+        "route": "/zh-CN/receipt-yandex/",
+        "title": "Yandex",
+        "description": "Yandex Feed 生成示例",
+        "keywords": [
+            "Yandex",
+            "marketplace",
+            "recipe",
+            "XML"
+        ],
+        "headings": [
+            "Yandex",
+            "创建文件",
+            "填充 Feed",
+            "自定义分类结构",
+            "启用",
+            "生成 Feed",
+            "结果",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → Yandex 创建文件 填充 Feed 在生成的类中，将 extends Feed 替换为 extends YandexFeedPreset ： 自定义分类结构 默认情况下， category() 根据 ID 和名称构建分类。需要额外属性或其他结构时，请使用 rawCategory() 。该数组会原样添加到 Feed： categories() 方法接受这两种形式。字符串值会传给 category() ，数组值会传给 rawCategory() 。 自定义分类数组不会经过验证或转换。请使用受支持的 XML 指令构建它们。 启用 检查生成的操作类或迁移文件，然后运行相应的控制台命令： 生成 Feed 运行以下控制台命令生成 Feed： 结果 另请参阅 - 预设 - 指令 - 站点地图示例"
+    },
+    {
+        "route": "/zh-CN/supported-formats/",
+        "title": "支持的格式",
+        "description": "支持的 Feed 导出格式列表",
+        "keywords": [
+            "XML",
+            "JSON",
+            "JSONL",
+            "CSV",
+            "RSS"
+        ],
+        "headings": [
+            "支持的格式",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 支持的格式 - xml — 生成 XML 格式的 Feed。 - json — 生成 JSON 格式的 Feed。 - jsonl — 生成 JSON Lines 格式的 Feed。 - csv — 生成 CSV 格式的 Feed。 - rss — 生成 RSS Atom 格式的 Feed。 默认使用 xml 格式。 另请参阅 - 元素 - 指令 - 创建 Feed"
+    },
+    {
+        "route": "/zh-CN/troubleshooting/",
+        "title": "故障排除",
+        "description": "诊断 Laravel Feeds 配置、生成、存储、队列和输出失败",
+        "keywords": [
+            "troubleshooting",
+            "errors",
+            "queue",
+            "storage",
+            "diagnostics"
+        ],
+        "headings": [
+            "故障排除",
+            "找不到 Feed 类",
+            "生成占用过多内存",
+            "队列任务没有运行",
+            "存储磁盘被拒绝",
+            "XML 生成失败",
+            "CSV 行在第一项之后失败",
+            "已发布文件不完整或过期",
+            "另请参阅"
+        ],
+        "content": "故障排除 从第一个失败边界开始：注册、查询、转换、存储或交付。保留原始异常，因为它包含 Feed 类和输出上下文。 找不到 Feed 类 确认注册记录包含完整类名、Composer 自动加载能够解析该类，并且该类继承 DragonCode\\LaravelFeed\\Feeds\\Feed 或预设。移动类后运行 composer dump-autoload 。 生成占用过多内存 - 从 builder() 返回 Eloquent Builder 。 - 不要对完整数据集调用 get() 、 all() 或 toArray() 。 - 降低 chunkSize() 并重新测量。 - 使用 perFile() 拆分大型输出。 - 只有 Feed 本身保持流式处理后，才将任务移到异步队列。 请参阅性能。 队列任务没有运行 检查 FEED_QUEUE_CONNECTION 、 FEED_QUEUE_NAME 和工作进程命令。 sync 连接会立即运行，无法测试异步交付。唯一性锁可能阻止同一 Feed 的另一个任务，直到 FEED_QUEUE_UNIQUE_TTL 过期。 存储磁盘被拒绝 磁盘必须解析为 Illuminate\\Filesystem\\FilesystemAdapter ，并支持可写流、移动、目录管理、列表和删除。无法解析为 FilesystemAdapter 的自定义实现会在数据库查询开始前抛出 UnsupportedStorageDiskException 。Laravel 只读磁盘会通过该类型检查；写入会在 Feed 查询和本地暂存完成后的发布阶段失败， GeneratorService 会将该存储错误包装为 FeedGenerationException 。 XML 生成失败 验证通过 @mixed 传入的原始 XML，确保 CDATA 内容有效，并让指令值符合文档规定的标量或数组契约。除非必须使用原始 XML，否则应使用普通转义值。 CSV 行在第一项之后失败 CSV 根据输出结构建立列。每个 Feed 项必须生成相同的键。可选值会保留空列，而不是将其删除。 已发布文件不完整或过期 检查原始存储异常并验证磁盘权限。对于远程磁盘，应考虑最终一致性以及非原子的复制后删除移动。如果多个主机上的生成器可能发布同一目标，则需要外部分布式锁。 另请参阅 - 事件与异常 - 存储位置 - 常见问题"
+    },
+    {
+        "route": "/zh-CN/upgrade-guide/",
+        "title": "升级指南",
+        "description": "在支持的 1.x 发布系列中安全升级 Laravel Feeds 的流程",
+        "keywords": [
+            "upgrade",
+            "Composer",
+            "migration",
+            "rollback",
+            "compatibility"
+        ],
+        "headings": [
+            "升级指南",
+            "升级前",
+            "应用更新",
+            "验证",
+            "回滚",
+            "另请参阅"
+        ],
+        "content": "升级指南 当前文档涵盖 1.x 发布系列。每次更新前，请查看软件包发布说明和依赖锁文件。 升级前 1. 确认目标版本支持应用的 PHP 和 Laravel 版本。 2. 提交 composer.lock 和当前发布的 config/feeds.php 。 3. 记录已启用的 Feed 注册项和生成文件目标位置。 4. 运行应用的 Feed 生成测试，或在非生产环境中生成有代表性的 Feed。 应用更新 将已安装软件包的 config/feeds.php 与应用发布的副本进行比较，并手动合并新键。不要使用 --force 重新发布，因为它会覆盖应用专用值。 验证 - 为每种已用格式生成一个 Feed。 - 验证拆分文件的数量和文件名。 - 确认计划和队列生成正常。 - 确认自定义 Feed 模型、转换器、宏和预设子类正常。 - 将代表性输出与以前版本进行比较。 回滚 恢复以前的 composer.lock 和配置，运行 composer install ，并应用该应用的迁移回滚策略。生成文件是部署产物；请根据存储恢复计划还原或重新生成它们。 另请参阅 - 兼容性 - 配置参考 - 贡献指南"
+    }
+]

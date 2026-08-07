@@ -1,0 +1,55 @@
+---
+title: "Solução de problemas"
+description: "Diagnostique falhas de configuração, geração, armazenamento, fila e saída do Laravel Feeds"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["troubleshooting", "errors", "queue", "storage", "diagnostics"]
+---
+
+# Solução de problemas
+
+<PageLead>
+Comece pelo primeiro limite que falha: registro, consulta, conversão, armazenamento ou entrega. Preserve a exceção original, pois ela contém a classe do feed e o contexto da saída.
+</PageLead>
+
+## A classe do feed não foi encontrada {/* #feed-class-not-found */}
+
+Confirme que o registro contém o nome completo, que o autoload do Composer consegue resolvê-lo e que a classe estende `DragonCode\LaravelFeed\Feeds\Feed` ou uma predefinição. Execute `composer dump-autoload` depois de mover uma classe.
+
+## A geração usa memória demais {/* #high-memory */}
+
+- Retorne um `Builder` do Eloquent em `builder()`.
+- Não chame `get()`, `all()` nem `toArray()` no conjunto completo.
+- Reduza `chunkSize()` e meça novamente.
+- Divida saídas grandes com `perFile()`.
+- Mova o trabalho para uma fila assíncrona somente depois que o feed permanecer em fluxo contínuo.
+
+Veja [desempenho](./performance.mdx).
+
+## Um job da fila nunca é executado {/* #queue-job */}
+
+Verifique `FEED_QUEUE_CONNECTION`, `FEED_QUEUE_NAME` e o comando do worker. A conexão `sync` executa imediatamente e não testa a entrega assíncrona. Um bloqueio de unicidade pode impedir outro job até `FEED_QUEUE_UNIQUE_TTL` expirar.
+
+## O disco de armazenamento é rejeitado {/* #storage-disk */}
+
+O disco deve resolver para `Illuminate\Filesystem\FilesystemAdapter` e aceitar streams graváveis, movimentos, diretórios, listagens e exclusões. Uma implementação personalizada que não é um `FilesystemAdapter` falha com `UnsupportedStorageDiskException` antes da consulta ao banco. Um disco somente leitura do Laravel passa nessa verificação de tipo. A gravação falha durante a publicação, depois que a consulta do feed e o staging local terminam, e `GeneratorService` envolve a falha de armazenamento em `FeedGenerationException`.
+
+## A geração XML falha {/* #xml-failure */}
+
+Valide o XML bruto passado por `@mixed`, o conteúdo CDATA e os contratos escalares ou de array das diretivas. Prefira valores escapados quando XML bruto não for necessário.
+
+## Linhas CSV falham depois do primeiro item {/* #csv-schema */}
+
+O CSV define suas colunas pelo esquema da saída. Todos os itens devem produzir as mesmas chaves. Valores opcionais mantêm uma coluna vazia em vez de removê-la.
+
+## Arquivos publicados estão incompletos ou antigos {/* #publication */}
+
+Inspecione a exceção original e as permissões do disco. Em discos remotos, considere consistência eventual e movimentos não atômicos por cópia e exclusão. Vários hosts publicando o mesmo destino exigem bloqueio distribuído externo.
+
+## Veja também
+
+- [Eventos e exceções](./api/events-exceptions.mdx)
+- [Armazenamento](./location.mdx)
+- [Perguntas frequentes](./faq.mdx)
+

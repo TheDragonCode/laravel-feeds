@@ -1,0 +1,68 @@
+---
+title: "Leistung bei großen Datenmengen"
+description: "Arbeitsspeicher, Datenbanklast, Dateiaufteilung, Queues und Speicherdurchsatz großer Feeds steuern"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["performance", "memory", "chunks", "large datasets", "queues"]
+---
+
+# Leistung bei großen Datenmengen
+
+<PageLead>
+Laravel Feeds schreibt Datensätze schrittweise. Der Speicherverbrauch bleibt nur begrenzt, wenn jeder vorgelagerte Schritt der Anwendung lazy bleibt.
+</PageLead>
+
+## Abfrage lazy halten {/* #lazy-query */}
+
+Geben Sie einen Eloquent-`Builder` direkt zurück:
+
+```php
+public function builder(): Builder
+{
+    return Product::query()
+        ->select(['id', 'title', 'updated_at'])
+        ->where('is_exportable', true);
+}
+```
+
+Materialisieren Sie nicht das vollständige Ergebnis vor der Generierung. Wählen Sie nur benötigte Spalten aus und laden Sie nur die von `item()` verwendeten Beziehungen vorab, um N+1-Abfragen zu vermeiden.
+
+## Chunk-Größe abstimmen {/* #chunk-size */}
+
+Der Standardwert beträgt `1000` Datensätze. Kleinere Werte senken den maximalen Modellspeicher und erhöhen die Zahl der Abfragen. Größere Werte verringern den Abfrage-Overhead und erhöhen den Speicherverbrauch. Messen Sie mit produktionsnahen Zeilengrößen.
+
+```php
+public function chunkSize(): int
+{
+    return 500;
+}
+```
+
+## Ausgabedateien aufteilen {/* #split-output */}
+
+Verwenden Sie `perFile()`, wenn Abnehmer mehrere Dateien akzeptieren oder eine einzelne Ausgabe schwer zu veröffentlichen und erneut zu versuchen wäre.
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+Belassen Sie `maxFiles()` beim Standardwert `0`, wenn alle passenden Datensätze exportiert werden müssen. Sind `perFile()` und `maxFiles()` beide größer als null, exportiert Laravel Feeds höchstens ihr Produkt und beendet die Generierung erfolgreich, ohne auf die ausgelassenen weiteren Datensätze hinzuweisen. Setzen Sie `maxFiles()` nur, wenn diese Begrenzung der Datensatzanzahl beabsichtigt ist.
+
+## Lang laufende Feeds in die Queue stellen {/* #queue-long-running */}
+
+Der Queue-Modus verlagert die Generierung aus dem Konsolenprozess, verringert aber nicht den Speicherbedarf eines Feeds. Verwenden Sie eine asynchrone Verbindung, führen Sie Worker mit passenden Zeit- und Speichergrenzen aus und wählen Sie eine Eindeutigkeits-TTL, die länger als die erwartete Generierungsdauer ist.
+
+## Gesamten Pfad messen {/* #measure */}
+
+Messen Sie Datenbankzeit, Modellhydration, Transformation, Serialisierung und Speicherveröffentlichung getrennt. Entfernte Datenträger können die Hauptkosten verursachen, auch wenn die Generierung schnell ist.
+
+## Siehe auch
+
+- [Eloquent-Chunk-Größe](./eloquent.mdx#chunk_size)
+- [Generierungs-Queues](./generation.mdx#queue)
+- [Garantien der Speicherveröffentlichung](./location.mdx#publication_guarantees)
+

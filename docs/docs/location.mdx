@@ -1,6 +1,10 @@
 ---
 title: "Location"
 description: "Configure storage disk and output filename for generated feeds"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["storage", "filesystem", "filename", "publication"]
 ---
 
 [← Previous](./eloquent.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./presets.mdx)
@@ -38,7 +42,7 @@ class UserFeed extends Feed
 Feed generation supports Laravel disks that resolve to `Illuminate\Filesystem\FilesystemAdapter`. This includes the `local`, `s3`, `sftp`, and `ftp` drivers when their Flysystem adapters are installed and configured. Custom adapters are supported when they provide writable streams, file moves, directory management and listings, and deletion through Flysystem.
 
 :::warning
-Read-only disks and custom disks that implement only `Illuminate\Contracts\Filesystem\Filesystem` are not supported. An incompatible disk fails before the feed database query starts with an `UnsupportedStorageDiskException`.
+Read-only disks and custom disks that implement only `Illuminate\Contracts\Filesystem\Filesystem` are not supported. A custom disk that does not resolve to `Illuminate\Filesystem\FilesystemAdapter` fails before the feed database query starts with `UnsupportedStorageDiskException`. A Laravel read-only disk still resolves to `FilesystemAdapter`, so the feed query and local staging finish before the publication write fails. `GeneratorService` wraps that storage failure in `FeedGenerationException`.
 :::
 
 ## Path contract {/* #path_contract */}

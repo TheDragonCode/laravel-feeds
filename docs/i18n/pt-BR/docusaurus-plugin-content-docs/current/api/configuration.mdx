@@ -1,0 +1,63 @@
+---
+title: "Referência de configuração"
+description: "Referência de todas as seções de configuração e variáveis de ambiente do Laravel Feeds"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["configuration", "environment", "queue", "schedule", "converters"]
+---
+
+# Referência de configuração
+
+<PageLead>
+Publique `config/feeds.php` com `php artisan vendor:publish --tag="feeds"`. Os valores do ambiente são lidos quando o Laravel cria o cache de configuração.
+</PageLead>
+
+## Configurações principais {/* #core-settings */}
+
+| Chave | Padrão | Finalidade |
+| --- | --- | --- |
+| `model` | `DragonCode\LaravelFeed\Models\Feed` | Modelo Eloquent dos registros de feeds. Um substituto deve estender o modelo do pacote. |
+| `pretty` / `FEED_PRETTY` | `false` | Ativa a saída XML e JSON formatada. |
+| `date.format` | `DATE_ATOM` | Formato de data PHP usado pelo transformador de datas. |
+| `date.timezone` / `FEED_TIMEZONE` | `UTC` | Fuso horário usado na serialização das datas. |
+| `table.connection` | `DB_CONNECTION`, depois `sqlite` | Conexão de banco dos registros de feeds. |
+| `table.table` / `FEED_TABLE` | `feeds` | Nome da tabela de registros de feeds. |
+
+## Agendamento e filas {/* #scheduling-and-queues */}
+
+| Variável de ambiente | Padrão | Finalidade |
+| --- | --- | --- |
+| `FEED_SCHEDULE_TTL` | `1440` | Duração do bloqueio do agendamento em minutos. |
+| `FEED_SCHEDULE_RUN_BACKGROUND` | `true` | Executa comandos agendados em segundo plano. |
+| `FEED_QUEUE_ENABLED` | `false` | Despacha a geração pelo Laravel Queue. |
+| `FEED_QUEUE_CONNECTION` | `QUEUE_CONNECTION`, depois `database` | Conexão da fila dos jobs de feed. |
+| `FEED_QUEUE_NAME` | Padrão da conexão | Nome da fila. |
+| `FEED_QUEUE_UNIQUE_TTL` | `3600` | Duração do bloqueio de unicidade em segundos. |
+| `FEED_CONSOLE_PROGRESS_BAR_ENABLED` | `false` | Exibe a barra de progresso no console. |
+
+O modo de fila exige um worker quando a conexão é assíncrona. A conexão `sync` ainda executa a geração no processo do comando.
+
+## Transformadores {/* #transformers */}
+
+O pipeline padrão contém `BoolTransformer`, `DateTimeTransformer` e `EnumTransformer`, nessa ordem. Cada transformador compatível recebe o valor retornado pelo anterior.
+
+Depois de implementar `DragonCode\LaravelFeed\Contracts\Transformer`, adicione a classe em `transformers`. O Laravel a resolve pelo contêiner de serviços.
+
+## Configurações dos conversores {/* #converter-settings */}
+
+| Chave | Padrão |
+| --- | --- |
+| `converters.json.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.jsonl.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.csv.delimiter` | `;` |
+| `converters.csv.enclosure` | `"` |
+| `converters.csv.escape` | String vazia |
+| `converters.csv.line_ending` | `PHP_EOL` |
+
+## Veja também
+
+- [Instalação](../installation.mdx)
+- [Geração e agendamento](../generation.mdx)
+- [Configuração do modelo Eloquent](../eloquent.mdx)
+

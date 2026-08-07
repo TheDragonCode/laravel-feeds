@@ -1,0 +1,63 @@
+---
+title: "Довідник конфігурації"
+description: "Довідка для всіх розділів конфігурації та змінних середовища Laravel Feeds"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["configuration", "environment", "queue", "schedule", "converters"]
+---
+
+# Довідник конфігурації
+
+<PageLead>
+Опублікуйте `config/feeds.php` командою `php artisan vendor:publish --tag="feeds"`. Значення середовища читаються під час побудови кешу конфігурації Laravel.
+</PageLead>
+
+## Основні налаштування {/* #core-settings */}
+
+| Ключ | Типове значення | Призначення |
+| --- | --- | --- |
+| `model` | `DragonCode\LaravelFeed\Models\Feed` | Модель Eloquent для реєстрацій фідів. Її заміна має успадковувати модель пакета. |
+| `pretty` / `FEED_PRETTY` | `false` | Вмикає форматоване виведення XML і JSON. |
+| `date.format` | `DATE_ATOM` | Формат дати PHP, який використовує перетворювач дат. |
+| `date.timezone` / `FEED_TIMEZONE` | `UTC` | Часовий пояс під час серіалізації дат. |
+| `table.connection` | `DB_CONNECTION`, потім `sqlite` | Підключення до бази даних для реєстрацій фідів. |
+| `table.table` / `FEED_TABLE` | `feeds` | Назва таблиці реєстрацій фідів. |
+
+## Розклад і черги {/* #scheduling-and-queues */}
+
+| Змінна середовища | Типове значення | Призначення |
+| --- | --- | --- |
+| `FEED_SCHEDULE_TTL` | `1440` | Час дії блокування розкладу у хвилинах. |
+| `FEED_SCHEDULE_RUN_BACKGROUND` | `true` | Виконує заплановані команди фідів у фоновому режимі. |
+| `FEED_QUEUE_ENABLED` | `false` | Передає генерування до Laravel Queue. |
+| `FEED_QUEUE_CONNECTION` | `QUEUE_CONNECTION`, потім `database` | Підключення до черги для завдань фідів. |
+| `FEED_QUEUE_NAME` | Типова черга підключення | Назва черги. |
+| `FEED_QUEUE_UNIQUE_TTL` | `3600` | Час дії блокування унікального завдання в секундах. |
+| `FEED_CONSOLE_PROGRESS_BAR_ENABLED` | `false` | Показує індикатор поступу в консолі. |
+
+Режим черги потребує обробника, якщо вибране підключення асинхронне. Підключення `sync` і далі виконує генерування в процесі команди.
+
+## Перетворювачі {/* #transformers */}
+
+Типовий конвеєр містить `BoolTransformer`, `DateTimeTransformer` і `EnumTransformer` саме в такому порядку. Кожен відповідний перетворювач отримує значення, повернуте попереднім перетворювачем.
+
+Додайте власний клас до `transformers` після реалізації `DragonCode\LaravelFeed\Contracts\Transformer`. Laravel визначає клас через контейнер служб.
+
+## Налаштування конвертерів {/* #converter-settings */}
+
+| Ключ | Типове значення |
+| --- | --- |
+| `converters.json.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.jsonl.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.csv.delimiter` | `;` |
+| `converters.csv.enclosure` | `"` |
+| `converters.csv.escape` | Порожній рядок |
+| `converters.csv.line_ending` | `PHP_EOL` |
+
+## Дивіться також
+
+- [Установлення](../installation.mdx)
+- [Генерування й розклад](../generation.mdx)
+- [Налаштування моделі Eloquent](../eloquent.mdx)
+

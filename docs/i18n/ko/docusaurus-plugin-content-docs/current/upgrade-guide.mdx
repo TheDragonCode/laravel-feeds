@@ -1,0 +1,48 @@
+---
+title: "업그레이드 가이드"
+description: "지원되는 1.x 릴리스 범위에서 Laravel Feeds를 안전하게 업그레이드하는 절차"
+type: project
+status: stable
+since: "1.0"
+keywords: ["upgrade", "Composer", "migration", "rollback", "compatibility"]
+---
+
+# 업그레이드 가이드
+
+<PageLead>
+현재 문서는 `1.x` 릴리스 계열을 다룹니다. 업데이트 전에 패키지 릴리스 노트와 의존성 잠금 파일을 검토하십시오.
+</PageLead>
+
+## 업그레이드 전 {/* #before-upgrading */}
+
+1. 대상 버전이 애플리케이션의 PHP 및 Laravel 버전을 지원하는지 확인하십시오.
+2. `composer.lock`과 현재 게시된 `config/feeds.php`를 커밋하십시오.
+3. 활성 피드 등록과 생성 파일 위치를 기록하십시오.
+4. 애플리케이션의 피드 생성 테스트를 실행하거나 프로덕션 외부에서 대표 피드를 생성하십시오.
+
+## 업데이트 적용 {/* #apply-update */}
+
+```bash
+composer update dragon-code/laravel-feeds --with-all-dependencies
+php artisan migrate
+```
+
+설치된 패키지의 `config/feeds.php`와 애플리케이션의 게시된 파일을 비교하고 새 키를 직접 병합하십시오. `--force`로 다시 게시하지 마십시오. 애플리케이션별 값이 덮어써집니다.
+
+## 검증 {/* #verify */}
+
+- 사용 중인 각 형식의 피드를 하나씩 생성하십시오.
+- 분할 파일 수와 파일 이름을 확인하십시오.
+- 예약 생성과 큐 생성을 확인하십시오.
+- 사용자 지정 피드 모델, 트랜스포머, 매크로 및 프리셋 하위 클래스를 확인하십시오.
+- 대표 출력을 이전 버전과 비교하십시오.
+
+## 롤백 {/* #rollback */}
+
+이전 `composer.lock`과 구성을 복원하고 `composer install`을 실행한 다음 애플리케이션의 마이그레이션 롤백 정책을 적용하십시오. 생성 파일은 배포 산출물이므로 저장소 복구 계획에 따라 복원하거나 다시 생성하십시오.
+
+## 관련 문서
+
+- [호환성](./compatibility.mdx)
+- [구성 참조](./api/configuration.mdx)
+- [기여 가이드](./contributions.mdx)

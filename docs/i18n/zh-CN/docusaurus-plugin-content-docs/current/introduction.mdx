@@ -1,28 +1,97 @@
 ---
 title: "入门"
-description: "Laravel Feeds 概览，包含安装和使用的快速链接"
-slug: /
+description: "安装 Laravel Feeds，并在五分钟内生成第一个 Feed"
+slug: /introduction/
+type: guide
+status: stable
+since: "1.0"
+keywords: ["getting started", "Laravel", "feeds", "quick start"]
 ---
-
-[返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./installation.mdx)
 
 # 入门
 
-## 📃 Laravel Feeds
+<PageLead>
+安装软件包，定义 Eloquent 查询和 Feed 项结构，然后生成 Feed 文件。在现有 Laravel 应用中，创建首个可用导出大约需要五分钟。
+</PageLead>
 
-一种简单快捷的方法，可将大量数据导出为供市场平台和其他使用方使用的 Feed。
+## 前置条件 {/* #prerequisites */}
+
+- PHP `8.2` 或 Composer 接受的更高 `8.x` 版本
+- Laravel `11.x`、`12.x` 或 `13.x`
+- 已配置的数据库和文件系统磁盘
+
+## 安装与准备 {/* #install-and-prepare */}
+
+```bash
+composer require dragon-code/laravel-feeds
+php artisan vendor:publish --tag="feeds"
+php artisan migrate
+php artisan make:feed User --item
+```
+
+生成器会创建 Feed 类和 Feed 项类，还会创建用于注册 Feed 的数据库变更。如果该迁移是在前面的 `migrate` 命令之后生成的，请在首次生成前运行它。
+
+## 定义数据源 {/* #define-the-data-source */}
+
+使用 Eloquent 构建器，以便分块读取记录。
+
+```php source="docs/snippets/create-feeds-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+## 定义每个 Feed 项 {/* #define-each-item */}
+
+```php source="docs/snippets/generation-feed-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+## 生成文件 {/* #generate-the-file */}
+
+```bash
+php artisan feed:generate
+```
+
+命令会显示每个 Feed 的状态；普通控制台输出不包含生成文件的路径。Feed 类默认使用 XML 格式和 `public` 磁盘。请在 Feed 类中修改相应值。
+
+## 后续步骤 {/* #next-steps */}
 
 - [安装与设置](./installation.mdx)
 - [创建 Feed](./create-feeds.mdx)
-
-## 使用方法
-
 - [生成与调度](./generation.mdx)
-- [元素](./elements.mdx)
-- [机器学习](./machine-learning.mdx)
-
-## 另请参阅
-
-- [安装与设置](./installation.mdx)
-- [创建 Feed](./create-feeds.mdx)
-- [生成与调度](./generation.mdx)
+- [支持的格式](./supported-formats.mdx)

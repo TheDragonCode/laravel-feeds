@@ -1,0 +1,52 @@
+---
+title: "호환성"
+description: "Laravel Feeds 1.x의 PHP, Laravel, 저장소, 큐 및 출력 형식 지원 계약"
+type: project
+status: stable
+since: "1.0"
+keywords: ["compatibility", "PHP", "Laravel", "Flysystem", "formats"]
+---
+
+# 호환성
+
+<PageLead>
+특정 애플리케이션의 최종 호환성은 Composer가 해석한 의존성 그래프로 확인하십시오.
+</PageLead>
+
+## 런타임 매트릭스 {/* #runtime-matrix */}
+
+<ResponsiveTable label="Laravel Feeds 런타임 호환성">
+
+| 구성 요소 | 지원 버전 |
+| --- | --- |
+| PHP | 설치된 패키지 제약 조건이 허용하는 `8.2` 및 최신 `8.x` 버전 |
+| Laravel 구성 요소 | `11.x`, `12.x`, `13.x` |
+| 데이터베이스 | 구성된 Eloquent 모델과 마이그레이션이 지원하는 모든 Laravel 연결 |
+| 파일시스템 | `FilesystemAdapter`로 해석되는 쓰기 가능한 Laravel 디스크 |
+
+</ResponsiveTable>
+
+특정 애플리케이션에서는 설치된 `composer.lock`이 최종 기준입니다. Composer는 지원되지 않는 조합을 거부합니다.
+
+## 출력 형식 {/* #output-formats */}
+
+| 형식 | 확장자 | 중첩 데이터 | XML 디렉티브 |
+| --- | --- | --- | --- |
+| XML | `.xml` | 예 | 예 |
+| JSON | `.json` | 예 | 아니요 |
+| JSON Lines | `.jsonl` | 한 줄에 하나의 JSON 값 | 아니요 |
+| CSV | `.csv` | 아니요. 안정적인 스칼라 열 필요 | 아니요 |
+| RSS | `.rss` | 예 | 예 |
+
+## 선택적 통합 {/* #optional-integrations */}
+
+- Laravel Queue는 큐 모드를 활성화할 때만 필요합니다.
+- Laravel Deploy Operations가 설치되어 있으면 `make:feed`가 사용하고, 그렇지 않으면 마이그레이션을 생성합니다.
+- Spatie Laravel Data 패키지가 설치되어 있으면 선택적 값을 인식합니다.
+
+## 관련 문서
+
+- [설치](./installation.mdx)
+- [지원 형식](./supported-formats.mdx)
+- [업그레이드 가이드](./upgrade-guide.mdx)
+

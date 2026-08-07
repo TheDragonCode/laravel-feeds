@@ -1,0 +1,85 @@
+---
+title: "Feeds und Daten"
+description: "Öffentliche Verträge für Feed, FeedItem, FeedInfo, ElementData und Generierungsergebnisse"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+---
+
+# Feeds und Daten
+
+<PageLead>
+Die Kern-API trennt Datenquelle, Elementabbildung, Metadaten des Feeds, Ausgabestruktur und Generierungsergebnis.
+</PageLead>
+
+## Feed {/* #feed */}
+
+`DragonCode\LaravelFeed\Feeds\Feed` ist die Basisklasse eines Exports. Implementieren Sie `builder()` und überschreiben Sie nur die Ausgabepunkte, die der Feed benötigt.
+
+<ApiSignature>abstract public function builder(): Builder</ApiSignature>
+
+| Methode | Standard | Vertrag |
+| --- | --- | --- |
+| `builder(): Builder` | Abstrakt | Gibt die Eloquent-Abfrage als Datenquelle zurück. |
+| `item(Model $model): FeedItem` | Neues Basis-`FeedItem` | Bildet ein Modell auf ein Ausgabeelement ab. |
+| `transformers(): array` | `[]` | Stellt Transformer-Klassennamen für diesen Feed voran. |
+| `chunkSize(): int` | `1000` | Chunk-Größe der Datenbankabfrage. |
+| `perFile(): int` | `0` | Datensätze pro Datei. Null deaktiviert die Aufteilung nach Anzahl. |
+| `maxFiles(): int` | `0` | Maximale Anzahl der Ausgabedateien. Null bedeutet ohne Begrenzung. |
+| `header(): string` | XML-Deklaration für XML/RSS | Inhalt vor dem Wurzelelement und den Elementen. |
+| `footer(): string` | Leere Zeichenfolge | Inhalt nach dem Wurzelelement und den Elementen. |
+| `root(): ElementData` | Aus der Klasse abgeleiteter Elementname | Definiert Wurzelelement und Attribute. |
+| `info(): FeedInfo` | Leeres `FeedInfo` | Definiert Informationen auf Feed-Ebene. |
+| `filename(): string` | Aus der Klasse abgeleiteter Dateiname | Gibt den datenträgerrelativen Ausgabedateinamen zurück. |
+| `path($suffix): string` | Vom Adapter aufgelöster Pfad | Gibt einen lokalen oder vom Adapter aufgelösten Pfad zurück. |
+| `storagePath($suffix): string` | Datenträgerrelativer Dateiname | Gibt den Pfad für Speichervorgänge zurück. |
+| `storage(): FilesystemAdapter` | Datenträger `public` | Löst den Laravel-Datenträger auf und prüft ihn. |
+| `format(): FeedFormatEnum` | `Xml` | Gibt das konfigurierte Ausgabeformat zurück. |
+
+`Feed` verwendet Laravel `Conditionable` und `Macroable`.
+
+## FeedItem und FeedInfo {/* #feed-item-and-feed-info */}
+
+`FeedItem` erhält das aktuelle Eloquent-Modell. Standardmäßig gilt:
+
+- `name()` gibt den Basisnamen der Modellklasse in Kebab-Schreibweise zurück;
+- `attributes()` gibt ein leeres Array zurück;
+- `toArray()` gibt das Modellarray zurück.
+
+`FeedInfo::toArray()` gibt ein leeres Array zurück. Beide Klassen verwenden `Conditionable` und `Macroable`; erweitern Sie sie, wenn die Ausgabe ein explizites Schema benötigt.
+
+## ElementData {/* #element-data */}
+
+`ElementData` ist ein schreibgeschütztes Objekt mit drei Konstruktoreigenschaften:
+
+| Eigenschaft | Typ | Standard |
+| --- | --- | --- |
+| `name` | `?string` | `null` |
+| `attributes` | `array` | `[]` |
+| `beforeInfo` | `bool` | `true` |
+
+Setzen Sie `name` auf `null` oder eine leere Zeichenfolge, um das Wurzelelement zu unterdrücken. Setzen Sie `beforeInfo` auf `false`, um Feed-Informationen vor das Wurzelelement zu schreiben.
+
+## Generierungsergebnis {/* #generation-result */}
+
+`GeneratorService::feed()` gibt `GenerationResultData` zurück. Die schreibgeschützte Eigenschaft `paths` enthält die veröffentlichten Dateien in Ausgabereihenfolge. `records` ordnet jedem Pfad die Anzahl der in diese Datei geschriebenen Datensätze zu.
+
+Methoden zur programmgesteuerten Generierung und Registrierung finden Sie unter [Laufzeitdienste und Verträge](./runtime.mdx).
+
+## FeedFormatEnum {/* #feed-format-enum */}
+
+| Fall | Wert |
+| --- | --- |
+| `Xml` | `xml` |
+| `Json` | `json` |
+| `JsonLines` | `jsonl` |
+| `Csv` | `csv` |
+| `Rss` | `rss` |
+
+## Siehe auch
+
+- [Feeds erstellen](../create-feeds.mdx)
+- [Elemente](../elements.mdx)
+- [Speicherort](../location.mdx)
+- [Laufzeitdienste und Verträge](./runtime.mdx)

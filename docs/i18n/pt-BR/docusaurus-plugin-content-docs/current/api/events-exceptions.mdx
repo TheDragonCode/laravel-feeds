@@ -1,0 +1,57 @@
+---
+title: "Eventos e exceções"
+description: "Referência dos eventos do ciclo de geração e dos tipos públicos de exceção"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+---
+
+# Eventos e exceções
+
+<PageLead>
+Use eventos do ciclo de vida para integrar a aplicação e os tipos de exceção para recuperação no limite capaz de tratar a falha.
+</PageLead>
+
+## Eventos do ciclo de vida {/* #lifecycle-events */}
+
+| Evento | Dados públicos | Momento do disparo |
+| --- | --- | --- |
+| `FeedStartingEvent` | `feed` | Após a verificação preliminar do armazenamento e do caminho, antes da resolução do conversor e da preparação. |
+| `FeedFinishedEvent` | `feed`, `path`, `paths` | Depois da publicação bem-sucedida de todos os arquivos gerados. |
+
+`FeedFinishedEvent::$paths` contém todos os caminhos publicados em ordem. `$path` é mantido para compatibilidade e sempre contém o primeiro caminho.
+
+## Falhas de entrada e busca {/* #input-and-lookup-failures */}
+
+| Exceção | Significado |
+| --- | --- |
+| `InvalidFeedArgumentException` | O ID do feed no console é inválido. |
+| `FeedNotFoundException` | Não existe registro para o ID solicitado. |
+| `InvalidExpressionException` | A expressão de agendamento é inválida. |
+| `UnknownFeedClassException` | A classe configurada não pode ser resolvida. |
+| `UnexpectedClassException` | A classe resolvida não atende ao contrato esperado. |
+
+## Falhas de serialização e armazenamento {/* #serialization-and-storage-failures */}
+
+| Exceção | Significado |
+| --- | --- |
+| `InvalidCsvRowException` | A linha CSV não corresponde ao esquema de colunas definido. |
+| `InvalidCsvValueException` | Um campo CSV não pode ser serializado como valor escalar. |
+| `InvalidXmlCDataException` | O valor CDATA é inválido. |
+| `InvalidXmlFragmentException` | O fragmento XML bruto é inválido. |
+| `UnsupportedStorageDiskException` | O disco Laravel escolhido não é resolvido como `FilesystemAdapter`. |
+| `OpenFeedException` | O recurso temporário de saída não pode ser aberto. |
+| `WriteFeedException` | A saída completa não pode ser gravada. |
+| `CloseFeedException` | O recurso de saída não pode ser fechado. |
+| `ResourceMetaException` | Os metadados necessários do stream não estão disponíveis. |
+| `FeedGenerationException` | A geração falhou para uma classe de feed. |
+
+Capture exceções somente onde a aplicação puder adicionar recuperação ou contexto útil. Deixe o Laravel reportar falhas irrecuperáveis.
+
+## Veja também
+
+- [Guia de eventos](../events.mdx)
+- [Solução de problemas](../troubleshooting.mdx)
+- [Garantias de armazenamento](../location.mdx#publication_guarantees)
+

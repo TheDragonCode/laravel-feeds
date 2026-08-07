@@ -1,28 +1,97 @@
 ---
 title: "Bien démarrer"
-description: "Présentation de Laravel Feeds avec des liens rapides vers l’installation et l’utilisation"
-slug: /
+description: "Installer Laravel Feeds et générer un premier flux en cinq minutes"
+slug: /introduction/
+type: guide
+status: stable
+since: "1.0"
+keywords: ["getting started", "Laravel", "feeds", "quick start"]
 ---
-
-[Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./installation.mdx)
 
 # Bien démarrer
 
-## 📃 Laravel Feeds
+<PageLead>
+Installez le paquet, définissez une requête Eloquent et la structure d’un élément, puis générez un fichier de flux. Dans une application Laravel existante, le premier export fonctionnel prend environ cinq minutes.
+</PageLead>
 
-Une méthode simple et rapide pour exporter de grandes quantités de données vers des flux destinés aux places de marché et à d’autres consommateurs.
+## Prérequis {/* #prerequisites */}
+
+- PHP `8.2` ou une version `8.x` ultérieure acceptée par Composer
+- Laravel `11.x`, `12.x` ou `13.x`
+- Une base de données et un disque de système de fichiers configurés
+
+## Installer et préparer {/* #install-and-prepare */}
+
+```bash
+composer require dragon-code/laravel-feeds
+php artisan vendor:publish --tag="feeds"
+php artisan migrate
+php artisan make:feed User --item
+```
+
+Le générateur crée les classes du flux et de l’élément. Il crée aussi la modification de base de données qui enregistre le flux. Exécutez cette migration avant la première génération si elle a été créée après la commande `migrate` précédente.
+
+## Définir la source de données {/* #define-the-data-source */}
+
+Renvoyez un builder Eloquent afin de lire les enregistrements par lots.
+
+```php source="docs/snippets/create-feeds-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+## Définir chaque élément {/* #define-each-item */}
+
+```php source="docs/snippets/generation-feed-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+## Générer le fichier {/* #generate-the-file */}
+
+```bash
+php artisan feed:generate
+```
+
+La commande indique l’état de chaque flux ; la sortie normale de la console ne contient pas les chemins des fichiers générés. Les classes de flux utilisent XML et le disque `public` par défaut. Modifiez l’une ou l’autre valeur dans la classe du flux.
+
+## Étapes suivantes {/* #next-steps */}
 
 - [Installation et configuration](./installation.mdx)
 - [Créer des flux](./create-feeds.mdx)
-
-## Utilisation
-
 - [Génération et planification](./generation.mdx)
-- [Éléments](./elements.mdx)
-- [Apprentissage automatique](./machine-learning.mdx)
-
-## Voir aussi
-
-- [Installation et configuration](./installation.mdx)
-- [Créer des flux](./create-feeds.mdx)
-- [Génération et planification](./generation.mdx)
+- [Formats pris en charge](./supported-formats.mdx)

@@ -1,0 +1,57 @@
+---
+title: "이벤트 및 예외"
+description: "피드 생성 수명 주기 이벤트와 public 예외 타입 참조"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+---
+
+# 이벤트 및 예외
+
+<PageLead>
+애플리케이션 통합에는 수명 주기 이벤트를 사용하고, 오류를 처리할 수 있는 경계에서 복구할 때는 예외 타입을 사용하십시오.
+</PageLead>
+
+## 수명 주기 이벤트 {/* #lifecycle-events */}
+
+| 이벤트 | Public 데이터 | 전달 시점 |
+| --- | --- | --- |
+| `FeedStartingEvent` | `feed` | 저장소와 경로 사전 검사가 끝난 뒤, 컨버터 해석과 스테이징 전입니다. |
+| `FeedFinishedEvent` | `feed`, `path`, `paths` | 생성된 모든 파일을 성공적으로 게시한 후입니다. |
+
+`FeedFinishedEvent::$paths`에는 게시된 모든 경로가 순서대로 들어 있습니다. `$path`는 호환성을 위해 유지되며 항상 첫 번째 경로를 담습니다.
+
+## 입력 및 조회 오류 {/* #input-and-lookup-failures */}
+
+| 예외 | 의미 |
+| --- | --- |
+| `InvalidFeedArgumentException` | 콘솔 피드 ID가 유효하지 않습니다. |
+| `FeedNotFoundException` | 요청한 피드 ID의 등록 정보가 없습니다. |
+| `InvalidExpressionException` | 스케줄 표현식이 유효하지 않습니다. |
+| `UnknownFeedClassException` | 구성된 피드 클래스를 해석할 수 없습니다. |
+| `UnexpectedClassException` | 해석된 클래스가 예상 계약을 충족하지 않습니다. |
+
+## 직렬화 및 저장소 오류 {/* #serialization-and-storage-failures */}
+
+| 예외 | 의미 |
+| --- | --- |
+| `InvalidCsvRowException` | CSV 행이 확정된 열 스키마와 일치하지 않습니다. |
+| `InvalidCsvValueException` | CSV 필드를 스칼라 값으로 직렬화할 수 없습니다. |
+| `InvalidXmlCDataException` | CDATA 값이 유효하지 않습니다. |
+| `InvalidXmlFragmentException` | 원시 XML 조각이 유효하지 않습니다. |
+| `UnsupportedStorageDiskException` | 선택한 Laravel 디스크가 `FilesystemAdapter`로 해석되지 않습니다. |
+| `OpenFeedException` | 초안 출력 리소스를 열 수 없습니다. |
+| `WriteFeedException` | 전체 출력을 기록할 수 없습니다. |
+| `CloseFeedException` | 출력 리소스를 닫을 수 없습니다. |
+| `ResourceMetaException` | 필요한 스트림 메타데이터를 사용할 수 없습니다. |
+| `FeedGenerationException` | 특정 피드 클래스의 생성에 실패했습니다. |
+
+애플리케이션에서 복구하거나 사용자에게 맥락을 제공할 수 있는 곳에서만 예외를 잡으십시오. 복구할 수 없는 생성 오류는 Laravel이 보고하도록 두십시오.
+
+## 관련 문서
+
+- [이벤트 가이드](../events.mdx)
+- [문제 해결](../troubleshooting.mdx)
+- [저장소 보장](../location.mdx#publication_guarantees)
+

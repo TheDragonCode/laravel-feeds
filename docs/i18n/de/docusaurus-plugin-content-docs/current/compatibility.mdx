@@ -1,0 +1,52 @@
+---
+title: "Kompatibilität"
+description: "Unterstützte Verträge für PHP, Laravel, Speicher, Queue und Ausgabeformate von Laravel Feeds 1.x"
+type: project
+status: stable
+since: "1.0"
+keywords: ["compatibility", "PHP", "Laravel", "Flysystem", "formats"]
+---
+
+# Kompatibilität
+
+<PageLead>
+Verwenden Sie den von Composer aufgelösten Abhängigkeitsgraphen als abschließende Kompatibilitätsprüfung einer konkreten Anwendung.
+</PageLead>
+
+## Laufzeitmatrix {/* #runtime-matrix */}
+
+<ResponsiveTable label="Laufzeitkompatibilität von Laravel Feeds">
+
+| Komponente | Unterstützte Versionen |
+| --- | --- |
+| PHP | `8.2` und neuere `8.x`-Versionen, die von den installierten Paketbeschränkungen erlaubt werden |
+| Laravel-Komponenten | `11.x`, `12.x`, `13.x` |
+| Datenbank | Jede Laravel-Verbindung, die vom konfigurierten Eloquent-Modell und der Migration unterstützt wird |
+| Dateisystem | Beschreibbare Laravel-Datenträger, die zu `FilesystemAdapter` aufgelöst werden |
+
+</ResponsiveTable>
+
+Die installierte `composer.lock` ist für eine konkrete Anwendung maßgeblich. Composer lehnt nicht unterstützte Kombinationen ab.
+
+## Ausgabeformate {/* #output-formats */}
+
+| Format | Erweiterung | Verschachtelte Daten | XML-Direktiven |
+| --- | --- | --- | --- |
+| XML | `.xml` | Ja | Ja |
+| JSON | `.json` | Ja | Nein |
+| JSON Lines | `.jsonl` | Ein JSON-Wert pro Zeile | Nein |
+| CSV | `.csv` | Nein; stabile skalare Spalten erforderlich | Nein |
+| RSS | `.rss` | Ja | Ja |
+
+## Optionale Integrationen {/* #optional-integrations */}
+
+- Laravel Queue ist nur erforderlich, wenn der Queue-Modus aktiviert ist.
+- Laravel Deploy Operations wird von `make:feed` verwendet, wenn es installiert ist; andernfalls erzeugt der Befehl eine Migration.
+- Optionale Werte von Spatie Laravel Data werden erkannt, wenn dieses Paket installiert ist.
+
+## Siehe auch
+
+- [Installation](./installation.mdx)
+- [Unterstützte Formate](./supported-formats.mdx)
+- [Upgrade-Leitfaden](./upgrade-guide.mdx)
+

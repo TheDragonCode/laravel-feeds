@@ -325,5 +325,98 @@
   "theme.tags.tagsPageTitle": {
     "message": "Теги",
     "description": "Опис заголовка інтерфейсу"
+  },
+  "homepage.install.copied": {
+    "message": "Скопійовано"
+  },
+  "homepage.install.copy": {
+    "message": "Копіювати"
+  },
+  "homepage.install.copySuccess": {
+    "message": "Команду встановлення скопійовано до буфера обміну."
+  },
+  "homepage.install.copyFailure": {
+    "message": "Не вдалося скопіювати. Виділіть команду вручну."
+  },
+  "homepage.meta.title": {
+    "message": "Документація Laravel Feeds"
+  },
+  "homepage.meta.description": {
+    "message": "Експортуйте великі набори даних Laravel у XML, JSON, JSON Lines, CSV, RSS і фіди маркетплейсів."
+  },
+  "homepage.eyebrow": {
+    "message": "Пакет Laravel · Документація 1.x"
+  },
+  "homepage.title": {
+    "message": "Експортуйте великі набори даних без повного завантаження в пам'ять"
+  },
+  "homepage.summary": {
+    "message": "Генеруйте фіди XML, JSON, JSON Lines, CSV, RSS, Sitemap, Instagram і Yandex у потоковому процесі Laravel."
+  },
+  "homepage.action.start": {
+    "message": "Почати за 5 хвилин"
+  },
+  "homepage.action.formats": {
+    "message": "Вибрати формат"
+  },
+  "homepage.example.php": {
+    "message": "ProductFeed.php"
+  },
+  "homepage.example.output": {
+    "message": "Згенерований XML"
+  },
+  "homepage.paths.eyebrow": {
+    "message": "Оберіть свій шлях"
+  },
+  "homepage.paths.title": {
+    "message": "Почніть із завдання, потім використовуйте довідник"
+  },
+  "homepage.card.quick.description": {
+    "message": "Установіть пакет і згенеруйте перший фід."
+  },
+  "homepage.card.quick.title": {
+    "message": "Швидкий старт"
+  },
+  "homepage.card.performance.description": {
+    "message": "Керуйте блоками, пам'яттю, чергами та розділенням файлів."
+  },
+  "homepage.card.performance.title": {
+    "message": "Великі набори даних"
+  },
+  "homepage.card.recipes.description": {
+    "message": "Використовуйте готові шаблони для Sitemap, RSS, Instagram і Yandex."
+  },
+  "homepage.card.recipes.title": {
+    "message": "Формати та приклади"
+  },
+  "homepage.card.api.description": {
+    "message": "Знаходьте точні методи, ключі конфігурації, події та помилки."
+  },
+  "homepage.card.api.title": {
+    "message": "Довідник API"
+  },
+  "homepage.support.label": {
+    "message": "Сумісність"
+  },
+  "homepage.support.details": {
+    "message": "Докладніше про сумісність"
+  },
+  "search.trigger": {
+    "message": "Пошук"
+  },
+  "search.dialog.label": {
+    "message": "Пошук у документації"
+  },
+  "search.input.label": {
+    "message": "Пошук у документації"
+  },
+  "search.input.placeholder": {
+    "message": "Пошук посібників, API та розв'язання проблем"
+  },
+  "search.close": {
+    "message": "Закрити"
+  },
+  "search.empty": {
+    "message": "Відповідної документації не знайдено."
   }
 }

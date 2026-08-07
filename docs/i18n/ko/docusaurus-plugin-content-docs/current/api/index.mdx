@@ -1,0 +1,40 @@
+---
+title: "API 참조"
+description: "Laravel Feeds public 클래스, 계약, 데이터 객체, 이벤트 및 예외 안내"
+slug: /api/
+type: reference
+status: stable
+since: "1.0"
+keywords: ["API", "reference", "Feed", "FeedItem", "FeedInfo"]
+---
+
+# API 참조
+
+<PageLead>
+워크플로를 이미 알고 있고 정확한 클래스, 메서드, 구성 키, 이벤트 또는 오류 계약이 필요할 때 이 섹션을 사용하십시오.
+</PageLead>
+
+| 영역 | 주요 진입점 | 참조 |
+| --- | --- | --- |
+| 구성 | `config/feeds.php` | [구성](./configuration.mdx) |
+| 피드 클래스 | `Feed`, `FeedItem`, `FeedInfo` | [피드 및 데이터](./feed.mdx) |
+| 출력 구조 | `ElementData`, XML 디렉티브 | [요소](../elements.mdx), [디렉티브](../directives.mdx) |
+| 형식 | `FeedFormatEnum`, 변환기 | [지원 형식](../supported-formats.mdx) |
+| 런타임 | `GeneratorService`, `FeedQuery`, `ScheduleFeedHelper` | [런타임 서비스 및 계약](./runtime.mdx) |
+| 수명 주기 | 시작 및 완료 이벤트 | [이벤트 및 예외](./events-exceptions.mdx) |
+| 프리셋 | Sitemap, RSS, Instagram, Yandex | [프리셋](../presets.mdx) |
+
+## 확장 지점 {/* #extension-points */}
+
+- 데이터 소스와 출력 계약을 정의하려면 `Feed` 또는 프리셋을 확장하십시오.
+- 직렬화할 데이터를 제어하려면 `FeedItem`과 `FeedInfo`를 확장하십시오.
+- 사용자 지정 스칼라 변환에는 `DragonCode\LaravelFeed\Contracts\Transformer`를 구현하십시오.
+- 필드를 생략해야 할 때 `DragonCode\LaravelFeed\Data\OptionalData`를 반환하십시오.
+- 애플리케이션 도우미를 위해 `Feed`, `FeedItem` 또는 `FeedInfo`에 매크로를 등록하십시오.
+
+## 관련 문서
+
+- [피드 생성](../create-feeds.mdx)
+- [기능 확장](../extending-functionality.mdx)
+- [문제 해결](../troubleshooting.mdx)
+

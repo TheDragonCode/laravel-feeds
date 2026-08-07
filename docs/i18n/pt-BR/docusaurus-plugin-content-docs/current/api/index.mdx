@@ -1,0 +1,40 @@
+---
+title: "Referência da API"
+description: "Mapa das classes, contratos, objetos de dados, eventos e exceções públicos do Laravel Feeds"
+slug: /api/
+type: reference
+status: stable
+since: "1.0"
+keywords: ["API", "reference", "Feed", "FeedItem", "FeedInfo"]
+---
+
+# Referência da API
+
+<PageLead>
+Use esta seção quando já conhecer o fluxo e precisar de uma classe, método, chave de configuração, evento ou contrato de falha exato.
+</PageLead>
+
+| Área | Principais pontos de entrada | Referência |
+| --- | --- | --- |
+| Configuração | `config/feeds.php` | [Configuração](./configuration.mdx) |
+| Classes de feed | `Feed`, `FeedItem`, `FeedInfo` | [Feeds e dados](./feed.mdx) |
+| Estrutura da saída | `ElementData`, diretivas XML | [Elementos](../elements.mdx), [Diretivas](../directives.mdx) |
+| Formatos | `FeedFormatEnum`, conversores | [Formatos compatíveis](../supported-formats.mdx) |
+| Execução | `GeneratorService`, `FeedQuery`, `ScheduleFeedHelper` | [Serviços e contratos de execução](./runtime.mdx) |
+| Ciclo de vida | Eventos de início e conclusão | [Eventos e exceções](./events-exceptions.mdx) |
+| Predefinições | Sitemap, RSS, Instagram, Yandex | [Predefinições](../presets.mdx) |
+
+## Pontos de extensão {/* #extension-points */}
+
+- Estenda `Feed` ou uma predefinição para definir a fonte de dados e o contrato de saída.
+- Estenda `FeedItem` e `FeedInfo` para controlar os dados serializados.
+- Implemente `DragonCode\LaravelFeed\Contracts\Transformer` para conversão escalar personalizada.
+- Retorne `DragonCode\LaravelFeed\Data\OptionalData` quando um campo precisar ser omitido.
+- Registre macros em `Feed`, `FeedItem` ou `FeedInfo` para auxiliares da aplicação.
+
+## Veja também
+
+- [Criar feeds](../create-feeds.mdx)
+- [Extensão de funcionalidades](../extending-functionality.mdx)
+- [Solução de problemas](../troubleshooting.mdx)
+

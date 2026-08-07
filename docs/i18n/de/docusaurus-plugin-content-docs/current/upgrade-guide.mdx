@@ -1,0 +1,48 @@
+---
+title: "Upgrade-Leitfaden"
+description: "Sicherer Prozess für Upgrades von Laravel Feeds innerhalb der unterstützten Versionsreihe 1.x"
+type: project
+status: stable
+since: "1.0"
+keywords: ["upgrade", "Composer", "migration", "rollback", "compatibility"]
+---
+
+# Upgrade-Leitfaden
+
+<PageLead>
+Diese Dokumentation behandelt derzeit die Versionsreihe `1.x`. Prüfen Sie vor jedem Update die Versionshinweise des Pakets und Ihre Abhängigkeitssperre.
+</PageLead>
+
+## Vor dem Upgrade {/* #before-upgrading */}
+
+1. Prüfen Sie, ob die Zielversion die PHP- und Laravel-Versionen der Anwendung unterstützt.
+2. Committen Sie `composer.lock` und die aktuell veröffentlichte `config/feeds.php`.
+3. Erfassen Sie aktive Feed-Registrierungen und Ziele der erzeugten Dateien.
+4. Führen Sie die Feed-Generierungstests der Anwendung aus oder erzeugen Sie repräsentative Feeds außerhalb der Produktion.
+
+## Update anwenden {/* #apply-update */}
+
+```bash
+composer update dragon-code/laravel-feeds --with-all-dependencies
+php artisan migrate
+```
+
+Vergleichen Sie `config/feeds.php` des installierten Pakets mit der veröffentlichten Kopie der Anwendung und übernehmen Sie neue Schlüssel manuell. Veröffentlichen Sie nicht erneut mit `--force`: Dies überschreibt anwendungsspezifische Werte.
+
+## Prüfen {/* #verify */}
+
+- Erzeugen Sie je einen Feed für jedes verwendete Format.
+- Prüfen Sie Anzahl und Namen aufgeteilter Dateien.
+- Prüfen Sie geplante und über Queues ausgeführte Generierung.
+- Prüfen Sie eigene Feed-Modelle, Transformer, Makros und Unterklassen von Voreinstellungen.
+- Vergleichen Sie eine repräsentative Ausgabe mit der vorherigen Version.
+
+## Zurücksetzen {/* #rollback */}
+
+Stellen Sie die vorherige `composer.lock` und Konfiguration wieder her, führen Sie `composer install` aus und wenden Sie die Migrations-Rollback-Richtlinie der Anwendung an. Erzeugte Dateien sind Deployment-Artefakte; stellen Sie sie gemäß dem Wiederherstellungsplan des Speichers wieder her oder erzeugen Sie sie erneut.
+
+## Siehe auch
+
+- [Kompatibilität](./compatibility.mdx)
+- [Konfigurationsreferenz](./api/configuration.mdx)
+- [Beitragsleitfaden](./contributions.mdx)

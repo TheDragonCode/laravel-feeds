@@ -1,0 +1,68 @@
+---
+title: "大型数据集性能"
+description: "控制大型 Feed 的内存、数据库负载、文件拆分、队列和存储吞吐量"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["performance", "memory", "chunks", "large datasets", "queues"]
+---
+
+# 大型数据集性能
+
+<PageLead>
+Laravel Feeds 会增量写入记录。只有应用的每个上游步骤都保持惰性，内存占用才会保持有限。
+</PageLead>
+
+## 保持查询惰性 {/* #lazy-query */}
+
+直接返回 Eloquent `Builder`：
+
+```php
+public function builder(): Builder
+{
+    return Product::query()
+        ->select(['id', 'title', 'updated_at'])
+        ->where('is_exportable', true);
+}
+```
+
+不要在生成前加载完整结果。只选择所需列，并且只预加载 `item()` 使用的关系，以避免 N+1 查询。
+
+## 调整分块大小 {/* #chunk-size */}
+
+默认值为 `1000` 条记录。较小的值会降低模型内存峰值，但增加查询次数。较大的值会降低查询开销，但增加内存占用。请使用接近生产环境的行大小进行测量。
+
+```php
+public function chunkSize(): int
+{
+    return 500;
+}
+```
+
+## 拆分输出文件 {/* #split-output */}
+
+当数据使用方接受多个文件，或单个输出难以发布和重试时，请使用 `perFile()`。
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+如果必须导出所有匹配的记录，请保留 `maxFiles()` 的默认值 `0`。当 `perFile()` 和 `maxFiles()` 都大于零时，Laravel Feeds 最多只会导出两者乘积数量的记录，并在不提示后续记录已被省略的情况下成功完成。仅在有意限制记录总数时设置 `maxFiles()`。
+
+## 将长时间运行的 Feed 放入队列 {/* #queue-long-running */}
+
+队列模式会将生成任务移出控制台请求，但不会减少 Feed 使用的内存。使用异步连接，以合适的超时和内存限制运行工作进程，并让唯一性锁的有效期长于预计生成时间。
+
+## 测量整个路径 {/* #measure */}
+
+分别测量数据库时间、模型填充、转换、序列化和存储发布。即使生成很快，远程磁盘也可能使发布成为主要开销。
+
+## 另请参阅
+
+- [Eloquent 分块大小](./eloquent.mdx#chunk_size)
+- [生成队列](./generation.mdx#queue)
+- [存储发布保证](./location.mdx#publication_guarantees)
+

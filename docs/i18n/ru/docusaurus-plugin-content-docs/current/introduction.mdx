@@ -1,28 +1,97 @@
 ---
 title: "Начало работы"
-description: "Обзор Laravel Feeds с быстрыми ссылками на установку и использование"
-slug: /
+description: "Установите Laravel Feeds и сгенерируйте первый фид за пять минут"
+slug: /introduction/
+type: guide
+status: stable
+since: "1.0"
+keywords: ["getting started", "Laravel", "feeds", "quick start"]
 ---
-
-[Назад к README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Следующая →](./installation.mdx)
 
 # Начало работы
 
-## 📃 Laravel Feeds
+<PageLead>
+Установите пакет, задайте запрос Eloquent и структуру элемента, затем сгенерируйте файл фида. В готовом приложении Laravel первый рабочий экспорт занимает около пяти минут.
+</PageLead>
 
-Простой и быстрый способ экспортировать большие объёмы данных в фиды для маркетплейсов и других потребителей.
+## Требования {/* #prerequisites */}
+
+- PHP `8.2` или более новая версия `8.x`, допустимая для Composer
+- Laravel `11.x`, `12.x` или `13.x`
+- Настроенные база данных и диск файловой системы
+
+## Установка и подготовка {/* #install-and-prepare */}
+
+```bash
+composer require dragon-code/laravel-feeds
+php artisan vendor:publish --tag="feeds"
+php artisan migrate
+php artisan make:feed User --item
+```
+
+Генератор создаст классы фида и элемента. Он также создаст изменение базы данных для регистрации фида. Если оно появилось после предыдущей команды `migrate`, запустите миграции ещё раз перед первой генерацией.
+
+## Источник данных {/* #define-the-data-source */}
+
+Возвращайте построитель запроса Eloquent, чтобы записи читались блоками.
+
+```php source="docs/snippets/create-feeds-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+## Структура элемента {/* #define-each-item */}
+
+```php source="docs/snippets/generation-feed-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+## Генерация файла {/* #generate-the-file */}
+
+```bash
+php artisan feed:generate
+```
+
+Команда показывает статус каждого фида; обычный консольный вывод не содержит путей к сгенерированным файлам. Классы фидов по умолчанию используют формат XML и диск `public`. Измените нужное значение в классе фида.
+
+## Следующие шаги {/* #next-steps */}
 
 - [Установка и настройка](./installation.mdx)
 - [Создание фидов](./create-feeds.mdx)
-
-## Использование
-
 - [Генерация и расписание](./generation.mdx)
-- [Элементы](./elements.mdx)
-- [Машинное обучение](./machine-learning.mdx)
-
-## Смотрите также
-
-- [Установка и настройка](./installation.mdx)
-- [Создание фидов](./create-feeds.mdx)
-- [Генерация и расписание](./generation.mdx)
+- [Поддерживаемые форматы](./supported-formats.mdx)

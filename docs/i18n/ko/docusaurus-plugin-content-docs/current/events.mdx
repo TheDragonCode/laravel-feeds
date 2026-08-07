@@ -1,6 +1,10 @@
 ---
 title: "이벤트"
 description: "피드 생성 중 전달되는 이벤트"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 ---
 
 [← 이전](./presets.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./extending-functionality.mdx)
@@ -9,7 +13,7 @@ description: "피드 생성 중 전달되는 이벤트"
 
 피드는 명령을 실행할 때 두 가지 이벤트를 전달합니다.
 
-- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — `FeedStartingEvent`는 초안 파일을 만들기 직전에 전달됩니다.
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — `FeedStartingEvent`는 저장소와 경로 사전 검사가 끝난 뒤, 컨버터 해석과 스테이징 전에 전달됩니다. 이 시점에는 초안 파일이 존재한다고 보장되지 않습니다.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — `FeedFinishedEvent`는 생성된 모든 파일이 성공적으로 게시된 후 전달됩니다. 생성에 실패하면 이 이벤트가 전달되지 않습니다.
 
 ## 완료 이벤트 계약 {/* #finished_event_contract */}

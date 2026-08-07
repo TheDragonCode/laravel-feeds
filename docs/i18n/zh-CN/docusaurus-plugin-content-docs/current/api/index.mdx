@@ -1,0 +1,40 @@
+---
+title: "API 参考"
+description: "Laravel Feeds 公共类、契约、数据对象、事件和异常的参考索引"
+slug: /api/
+type: reference
+status: stable
+since: "1.0"
+keywords: ["API", "reference", "Feed", "FeedItem", "FeedInfo"]
+---
+
+# API 参考
+
+<PageLead>
+当你已了解工作流程，需要查找准确的类、方法、配置键、事件或失败契约时，请使用本节。
+</PageLead>
+
+| 领域 | 主要入口 | 参考资料 |
+| --- | --- | --- |
+| 配置 | `config/feeds.php` | [配置](./configuration.mdx) |
+| Feed 类 | `Feed`、`FeedItem`、`FeedInfo` | [Feed 与数据](./feed.mdx) |
+| 输出结构 | `ElementData`、XML 指令 | [元素](../elements.mdx)、[指令](../directives.mdx) |
+| 格式 | `FeedFormatEnum`、转换程序 | [支持的格式](../supported-formats.mdx) |
+| 运行时 | `GeneratorService`、`FeedQuery`、`ScheduleFeedHelper` | [运行时服务与契约](./runtime.mdx) |
+| 生命周期 | 开始和完成事件 | [事件与异常](./events-exceptions.mdx) |
+| 预设 | Sitemap、RSS、Instagram、Yandex | [预设](../presets.mdx) |
+
+## 扩展点 {/* #extension-points */}
+
+- 继承 `Feed` 或预设，以定义数据源和输出契约。
+- 继承 `FeedItem` 和 `FeedInfo`，以控制序列化数据。
+- 实现 `DragonCode\LaravelFeed\Contracts\Transformer`，以自定义标量转换。
+- 需要省略字段时，返回 `DragonCode\LaravelFeed\Data\OptionalData`。
+- 在 `Feed`、`FeedItem` 或 `FeedInfo` 上注册宏，以添加应用级辅助方法。
+
+## 另请参阅
+
+- [创建 Feed](../create-feeds.mdx)
+- [扩展功能](../extending-functionality.mdx)
+- [故障排除](../troubleshooting.mdx)
+

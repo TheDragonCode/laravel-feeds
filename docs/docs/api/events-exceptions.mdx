@@ -1,0 +1,56 @@
+---
+title: "Events and exceptions"
+description: "Reference for feed generation lifecycle events and public exception types"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+---
+
+# Events and exceptions
+
+<PageLead>
+Use lifecycle events for application integration and exception types for recovery at the boundary that can handle the failure.
+</PageLead>
+
+## Lifecycle events {/* #lifecycle-events */}
+
+| Event | Public data | Dispatch point |
+| --- | --- | --- |
+| `FeedStartingEvent` | `feed` | After storage and path preflight, before converter resolution and staging. |
+| `FeedFinishedEvent` | `feed`, `path`, `paths` | After every generated file is published successfully. |
+
+`FeedFinishedEvent::$paths` contains all published paths in order. `$path` is retained for compatibility and always contains the first path.
+
+## Input and lookup failures {/* #input-and-lookup-failures */}
+
+| Exception | Meaning |
+| --- | --- |
+| `InvalidFeedArgumentException` | A console feed ID is invalid. |
+| `FeedNotFoundException` | No registration exists for the requested feed ID. |
+| `InvalidExpressionException` | A schedule expression is invalid. |
+| `UnknownFeedClassException` | A configured feed class cannot be resolved. |
+| `UnexpectedClassException` | A resolved class does not satisfy the expected contract. |
+
+## Serialization and storage failures {/* #serialization-and-storage-failures */}
+
+| Exception | Meaning |
+| --- | --- |
+| `InvalidCsvRowException` | A CSV row does not match the established column schema. |
+| `InvalidCsvValueException` | A CSV field cannot be serialized as a scalar value. |
+| `InvalidXmlCDataException` | A CDATA value is invalid. |
+| `InvalidXmlFragmentException` | A raw XML fragment is invalid. |
+| `UnsupportedStorageDiskException` | The selected Laravel disk does not resolve to `FilesystemAdapter`. |
+| `OpenFeedException` | A draft output resource cannot be opened. |
+| `WriteFeedException` | The full output cannot be written. |
+| `CloseFeedException` | The output resource cannot be closed. |
+| `ResourceMetaException` | Required stream metadata is unavailable. |
+| `FeedGenerationException` | Generation failed for a specific feed class. |
+
+Catch exceptions only where the application can add recovery or user-facing context. Let Laravel report unrecoverable generation failures.
+
+## See Also
+
+- [Events guide](../events.mdx)
+- [Troubleshooting](../troubleshooting.mdx)
+- [Storage guarantees](../location.mdx#publication_guarantees)

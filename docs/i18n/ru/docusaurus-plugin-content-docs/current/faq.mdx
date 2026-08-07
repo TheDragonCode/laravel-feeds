@@ -1,0 +1,69 @@
+---
+title: "Частые вопросы"
+description: "Короткие ответы на частые вопросы о настройке, генерации, хранилище и форматах"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["FAQ", "generation", "storage", "formats", "memory"]
+---
+
+# Частые вопросы
+
+<PageLead>
+Короткие ответы на частые вопросы о настройке, генерации, хранилище, форматах и памяти.
+</PageLead>
+
+<details className="faqItem" id="large-datasets">
+<summary>Может ли Laravel Feeds экспортировать миллионы записей?</summary>
+
+Да. Пакет читает результаты Eloquent блоками и записывает вывод постепенно. Оставляйте `builder()` ленивым, не вызывайте `get()` или `toArray()` для всего результата и настраивайте `chunkSize()` после измерения памяти и нагрузки на базу.
+
+Смотрите [производительность на больших наборах данных](./performance.mdx).
+</details>
+
+<details className="faqItem" id="choose-format">
+<summary>Какой формат выбрать?</summary>
+
+Используйте контракт, который требует потребитель. XML и RSS поддерживают иерархические директивы, JSON сохраняет вложенные данные, JSON Lines подходит для построчной обработки, а CSV требует стабильную схему столбцов.
+
+Смотрите [поддерживаемые форматы](./supported-formats.mdx).
+</details>
+
+<details className="faqItem" id="split-files">
+<summary>Может ли один фид создать несколько файлов?</summary>
+
+Да. Переопределите `perFile()`, чтобы задать число записей в файле, и `maxFiles()`, чтобы при необходимости ограничить количество файлов. Разделённые файлы получают последовательные суффиксы.
+
+Смотрите [разделение файлов](./elements.mdx#split_files).
+</details>
+
+<details className="faqItem" id="remote-storage">
+<summary>Можно ли хранить фиды в S3 или на другом удалённом диске?</summary>
+
+Да, если настроенный диск Laravel возвращает доступный для записи `FilesystemAdapter`. Удалённое перемещение может быть реализовано как копирование и удаление, поэтому атомарная замена не гарантируется.
+
+Смотрите [поддерживаемые диски](./location.mdx#supported_disks).
+</details>
+
+<details className="faqItem" id="disabled-feed">
+<summary>Почему отключённый фид был выполнен?</summary>
+
+Передача идентификатора в `feed:generate` запускает фид даже при неактивной записи. Команда без идентификатора пропускает неактивные записи.
+
+Смотрите [генерацию одного фида](./generation.mdx#single_feed).
+</details>
+
+<details className="faqItem" id="optional-field">
+<summary>Как пропустить необязательное поле?</summary>
+
+Верните `DragonCode\LaravelFeed\Data\OptionalData` или `Spatie\LaravelData\Optional` как значение поля. CSV сохраняет столбец и записывает пустое значение; объектные форматы и XML пропускают поле.
+
+Смотрите [необязательные значения](./create-feeds.mdx#optional_values).
+</details>
+
+## Смотрите также
+
+- [Решение проблем](./troubleshooting.mdx)
+- [Справочник по конфигурации](./api/configuration.mdx)
+- [Справочник API](./api/index.mdx)
+

@@ -325,5 +325,98 @@
   "theme.tags.tagsPageTitle": {
     "message": "Etiquetas",
     "description": "Título da página com a lista de etiquetas"
+  },
+  "homepage.install.copied": {
+    "message": "Copiado"
+  },
+  "homepage.install.copy": {
+    "message": "Copiar"
+  },
+  "homepage.install.copySuccess": {
+    "message": "Comando de instalação copiado para a área de transferência."
+  },
+  "homepage.install.copyFailure": {
+    "message": "Falha ao copiar. Selecione o comando manualmente."
+  },
+  "homepage.meta.title": {
+    "message": "Documentação do Laravel Feeds"
+  },
+  "homepage.meta.description": {
+    "message": "Exporte grandes conjuntos de dados do Laravel para XML, JSON, JSON Lines, CSV, RSS e feeds de marketplaces."
+  },
+  "homepage.eyebrow": {
+    "message": "Pacote Laravel · Documentação 1.x"
+  },
+  "homepage.title": {
+    "message": "Exporte grandes conjuntos de dados sem carregá-los por completo na memória"
+  },
+  "homepage.summary": {
+    "message": "Gere feeds XML, JSON, JSON Lines, CSV, RSS, Sitemap, Instagram e Yandex com um fluxo contínuo no Laravel."
+  },
+  "homepage.action.start": {
+    "message": "Comece em 5 minutos"
+  },
+  "homepage.action.formats": {
+    "message": "Escolha um formato"
+  },
+  "homepage.example.php": {
+    "message": "ProductFeed.php"
+  },
+  "homepage.example.output": {
+    "message": "XML gerado"
+  },
+  "homepage.paths.eyebrow": {
+    "message": "Encontre seu caminho"
+  },
+  "homepage.paths.title": {
+    "message": "Comece por uma tarefa e depois consulte a referência"
+  },
+  "homepage.card.quick.description": {
+    "message": "Instale o pacote e gere o primeiro feed."
+  },
+  "homepage.card.quick.title": {
+    "message": "Início rápido"
+  },
+  "homepage.card.performance.description": {
+    "message": "Controle lotes, memória, filas e divisão de arquivos."
+  },
+  "homepage.card.performance.title": {
+    "message": "Grandes conjuntos de dados"
+  },
+  "homepage.card.recipes.description": {
+    "message": "Use padrões prontos para Sitemap, RSS, Instagram e Yandex."
+  },
+  "homepage.card.recipes.title": {
+    "message": "Formatos e receitas"
+  },
+  "homepage.card.api.description": {
+    "message": "Encontre métodos, chaves de configuração, eventos e falhas exatos."
+  },
+  "homepage.card.api.title": {
+    "message": "Referência da API"
+  },
+  "homepage.support.label": {
+    "message": "Compatibilidade"
+  },
+  "homepage.support.details": {
+    "message": "Detalhes de compatibilidade"
+  },
+  "search.trigger": {
+    "message": "Pesquisar"
+  },
+  "search.dialog.label": {
+    "message": "Pesquisar na documentação"
+  },
+  "search.input.label": {
+    "message": "Pesquisar na documentação"
+  },
+  "search.input.placeholder": {
+    "message": "Pesquisar guias, API e solução de problemas"
+  },
+  "search.close": {
+    "message": "Fechar"
+  },
+  "search.empty": {
+    "message": "Nenhuma documentação correspondente foi encontrada."
   }
 }

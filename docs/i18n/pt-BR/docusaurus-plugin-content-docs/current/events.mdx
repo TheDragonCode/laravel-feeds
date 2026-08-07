@@ -1,6 +1,10 @@
 ---
 title: "Eventos"
 description: "Eventos disparados durante a geração dos feeds"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 ---
 
 [← Anterior](./presets.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./extending-functionality.mdx)
@@ -9,7 +13,7 @@ description: "Eventos disparados durante a geração dos feeds"
 
 Os feeds disparam dois eventos durante a execução do comando:
 
-- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — O `FeedStartingEvent` é disparado imediatamente antes da criação do arquivo temporário.
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — O `FeedStartingEvent` é disparado após a verificação preliminar do armazenamento e do caminho, antes da resolução do conversor e da preparação. Isso não significa que já exista um arquivo temporário.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — O `FeedFinishedEvent` é disparado depois que todos os arquivos gerados são publicados com sucesso. Uma geração que falha não dispara esse evento.
 
 ## Contrato do evento de conclusão {/* #finished_event_contract */}

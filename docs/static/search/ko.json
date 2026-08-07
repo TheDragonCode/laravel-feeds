@@ -1,0 +1,593 @@
+[
+    {
+        "route": "/ko/",
+        "title": "Laravel Feeds 문서",
+        "description": "대규모 Laravel 데이터셋을 XML, JSON, JSON Lines, CSV, RSS 및 마켓플레이스 피드로 내보냅니다.",
+        "keywords": [
+            "Laravel",
+            "feeds",
+            "data export",
+            "documentation"
+        ],
+        "headings": [
+            "전체 데이터를 메모리에 올리지 않고 대규모 데이터셋 내보내기",
+            "작업부터 시작하고 참조 문서로 세부 정보 확인"
+        ],
+        "content": ""
+    },
+    {
+        "route": "/ko/api/",
+        "title": "API 참조",
+        "description": "Laravel Feeds public 클래스, 계약, 데이터 객체, 이벤트 및 예외 안내",
+        "keywords": [
+            "API",
+            "reference",
+            "Feed",
+            "FeedItem",
+            "FeedInfo"
+        ],
+        "headings": [
+            "API 참조",
+            "확장 지점",
+            "관련 문서"
+        ],
+        "content": "API 참조 워크플로를 이미 알고 있고 정확한 클래스, 메서드, 구성 키, 이벤트 또는 오류 계약이 필요할 때 이 섹션을 사용하십시오. 영역 주요 진입점 참조 --- --- --- 구성 config/feeds.php 구성 피드 클래스 Feed , FeedItem , FeedInfo 피드 및 데이터 출력 구조 ElementData , XML 디렉티브 요소, 디렉티브 형식 FeedFormatEnum , 변환기 지원 형식 런타임 GeneratorService , FeedQuery , ScheduleFeedHelper 런타임 서비스 및 계약 수명 주기 시작 및 완료 이벤트 이벤트 및 예외 프리셋 Sitemap, RSS, Instagram, Yandex 프리셋 확장 지점 - 데이터 소스와 출력 계약을 정의하려면 Feed 또는 프리셋을 확장하십시오. - 직렬화할 데이터를 제어하려면 FeedItem 과 FeedInfo 를 확장하십시오. - 사용자 지정 스칼라 변환에는 DragonCode\\LaravelFeed\\Contracts\\Transformer 를 구현하십시오. - 필드를 생략해야 할 때 DragonCode\\LaravelFeed\\Data\\OptionalData 를 반환하십시오. - 애플리케이션 도우미를 위해 Feed , FeedItem 또는 FeedInfo 에 매크로를 등록하십시오. 관련 문서 - 피드 생성 - 기능 확장 - 문제 해결"
+    },
+    {
+        "route": "/ko/api/configuration/",
+        "title": "구성 참조",
+        "description": "Laravel Feeds의 모든 구성 섹션과 환경 변수 참조",
+        "keywords": [
+            "configuration",
+            "environment",
+            "queue",
+            "schedule",
+            "converters"
+        ],
+        "headings": [
+            "구성 참조",
+            "기본 설정",
+            "스케줄 및 큐",
+            "트랜스포머",
+            "변환기 설정",
+            "관련 문서"
+        ],
+        "content": "구성 참조 php artisan vendor:publish --tag=\"feeds\" 로 config/feeds.php 를 게시하십시오. 환경 값은 Laravel이 구성 캐시를 만들 때 읽습니다. 기본 설정 키 기본값 용도 --- --- --- model DragonCode\\LaravelFeed\\Models\\Feed 피드 등록에 사용하는 Eloquent 모델입니다. 대체 모델은 패키지 모델을 확장해야 합니다. pretty / FEED_PRETTY false 형식화된 XML 및 JSON 출력을 활성화합니다. date.format DATE_ATOM 날짜 트랜스포머가 사용하는 PHP 날짜 형식입니다. date.timezone / FEED_TIMEZONE UTC 날짜 직렬화에 사용하는 시간대입니다. table.connection DB_CONNECTION , 다음 sqlite 피드 등록용 데이터베이스 연결입니다. table.table / FEED_TABLE feeds 피드 등록 테이블 이름입니다. 스케줄 및 큐 환경 변수 기본값 용도 --- --- --- FEED_SCHEDULE_TTL 1440 스케줄 잠금 수명(분)입니다. FEED_SCHEDULE_RUN_BACKGROUND true 예약된 피드 명령을 백그라운드에서 실행합니다. FEED_QUEUE_ENABLED false Laravel Queue로 생성을 전달합니다. FEED_QUEUE_CONNECTION QUEUE_CONNECTION , 다음 database 피드 작업용 큐 연결입니다. FEED_QUEUE_NAME 연결 기본값 큐 이름입니다. FEED_QUEUE_UNIQUE_TTL 3600 고유 작업 잠금 수명(초)입니다. FEED_CONSOLE_PROGRESS_BAR_ENABLED false 콘솔 진행률 표시줄을 표시합니다. 비동기 연결에서 큐 모드를 사용하려면 워커가 필요합니다. sync 연결은 명령 프로세스에서 생성을 실행합니다. 트랜스포머 기본 파이프라인에는 BoolTransformer , DateTimeTransformer , EnumTransformer 가 이 순서로 포함됩니다. 조건에 맞는 각 트랜스포머는 이전 트랜스포머가 반환한 값을 받습니다. DragonCode\\LaravelFeed\\Contracts\\Transformer 를 구현한 후 사용자 지정 클래스를 transformers 에 추가하십시오. Laravel은 서비스 컨테이너를 통해 클래스를 해석합니다. 변환기 설정 키 기본값 --- --- converters.json.options JSON_UNESCAPED_SLASHES JSON_UNESCAPED_UNICODE converters.jsonl.options JSON_UNESCAPED_SLASHES JSON_UNESCAPED_UNICODE converters.csv.delimiter ; converters.csv.enclosure \" converters.csv.escape 빈 문자열 converters.csv.line_ending PHP_EOL 관련 문서 - 설치 - 생성 및 스케줄 - Eloquent 모델 구성"
+    },
+    {
+        "route": "/ko/api/events-exceptions/",
+        "title": "이벤트 및 예외",
+        "description": "피드 생성 수명 주기 이벤트와 public 예외 타입 참조",
+        "keywords": [
+            "events",
+            "exceptions",
+            "FeedStartingEvent",
+            "FeedFinishedEvent"
+        ],
+        "headings": [
+            "이벤트 및 예외",
+            "수명 주기 이벤트",
+            "입력 및 조회 오류",
+            "직렬화 및 저장소 오류",
+            "관련 문서"
+        ],
+        "content": "이벤트 및 예외 애플리케이션 통합에는 수명 주기 이벤트를 사용하고, 오류를 처리할 수 있는 경계에서 복구할 때는 예외 타입을 사용하십시오. 수명 주기 이벤트 이벤트 Public 데이터 전달 시점 --- --- --- FeedStartingEvent feed 저장소와 경로 사전 검사가 끝난 뒤, 컨버터 해석과 스테이징 전입니다. FeedFinishedEvent feed , path , paths 생성된 모든 파일을 성공적으로 게시한 후입니다. FeedFinishedEvent::$paths 에는 게시된 모든 경로가 순서대로 들어 있습니다. $path 는 호환성을 위해 유지되며 항상 첫 번째 경로를 담습니다. 입력 및 조회 오류 예외 의미 --- --- InvalidFeedArgumentException 콘솔 피드 ID가 유효하지 않습니다. FeedNotFoundException 요청한 피드 ID의 등록 정보가 없습니다. InvalidExpressionException 스케줄 표현식이 유효하지 않습니다. UnknownFeedClassException 구성된 피드 클래스를 해석할 수 없습니다. UnexpectedClassException 해석된 클래스가 예상 계약을 충족하지 않습니다. 직렬화 및 저장소 오류 예외 의미 --- --- InvalidCsvRowException CSV 행이 확정된 열 스키마와 일치하지 않습니다. InvalidCsvValueException CSV 필드를 스칼라 값으로 직렬화할 수 없습니다. InvalidXmlCDataException CDATA 값이 유효하지 않습니다. InvalidXmlFragmentException 원시 XML 조각이 유효하지 않습니다. UnsupportedStorageDiskException 선택한 Laravel 디스크가 FilesystemAdapter 로 해석되지 않습니다. OpenFeedException 초안 출력 리소스를 열 수 없습니다. WriteFeedException 전체 출력을 기록할 수 없습니다. CloseFeedException 출력 리소스를 닫을 수 없습니다. ResourceMetaException 필요한 스트림 메타데이터를 사용할 수 없습니다. FeedGenerationException 특정 피드 클래스의 생성에 실패했습니다. 애플리케이션에서 복구하거나 사용자에게 맥락을 제공할 수 있는 곳에서만 예외를 잡으십시오. 복구할 수 없는 생성 오류는 Laravel이 보고하도록 두십시오. 관련 문서 - 이벤트 가이드 - 문제 해결 - 저장소 보장"
+    },
+    {
+        "route": "/ko/api/feed/",
+        "title": "피드 및 데이터",
+        "description": "Feed, FeedItem, FeedInfo, ElementData 및 생성 결과의 public 계약",
+        "keywords": [
+            "Feed",
+            "FeedItem",
+            "FeedInfo",
+            "ElementData",
+            "GenerationResultData"
+        ],
+        "headings": [
+            "피드 및 데이터",
+            "Feed",
+            "FeedItem 및 FeedInfo",
+            "ElementData",
+            "생성 결과",
+            "FeedFormatEnum",
+            "관련 문서"
+        ],
+        "content": "피드 및 데이터 핵심 API는 데이터 소스, 항목 매핑, 피드 수준 메타데이터, 출력 구조 및 생성 결과를 분리합니다. Feed DragonCode\\LaravelFeed\\Feeds\\Feed 는 내보내기의 기본 클래스입니다. builder() 를 구현하고 피드에 필요한 출력 지점만 재정의하십시오. abstract public function builder(): Builder 메서드 기본값 계약 --- --- --- builder(): Builder 추상 메서드 데이터 소스로 사용할 Eloquent 쿼리를 반환합니다. item(Model $model): FeedItem 새 기본 FeedItem 하나의 모델을 출력 항목으로 매핑합니다. transformers(): array [] 이 피드의 트랜스포머 클래스 이름을 앞에 추가합니다. chunkSize(): int 1000 데이터베이스 쿼리 청크 크기입니다. perFile(): int 0 파일당 레코드 수입니다. 0이면 개수에 따른 분할을 끕니다. maxFiles(): int 0 최대 출력 파일 수입니다. 0이면 제한이 없습니다. header(): string XML/RSS용 XML 선언 루트와 항목 앞에 기록할 내용입니다. footer(): string 빈 문자열 루트와 항목 뒤에 기록할 내용입니다. root(): ElementData 클래스에서 파생한 요소 이름 루트 요소와 속성을 정의합니다. info(): FeedInfo 빈 FeedInfo 피드 수준 정보를 정의합니다. filename(): string 클래스에서 파생한 파일 이름 디스크 기준 출력 파일 이름을 반환합니다. path($suffix): string 어댑터가 해석한 경로 로컬 또는 어댑터가 해석한 경로를 반환합니다. storagePath($suffix): string 디스크 기준 파일 이름 저장소 작업에 사용할 경로를 반환합니다. storage(): FilesystemAdapter public 디스크 Laravel 파일시스템 디스크를 해석하고 검증합니다. format(): FeedFormatEnum Xml 구성된 출력 형식을 반환합니다. Feed 는 Laravel의 Conditionable 과 Macroable 을 사용합니다. FeedItem 및 FeedInfo FeedItem 은 현재 Eloquent 모델을 받습니다. 기본 동작은 다음과 같습니다. - name() 은 모델 클래스 기본 이름을 kebab case로 반환합니다. - attributes() 는 빈 배열을 반환합니다. - toArray() 는 모델 배열을 반환합니다. FeedInfo::toArray() 는 빈 배열을 반환합니다. 두 클래스 모두 Conditionable 과 Macroable 을 사용합니다. 출력에 명시적인 스키마가 필요하면 확장하십시오. ElementData ElementData 는 세 가지 생성자 속성을 가진 읽기 전용 객체입니다. 속성 타입 기본값 --- --- --- name ?string null attributes array [] beforeInfo bool true 루트 요소를 생략하려면 name 을 null 또는 빈 문자열로 설정하십시오. 피드 정보를 루트 앞에 쓰려면 beforeInfo 를 false 로 설정하십시오. 생성 결과 GeneratorService::feed() 는 GenerationResultData 를 반환합니다. 읽기 전용 paths 속성에는 게시된 파일이 출력 순서대로 들어 있습니다. records 는 각 경로를 해당 파일에 기록된 레코드 수와 연결합니다. 프로그래밍 방식의 생성 및 등록 메서드는 런타임 서비스 및 계약에 정리되어 있습니다. FeedFormatEnum 케이스 값 --- --- Xml xml Json json JsonLines jsonl Csv csv Rss rss 관련 문서 - 피드 생성 - 요소 - 저장 위치 - 런타임 서비스 및 계약"
+    },
+    {
+        "route": "/ko/api/runtime/",
+        "title": "런타임 서비스 및 계약",
+        "description": "생성, 등록, 스케줄, 변환 및 선택적 값의 public API",
+        "keywords": [
+            "GeneratorService",
+            "FeedQuery",
+            "ScheduleFeedHelper",
+            "Transformer",
+            "OptionalData"
+        ],
+        "headings": [
+            "런타임 서비스 및 계약",
+            "GeneratorService",
+            "FeedQuery",
+            "ScheduleFeedHelper",
+            "Transformer",
+            "OptionalData",
+            "관련 문서"
+        ],
+        "content": "런타임 서비스 및 계약 이 진입점은 프로그래밍 방식의 생성, 피드 등록, 스케줄러 통합, 스칼라 변환 및 선택적 필드를 지원합니다. GeneratorService DragonCode\\LaravelFeed\\Services\\GeneratorService 는 하나의 피드를 생성하고 게시합니다. public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData 이 메서드는 모든 부분을 하나의 작업으로 게시하고, 등록 정보의 마지막 활동 시간을 갱신하고, 수명 주기 이벤트를 전달하고, 파일별 레코드 수와 경로를 반환합니다. 스토리지와 출력 경로는 생성을 시작하기 전에 확인하며, 이 사전 검사에서 발생한 예외( UnsupportedStorageDiskException 포함)는 그대로 전달됩니다. 사전 검사가 성공한 뒤 발생한 생성 오류는 FeedGenerationException 으로 감싸며 원래 예외는 이전 예외로 유지합니다. 내부 의존성을 직접 생성하지 말고 Laravel 컨테이너에서 서비스를 해석하십시오. FeedQuery DragonCode\\LaravelFeed\\Queries\\FeedQuery 는 저장된 피드 등록 정보를 관리합니다. 메서드 결과 --- --- create(string $class, string $title, string $expression = '0 ', bool $isActive = true, array $extra = []): Feed 등록 정보를 생성합니다. find(int $id): Feed 등록 정보를 반환하거나 FeedNotFoundException 을 발생시킵니다. all(): Builder 모든 등록 정보를 ID순으로 반환합니다. active(): Builder 활성 등록 정보를 ID순으로 반환합니다. setLastActivity(string $class): void 피드 클래스의 last_activity 를 갱신합니다. delete(int $id): void ID로 등록 정보를 소프트 삭제합니다. deleteByClass(string $class): void 삭제된 행을 포함해 해당 클래스의 등록 정보를 영구 삭제합니다. restore(int $id): void 소프트 삭제된 등록 정보를 복원합니다. 일반적인 등록 변경은 생성된 마이그레이션이나 배포 operation을 사용하여 모든 환경에서 재현할 수 있게 하십시오. ScheduleFeedHelper DragonCode\\LaravelFeed\\Helpers\\ScheduleFeedHelper::register() 는 활성 등록 정보를 Laravel 스케줄러에 추가합니다. 각 등록은 저장된 cron 표현식과 중복 방지 잠금을 사용합니다. 백그라운드 실행과 잠금 TTL은 feeds.schedule 구성에서 가져옵니다. 구성된 피드 테이블이 없으면 등록을 안전하게 건너뜁니다. Transformer 직렬화 전에 지원되는 값을 변환하려면 DragonCode\\LaravelFeed\\Contracts\\Transformer 를 구현하십시오. public function allow(mixed $value): bool public function transform(mixed $value): string allow() 는 트랜스포머가 값을 처리할지 결정합니다. transform() 은 직렬화된 스칼라 표현을 반환합니다. Feed::transformers() 또는 feeds.transformers 로 클래스를 추가하십시오. OptionalData 값이 없을 때 생략할 필드에는 새 DragonCode\\LaravelFeed\\Data\\OptionalData 를 반환하십시오. XML, RSS, JSON 및 JSON Lines는 필드를 생략합니다. CSV는 열을 유지하고 빈 필드를 기록합니다. 관련 문서 - 피드 및 데이터 - 구성 - 이벤트 및 예외 - 생성 및 스케줄"
+    },
+    {
+        "route": "/ko/compatibility/",
+        "title": "호환성",
+        "description": "Laravel Feeds 1.x의 PHP, Laravel, 저장소, 큐 및 출력 형식 지원 계약",
+        "keywords": [
+            "compatibility",
+            "PHP",
+            "Laravel",
+            "Flysystem",
+            "formats"
+        ],
+        "headings": [
+            "호환성",
+            "런타임 매트릭스",
+            "출력 형식",
+            "선택적 통합",
+            "관련 문서"
+        ],
+        "content": "호환성 특정 애플리케이션의 최종 호환성은 Composer가 해석한 의존성 그래프로 확인하십시오. 런타임 매트릭스 구성 요소 지원 버전 --- --- PHP 설치된 패키지 제약 조건이 허용하는 8.2 및 최신 8.x 버전 Laravel 구성 요소 11.x , 12.x , 13.x 데이터베이스 구성된 Eloquent 모델과 마이그레이션이 지원하는 모든 Laravel 연결 파일시스템 FilesystemAdapter 로 해석되는 쓰기 가능한 Laravel 디스크 특정 애플리케이션에서는 설치된 composer.lock 이 최종 기준입니다. Composer는 지원되지 않는 조합을 거부합니다. 출력 형식 형식 확장자 중첩 데이터 XML 디렉티브 --- --- --- --- XML .xml 예 예 JSON .json 예 아니요 JSON Lines .jsonl 한 줄에 하나의 JSON 값 아니요 CSV .csv 아니요. 안정적인 스칼라 열 필요 아니요 RSS .rss 예 예 선택적 통합 - Laravel Queue는 큐 모드를 활성화할 때만 필요합니다. - Laravel Deploy Operations가 설치되어 있으면 make:feed 가 사용하고, 그렇지 않으면 마이그레이션을 생성합니다. - Spatie Laravel Data 패키지가 설치되어 있으면 선택적 값을 인식합니다. 관련 문서 - 설치 - 지원 형식 - 업그레이드 가이드"
+    },
+    {
+        "route": "/ko/contributions/",
+        "title": "기여 가이드",
+        "description": "Laravel Feeds 프로젝트 개발자를 위한 안내",
+        "keywords": [
+            "contributing",
+            "code style",
+            "code of conduct"
+        ],
+        "headings": [
+            "기여 가이드",
+            "코드 스타일",
+            "행동 강령",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → 기여 가이드 기여는 언제나 환영 하며 기여자에게 충분히 감사 표시 를 합니다. 우리 조직의 모든 프로젝트는 Pull Request를 통한 기여를 받습니다. 코드 스타일 Laravel Feeds 는 PER-3 코딩 표준과 PSR-4 오토로딩 표준을 따릅니다. 코드 스타일 서식을 적용하려면 다음 콘솔 명령을 실행하십시오. 행동 강령 Laravel 행동 강령은 Contributor Covenant 행동 강령을 바탕으로 합니다. 행동 강령 위반은 Andrey Helldar에게 신고할 수 있습니다. - 참여자는 반대 의견을 존중해야 합니다. - 참여자는 말과 행동에 인신공격이나 비하 발언이 포함되지 않도록 해야 합니다. - 다른 사람의 말과 행동을 해석할 때는 항상 선의를 전제로 해야 합니다. - 합리적으로 괴롭힘으로 볼 수 있는 행동은 허용되지 않습니다. 관련 문서 - MIT 라이선스 - 시작하기 - 머신 러닝"
+    },
+    {
+        "route": "/ko/create-feeds/",
+        "title": "피드 생성",
+        "description": "피드, 피드 항목 및 피드 정보 클래스를 생성하고 채우는 방법",
+        "keywords": [
+            "feed",
+            "FeedItem",
+            "FeedInfo",
+            "make:feed"
+        ],
+        "headings": [
+            "피드 생성",
+            "피드 채우기",
+            "피드",
+            "피드 항목",
+            "선택적 값",
+            "파일 형식",
+            "관련 문서"
+        ],
+        "content": "import ThemedImage from '@theme/ThemedImage'; ← 이전 · README로 돌아가기 · 다음 → 피드 생성 필요한 클래스를 만드는 가장 편리한 방법은 Laravel Idea 플러그인을 사용하는 것입니다. 이 플러그인은 PhpStorm용입니다. 피드 클래스를 만들려면 make:feed 콘솔 명령을 사용하십시오. 이 명령은 피드 파일을 생성합니다. 예: app/Feeds/UserFeed.php . 이 콘솔 명령은 피드 클래스와 함께 항목 및 정보 클래스도 만들 수 있습니다. --item 과 --info 옵션을 사용하십시오. 단축 옵션도 사용할 수 있습니다. 피드를 만들면 데이터베이스에 피드를 추가하기 위한 operation 또는 마이그레이션도 생성됩니다. 프로젝트가 Laravel Deploy Operations 를 사용하면 operation 클래스가 생성되고, 그렇지 않으면 마이그레이션 클래스가 생성됩니다. 이는 데이터베이스에 피드 정보를 추가하고 관리하는 데 필요합니다. 피드 채우기 피드 기본 피드 클래스를 채우십시오. 예: 피드 항목 피드 항목 클래스를 채우십시오. 예: 선택적 값 값을 사용할 수 없을 때 필드를 생략하려면 해당 값으로 DragonCode\\LaravelFeed\\Data\\OptionalData 인스턴스를 반환하십시오. 선택적 필드는 일반 중첩 필드를 포함하여 JSON 및 JSON Lines 객체와 XML 및 RSS 요소에서 제거됩니다. CSV는 열 위치를 유지하고 빈 필드를 기록합니다. 애플리케이션에서 Spatie Laravel Data를 사용한다면 대신 Spatie\\LaravelData\\Optional 을 반환할 수 있습니다. 두 선택적 값 클래스는 모두 자동으로 처리됩니다. 파일 형식 사용 가능한 형식 목록은 지원 형식 페이지에서 확인할 수 있습니다. 피드는 여러 형식으로 생성할 수 있습니다. 피드 클래스는 의도된 형식으로만 올바르게 내보낼 수 있습니다. 이는 디렉티브와 기타 형식별 특성 때문입니다. 필요한 형식을 적용하려면 피드 클래스의 $format 속성을 재정의하십시오. 관련 문서 - 생성 및 스케줄 - 지원 형식 - 프리셋"
+    },
+    {
+        "route": "/ko/directives/",
+        "title": "디렉티브",
+        "description": "피드 출력을 위한 기본 제공 XML 디렉티브",
+        "keywords": [
+            "XML",
+            "directives",
+            "attributes",
+            "CDATA"
+        ],
+        "headings": [
+            "디렉티브",
+            "@attributes",
+            "@value",
+            "@cdata",
+            "@mixed",
+            "@custom",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → 디렉티브 형식: XML [예약된 디렉티브] - @attributes - @value - @cdata - @mixed - @custom 디렉티브는 XML 형식으로 피드를 생성할 때만 사용할 수 있습니다. @attributes 속성 배열을 나타냅니다. @attributes 키를 사용하여 노드에 속성을 추가할 수 있습니다. 이 코드는 다음 결과를 생성합니다. @value 적용할 값을 “그대로” 지정합니다. @value 필드의 값은 문자열이어야 합니다. @value 키를 사용하여 노드에 값을 추가할 수 있습니다. 이 코드는 다음 결과를 생성합니다. @cdata 변환 없이 XML 마크업을 사용할 수 있습니다. 노드 값을 CDATA 섹션으로 감쌀 수도 있습니다. 이를 통해 예약 문자를 사용할 수 있습니다. @cdata 키를 사용하여 노드에 CDATA를 추가할 수 있습니다. 이 코드는 다음 결과를 생성합니다. @mixed 문서 구조 안에서 XML 마크업을 직접 사용할 수 있습니다. XML 조각을 “그대로” 삽입하려면 @mixed 디렉티브를 사용하십시오. 이 코드는 다음 결과를 생성합니다. @custom 같은 키를 가진 요소 배열을 나열하는 방법을 설명합니다. 경우에 따라 이름이 같은 요소 배열을 배치해야 합니다. 이렇게 하려면 키 이름 앞에 @ 기호를 추가하십시오. 이 코드는 다음 결과를 생성합니다. 관련 문서 - 요소 - 지원 형식 - Yandex 레시피"
+    },
+    {
+        "route": "/ko/elements/",
+        "title": "요소",
+        "description": "루트 요소, 정보 블록, 헤더/푸터 및 속성을 포함한 피드 구조 구성",
+        "keywords": [
+            "elements",
+            "FeedInfo",
+            "attributes",
+            "split files"
+        ],
+        "headings": [
+            "요소",
+            "루트 요소",
+            "정보",
+            "헤더 및 푸터",
+            "속성",
+            "파일 분할",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → 요소 루트 요소 형식: XML, RSS, JSON 기본적으로 루트 요소의 이름은 피드 클래스의 기본 이름에서 파생됩니다. 예를 들어 App\\Feeds\\FooBarFeed 클래스의 이름은 foo_bar 입니다. 루트 요소 및 해당 속성을 추가하려면 root 메서드를 재정의하십시오. 루트 요소 추가를 비활성화하려면 이름을 null 또는 \"\" 로 비워 두십시오. 이 코드는 다음 결과를 생성합니다. 정보 형식: XML, RSS, JSON, JSONL, CSV 루트 요소가 있으면 그 시작 부분에 정보를 추가하고, 없으면 정보만 추가하려면 피드 클래스의 info 메서드를 재정의하고 DragonCode\\LaravelFeed\\Feeds\\Info\\FeedInfo 클래스를 확장하는 객체를 만드십시오. 이 코드는 다음 결과를 생성합니다. 정보 블록을 기준으로 루트 요소가 출력되는 순서를 변경하려면 root 메서드의 beforeInfo 매개변수를 설정하십시오. 이 코드는 다음 결과를 생성합니다. 헤더 및 푸터 형식: XML, RSS, JSON 헤더와 푸터를 변경하려면 header 및 footer 메서드를 재정의하십시오. 이 코드는 다음 결과를 생성합니다. 속성 형식: XML, RSS 이 코드는 다음 결과를 생성합니다. 파일 분할 형식: XML, RSS, JSON, JSONL, CSV 필요하면 파일에 출력되는 줄 수와 파일 수를 제한할 수 있습니다. perFile 및 maxFiles 함수를 사용하십시오. 두 메서드는 서로 독립적으로 작동합니다. 분할할 때 파일 이름에 일련번호가 추가됩니다. 예: - attribute-1.xml - attribute-2.xml - attribute-3.xml 관련 문서 - 디렉티브 - 지원 형식 - 저장 위치"
+    },
+    {
+        "route": "/ko/eloquent/",
+        "title": "Eloquent",
+        "description": "피드 등록 모델과 피드 쿼리 청크 크기 구성",
+        "keywords": [
+            "Eloquent",
+            "model",
+            "FeedQuery",
+            "chunk size"
+        ],
+        "headings": [
+            "Eloquent",
+            "사용자 지정 피드 등록 모델",
+            "청크 크기",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → Eloquent 사용자 지정 피드 등록 모델 피드 등록 레코드에 추가 열, 캐스트, 관계 또는 메서드가 필요하면 feeds.model 을 애플리케이션 모델로 설정하십시오. 사용자 지정 모델은 DragonCode\\LaravelFeed\\Models\\Feed 를 확장해야 합니다. config/feeds.php 에 모델을 등록하십시오. 애플리케이션 마이그레이션에서 feeds 테이블에 사용자 지정 열을 추가하십시오. 대량 할당을 허용하는 모든 속성을 $fillable 에 유지하십시오. FeedQuery 는 생성, 조회, 목록, 업데이트, 삭제 및 복원 작업에 구성된 모델을 사용합니다. 레코드를 생성할 때 애플리케이션별 값은 extra 로 전달하십시오. 이 값은 마지막에 적용되며 메서드 인수를 재정의할 수 있습니다. 애플리케이션 모델에서 일반 Eloquent API를 사용할 수도 있습니다. 구성된 모델은 런타임에 해석됩니다. 정적 분석은 FeedQuery::create() 의 결과를 패키지 기본 모델로 인식합니다. 애플리케이션별 속성의 자동 완성이 필요하면 App\\Models\\Feed::create() 또는 명시적인 로컬 타입을 사용하십시오. 청크 크기 데이터베이스 쿼리는 기본적으로 1000 개 항목 단위의 청크를 사용합니다. chunkSize 메서드를 재정의하여 변경할 수 있습니다. 관련 문서 - 피드 생성 - 생성 및 스케줄 - 기능 확장"
+    },
+    {
+        "route": "/ko/events/",
+        "title": "이벤트",
+        "description": "피드 생성 중 전달되는 이벤트",
+        "keywords": [
+            "events",
+            "FeedStartingEvent",
+            "FeedFinishedEvent"
+        ],
+        "headings": [
+            "이벤트",
+            "완료 이벤트 계약",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → 이벤트 피드는 명령을 실행할 때 두 가지 이벤트를 전달합니다. - DragonCode\\LaravelFeed\\Events\\FeedStartingEvent — FeedStartingEvent 는 저장소와 경로 사전 검사가 끝난 뒤, 컨버터 해석과 스테이징 전에 전달됩니다. 이 시점에는 초안 파일이 존재한다고 보장되지 않습니다. - DragonCode\\LaravelFeed\\Events\\FeedFinishedEvent — FeedFinishedEvent 는 생성된 모든 파일이 성공적으로 게시된 후 전달됩니다. 생성에 실패하면 이 이벤트가 전달되지 않습니다. 완료 이벤트 계약 완료 이벤트는 다음 public 속성을 제공합니다. - $feed 에는 생성된 피드 클래스가 들어 있습니다. - $paths 에는 게시된 모든 파일 경로가 출력 순서대로 들어 있습니다. - $path 는 하위 호환성을 위해 유지되며 첫 번째 게시 경로를 담습니다. 피드가 여러 파일로 분할될 수 있으면 $paths 를 사용하십시오. GeneratorService::feed() 는 GenerationResultData 객체를 반환합니다. $paths 속성에는 같은 순서의 경로가 들어 있고, $records 속성은 각 경로를 해당 파일에 기록된 레코드 수와 연결합니다. 관련 문서 - 생성 및 스케줄 - 저장 위치 - 기능 확장"
+    },
+    {
+        "route": "/ko/extending-functionality/",
+        "title": "기능 확장",
+        "description": "조건부 절, 매크로 및 사용자 지정 트랜스포머로 피드 확장",
+        "keywords": [
+            "extensions",
+            "macros",
+            "transformers",
+            "conditional clauses"
+        ],
+        "headings": [
+            "기능 확장",
+            "조건부 절",
+            "매크로 기능",
+            "사용자 지정 트랜스포머",
+            "피드 트랜스포머 앞에 추가",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → 기능 확장 조건부 절 조건부 절은 Feed , FeedInfo , FeedItem 클래스에서 사용할 수 있습니다. 다른 조건에 따라 특정 피드 절을 적용해야 할 수 있습니다. 예를 들어 입력값이 있거나 다른 속성에 값이 있을 때만 where 문을 적용할 수 있습니다. when 메서드를 사용하십시오. when 메서드는 첫 번째 인수가 true 일 때만 전달된 클로저를 실행합니다. 첫 번째 인수가 false 이면 클로저가 실행되지 않습니다. 따라서 위 예제에서 when 메서드에 전달된 클로저는 모델에 category 필드가 있고 그 값이 true 로 평가될 때만 호출됩니다. when 메서드의 세 번째 인수로 다른 클로저를 전달할 수 있습니다. 이 클로저는 첫 번째 인수가 false 로 평가될 때만 실행됩니다. 다음 예제에서는 이 기능으로 모델 제목 접미사를 구성합니다. 반대 동작을 하는 unless 메서드도 사용할 수 있습니다. 이 경우 처리 로직은 정확히 반대입니다. 매크로 기능 Feed , FeedItem , FeedInfo 는 매크로를 지원하므로 런타임에 메서드를 추가할 수 있습니다. macro 메서드는 매크로가 호출될 때 실행할 클로저를 받습니다. 매크로 클로저는 피드 클래스의 실제 메서드처럼 $this 를 통해 피드의 다른 메서드에 접근할 수 있습니다. 다음 코드는 Feed 클래스에 customFilename 메서드를 추가합니다. 다음은 FeedInfo 와 FeedItem 의 예제입니다. 사용자 지정 트랜스포머 트랜스포머는 변환기가 지원되는 값을 직렬화하기 전에 값을 변환합니다. 트랜스포머 클래스 이름을 config/feeds.php 에 등록하십시오. Laravel은 서비스 컨테이너를 통해 각 클래스를 해석하므로 생성자 의존성과 사용자 지정 컨테이너 바인딩이 지원됩니다. 기본 제공 트랜스포머 뒤에 사용자 지정 트랜스포머를 구성 목록에 추가하십시오. 구성된 트랜스포머는 선언 순서대로 실행됩니다. 각 allow() 호출은 앞선 트랜스포머가 변경한 값을 포함한 현재 값을 받으며, 조건에 맞는 모든 트랜스포머가 값을 업데이트할 수 있습니다. 중복 항목은 컨테이너 해석 후 제거되며 첫 번째 항목의 위치는 유지됩니다. 변환기는 이 순서가 지정된 파이프라인을 한 번 구성하고 해당 피드 생성의 모든 필드에 같은 트랜스포머 인스턴스를 재사용합니다. 피드 트랜스포머 앞에 추가 해당 피드의 트랜스포머를 앞에 추가하려면 피드의 transformers() 를 재정의하십시오. 이 메서드는 트랜스포머 클래스 이름을 반환하며 Laravel은 전역 목록과 같은 방식으로 서비스 컨테이너를 통해 이를 해석합니다. 예를 들어 피드별 형식을 사용하는 날짜 트랜스포머를 정의합니다. 그런 다음 피드에서 반환합니다. 앞에 추가된 목록은 config/feeds.php 의 전역 목록을 대체하지 않습니다. 트랜스포머는 다음 순서로 실행됩니다. 1. transformers() 가 반환한 앞쪽 트랜스포머. 2. config/feeds.php 의 전역 트랜스포머. 3. 선택한 출력 형식에 필요한 변환기별 트랜스포머. 따라서 앞에 추가된 트랜스포머가 날짜를 먼저 형식화할 수 있습니다. 전역 날짜 트랜스포머는 결과 문자열을 받아 건너뛰고, 다른 전역 트랜스포머는 조건에 맞는 필드를 계속 처리합니다. 관련 문서 - 피드 생성 - Eloquent - 디렉티브"
+    },
+    {
+        "route": "/ko/faq/",
+        "title": "자주 묻는 질문",
+        "description": "Laravel Feeds 설정, 생성, 저장소 및 형식에 관한 일반적인 질문과 답변",
+        "keywords": [
+            "FAQ",
+            "generation",
+            "storage",
+            "formats",
+            "memory"
+        ],
+        "headings": [
+            "자주 묻는 질문",
+            "관련 문서"
+        ],
+        "content": "자주 묻는 질문 설정, 생성, 저장소, 형식 및 메모리에 관한 일반적인 질문의 짧은 답변입니다. Laravel Feeds로 수백만 개의 레코드를 내보낼 수 있습니까? 가능합니다. 패키지는 Eloquent 결과를 청크로 읽고 출력을 점진적으로 기록합니다. builder() 를 지연 상태로 유지하고 전체 결과에 get() 이나 toArray() 를 호출하지 마십시오. 메모리와 데이터베이스 부하를 측정한 후 chunkSize() 를 조정하십시오. 대규모 데이터셋 성능을 참고하십시오. 어떤 형식을 사용해야 합니까? 소비자가 요구하는 계약을 사용하십시오. XML과 RSS는 계층 디렉티브를 지원하고, JSON은 중첩 데이터를 유지하고, JSON Lines는 줄 단위 처리에 적합하며, CSV는 안정적인 열 스키마가 필요합니다. 지원 형식을 참고하십시오. 하나의 피드가 여러 파일을 만들 수 있습니까? 가능합니다. perFile() 로 파일당 레코드 수를 설정하고 maxFiles() 로 선택적 상한을 지정하십시오. 분할 파일에는 순차적인 접미사가 붙습니다. 파일 분할을 참고하십시오. S3 또는 다른 원격 디스크에 피드를 저장할 수 있습니까? 구성된 Laravel 디스크가 쓰기 가능한 FilesystemAdapter 로 해석되면 가능합니다. 원격 이동은 복사 후 삭제 방식일 수 있으므로 원자적 교체가 보장되지 않습니다. 지원 디스크를 참고하십시오. 비활성 피드가 실행된 이유는 무엇입니까? feed:generate 에 피드 ID를 전달하면 등록이 비활성이어도 해당 피드를 실행합니다. ID 없이 실행하면 비활성 등록을 건너뜁니다. 단일 피드 생성을 참고하십시오. 선택적 필드를 생략하려면 어떻게 합니까? 필드 값으로 DragonCode\\LaravelFeed\\Data\\OptionalData 또는 Spatie\\LaravelData\\Optional 을 반환하십시오. CSV는 열을 유지하고 빈 값을 쓰며, 객체 형식과 XML은 필드를 생략합니다. 선택적 값을 참고하십시오. 관련 문서 - 문제 해결 - 구성 참조 - API 참조"
+    },
+    {
+        "route": "/ko/generation/",
+        "title": "생성 및 스케줄",
+        "description": "나중에 배포할 피드 파일을 생성하는 방법",
+        "keywords": [
+            "generation",
+            "schedule",
+            "queue",
+            "feed:generate"
+        ],
+        "headings": [
+            "생성 및 스케줄",
+            "단일 피드",
+            "AI 에이전트 출력",
+            "큐",
+            "스케줄",
+            "자동",
+            "수동",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → 생성 및 스케줄 활성화된 모든 피드를 생성하려면 다음 콘솔 명령을 사용하십시오. 그 결과 feeds 테이블 또는 config/feeds.php 파일에서 지정한 테이블의 모든 활성 피드( is_active = true )가 실행됩니다. 매개변수 없이 명령을 호출하면 is_active 속성이 false 인 피드를 포함한 모든 피드의 링크가 콘솔에 표시됩니다. 단, 이러한 피드는 실행되지 않고 SKIP 상태로 표시됩니다. 단일 피드 지정한 피드는 데이터베이스의 feeds 테이블에서 비활성화되어 있어도 실행됩니다 . 특정 피드를 생성하려면 feeds 테이블의 피드 ID를 매개변수로 전달하여 feed:generate 콘솔 명령을 호출하십시오. AI 에이전트 출력 feed:generate 가 Laravel Agent Detector가 인식하는 AI 코딩 에이전트 안에서 실행되면 진행률 표시줄과 형식화된 상태 줄 대신 단일 JSON 객체를 자동으로 출력합니다. 명령 옵션은 필요하지 않습니다. 인식된 에이전트 외부에서는 기존 콘솔 출력이 그대로 유지됩니다. 직접 생성할 때는 생성된 각 피드에 게시된 모든 파일과 레코드 수가 포함됩니다. 명령은 한 줄로 된 압축 JSON을 출력합니다. 위 예제는 읽기 쉽도록 형식만 지정했습니다. 상태 의미 추가 필드 --- --- --- generated 피드 파일을 직접 생성했습니다. 각 파일의 path 와 records 를 포함하는 files queued 큐 모드가 활성화되어 있으며 에이전트를 위해 피드 작업을 동기적으로 실행했습니다. 없음 skipped 피드가 비활성 상태이고 피드 ID 없이 명령을 실행했습니다. 없음 큐 모드에서 에이전트 전용 경로는 JSON 결과를 반환하기 전에 활성화된 각 작업을 동기적으로 실행합니다. 사람이 읽는 형식의 기존 경로는 구성된 큐 연결을 통해 계속 작업을 전달합니다. 이 JSON 래퍼는 실행에 성공한 경우에만 사용됩니다. 생성 중 예외가 발생하면 Laravel이 일반적인 방식으로 명령 오류를 처리하며 JSON 오류 래퍼는 출력되지 않습니다. 큐 기본적으로 피드 생성은 콘솔 프로세스에서 실행됩니다. 실행 시간이 길거나 메모리를 많이 사용하는 피드는 환경에서 Laravel Queue 모드를 활성화하십시오. 큐 모드가 활성화되면 feed:generate 는 파일을 직접 생성하지 않고 활성 피드마다 하나의 작업을 전달합니다. 비동기 연결에서는 작업 전달이 끝나면 명령이 반환됩니다. 작업을 처리하려면 선택한 연결과 큐에 대한 큐 워커를 시작하십시오. - FEED_QUEUE_CONNECTION 은 큐 연결을 선택합니다. 설정되지 않으면 QUEUE_CONNECTION , 그다음 database 를 사용합니다. - FEED_QUEUE_NAME 은 해당 연결의 큐를 선택합니다. 연결의 기본 큐를 사용하려면 설정하지 마십시오. - FEED_QUEUE_UNIQUE_TTL 은 고유성 잠금의 최대 수명을 초 단위로 설정합니다. 이 잠금이 활성화된 동안에는 같은 피드의 두 번째 작업이 큐에 추가되지 않습니다. sync 연결은 각 작업을 콘솔 프로세스에서 즉시 실행합니다. 생성을 워커로 옮기려면 비동기 연결을 선택하십시오. 작업을 전달하지 않고 피드를 직접 생성하려면 FEED_QUEUE_ENABLED=false 로 설정하십시오. 스케줄 자동 피드 생성을 자동화하려면 스케줄을 사용하십시오. 변경하지 않았다면 기본 경로인 routes/console.php 파일에 헬퍼 호출을 지정합니다. 이렇게 하면 데이터베이스의 expression 열에 지정한 스케줄에 따라 모든 활성 피드 호출을 등록할 수 있습니다. 수동 자체 규칙에 따라 스케줄을 직접 지정할 수도 있습니다. 이 경우 지정한 피드만 실행됩니다. 관련 문서 - 피드 생성 - 이벤트 - 저장 위치"
+    },
+    {
+        "route": "/ko/installation/",
+        "title": "설치 및 설정",
+        "description": "Laravel Feeds 설치 및 구성 안내",
+        "keywords": [
+            "installation",
+            "Composer",
+            "configuration",
+            "migration"
+        ],
+        "headings": [
+            "설치 및 설정",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → 설치 및 설정 Composer를 사용하여 패키지를 설치할 수 있습니다. 다음 명령으로 마이그레이션과 config/feeds.php 구성 파일을 게시해야 합니다. 마이그레이션을 실행하기 전에 config/feeds.php 파일의 데이터베이스 연결 설정을 확인하십시오. 이제 마이그레이션을 실행하고 피드를 생성할 수 있습니다. 관련 문서 - 피드 생성 - 생성 및 스케줄 - 지원 형식"
+    },
+    {
+        "route": "/ko/introduction/",
+        "title": "시작하기",
+        "description": "Laravel Feeds를 설치하고 5분 안에 첫 번째 피드 생성",
+        "keywords": [
+            "getting started",
+            "Laravel",
+            "feeds",
+            "quick start"
+        ],
+        "headings": [
+            "시작하기",
+            "요구 사항",
+            "설치 및 준비",
+            "데이터 소스 정의",
+            "각 항목 정의",
+            "파일 생성",
+            "다음 단계"
+        ],
+        "content": "시작하기 패키지를 설치하고 Eloquent 쿼리와 항목 구조를 정의한 다음 피드 파일을 생성합니다. 기존 Laravel 애플리케이션에서 첫 번째 내보내기는 약 5분이면 완성할 수 있습니다. 요구 사항 - PHP 8.2 또는 Composer가 허용하는 최신 8.x 버전 - Laravel 11.x , 12.x 또는 13.x - 구성된 데이터베이스와 파일시스템 디스크 설치 및 준비 생성기는 피드 클래스와 항목 클래스를 만듭니다. 피드를 등록하는 데이터베이스 변경 사항도 생성합니다. 앞의 migrate 명령 이후에 생성되었다면 첫 생성 전에 해당 마이그레이션을 실행하십시오. 데이터 소스 정의 레코드를 청크 단위로 읽을 수 있도록 Eloquent Builder를 직접 반환하십시오. 각 항목 정의 파일 생성 명령은 각 피드의 상태를 표시하며, 일반 콘솔 출력에는 생성된 파일 경로가 포함되지 않습니다. 피드 클래스는 기본적으로 XML 형식과 public 디스크를 사용합니다. 두 값 모두 피드 클래스에서 변경하십시오. 다음 단계 - 설치 및 구성 - 피드 생성 - 생성 및 스케줄 - 지원 형식"
+    },
+    {
+        "route": "/ko/license/",
+        "title": "MIT 라이선스",
+        "description": "Laravel Feeds 배포에 적용되는 라이선스 정보",
+        "keywords": [
+            "MIT",
+            "license",
+            "copyright"
+        ],
+        "headings": [
+            "MIT 라이선스",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 MIT 라이선스 저작권 (c) 2025-2026 Andrey Helldar 이 소프트웨어 및 관련 문서 파일(이하 “소프트웨어”)의 사본을 취득하는 모든 사람에게 소프트웨어를 제한 없이 취급할 수 있는 권한을 무상으로 부여합니다. 여기에는 소프트웨어 사본을 사용, 복사, 수정, 병합, 게시, 배포, 재라이선스 및/또는 판매할 권리와 소프트웨어를 제공받은 사람에게 이를 허용할 권리가 제한 없이 포함되며, 다음 조건을 따릅니다. 위 저작권 고지와 이 허가 고지는 소프트웨어의 모든 사본 또는 주요 부분에 포함되어야 합니다. 소프트웨어는 상품성, 특정 목적에 대한 적합성 및 비침해성에 대한 보증을 포함하되 이에 국한되지 않는 명시적 또는 묵시적 보증 없이 “있는 그대로” 제공됩니다. 어떠한 경우에도 저자 또는 저작권자는 계약, 불법 행위 또는 기타 사유로 발생하는 청구, 손해 또는 기타 책임에 대해 책임을 지지 않습니다. 이는 소프트웨어 또는 소프트웨어의 사용이나 기타 거래로부터 발생하거나 이와 관련된 모든 경우에 적용됩니다. 관련 문서 - 기여 가이드 - 시작하기 - 머신 러닝"
+    },
+    {
+        "route": "/ko/location/",
+        "title": "저장 위치",
+        "description": "생성된 피드의 스토리지 디스크와 출력 파일 이름 구성",
+        "keywords": [
+            "storage",
+            "filesystem",
+            "filename",
+            "publication"
+        ],
+        "headings": [
+            "저장 위치",
+            "지원되는 디스크",
+            "경로 계약",
+            "게시 보장",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → 저장 위치 기본적으로 피드는 public 스토리지에 저장됩니다. 파일 이름은 App\\Feeds\\ 뒤의 피드 클래스 이름을 바탕으로 kebab-case 형식으로 자동 생성됩니다. 예: $storage 속성과 filename 메서드를 재정의하여 이 값을 변경할 수 있습니다. 지원되는 디스크 피드 생성은 Illuminate\\Filesystem\\FilesystemAdapter 로 해석되는 Laravel 디스크를 지원합니다. Flysystem 어댑터가 설치되고 구성된 local , s3 , sftp , ftp 드라이버가 이에 포함됩니다. 쓰기 가능한 스트림, 파일 이동, 디렉터리 관리 및 목록 조회, Flysystem을 통한 삭제를 제공하는 사용자 지정 어댑터도 지원됩니다. 읽기 전용 디스크와 Illuminate\\Contracts\\Filesystem\\Filesystem 만 구현한 사용자 지정 디스크는 지원되지 않습니다. Illuminate\\Filesystem\\FilesystemAdapter 로 해석되지 않는 사용자 지정 디스크는 피드 데이터베이스 쿼리가 시작되기 전에 UnsupportedStorageDiskException 으로 실패합니다. Laravel 읽기 전용 디스크는 여전히 FilesystemAdapter 로 해석되므로 피드 쿼리와 로컬 스테이징이 완료된 후 게시 쓰기 작업에서 실패합니다. GeneratorService 는 이 스토리지 오류를 FeedGenerationException 으로 감쌉니다. 경로 계약 - storage() 는 구성된 FilesystemAdapter 를 반환합니다. - storagePath() 는 선택적 분할 파일 접미사를 포함하여 스토리지 작업에 사용하는 디스크 상대 경로를 반환합니다. - path() 는 Laravel 어댑터가 해석한 경로를 반환합니다. 로컬 디스크에서는 절대 파일 시스템 경로이며 원격 디스크에서는 어댑터가 해석한 경로입니다. 게시 보장 모든 피드 부분은 게시가 시작되기 전에 완성됩니다. 로컬 디스크는 독점 애플리케이션 잠금 아래에서 파일 시스템 이동을 사용해 스테이징된 파일을 게시합니다. 이동에 실패하면 Laravel Feeds는 스테이징 백업에서 이전 파일을 모두 복원하려고 시도합니다. 원격 디스크는 게시된 객체가 변경되기 전에 Flysystem 스트림을 통해 완성된 스테이징 파일을 받습니다. 이후 게시 과정에서 각 스테이징 객체를 제 위치로 이동하며, 실패하면 동일한 롤백을 시도합니다. 원격 이동은 복사 후 삭제 작업으로 구현될 수 있으며 최종 일관성만 보장될 수 있습니다. 따라서 단일 객체나 분할 피드 전체의 원자적 교체는 보장되지 않습니다. 게시 잠금은 애플리케이션 호스트에만 적용되므로 서로 다른 호스트의 생성기가 같은 피드를 동시에 게시할 수 있다면 외부 분산 잠금이 필요합니다. 관련 문서 - 생성 및 스케줄 - 요소 - 이벤트"
+    },
+    {
+        "route": "/ko/machine-learning/",
+        "title": "머신 러닝",
+        "description": "LLM 및 통합 지식 베이스와 함께 프로젝트를 사용하는 방법",
+        "keywords": [
+            "LLM",
+            "llms.txt",
+            "machine learning",
+            "knowledge base"
+        ],
+        "headings": [
+            "머신 러닝",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → 머신 러닝 LLM이 이 프로젝트의 구조와 규칙을 더 잘 이해하도록 할 수 있습니다. 이를 위해 다음 파일의 지침을 가져오십시오: llms.txt . 이 파일은 프로젝트의 컴파일된 문서를 담은 하나의 통합 Markdown 문서입니다. LLM의 지식 베이스로 사용하도록 설계되었습니다. 예를 들어 시스템 프롬프트 첨부 파일, 검색 코퍼스 또는 사용자 지정 지식 파일로 사용할 수 있습니다. URL을 저장하고 프로젝트 변경 사항을 반영할 수 있도록 주기적으로 다시 가져오십시오. 관련 문서 - 시작하기 - 기여 가이드 - MIT 라이선스"
+    },
+    {
+        "route": "/ko/performance/",
+        "title": "대규모 데이터셋 성능",
+        "description": "대규모 피드의 메모리, 데이터베이스 부하, 파일 분할, 큐 및 저장소 처리량 제어",
+        "keywords": [
+            "performance",
+            "memory",
+            "chunks",
+            "large datasets",
+            "queues"
+        ],
+        "headings": [
+            "대규모 데이터셋 성능",
+            "쿼리를 지연 상태로 유지",
+            "청크 크기 조정",
+            "출력 파일 분할",
+            "장시간 실행 피드를 큐로 이동",
+            "전체 경로 측정",
+            "관련 문서"
+        ],
+        "content": "대규모 데이터셋 성능 Laravel Feeds는 레코드를 점진적으로 기록합니다. 애플리케이션의 모든 상위 단계가 지연 평가를 유지해야 메모리 사용량을 제한할 수 있습니다. 쿼리를 지연 상태로 유지 Eloquent Builder 를 직접 반환하십시오. 생성 전에 전체 결과를 구체화하지 마십시오. 필요한 열만 선택하고 item() 에서 사용하는 관계만 미리 로드하여 N+1 쿼리를 방지하십시오. 청크 크기 조정 기본값은 1000 개 레코드입니다. 값이 작으면 모델 메모리 정점은 낮아지고 쿼리 수는 늘어납니다. 값이 크면 쿼리 오버헤드는 줄고 메모리 사용량은 늘어납니다. 프로덕션과 비슷한 행 크기로 측정하십시오. 출력 파일 분할 소비자가 여러 파일을 허용하거나 하나의 출력이 게시 및 재시도하기 어려울 때 perFile() 을 사용하십시오. 일치하는 모든 레코드를 내보내야 한다면 maxFiles() 의 기본값 0 을 유지하십시오. perFile() 과 maxFiles() 가 모두 0보다 크면 Laravel Feeds는 두 값의 곱만큼만 내보내고 이후 레코드가 제외되었다는 알림 없이 성공적으로 완료됩니다. 이 레코드 제한이 의도된 경우에만 maxFiles() 를 설정하십시오. 장시간 실행 피드를 큐로 이동 큐 모드는 생성을 콘솔 명령 밖으로 옮기지만 피드의 메모리 사용량을 줄이지는 않습니다. 비동기 연결과 적절한 시간 및 메모리 제한의 워커를 사용하고, 고유성 TTL을 예상 생성 시간보다 길게 설정하십시오. 전체 경로 측정 데이터베이스 시간, 모델 hydration, 변환, 직렬화 및 저장소 게시를 따로 측정하십시오. 생성이 빨라도 원격 디스크 게시가 가장 큰 비용일 수 있습니다. 관련 문서 - Eloquent 청크 크기 - 생성 큐 - 저장소 게시 보장"
+    },
+    {
+        "route": "/ko/presets/",
+        "title": "프리셋",
+        "description": "기본 제공 프리셋(Instagram, Yandex, Sitemap, RSS)으로 피드를 빠르게 생성",
+        "keywords": [
+            "presets",
+            "Instagram",
+            "Yandex",
+            "Sitemap",
+            "RSS"
+        ],
+        "headings": [
+            "프리셋",
+            "기본값",
+            "Instagram",
+            "Yandex",
+            "사이트맵",
+            "RSS",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → 프리셋 기본 제공 프리셋을 사용하여 피드를 빠르게 만들 수 있습니다. - DragonCode\\LaravelFeed\\Presets\\InstagramFeedPreset - DragonCode\\LaravelFeed\\Presets\\YandexFeedPreset - DragonCode\\LaravelFeed\\Presets\\SitemapFeedPreset - DragonCode\\LaravelFeed\\Presets\\RssFeedPreset 피드 클래스를 직접 만들거나 php artisan make:feed 콘솔 명령으로 생성한 다음 필요한 프리셋을 확장하십시오. 예: 그런 다음 필수 메서드인 builder 와 item 을 구현하십시오. 예: 기술적으로 프리셋 클래스는 정보 블록과 항목을 구성하는 방식 등 대상 서비스에 맞는 로직을 포함한다는 점을 제외하면 기본 Feed 클래스와 같습니다. 기본값 Instagram class InstagramFeedItem extends FeedItem Yandex class YandexFeedItem extends FeedItem 사이트맵 class SitemapFeedItem extends FeedItem RSS class RssFeedItem extends FeedItem 관련 문서 - Instagram 레시피 - Yandex 레시피 - 사이트맵 레시피"
+    },
+    {
+        "route": "/ko/receipt-instagram/",
+        "title": "Instagram",
+        "description": "Instagram용 피드 생성 레시피",
+        "keywords": [
+            "Instagram",
+            "product feed",
+            "recipe",
+            "XML"
+        ],
+        "headings": [
+            "Instagram",
+            "파일 생성",
+            "피드 채우기",
+            "활성화",
+            "피드 생성",
+            "결과",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → Instagram 파일 생성 피드 채우기 생성된 클래스에서 extends Feed 를 extends InstagramFeedPreset 으로 바꾸십시오. 활성화 생성된 operation 또는 마이그레이션 파일을 검토한 다음 적절한 콘솔 명령을 실행하십시오. 피드 생성 다음 콘솔 명령을 실행하여 피드를 생성하십시오. 결과 관련 문서 - 프리셋 - Yandex 레시피 - RSS Atom 레시피"
+    },
+    {
+        "route": "/ko/receipt-rss-atom/",
+        "title": "RSS Atom",
+        "description": "RSS Atom용 피드 생성 레시피",
+        "keywords": [
+            "RSS",
+            "Atom",
+            "recipe",
+            "XML"
+        ],
+        "headings": [
+            "RSS Atom",
+            "파일 생성",
+            "피드 채우기",
+            "활성화",
+            "피드 생성",
+            "결과",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → RSS Atom 파일 생성 피드 채우기 생성된 클래스에서 extends Feed 를 extends RssFeedPreset 으로 바꾸십시오. 활성화 생성된 operation 또는 마이그레이션 파일을 검토한 다음 적절한 콘솔 명령을 실행하십시오. 피드 생성 다음 콘솔 명령을 실행하여 피드를 생성하십시오. 결과 관련 문서 - 프리셋 - 사이트맵 레시피 - Instagram 레시피"
+    },
+    {
+        "route": "/ko/receipt-sitemap/",
+        "title": "사이트맵",
+        "description": "제품 사이트맵 피드를 만드는 단계별 가이드",
+        "keywords": [
+            "Sitemap",
+            "recipe",
+            "SEO",
+            "XML"
+        ],
+        "headings": [
+            "사이트맵",
+            "파일 생성",
+            "피드 채우기",
+            "활성화",
+            "링크",
+            "피드 생성",
+            "루트 sitemap.xml에 링크 추가",
+            "결과",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → 사이트맵 이 레시피에서는 Laravel Feeds로 제품 사이트맵 피드를 만드는 과정을 설명합니다. 다음 작업을 수행합니다. - 필요한 클래스를 생성합니다. - 피드 로직을 구현합니다. - 파일 시스템을 통해 파일을 공개합니다. - 필요하면 루트 sitemap.xml 파일에서 생성된 사이트맵을 참조합니다. 파일 생성 다음 콘솔 명령으로 피드와 항목 클래스를 생성하십시오. 피드 채우기 생성된 클래스에서 extends Feed 를 extends SitemapFeedPreset 으로 바꾸십시오. FeedItem 클래스에서 사용할 수 있는 메서드: - url - 필수로 지정해야 합니다. - modifiedAt - 기본값은 $model- updated_at 입니다. - priority - 기본값은 0.9 입니다. 활성화 생성된 operation 또는 마이그레이션 파일을 검토한 다음 적절한 콘솔 명령을 실행하십시오. 링크 config/filesystems.php 구성 파일에 사이트맵이 있는 디렉터리를 가리키는 파일 시스템 디스크를 추가하십시오. 그런 다음 브라우저에서 파일에 접근할 수 있도록 공개 심볼릭 링크를 만드십시오. 피드 생성 다음 콘솔 명령을 실행하여 피드를 생성하십시오. 루트 sitemap.xml에 링크 추가 다른 사이트맵을 참조하는 루트 sitemap.xml 파일을 관리한다면 다음과 같은 항목을 추가하십시오. 결과 제품용으로 생성된 sitemap.xml은 다음과 같습니다. 관련 문서 - 프리셋 - Yandex 레시피 - RSS Atom 레시피"
+    },
+    {
+        "route": "/ko/receipt-yandex/",
+        "title": "Yandex",
+        "description": "Yandex용 피드 생성 레시피",
+        "keywords": [
+            "Yandex",
+            "marketplace",
+            "recipe",
+            "XML"
+        ],
+        "headings": [
+            "Yandex",
+            "파일 생성",
+            "피드 채우기",
+            "사용자 지정 카테고리 구조",
+            "활성화",
+            "피드 생성",
+            "결과",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → Yandex 파일 생성 피드 채우기 생성된 클래스에서 extends Feed 를 extends YandexFeedPreset 으로 바꾸십시오. 사용자 지정 카테고리 구조 기본적으로 category() 는 ID와 이름으로 카테고리를 만듭니다. 추가 속성이나 다른 구조가 필요하면 rawCategory() 를 사용하십시오. 배열은 변경 없이 피드에 추가됩니다. categories() 메서드는 두 형식을 모두 받습니다. 문자열 값은 category() 로, 배열 값은 rawCategory() 로 전달합니다. 사용자 지정 카테고리 배열은 검증되거나 변환되지 않습니다. 지원되는 XML 디렉티브를 사용하여 구성하십시오. 활성화 생성된 operation 또는 마이그레이션 파일을 검토한 다음 적절한 콘솔 명령을 실행하십시오. 피드 생성 다음 콘솔 명령을 실행하여 피드를 생성하십시오. 결과 관련 문서 - 프리셋 - 디렉티브 - 사이트맵 레시피"
+    },
+    {
+        "route": "/ko/supported-formats/",
+        "title": "지원 형식",
+        "description": "지원되는 피드 내보내기 형식 목록",
+        "keywords": [
+            "XML",
+            "JSON",
+            "JSONL",
+            "CSV",
+            "RSS"
+        ],
+        "headings": [
+            "지원 형식",
+            "관련 문서"
+        ],
+        "content": "← 이전 · README로 돌아가기 · 다음 → 지원 형식 - xml — XML 형식으로 피드를 생성합니다. - json — JSON 형식으로 피드를 생성합니다. - jsonl — JSON Lines 형식으로 피드를 생성합니다. - csv — CSV 형식으로 피드를 생성합니다. - rss — RSS Atom 형식으로 피드를 생성합니다. 기본값은 xml 형식입니다. 관련 문서 - 요소 - 디렉티브 - 피드 생성"
+    },
+    {
+        "route": "/ko/troubleshooting/",
+        "title": "문제 해결",
+        "description": "Laravel Feeds 구성, 생성, 저장소, 큐 및 출력 오류 진단",
+        "keywords": [
+            "troubleshooting",
+            "errors",
+            "queue",
+            "storage",
+            "diagnostics"
+        ],
+        "headings": [
+            "문제 해결",
+            "피드 클래스를 찾을 수 없음",
+            "생성에 너무 많은 메모리 사용",
+            "큐 작업이 실행되지 않음",
+            "저장소 디스크가 거부됨",
+            "XML 생성 실패",
+            "첫 항목 이후 CSV 행 실패",
+            "게시된 파일이 불완전하거나 오래됨",
+            "관련 문서"
+        ],
+        "content": "문제 해결 등록, 쿼리, 변환, 저장소 또는 전달 중 처음 실패한 경계부터 확인하십시오. 원래 예외에는 피드 클래스와 출력 맥락이 있으므로 유지하십시오. 피드 클래스를 찾을 수 없음 등록 정보에 전체 클래스 이름이 있는지, Composer 오토로딩이 해석할 수 있는지, 클래스가 DragonCode\\LaravelFeed\\Feeds\\Feed 또는 프리셋을 확장하는지 확인하십시오. 클래스를 이동한 후 composer dump-autoload 를 실행하십시오. 생성에 너무 많은 메모리 사용 - builder() 에서 Eloquent Builder 를 반환하십시오. - 전체 데이터셋에 get() , all() 또는 toArray() 를 호출하지 마십시오. - chunkSize() 를 낮추고 다시 측정하십시오. - perFile() 로 대규모 출력을 분할하십시오. - 피드 자체가 스트리밍을 유지한 다음 비동기 큐로 작업을 옮기십시오. 성능을 참고하십시오. 큐 작업이 실행되지 않음 FEED_QUEUE_CONNECTION , FEED_QUEUE_NAME 및 워커 명령을 확인하십시오. sync 연결은 즉시 실행되므로 비동기 전달을 검증하지 않습니다. 고유성 잠금은 FEED_QUEUE_UNIQUE_TTL 이 만료될 때까지 같은 피드의 다른 작업을 막을 수 있습니다. 저장소 디스크가 거부됨 디스크는 Illuminate\\Filesystem\\FilesystemAdapter 로 해석되어야 하며 쓰기 스트림, 이동, 디렉터리 관리, 목록 및 삭제를 지원해야 합니다. 사용자 지정 구현이 FilesystemAdapter 가 아니면 데이터베이스 쿼리 전에 UnsupportedStorageDiskException 으로 실패합니다. Laravel 읽기 전용 디스크는 이 타입 검사를 통과합니다. 쓰기는 피드 쿼리와 로컬 스테이징이 완료된 뒤 게시 중에 실패하며, GeneratorService 는 스토리지 오류를 FeedGenerationException 으로 감쌉니다. XML 생성 실패 @mixed 로 전달한 원시 XML을 검증하고 CDATA 내용이 유효한지 확인하십시오. 디렉티브 값은 문서화된 스칼라 또는 배열 계약을 따라야 합니다. 원시 XML이 꼭 필요하지 않다면 일반 이스케이프 값을 사용하십시오. 첫 항목 이후 CSV 행 실패 CSV는 출력 스키마에서 열을 확정합니다. 모든 항목이 같은 키를 만들어야 합니다. 선택적 값은 열을 제거하지 않고 빈 열로 유지합니다. 게시된 파일이 불완전하거나 오래됨 원래 저장소 예외와 디스크 권한을 확인하십시오. 원격 디스크에서는 eventual consistency와 비원자적 복사-삭제 이동을 고려하십시오. 여러 호스트에서 같은 대상을 게시할 수 있다면 외부 분산 잠금이 필요합니다. 관련 문서 - 이벤트 및 예외 - 저장 위치 - 자주 묻는 질문"
+    },
+    {
+        "route": "/ko/upgrade-guide/",
+        "title": "업그레이드 가이드",
+        "description": "지원되는 1.x 릴리스 범위에서 Laravel Feeds를 안전하게 업그레이드하는 절차",
+        "keywords": [
+            "upgrade",
+            "Composer",
+            "migration",
+            "rollback",
+            "compatibility"
+        ],
+        "headings": [
+            "업그레이드 가이드",
+            "업그레이드 전",
+            "업데이트 적용",
+            "검증",
+            "롤백",
+            "관련 문서"
+        ],
+        "content": "업그레이드 가이드 현재 문서는 1.x 릴리스 계열을 다룹니다. 업데이트 전에 패키지 릴리스 노트와 의존성 잠금 파일을 검토하십시오. 업그레이드 전 1. 대상 버전이 애플리케이션의 PHP 및 Laravel 버전을 지원하는지 확인하십시오. 2. composer.lock 과 현재 게시된 config/feeds.php 를 커밋하십시오. 3. 활성 피드 등록과 생성 파일 위치를 기록하십시오. 4. 애플리케이션의 피드 생성 테스트를 실행하거나 프로덕션 외부에서 대표 피드를 생성하십시오. 업데이트 적용 설치된 패키지의 config/feeds.php 와 애플리케이션의 게시된 파일을 비교하고 새 키를 직접 병합하십시오. --force 로 다시 게시하지 마십시오. 애플리케이션별 값이 덮어써집니다. 검증 - 사용 중인 각 형식의 피드를 하나씩 생성하십시오. - 분할 파일 수와 파일 이름을 확인하십시오. - 예약 생성과 큐 생성을 확인하십시오. - 사용자 지정 피드 모델, 트랜스포머, 매크로 및 프리셋 하위 클래스를 확인하십시오. - 대표 출력을 이전 버전과 비교하십시오. 롤백 이전 composer.lock 과 구성을 복원하고 composer install 을 실행한 다음 애플리케이션의 마이그레이션 롤백 정책을 적용하십시오. 생성 파일은 배포 산출물이므로 저장소 복구 계획에 따라 복원하거나 다시 생성하십시오. 관련 문서 - 호환성 - 구성 참조 - 기여 가이드"
+    }
+]

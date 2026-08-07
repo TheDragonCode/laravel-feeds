@@ -1,0 +1,49 @@
+---
+title: "升级指南"
+description: "在支持的 1.x 发布系列中安全升级 Laravel Feeds 的流程"
+type: project
+status: stable
+since: "1.0"
+keywords: ["upgrade", "Composer", "migration", "rollback", "compatibility"]
+---
+
+# 升级指南
+
+<PageLead>
+当前文档涵盖 `1.x` 发布系列。每次更新前，请查看软件包发布说明和依赖锁文件。
+</PageLead>
+
+## 升级前 {/* #before-upgrading */}
+
+1. 确认目标版本支持应用的 PHP 和 Laravel 版本。
+2. 提交 `composer.lock` 和当前发布的 `config/feeds.php`。
+3. 记录已启用的 Feed 注册项和生成文件目标位置。
+4. 运行应用的 Feed 生成测试，或在非生产环境中生成有代表性的 Feed。
+
+## 应用更新 {/* #apply-update */}
+
+```bash
+composer update dragon-code/laravel-feeds --with-all-dependencies
+php artisan migrate
+```
+
+将已安装软件包的 `config/feeds.php` 与应用发布的副本进行比较，并手动合并新键。不要使用 `--force` 重新发布，因为它会覆盖应用专用值。
+
+## 验证 {/* #verify */}
+
+- 为每种已用格式生成一个 Feed。
+- 验证拆分文件的数量和文件名。
+- 确认计划和队列生成正常。
+- 确认自定义 Feed 模型、转换器、宏和预设子类正常。
+- 将代表性输出与以前版本进行比较。
+
+## 回滚 {/* #rollback */}
+
+恢复以前的 `composer.lock` 和配置，运行 `composer install`，并应用该应用的迁移回滚策略。生成文件是部署产物；请根据存储恢复计划还原或重新生成它们。
+
+## 另请参阅
+
+- [兼容性](./compatibility.mdx)
+- [配置参考](./api/configuration.mdx)
+- [贡献指南](./contributions.mdx)
+

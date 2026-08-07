@@ -1,28 +1,97 @@
 ---
 title: "시작하기"
-description: "설치와 사용법으로 빠르게 이동할 수 있는 Laravel Feeds 개요"
-slug: /
+description: "Laravel Feeds를 설치하고 5분 안에 첫 번째 피드 생성"
+slug: /introduction/
+type: guide
+status: stable
+since: "1.0"
+keywords: ["getting started", "Laravel", "feeds", "quick start"]
 ---
-
-[README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./installation.mdx)
 
 # 시작하기
 
-## 📃 Laravel Feeds
+<PageLead>
+패키지를 설치하고 Eloquent 쿼리와 항목 구조를 정의한 다음 피드 파일을 생성합니다. 기존 Laravel 애플리케이션에서 첫 번째 내보내기는 약 5분이면 완성할 수 있습니다.
+</PageLead>
 
-대량의 데이터를 마켓플레이스와 기타 소비자용 피드로 쉽고 빠르게 내보낼 수 있습니다.
+## 요구 사항 {/* #prerequisites */}
 
-- [설치 및 설정](./installation.mdx)
+- PHP `8.2` 또는 Composer가 허용하는 최신 `8.x` 버전
+- Laravel `11.x`, `12.x` 또는 `13.x`
+- 구성된 데이터베이스와 파일시스템 디스크
+
+## 설치 및 준비 {/* #install-and-prepare */}
+
+```bash
+composer require dragon-code/laravel-feeds
+php artisan vendor:publish --tag="feeds"
+php artisan migrate
+php artisan make:feed User --item
+```
+
+생성기는 피드 클래스와 항목 클래스를 만듭니다. 피드를 등록하는 데이터베이스 변경 사항도 생성합니다. 앞의 `migrate` 명령 이후에 생성되었다면 첫 생성 전에 해당 마이그레이션을 실행하십시오.
+
+## 데이터 소스 정의 {/* #define-the-data-source */}
+
+레코드를 청크 단위로 읽을 수 있도록 Eloquent Builder를 직접 반환하십시오.
+
+```php source="docs/snippets/create-feeds-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+## 각 항목 정의 {/* #define-each-item */}
+
+```php source="docs/snippets/generation-feed-item.php" lines="5-"
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+## 파일 생성 {/* #generate-the-file */}
+
+```bash
+php artisan feed:generate
+```
+
+명령은 각 피드의 상태를 표시하며, 일반 콘솔 출력에는 생성된 파일 경로가 포함되지 않습니다. 피드 클래스는 기본적으로 XML 형식과 `public` 디스크를 사용합니다. 두 값 모두 피드 클래스에서 변경하십시오.
+
+## 다음 단계 {/* #next-steps */}
+
+- [설치 및 구성](./installation.mdx)
 - [피드 생성](./create-feeds.mdx)
-
-## 사용법
-
 - [생성 및 스케줄](./generation.mdx)
-- [요소](./elements.mdx)
-- [머신 러닝](./machine-learning.mdx)
-
-## 관련 문서
-
-- [설치 및 설정](./installation.mdx)
-- [피드 생성](./create-feeds.mdx)
-- [생성 및 스케줄](./generation.mdx)
+- [지원 형식](./supported-formats.mdx)

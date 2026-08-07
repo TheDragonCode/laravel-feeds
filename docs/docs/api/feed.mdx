@@ -1,0 +1,85 @@
+---
+title: "Feeds and data"
+description: "Public contracts for Feed, FeedItem, FeedInfo, ElementData, and generation results"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+---
+
+# Feeds and data
+
+<PageLead>
+The core API separates the data source, item mapping, feed-level metadata, output structure, and generation result.
+</PageLead>
+
+## Feed {/* #feed */}
+
+`DragonCode\LaravelFeed\Feeds\Feed` is the base class for an export. Implement `builder()` and override only the output hooks your feed needs.
+
+<ApiSignature>abstract public function builder(): Builder</ApiSignature>
+
+| Method | Default | Contract |
+| --- | --- | --- |
+| `builder(): Builder` | Abstract | Returns the Eloquent query used as the data source. |
+| `item(Model $model): FeedItem` | New base `FeedItem` | Maps one model to an output item. |
+| `transformers(): array` | `[]` | Prepends transformer class names for this feed. |
+| `chunkSize(): int` | `1000` | Database query chunk size. |
+| `perFile(): int` | `0` | Records per file. Zero disables splitting by count. |
+| `maxFiles(): int` | `0` | Maximum number of output files. Zero means no limit. |
+| `header(): string` | XML declaration for XML/RSS | Content written before the root and items. |
+| `footer(): string` | Empty string | Content written after the root and items. |
+| `root(): ElementData` | Class-derived element name | Defines the root element and attributes. |
+| `info(): FeedInfo` | Empty `FeedInfo` | Defines feed-level information. |
+| `filename(): string` | Class-derived filename | Returns the disk-relative output filename. |
+| `path($suffix): string` | Adapter-resolved path | Returns a local or adapter-resolved path. |
+| `storagePath($suffix): string` | Disk-relative filename | Returns the path used for storage operations. |
+| `storage(): FilesystemAdapter` | `public` disk | Resolves and validates the Laravel filesystem disk. |
+| `format(): FeedFormatEnum` | `Xml` | Returns the configured output format. |
+
+`Feed` uses Laravel `Conditionable` and `Macroable`.
+
+## FeedItem and FeedInfo {/* #feed-item-and-feed-info */}
+
+`FeedItem` receives the current Eloquent model. Its defaults are:
+
+- `name()` returns the model class basename in kebab case;
+- `attributes()` returns an empty array;
+- `toArray()` returns the model array.
+
+`FeedInfo::toArray()` returns an empty array. Both classes use `Conditionable` and `Macroable`; extend them when the output needs an explicit schema.
+
+## ElementData {/* #element-data */}
+
+`ElementData` is a readonly object with three constructor properties:
+
+| Property | Type | Default |
+| --- | --- | --- |
+| `name` | `?string` | `null` |
+| `attributes` | `array` | `[]` |
+| `beforeInfo` | `bool` | `true` |
+
+Set `name` to `null` or an empty string to suppress the root element. Set `beforeInfo` to `false` to write feed information before the root.
+
+## Generation result {/* #generation-result */}
+
+`GeneratorService::feed()` returns `GenerationResultData`. Its readonly `paths` property contains published files in output order. Its readonly `records` property maps each path to the number of records written to that file.
+
+Programmatic generation and registration methods are listed in [runtime services and contracts](./runtime.mdx).
+
+## FeedFormatEnum {/* #feed-format-enum */}
+
+| Case | Value |
+| --- | --- |
+| `Xml` | `xml` |
+| `Json` | `json` |
+| `JsonLines` | `jsonl` |
+| `Csv` | `csv` |
+| `Rss` | `rss` |
+
+## See Also
+
+- [Create feeds](../create-feeds.mdx)
+- [Elements](../elements.mdx)
+- [Location](../location.mdx)
+- [Runtime services and contracts](./runtime.mdx)

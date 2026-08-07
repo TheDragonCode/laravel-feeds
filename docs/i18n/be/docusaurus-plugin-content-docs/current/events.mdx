@@ -1,6 +1,10 @@
 ---
 title: "Падзеі"
 description: "Падзеі, якія адпраўляюцца падчас генерацыі стужкі"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
 ---
 
 [← Папярэдняя](./presets.mdx) · [Назад да README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступная →](./extending-functionality.mdx)
@@ -9,7 +13,7 @@ description: "Падзеі, якія адпраўляюцца падчас ге�
 
 Падчас выканання каманды стужкі адпраўляюць дзве падзеі:
 
-- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — падзея `FeedStartingEvent` адпраўляецца непасрэдна перад стварэннем чарнавога файла.
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — падзея `FeedStartingEvent` адпраўляецца пасля папярэдняй праверкі сховішча і шляху, перад вызначэннем канвертара і падрыхтоўкай файлаў. Гэта не азначае, што чарнавы файл ужо існуе.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — падзея `FeedFinishedEvent` адпраўляецца пасля паспяховай публікацыі ўсіх згенераваных файлаў. Калі генерацыя завяршылася памылкай, гэта падзея не адпраўляецца.
 
 ## Кантракт падзеі завяршэння {/* #finished_event_contract */}

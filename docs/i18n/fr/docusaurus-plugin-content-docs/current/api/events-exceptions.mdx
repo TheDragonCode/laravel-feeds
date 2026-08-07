@@ -1,0 +1,57 @@
+---
+title: "Événements et exceptions"
+description: "Référence des événements du cycle de génération et des types d’exception publics"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+---
+
+# Événements et exceptions
+
+<PageLead>
+Utilisez les événements du cycle de vie pour intégrer l’application et les types d’exception pour récupérer à la limite capable de traiter l’échec.
+</PageLead>
+
+## Événements du cycle de vie {/* #lifecycle-events */}
+
+| Événement | Données publiques | Moment d’émission |
+| --- | --- | --- |
+| `FeedStartingEvent` | `feed` | Après la vérification préalable du stockage et du chemin, avant la résolution du convertisseur et la préparation. |
+| `FeedFinishedEvent` | `feed`, `path`, `paths` | Après la publication réussie de tous les fichiers générés. |
+
+`FeedFinishedEvent::$paths` contient tous les chemins publiés dans l’ordre. `$path` est conservé pour la compatibilité et contient toujours le premier chemin.
+
+## Échecs de saisie et de recherche {/* #input-and-lookup-failures */}
+
+| Exception | Signification |
+| --- | --- |
+| `InvalidFeedArgumentException` | L’identifiant de flux transmis en console est invalide. |
+| `FeedNotFoundException` | Aucun enregistrement n’existe pour l’identifiant demandé. |
+| `InvalidExpressionException` | Une expression de planification est invalide. |
+| `UnknownFeedClassException` | Une classe de flux configurée ne peut pas être résolue. |
+| `UnexpectedClassException` | Une classe résolue ne respecte pas le contrat attendu. |
+
+## Échecs de sérialisation et de stockage {/* #serialization-and-storage-failures */}
+
+| Exception | Signification |
+| --- | --- |
+| `InvalidCsvRowException` | Une ligne CSV ne respecte pas le schéma de colonnes établi. |
+| `InvalidCsvValueException` | Un champ CSV ne peut pas être sérialisé comme valeur scalaire. |
+| `InvalidXmlCDataException` | Une valeur CDATA est invalide. |
+| `InvalidXmlFragmentException` | Un fragment XML brut est invalide. |
+| `UnsupportedStorageDiskException` | Le disque Laravel choisi ne se résout pas en `FilesystemAdapter`. |
+| `OpenFeedException` | Une ressource de sortie provisoire ne peut pas être ouverte. |
+| `WriteFeedException` | La sortie complète ne peut pas être écrite. |
+| `CloseFeedException` | La ressource de sortie ne peut pas être fermée. |
+| `ResourceMetaException` | Les métadonnées requises du flux ne sont pas disponibles. |
+| `FeedGenerationException` | La génération a échoué pour une classe de flux donnée. |
+
+N’interceptez les exceptions que lorsque l’application peut ajouter une récupération ou un contexte utile. Laissez Laravel signaler les échecs de génération irrécupérables.
+
+## Voir aussi
+
+- [Guide des événements](../events.mdx)
+- [Dépannage](../troubleshooting.mdx)
+- [Garanties de stockage](../location.mdx#publication_guarantees)
+

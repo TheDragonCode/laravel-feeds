@@ -3,20 +3,28 @@
     "message": "1.x",
     "description": "Метка текущей версии"
   },
-  "sidebar.docs.category.Getting Started": {
-    "message": "Начало работы",
-    "description": "Метка категории «Начало работы» на боковой панели «docs»"
-  },
-  "sidebar.docs.category.Digging Deeper": {
-    "message": "Подробное руководство",
-    "description": "Метка категории «Подробное руководство» на боковой панели «docs»"
-  },
-  "sidebar.docs.category.Recipes": {
-    "message": "Рецепты",
-    "description": "Метка категории «Рецепты» на боковой панели «docs»"
-  },
   "sidebar.docs.category.Project": {
     "message": "Проект",
     "description": "Метка категории «Проект» на боковой панели «docs»"
+  },
+  "sidebar.docs.category.Quick Start": {
+    "message": "Быстрый старт",
+    "description": "Метка категории «Быстрый старт» на боковой панели «docs»"
+  },
+  "sidebar.docs.category.Guides": {
+    "message": "Руководства",
+    "description": "Метка категории «Руководства» на боковой панели «docs»"
+  },
+  "sidebar.docs.category.Formats & Recipes": {
+    "message": "Форматы и рецепты",
+    "description": "Метка категории «Форматы и рецепты» на боковой панели «docs»"
+  },
+  "sidebar.docs.category.API Reference": {
+    "message": "Справочник API",
+    "description": "Метка категории «Справочник API» на боковой панели «docs»"
+  },
+  "sidebar.docs.category.Troubleshooting": {
+    "message": "Решение проблем",
+    "description": "Метка категории «Решение проблем» на боковой панели «docs»"
   }
 }

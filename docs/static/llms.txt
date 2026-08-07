@@ -9,24 +9,91 @@ Documentation: https://feeds.dragon-code.pro
 
 # Getting started
 
-## 📃 Laravel Feeds
+<PageLead>
+Install the package, define an Eloquent query and item shape, then generate a feed file. The first working export takes about five minutes in an existing Laravel application.
+</PageLead>
 
-An easy and fast way to export large amounts of data to feeds for marketplaces and other consumers.
+## Prerequisites
 
-- [Installation & setup](https://feeds.dragon-code.pro/installation/)
+- PHP `8.2` or a later `8.x` release accepted by Composer
+- Laravel `11.x`, `12.x`, or `13.x`
+- A configured database and filesystem disk
+
+## Install and prepare
+
+```bash
+composer require dragon-code/laravel-feeds
+php artisan vendor:publish --tag="feeds"
+php artisan migrate
+php artisan make:feed User --item
+```
+
+The generator creates the feed and item classes. It also creates the database change that registers the feed. Run that generated migration before the first generation if it was created after the earlier `migrate` command.
+
+## Define the data source
+
+Use an Eloquent builder so records can be read in chunks.
+
+```php
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+## Define each item
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+## Generate the file
+
+```bash
+php artisan feed:generate
+```
+
+The command reports the status of each feed; normal console output does not include generated file paths. Feed classes use XML and the `public` disk by default. Change either value in the feed class.
+
+## Next steps
+
+- [Installation and configuration](https://feeds.dragon-code.pro/installation/)
 - [Create feeds](https://feeds.dragon-code.pro/create-feeds/)
-
-## Usage
-
-- [Generation & schedule](https://feeds.dragon-code.pro/generation/)
-- [Elements](https://feeds.dragon-code.pro/elements/)
-- [Machine Learning](https://feeds.dragon-code.pro/machine-learning/)
-
-## See Also
-
-- [Installation & setup](https://feeds.dragon-code.pro/installation/)
-- [Create feeds](https://feeds.dragon-code.pro/create-feeds/)
-- [Generation & schedule](https://feeds.dragon-code.pro/generation/)
+- [Generation and schedule](https://feeds.dragon-code.pro/generation/)
+- [Supported formats](https://feeds.dragon-code.pro/supported-formats/)
 
 ---
 
@@ -236,6 +303,67 @@ class UserFeed extends Feed
 - [Generation & schedule](https://feeds.dragon-code.pro/generation/)
 - [Supported formats](https://feeds.dragon-code.pro/supported-formats/)
 - [Presets](https://feeds.dragon-code.pro/presets/)
+
+---
+
+# Large dataset performance
+
+<PageLead>
+Laravel Feeds is designed to write records incrementally. Memory stays bounded only when the application keeps every upstream step lazy.
+</PageLead>
+
+## Keep the query lazy
+
+Return an Eloquent `Builder` directly:
+
+```php
+public function builder(): Builder
+{
+    return Product::query()
+        ->select(['id', 'title', 'updated_at'])
+        ->where('is_exportable', true);
+}
+```
+
+Do not materialize the complete result before generation. Select only required columns and eager-load only relationships used by `item()` to avoid N+1 queries.
+
+## Tune chunk size
+
+The default is `1000` records. Lower values reduce peak model memory and increase query count. Higher values reduce query overhead and increase memory. Measure with production-like row sizes.
+
+```php
+public function chunkSize(): int
+{
+    return 500;
+}
+```
+
+## Split output files
+
+Use `perFile()` when consumers accept multiple files or one output would become difficult to publish and retry.
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+Leave `maxFiles()` at its default `0` when every matching record must be exported. When both `perFile()` and `maxFiles()` are greater than zero, Laravel Feeds exports at most their product and completes successfully without reporting that later records were omitted. Set `maxFiles()` only when that record cap is intentional.
+
+## Queue long-running feeds
+
+Queue mode moves generation out of the console request, but it does not reduce the memory used by a feed. Use an asynchronous connection, run workers with suitable timeout and memory limits, and keep the uniqueness TTL longer than the expected generation time.
+
+## Measure the whole path
+
+Measure database time, model hydration, transformation, serialization, and storage publication separately. Remote disks can make publication the dominant cost even when generation is fast.
+
+## See Also
+
+- [Eloquent chunk size](https://feeds.dragon-code.pro/eloquent/#chunk_size)
+- [Generation queues](https://feeds.dragon-code.pro/generation/#queue)
+- [Storage publication guarantees](https://feeds.dragon-code.pro/location/#publication_guarantees)
 
 ---
 
@@ -1227,7 +1355,7 @@ class UserFeed extends Feed
 Feed generation supports Laravel disks that resolve to `Illuminate\Filesystem\FilesystemAdapter`. This includes the `local`, `s3`, `sftp`, and `ftp` drivers when their Flysystem adapters are installed and configured. Custom adapters are supported when they provide writable streams, file moves, directory management and listings, and deletion through Flysystem.
 
 :::warning
-Read-only disks and custom disks that implement only `Illuminate\Contracts\Filesystem\Filesystem` are not supported. An incompatible disk fails before the feed database query starts with an `UnsupportedStorageDiskException`.
+Read-only disks and custom disks that implement only `Illuminate\Contracts\Filesystem\Filesystem` are not supported. A custom disk that does not resolve to `Illuminate\Filesystem\FilesystemAdapter` fails before the feed database query starts with `UnsupportedStorageDiskException`. A Laravel read-only disk still resolves to `FilesystemAdapter`, so the feed query and local staging finish before the publication write fails. `GeneratorService` wraps that storage failure in `FeedGenerationException`.
 :::
 
 ## Path contract
@@ -1857,7 +1985,7 @@ class RssFeedItem extends FeedItem
 
 Feeds dispatch two events when running the command:
 
-- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — The `FeedStartingEvent` is dispatched immediately before the draft file is created.
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — The `FeedStartingEvent` is dispatched after storage and path preflight, before converter resolution and staging. It does not mean that a draft file exists.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — The `FeedFinishedEvent` is dispatched after every generated file has been published successfully. A failed generation does not dispatch this event.
 
 ## Finished event contract
@@ -2753,6 +2881,493 @@ php artisan feed:generate
 
 ---
 
+# API reference
+
+<PageLead>
+Use this section when you already know the workflow and need an exact class, method, configuration key, event, or failure contract.
+</PageLead>
+
+| Area | Main entry points | Reference |
+| --- | --- | --- |
+| Configuration | `config/feeds.php` | [Configuration](https://feeds.dragon-code.pro/api/configuration/) |
+| Feed classes | `Feed`, `FeedItem`, `FeedInfo` | [Feeds and data](https://feeds.dragon-code.pro/api/feed/) |
+| Output structure | `ElementData`, XML directives | [Elements](https://feeds.dragon-code.pro/elements/), [Directives](https://feeds.dragon-code.pro/directives/) |
+| Formats | `FeedFormatEnum`, converters | [Supported formats](https://feeds.dragon-code.pro/supported-formats/) |
+| Runtime | `GeneratorService`, `FeedQuery`, `ScheduleFeedHelper` | [Runtime services and contracts](https://feeds.dragon-code.pro/api/runtime/) |
+| Lifecycle | Starting and finished events | [Events and exceptions](https://feeds.dragon-code.pro/api/events-exceptions/) |
+| Presets | Sitemap, RSS, Instagram, Yandex | [Presets](https://feeds.dragon-code.pro/presets/) |
+
+## Extension points
+
+- Extend `Feed` or a preset to define a data source and output contract.
+- Extend `FeedItem` and `FeedInfo` to control serialized data.
+- Implement `DragonCode\LaravelFeed\Contracts\Transformer` for custom scalar conversion.
+- Return `DragonCode\LaravelFeed\Data\OptionalData` when a field should be omitted.
+- Register macros on `Feed`, `FeedItem`, or `FeedInfo` for application-level helpers.
+
+## See Also
+
+- [Create feeds](https://feeds.dragon-code.pro/create-feeds/)
+- [Extending functionality](https://feeds.dragon-code.pro/extending-functionality/)
+- [Troubleshooting](https://feeds.dragon-code.pro/troubleshooting/)
+
+---
+
+# Configuration reference
+
+<PageLead>
+Publish `config/feeds.php` with `php artisan vendor:publish --tag="feeds"`. Environment values are read when Laravel builds the configuration cache.
+</PageLead>
+
+## Core settings
+
+| Key | Default | Purpose |
+| --- | --- | --- |
+| `model` | `DragonCode\LaravelFeed\Models\Feed` | Eloquent model used for feed registrations. A replacement must extend the package model. |
+| `pretty` / `FEED_PRETTY` | `false` | Enables formatted XML and JSON output. |
+| `date.format` | `DATE_ATOM` | PHP date format used by the date transformer. |
+| `date.timezone` / `FEED_TIMEZONE` | `UTC` | Timezone used while serializing dates. |
+| `table.connection` | `DB_CONNECTION`, then `sqlite` | Database connection for feed registrations. |
+| `table.table` / `FEED_TABLE` | `feeds` | Feed registration table name. |
+
+## Scheduling and queues
+
+| Environment variable | Default | Purpose |
+| --- | --- | --- |
+| `FEED_SCHEDULE_TTL` | `1440` | Schedule lock lifetime in minutes. |
+| `FEED_SCHEDULE_RUN_BACKGROUND` | `true` | Runs scheduled feed commands in the background. |
+| `FEED_QUEUE_ENABLED` | `false` | Dispatches generation through Laravel Queue. |
+| `FEED_QUEUE_CONNECTION` | `QUEUE_CONNECTION`, then `database` | Queue connection for feed jobs. |
+| `FEED_QUEUE_NAME` | Connection default | Queue name. |
+| `FEED_QUEUE_UNIQUE_TTL` | `3600` | Unique job lock lifetime in seconds. |
+| `FEED_CONSOLE_PROGRESS_BAR_ENABLED` | `false` | Displays the console progress bar. |
+
+Queue mode requires a worker when the selected connection is asynchronous. The `sync` connection still runs generation in the command process.
+
+## Transformers
+
+The default pipeline contains `BoolTransformer`, `DateTimeTransformer`, and `EnumTransformer` in that order. Each matching transformer receives the value returned by the previous transformer.
+
+Add a custom class to `transformers` after implementing `DragonCode\LaravelFeed\Contracts\Transformer`. Laravel resolves the class through the service container.
+
+## Converter settings
+
+| Key | Default |
+| --- | --- |
+| `converters.json.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.jsonl.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.csv.delimiter` | `;` |
+| `converters.csv.enclosure` | `"` |
+| `converters.csv.escape` | Empty string |
+| `converters.csv.line_ending` | `PHP_EOL` |
+
+## See Also
+
+- [Installation](https://feeds.dragon-code.pro/installation/)
+- [Generation and schedule](https://feeds.dragon-code.pro/generation/)
+- [Eloquent model configuration](https://feeds.dragon-code.pro/eloquent/)
+
+---
+
+# Feeds and data
+
+<PageLead>
+The core API separates the data source, item mapping, feed-level metadata, output structure, and generation result.
+</PageLead>
+
+## Feed
+
+`DragonCode\LaravelFeed\Feeds\Feed` is the base class for an export. Implement `builder()` and override only the output hooks your feed needs.
+
+<ApiSignature>abstract public function builder(): Builder</ApiSignature>
+
+| Method | Default | Contract |
+| --- | --- | --- |
+| `builder(): Builder` | Abstract | Returns the Eloquent query used as the data source. |
+| `item(Model $model): FeedItem` | New base `FeedItem` | Maps one model to an output item. |
+| `transformers(): array` | `[]` | Prepends transformer class names for this feed. |
+| `chunkSize(): int` | `1000` | Database query chunk size. |
+| `perFile(): int` | `0` | Records per file. Zero disables splitting by count. |
+| `maxFiles(): int` | `0` | Maximum number of output files. Zero means no limit. |
+| `header(): string` | XML declaration for XML/RSS | Content written before the root and items. |
+| `footer(): string` | Empty string | Content written after the root and items. |
+| `root(): ElementData` | Class-derived element name | Defines the root element and attributes. |
+| `info(): FeedInfo` | Empty `FeedInfo` | Defines feed-level information. |
+| `filename(): string` | Class-derived filename | Returns the disk-relative output filename. |
+| `path($suffix): string` | Adapter-resolved path | Returns a local or adapter-resolved path. |
+| `storagePath($suffix): string` | Disk-relative filename | Returns the path used for storage operations. |
+| `storage(): FilesystemAdapter` | `public` disk | Resolves and validates the Laravel filesystem disk. |
+| `format(): FeedFormatEnum` | `Xml` | Returns the configured output format. |
+
+`Feed` uses Laravel `Conditionable` and `Macroable`.
+
+## FeedItem and FeedInfo
+
+`FeedItem` receives the current Eloquent model. Its defaults are:
+
+- `name()` returns the model class basename in kebab case;
+- `attributes()` returns an empty array;
+- `toArray()` returns the model array.
+
+`FeedInfo::toArray()` returns an empty array. Both classes use `Conditionable` and `Macroable`; extend them when the output needs an explicit schema.
+
+## ElementData
+
+`ElementData` is a readonly object with three constructor properties:
+
+| Property | Type | Default |
+| --- | --- | --- |
+| `name` | `?string` | `null` |
+| `attributes` | `array` | `[]` |
+| `beforeInfo` | `bool` | `true` |
+
+Set `name` to `null` or an empty string to suppress the root element. Set `beforeInfo` to `false` to write feed information before the root.
+
+## Generation result
+
+`GeneratorService::feed()` returns `GenerationResultData`. Its readonly `paths` property contains published files in output order. Its readonly `records` property maps each path to the number of records written to that file.
+
+Programmatic generation and registration methods are listed in [runtime services and contracts](https://feeds.dragon-code.pro/api/runtime/).
+
+## FeedFormatEnum
+
+| Case | Value |
+| --- | --- |
+| `Xml` | `xml` |
+| `Json` | `json` |
+| `JsonLines` | `jsonl` |
+| `Csv` | `csv` |
+| `Rss` | `rss` |
+
+## See Also
+
+- [Create feeds](https://feeds.dragon-code.pro/create-feeds/)
+- [Elements](https://feeds.dragon-code.pro/elements/)
+- [Location](https://feeds.dragon-code.pro/location/)
+- [Runtime services and contracts](https://feeds.dragon-code.pro/api/runtime/)
+
+---
+
+# Runtime services and contracts
+
+<PageLead>
+These entry points support programmatic generation, feed registration, scheduler integration, scalar transformation, and optional fields.
+</PageLead>
+
+## GeneratorService
+
+`DragonCode\LaravelFeed\Services\GeneratorService` generates and publishes one feed.
+
+<ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
+
+The method publishes all parts as one operation, updates the registration's last activity, dispatches lifecycle events, and returns paths with per-file record counts. Storage resolution and output path lookup happen before generation starts; exceptions raised during this preflight, including `UnsupportedStorageDiskException`, are thrown directly. After preflight succeeds, generation failures are wrapped in `FeedGenerationException`, with the original exception as its previous throwable.
+
+Resolve the service through Laravel's container instead of constructing its internal collaborators.
+
+```php
+use App\Feeds\UserFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+
+$result = app(GeneratorService::class)->feed(app(UserFeed::class));
+
+foreach ($result->records as $path => $count) {
+    processFeedResult($path, $count);
+}
+```
+
+## FeedQuery
+
+`DragonCode\LaravelFeed\Queries\FeedQuery` manages persisted feed registrations.
+
+| Method | Result |
+| --- | --- |
+| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Creates a registration. |
+| `find(int $id): Feed` | Returns a registration or throws `FeedNotFoundException`. |
+| `all(): Builder` | Returns all registrations ordered by ID. |
+| `active(): Builder` | Returns active registrations ordered by ID. |
+| `setLastActivity(string $class): void` | Updates `last_activity` for a feed class. |
+| `delete(int $id): void` | Soft-deletes a registration by ID. |
+| `deleteByClass(string $class): void` | Permanently removes registrations for a class, including trashed rows. |
+| `restore(int $id): void` | Restores a soft-deleted registration. |
+
+Use the generated migration or deployment operation for normal registration changes so they remain reproducible across environments.
+
+## ScheduleFeedHelper
+
+`DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper::register()` adds active registrations to Laravel's scheduler. Each registration uses its stored cron expression and an overlap lock. Background execution and lock TTL come from `feeds.schedule` configuration.
+
+Registration is skipped safely when the configured feeds table does not exist.
+
+## Transformer
+
+Implement `DragonCode\LaravelFeed\Contracts\Transformer` to convert supported values before serialization.
+
+<ApiSignature>public function allow(mixed $value): bool</ApiSignature>
+
+<ApiSignature>public function transform(mixed $value): string</ApiSignature>
+
+`allow()` decides whether the transformer accepts a value. `transform()` returns its serialized scalar representation. Add the class through `Feed::transformers()` or `feeds.transformers`.
+
+## OptionalData
+
+Return a new `DragonCode\LaravelFeed\Data\OptionalData` for a field that should be omitted when no value exists. XML, RSS, JSON, and JSON Lines omit it. CSV preserves the column and writes an empty field.
+
+## See Also
+
+- [Feeds and data](https://feeds.dragon-code.pro/api/feed/)
+- [Configuration](https://feeds.dragon-code.pro/api/configuration/)
+- [Events and exceptions](https://feeds.dragon-code.pro/api/events-exceptions/)
+- [Generation and schedule](https://feeds.dragon-code.pro/generation/)
+
+---
+
+# Events and exceptions
+
+<PageLead>
+Use lifecycle events for application integration and exception types for recovery at the boundary that can handle the failure.
+</PageLead>
+
+## Lifecycle events
+
+| Event | Public data | Dispatch point |
+| --- | --- | --- |
+| `FeedStartingEvent` | `feed` | After storage and path preflight, before converter resolution and staging. |
+| `FeedFinishedEvent` | `feed`, `path`, `paths` | After every generated file is published successfully. |
+
+`FeedFinishedEvent::$paths` contains all published paths in order. `$path` is retained for compatibility and always contains the first path.
+
+## Input and lookup failures
+
+| Exception | Meaning |
+| --- | --- |
+| `InvalidFeedArgumentException` | A console feed ID is invalid. |
+| `FeedNotFoundException` | No registration exists for the requested feed ID. |
+| `InvalidExpressionException` | A schedule expression is invalid. |
+| `UnknownFeedClassException` | A configured feed class cannot be resolved. |
+| `UnexpectedClassException` | A resolved class does not satisfy the expected contract. |
+
+## Serialization and storage failures
+
+| Exception | Meaning |
+| --- | --- |
+| `InvalidCsvRowException` | A CSV row does not match the established column schema. |
+| `InvalidCsvValueException` | A CSV field cannot be serialized as a scalar value. |
+| `InvalidXmlCDataException` | A CDATA value is invalid. |
+| `InvalidXmlFragmentException` | A raw XML fragment is invalid. |
+| `UnsupportedStorageDiskException` | The selected Laravel disk does not resolve to `FilesystemAdapter`. |
+| `OpenFeedException` | A draft output resource cannot be opened. |
+| `WriteFeedException` | The full output cannot be written. |
+| `CloseFeedException` | The output resource cannot be closed. |
+| `ResourceMetaException` | Required stream metadata is unavailable. |
+| `FeedGenerationException` | Generation failed for a specific feed class. |
+
+Catch exceptions only where the application can add recovery or user-facing context. Let Laravel report unrecoverable generation failures.
+
+## See Also
+
+- [Events guide](https://feeds.dragon-code.pro/events/)
+- [Troubleshooting](https://feeds.dragon-code.pro/troubleshooting/)
+- [Storage guarantees](https://feeds.dragon-code.pro/location/#publication_guarantees)
+
+---
+
+# Frequently asked questions
+
+<PageLead>
+Short answers to common setup, generation, storage, format, and memory questions.
+</PageLead>
+
+<details className="faqItem" id="large-datasets">
+<summary>Can Laravel Feeds export millions of records?</summary>
+
+Yes. The package reads Eloquent results in chunks and writes output incrementally. Keep `builder()` lazy, avoid calling `get()` or `toArray()` on the full result, and tune `chunkSize()` after measuring memory and database load.
+
+See [large dataset performance](https://feeds.dragon-code.pro/performance/).
+</details>
+
+<details className="faqItem" id="choose-format">
+<summary>Which format should I use?</summary>
+
+Use the consumer's required contract. XML and RSS support hierarchical directives, JSON preserves nested data, JSON Lines is suited to line-oriented processing, and CSV requires a stable column schema.
+
+See [supported formats](https://feeds.dragon-code.pro/supported-formats/).
+</details>
+
+<details className="faqItem" id="split-files">
+<summary>Can one feed create multiple files?</summary>
+
+Yes. Override `perFile()` to set the number of records per file and `maxFiles()` to set an optional cap. Split files receive sequential suffixes.
+
+See [split files](https://feeds.dragon-code.pro/elements/#split_files).
+</details>
+
+<details className="faqItem" id="remote-storage">
+<summary>Can I store feeds on S3 or another remote disk?</summary>
+
+Yes, when the configured Laravel disk resolves to a writable `FilesystemAdapter`. Remote moves may be implemented as copy and delete, so atomic replacement is not guaranteed.
+
+See [supported disks](https://feeds.dragon-code.pro/location/#supported_disks).
+</details>
+
+<details className="faqItem" id="disabled-feed">
+<summary>Why did a disabled feed run?</summary>
+
+Passing a feed ID to `feed:generate` executes that feed even when its registration is inactive. Running the command without an ID skips inactive registrations.
+
+See [single feed generation](https://feeds.dragon-code.pro/generation/#single_feed).
+</details>
+
+<details className="faqItem" id="optional-field">
+<summary>How do I omit an optional field?</summary>
+
+Return `DragonCode\LaravelFeed\Data\OptionalData` or `Spatie\LaravelData\Optional` as the field value. CSV keeps the column and writes an empty value; object and XML formats omit the field.
+
+See [optional values](https://feeds.dragon-code.pro/create-feeds/#optional_values).
+</details>
+
+## See Also
+
+- [Troubleshooting](https://feeds.dragon-code.pro/troubleshooting/)
+- [Configuration reference](https://feeds.dragon-code.pro/api/configuration/)
+- [API reference](https://feeds.dragon-code.pro/api/)
+
+---
+
+# Troubleshooting
+
+<PageLead>
+Start with the first failing boundary: registration, query, conversion, storage, or delivery. Preserve the original exception because it contains the feed class and output context.
+</PageLead>
+
+## The feed class is not found
+
+Confirm that the registration contains the full class name, Composer autoloading can resolve it, and the class extends `DragonCode\LaravelFeed\Feeds\Feed` or a preset. Run `composer dump-autoload` after moving a class.
+
+## Generation uses too much memory
+
+- Return an Eloquent `Builder` from `builder()`.
+- Do not call `get()`, `all()`, or `toArray()` on the complete dataset.
+- Lower `chunkSize()` and measure again.
+- Split large outputs with `perFile()`.
+- Move work to an asynchronous queue only after the feed itself remains streaming.
+
+See [performance](https://feeds.dragon-code.pro/performance/).
+
+## A queue job never runs
+
+Check `FEED_QUEUE_CONNECTION`, `FEED_QUEUE_NAME`, and the worker command. The `sync` connection runs immediately and does not test asynchronous delivery. A uniqueness lock can suppress another job for the same feed until `FEED_QUEUE_UNIQUE_TTL` expires.
+
+## The storage disk is rejected
+
+The disk must resolve to `Illuminate\Filesystem\FilesystemAdapter` and support writable streams, moves, directory management, listings, and deletion. A custom implementation that is not a `FilesystemAdapter` fails before the database query with `UnsupportedStorageDiskException`. A Laravel read-only disk passes that type check. Its write fails during publication, after the feed query and local staging have completed, and `GeneratorService` wraps the storage failure in `FeedGenerationException`.
+
+## XML generation fails
+
+Validate raw XML passed through `@mixed`, ensure CDATA content is valid, and keep directive values within their documented scalar or array contracts. Prefer normal escaped values unless raw XML is required.
+
+## CSV rows fail after the first item
+
+CSV establishes its columns from the output schema. Every item must produce the same keys. Optional values keep an empty column rather than removing it.
+
+## Published files are incomplete or stale
+
+Inspect the original storage exception and verify disk permissions. On remote disks, account for eventual consistency and non-atomic copy-and-delete moves. Generators on multiple hosts need an external distributed lock when they can publish the same target.
+
+## See Also
+
+- [Events and exceptions](https://feeds.dragon-code.pro/api/events-exceptions/)
+- [Location](https://feeds.dragon-code.pro/location/)
+- [Frequently asked questions](https://feeds.dragon-code.pro/faq/)
+
+---
+
+# Upgrade guide
+
+<PageLead>
+The documentation currently covers the `1.x` release line. Review the package release notes and your dependency lock before each update.
+</PageLead>
+
+## Before upgrading
+
+1. Confirm that the target version supports the application's PHP and Laravel versions.
+2. Commit `composer.lock` and the current published `config/feeds.php`.
+3. Record active feed registrations and generated-file destinations.
+4. Run the application's feed generation tests or generate representative feeds in a non-production environment.
+
+## Apply the update
+
+```bash
+composer update dragon-code/laravel-feeds --with-all-dependencies
+php artisan migrate
+```
+
+Compare the installed package's `config/feeds.php` with the application's published copy and merge new keys manually. Do not republish with `--force`: it overwrites application-specific values.
+
+## Verify
+
+- Generate one feed for every used format.
+- Verify split-file counts and filenames.
+- Confirm scheduled and queued generation.
+- Confirm custom feed models, transformers, macros, and preset subclasses.
+- Compare representative output with the previous version.
+
+## Rollback
+
+Restore the previous `composer.lock` and configuration, run `composer install`, and apply the application's migration rollback policy. Generated files are deployment artifacts; restore or regenerate them according to the storage recovery plan.
+
+## See Also
+
+- [Compatibility](https://feeds.dragon-code.pro/compatibility/)
+- [Configuration reference](https://feeds.dragon-code.pro/api/configuration/)
+- [Contribution guide](https://feeds.dragon-code.pro/contributions/)
+
+---
+
+# Compatibility
+
+<PageLead>
+Use Composer's resolved dependency graph as the final compatibility check for a specific application.
+</PageLead>
+
+## Runtime matrix
+
+<ResponsiveTable label="Laravel Feeds runtime compatibility">
+
+| Component | Supported versions |
+| --- | --- |
+| PHP | `8.2` and later `8.x` versions allowed by the installed package constraints |
+| Laravel components | `11.x`, `12.x`, `13.x` |
+| Database | Any Laravel connection supported by the configured Eloquent model and migration |
+| Filesystem | Writable Laravel disks resolving to `FilesystemAdapter` |
+
+</ResponsiveTable>
+
+The installed `composer.lock` is the final authority for a specific application. Composer rejects unsupported combinations.
+
+## Output formats
+
+| Format | Extension | Nested data | XML directives |
+| --- | --- | --- | --- |
+| XML | `.xml` | Yes | Yes |
+| JSON | `.json` | Yes | No |
+| JSON Lines | `.jsonl` | One JSON value per line | No |
+| CSV | `.csv` | No; stable scalar columns required | No |
+| RSS | `.rss` | Yes | Yes |
+
+## Optional integrations
+
+- Laravel Queue is required only when queue mode is enabled.
+- Laravel Deploy Operations is used by `make:feed` when installed; otherwise the command creates a migration.
+- Spatie Laravel Data optional values are recognized when that package is installed.
+
+## See Also
+
+- [Installation](https://feeds.dragon-code.pro/installation/)
+- [Supported formats](https://feeds.dragon-code.pro/supported-formats/)
+- [Upgrade guide](https://feeds.dragon-code.pro/upgrade-guide/)
+
+---
+
 # Contribution guide
 
 Contributions are **welcome** and will be fully **credited**.
@@ -2781,7 +3396,7 @@ The Laravel code of conduct is derived from the [Contributor Covenant](https://w
 ## See Also
 
 - [MIT License](https://feeds.dragon-code.pro/license/)
-- [Getting started](https://feeds.dragon-code.pro/)
+- [Getting started](https://feeds.dragon-code.pro/introduction/)
 - [Machine Learning](https://feeds.dragon-code.pro/machine-learning/)
 
 ---
@@ -2800,7 +3415,7 @@ Save the URL and re-import it periodically to pick up updates as the project evo
 
 ## See Also
 
-- [Getting started](https://feeds.dragon-code.pro/)
+- [Getting started](https://feeds.dragon-code.pro/introduction/)
 - [Contribution guide](https://feeds.dragon-code.pro/contributions/)
 - [MIT License](https://feeds.dragon-code.pro/license/)
 
@@ -2819,5 +3434,5 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 ## See Also
 
 - [Contribution guide](https://feeds.dragon-code.pro/contributions/)
-- [Getting started](https://feeds.dragon-code.pro/)
+- [Getting started](https://feeds.dragon-code.pro/introduction/)
 - [Machine Learning](https://feeds.dragon-code.pro/machine-learning/)

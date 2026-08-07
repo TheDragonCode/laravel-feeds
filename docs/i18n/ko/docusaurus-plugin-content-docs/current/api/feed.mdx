@@ -1,0 +1,85 @@
+---
+title: "피드 및 데이터"
+description: "Feed, FeedItem, FeedInfo, ElementData 및 생성 결과의 public 계약"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+---
+
+# 피드 및 데이터
+
+<PageLead>
+핵심 API는 데이터 소스, 항목 매핑, 피드 수준 메타데이터, 출력 구조 및 생성 결과를 분리합니다.
+</PageLead>
+
+## Feed {/* #feed */}
+
+`DragonCode\LaravelFeed\Feeds\Feed`는 내보내기의 기본 클래스입니다. `builder()`를 구현하고 피드에 필요한 출력 지점만 재정의하십시오.
+
+<ApiSignature>abstract public function builder(): Builder</ApiSignature>
+
+| 메서드 | 기본값 | 계약 |
+| --- | --- | --- |
+| `builder(): Builder` | 추상 메서드 | 데이터 소스로 사용할 Eloquent 쿼리를 반환합니다. |
+| `item(Model $model): FeedItem` | 새 기본 `FeedItem` | 하나의 모델을 출력 항목으로 매핑합니다. |
+| `transformers(): array` | `[]` | 이 피드의 트랜스포머 클래스 이름을 앞에 추가합니다. |
+| `chunkSize(): int` | `1000` | 데이터베이스 쿼리 청크 크기입니다. |
+| `perFile(): int` | `0` | 파일당 레코드 수입니다. 0이면 개수에 따른 분할을 끕니다. |
+| `maxFiles(): int` | `0` | 최대 출력 파일 수입니다. 0이면 제한이 없습니다. |
+| `header(): string` | XML/RSS용 XML 선언 | 루트와 항목 앞에 기록할 내용입니다. |
+| `footer(): string` | 빈 문자열 | 루트와 항목 뒤에 기록할 내용입니다. |
+| `root(): ElementData` | 클래스에서 파생한 요소 이름 | 루트 요소와 속성을 정의합니다. |
+| `info(): FeedInfo` | 빈 `FeedInfo` | 피드 수준 정보를 정의합니다. |
+| `filename(): string` | 클래스에서 파생한 파일 이름 | 디스크 기준 출력 파일 이름을 반환합니다. |
+| `path($suffix): string` | 어댑터가 해석한 경로 | 로컬 또는 어댑터가 해석한 경로를 반환합니다. |
+| `storagePath($suffix): string` | 디스크 기준 파일 이름 | 저장소 작업에 사용할 경로를 반환합니다. |
+| `storage(): FilesystemAdapter` | `public` 디스크 | Laravel 파일시스템 디스크를 해석하고 검증합니다. |
+| `format(): FeedFormatEnum` | `Xml` | 구성된 출력 형식을 반환합니다. |
+
+`Feed`는 Laravel의 `Conditionable`과 `Macroable`을 사용합니다.
+
+## FeedItem 및 FeedInfo {/* #feed-item-and-feed-info */}
+
+`FeedItem`은 현재 Eloquent 모델을 받습니다. 기본 동작은 다음과 같습니다.
+
+- `name()`은 모델 클래스 기본 이름을 kebab case로 반환합니다.
+- `attributes()`는 빈 배열을 반환합니다.
+- `toArray()`는 모델 배열을 반환합니다.
+
+`FeedInfo::toArray()`는 빈 배열을 반환합니다. 두 클래스 모두 `Conditionable`과 `Macroable`을 사용합니다. 출력에 명시적인 스키마가 필요하면 확장하십시오.
+
+## ElementData {/* #element-data */}
+
+`ElementData`는 세 가지 생성자 속성을 가진 읽기 전용 객체입니다.
+
+| 속성 | 타입 | 기본값 |
+| --- | --- | --- |
+| `name` | `?string` | `null` |
+| `attributes` | `array` | `[]` |
+| `beforeInfo` | `bool` | `true` |
+
+루트 요소를 생략하려면 `name`을 `null` 또는 빈 문자열로 설정하십시오. 피드 정보를 루트 앞에 쓰려면 `beforeInfo`를 `false`로 설정하십시오.
+
+## 생성 결과 {/* #generation-result */}
+
+`GeneratorService::feed()`는 `GenerationResultData`를 반환합니다. 읽기 전용 `paths` 속성에는 게시된 파일이 출력 순서대로 들어 있습니다. `records`는 각 경로를 해당 파일에 기록된 레코드 수와 연결합니다.
+
+프로그래밍 방식의 생성 및 등록 메서드는 [런타임 서비스 및 계약](./runtime.mdx)에 정리되어 있습니다.
+
+## FeedFormatEnum {/* #feed-format-enum */}
+
+| 케이스 | 값 |
+| --- | --- |
+| `Xml` | `xml` |
+| `Json` | `json` |
+| `JsonLines` | `jsonl` |
+| `Csv` | `csv` |
+| `Rss` | `rss` |
+
+## 관련 문서
+
+- [피드 생성](../create-feeds.mdx)
+- [요소](../elements.mdx)
+- [저장 위치](../location.mdx)
+- [런타임 서비스 및 계약](./runtime.mdx)

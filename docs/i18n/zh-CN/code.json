@@ -325,5 +325,98 @@
   "theme.tags.tagsPageTitle": {
     "message": "标签",
     "description": "界面标题的中文说明"
+  },
+  "homepage.install.copied": {
+    "message": "已复制"
+  },
+  "homepage.install.copy": {
+    "message": "复制"
+  },
+  "homepage.install.copySuccess": {
+    "message": "安装命令已复制到剪贴板。"
+  },
+  "homepage.install.copyFailure": {
+    "message": "复制失败。请手动选择该命令。"
+  },
+  "homepage.meta.title": {
+    "message": "Laravel Feeds 文档"
+  },
+  "homepage.meta.description": {
+    "message": "将大型 Laravel 数据集导出为 XML、JSON、JSON Lines、CSV、RSS 和市场平台 Feed。"
+  },
+  "homepage.eyebrow": {
+    "message": "Laravel 软件包 · 1.x 文档"
+  },
+  "homepage.title": {
+    "message": "无需将全部数据加载到内存即可导出大型数据集"
+  },
+  "homepage.summary": {
+    "message": "通过流式 Laravel 工作流生成 XML、JSON、JSON Lines、CSV、RSS、Sitemap、Instagram 和 Yandex Feed。"
+  },
+  "homepage.action.start": {
+    "message": "5 分钟快速入门"
+  },
+  "homepage.action.formats": {
+    "message": "选择格式"
+  },
+  "homepage.example.php": {
+    "message": "ProductFeed.php"
+  },
+  "homepage.example.output": {
+    "message": "生成的 XML"
+  },
+  "homepage.paths.eyebrow": {
+    "message": "选择路径"
+  },
+  "homepage.paths.title": {
+    "message": "从任务开始，再查阅参考资料"
+  },
+  "homepage.card.quick.description": {
+    "message": "安装软件包并生成第一个 Feed。"
+  },
+  "homepage.card.quick.title": {
+    "message": "快速入门"
+  },
+  "homepage.card.performance.description": {
+    "message": "控制分块、内存、队列和文件拆分。"
+  },
+  "homepage.card.performance.title": {
+    "message": "大型数据集"
+  },
+  "homepage.card.recipes.description": {
+    "message": "使用 Sitemap、RSS、Instagram 和 Yandex 的现成模式。"
+  },
+  "homepage.card.recipes.title": {
+    "message": "格式与示例"
+  },
+  "homepage.card.api.description": {
+    "message": "查找准确的方法、配置键、事件和失败类型。"
+  },
+  "homepage.card.api.title": {
+    "message": "API 参考"
+  },
+  "homepage.support.label": {
+    "message": "兼容性"
+  },
+  "homepage.support.details": {
+    "message": "兼容性详情"
+  },
+  "search.trigger": {
+    "message": "搜索"
+  },
+  "search.dialog.label": {
+    "message": "搜索文档"
+  },
+  "search.input.label": {
+    "message": "搜索文档"
+  },
+  "search.input.placeholder": {
+    "message": "搜索指南、API 和故障排除"
+  },
+  "search.close": {
+    "message": "关闭"
+  },
+  "search.empty": {
+    "message": "未找到匹配的文档。"
   }
 }

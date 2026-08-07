@@ -1,0 +1,80 @@
+---
+title: "Сэрвісы і кантракты выканання"
+description: "Публічныя API генерацыі, рэгістрацыі, раскладу, пераўтварэння і неабавязковых значэнняў"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+---
+
+# Сэрвісы і кантракты выканання
+
+<PageLead>
+Гэтыя пункты ўваходу падтрымліваюць праграмную генерацыю, рэгістрацыю стужак, інтэграцыю з планіроўшчыкам, пераўтварэнне скалярных значэнняў і неабавязковыя палі.
+</PageLead>
+
+## GeneratorService {/* #generator-service */}
+
+`DragonCode\LaravelFeed\Services\GeneratorService` генеруе і публікуе адну стужку.
+
+<ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
+
+Метад публікуе ўсе часткі як адну аперацыю, абнаўляе час апошняй актыўнасці рэгістрацыі, адпраўляе падзеі жыццёвага цыкла і вяртае шляхі з колькасцю запісаў у кожным файле. Вызначэнне сховішча і атрыманне шляху вываду адбываюцца да пачатку генерацыі; выключэнні, якія ўзнікаюць падчас гэтай папярэдняй праверкі, у тым ліку `UnsupportedStorageDiskException`, выкідваюцца непасрэдна. Пасля паспяховай папярэдняй праверкі памылкі генерацыі абгортваюцца ў `FeedGenerationException`, а зыходнае выключэнне захоўваецца як папярэдняе.
+
+Атрымлівайце сэрвіс праз кантэйнер Laravel, а не стварайце яго ўнутраныя залежнасці ўручную.
+
+```php
+use App\Feeds\UserFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+
+$result = app(GeneratorService::class)->feed(app(UserFeed::class));
+
+foreach ($result->records as $path => $count) {
+    processFeedResult($path, $count);
+}
+```
+
+## FeedQuery {/* #feed-query */}
+
+`DragonCode\LaravelFeed\Queries\FeedQuery` кіруе захаванымі рэгістрацыямі стужак.
+
+| Метад | Вынік |
+| --- | --- |
+| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Стварае рэгістрацыю. |
+| `find(int $id): Feed` | Вяртае рэгістрацыю або кідае `FeedNotFoundException`. |
+| `all(): Builder` | Вяртае ўсе рэгістрацыі, упарадкаваныя па ідэнтыфікатары. |
+| `active(): Builder` | Вяртае актыўныя рэгістрацыі, упарадкаваныя па ідэнтыфікатары. |
+| `setLastActivity(string $class): void` | Абнаўляе `last_activity` для класа стужкі. |
+| `delete(int $id): void` | Мякка выдаляе рэгістрацыю па ідэнтыфікатары. |
+| `deleteByClass(string $class): void` | Канчаткова выдаляе рэгістрацыі класа, у тым ліку раней выдаленыя. |
+| `restore(int $id): void` | Аднаўляе мякка выдаленую рэгістрацыю. |
+
+Для звычайных змяненняў рэгістрацыі выкарыстоўвайце згенераваную міграцыю або аперацыю разгортвання, каб іх можна было паўтарыць у кожным асяроддзі.
+
+## ScheduleFeedHelper {/* #schedule-feed-helper */}
+
+`DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper::register()` дадае актыўныя рэгістрацыі ў планіроўшчык Laravel. Кожная рэгістрацыя выкарыстоўвае захаваны выраз cron і блакіроўку перакрыцця. Фонавае выкананне і час жыцця блакіроўкі задаюцца ў `feeds.schedule`.
+
+Калі наладжаная табліца стужак не існуе, рэгістрацыя бяспечна прапускаецца.
+
+## Transformer {/* #transformer */}
+
+Рэалізуйце `DragonCode\LaravelFeed\Contracts\Transformer`, каб пераўтвараць падтрыманыя значэнні перад серыялізацыяй.
+
+<ApiSignature>public function allow(mixed $value): bool</ApiSignature>
+
+<ApiSignature>public function transform(mixed $value): string</ApiSignature>
+
+`allow()` вызначае, ці прымае пераўтваральнік значэнне. `transform()` вяртае яго скалярнае прадстаўленне. Дадайце клас праз `Feed::transformers()` або `feeds.transformers`.
+
+## OptionalData {/* #optional-data */}
+
+Вяртайце новы `DragonCode\LaravelFeed\Data\OptionalData` для поля, якое трэба прапусціць пры адсутнасці значэння. XML, RSS, JSON і JSON Lines прапускаюць яго. CSV захоўвае слупок і запісвае пустое поле.
+
+## Глядзіце таксама
+
+- [Стужкі і даныя](./feed.mdx)
+- [Канфігурацыя](./configuration.mdx)
+- [Падзеі і выключэнні](./events-exceptions.mdx)
+- [Генерацыя і расклад](../generation.mdx)
+

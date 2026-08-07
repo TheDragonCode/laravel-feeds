@@ -4,11 +4,15 @@
     "description": "Titel in der Navigationsleiste"
   },
   "logo.alt": {
-    "message": "Laravel Feeds",
+    "message": "Projektlogo",
     "description": "Alternativtext des Logos in der Navigationsleiste"
   },
   "item.label.GitHub": {
     "message": "GitHub",
     "description": "Element der Navigationsleiste mit dem Label GitHub"
+  },
+  "item.label.Documentation": {
+    "message": "Dokumentation",
+    "description": "Element der Navigationsleiste mit dem Label Dokumentation"
   }
 }

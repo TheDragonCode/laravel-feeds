@@ -1,0 +1,52 @@
+---
+title: "Compatibilidade"
+description: "Contratos compatíveis de PHP, Laravel, armazenamento, fila e formatos no Laravel Feeds 1.x"
+type: project
+status: stable
+since: "1.0"
+keywords: ["compatibility", "PHP", "Laravel", "Flysystem", "formats"]
+---
+
+# Compatibilidade
+
+<PageLead>
+Use o grafo de dependências resolvido pelo Composer como verificação final de uma aplicação específica.
+</PageLead>
+
+## Matriz de execução {/* #runtime-matrix */}
+
+<ResponsiveTable label="Compatibilidade de execução do Laravel Feeds">
+
+| Componente | Versões compatíveis |
+| --- | --- |
+| PHP | `8.2` e versões `8.x` posteriores permitidas pelas restrições do pacote instalado |
+| Componentes Laravel | `11.x`, `12.x`, `13.x` |
+| Banco de dados | Qualquer conexão Laravel aceita pelo modelo Eloquent e pela migration configurados |
+| Sistema de arquivos | Discos graváveis do Laravel resolvidos como `FilesystemAdapter` |
+
+</ResponsiveTable>
+
+O `composer.lock` instalado é a autoridade final da aplicação. O Composer rejeita combinações incompatíveis.
+
+## Formatos de saída {/* #output-formats */}
+
+| Formato | Extensão | Dados aninhados | Diretivas XML |
+| --- | --- | --- | --- |
+| XML | `.xml` | Sim | Sim |
+| JSON | `.json` | Sim | Não |
+| JSON Lines | `.jsonl` | Um valor JSON por linha | Não |
+| CSV | `.csv` | Não; exige colunas escalares estáveis | Não |
+| RSS | `.rss` | Sim | Sim |
+
+## Integrações opcionais {/* #optional-integrations */}
+
+- O Laravel Queue só é necessário quando o modo de fila está ativo.
+- O `make:feed` usa Laravel Deploy Operations quando instalado; caso contrário, cria uma migration.
+- Valores opcionais do Spatie Laravel Data são reconhecidos quando o pacote está instalado.
+
+## Veja também
+
+- [Instalação](./installation.mdx)
+- [Formatos compatíveis](./supported-formats.mdx)
+- [Guia de atualização](./upgrade-guide.mdx)
+

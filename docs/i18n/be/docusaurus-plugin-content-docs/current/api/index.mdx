@@ -1,0 +1,40 @@
+---
+title: "Даведнік API"
+description: "Карта публічных класаў, кантрактаў, аб'ектаў даных, падзей і выключэнняў Laravel Feeds"
+slug: /api/
+type: reference
+status: stable
+since: "1.0"
+keywords: ["API", "reference", "Feed", "FeedItem", "FeedInfo"]
+---
+
+# Даведнік API
+
+<PageLead>
+Выкарыстоўвайце гэты раздзел, калі працэс ужо вядомы і патрэбны дакладны клас, метад, ключ канфігурацыі, падзея або кантракт памылкі.
+</PageLead>
+
+| Вобласць | Асноўныя пункты ўваходу | Даведнік |
+| --- | --- | --- |
+| Канфігурацыя | `config/feeds.php` | [Канфігурацыя](./configuration.mdx) |
+| Класы стужак | `Feed`, `FeedItem`, `FeedInfo` | [Стужкі і даныя](./feed.mdx) |
+| Структура вываду | `ElementData`, дырэктывы XML | [Элементы](../elements.mdx), [Дырэктывы](../directives.mdx) |
+| Фарматы | `FeedFormatEnum`, канвертары | [Падтрыманыя фарматы](../supported-formats.mdx) |
+| Выкананне | `GeneratorService`, `FeedQuery`, `ScheduleFeedHelper` | [Сэрвісы і кантракты выканання](./runtime.mdx) |
+| Жыццёвы цыкл | Падзеі пачатку і завяршэння | [Падзеі і выключэнні](./events-exceptions.mdx) |
+| Перадусталёўкі | Sitemap, RSS, Instagram, Yandex | [Перадусталёўкі](../presets.mdx) |
+
+## Пункты пашырэння {/* #extension-points */}
+
+- Пашырце `Feed` або перадусталёўку, каб вызначыць крыніцу даных і кантракт вываду.
+- Пашырце `FeedItem` і `FeedInfo`, каб кіраваць серыялізаванымі данымі.
+- Рэалізуйце `DragonCode\LaravelFeed\Contracts\Transformer` для карыстальніцкага пераўтварэння скалярных значэнняў.
+- Вяртайце `DragonCode\LaravelFeed\Data\OptionalData`, калі поле трэба прапусціць.
+- Рэгіструйце макрасы ў `Feed`, `FeedItem` або `FeedInfo` для дапаможных метадаў праграмы.
+
+## Глядзіце таксама
+
+- [Стварэнне стужак](../create-feeds.mdx)
+- [Пашырэнне функцыянальнасці](../extending-functionality.mdx)
+- [Вырашэнне праблем](../troubleshooting.mdx)
+

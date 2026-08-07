@@ -12,7 +12,7 @@ const legacyRedirects = [
     { from: "/contributions.html", to: "/contributions/" },
     { from: "/machine-learning.html", to: "/machine-learning/" },
     { from: "/license.html", to: "/license/" },
-    { from: "/introduction.html", to: "/" },
+    { from: "/introduction.html", to: "/introduction/" },
     { from: "/installation.html", to: "/installation/" },
     { from: "/create-feeds.html", to: "/create-feeds/" },
     { from: "/generation.html", to: "/generation/" },
@@ -61,13 +61,24 @@ function yandexMetrikaPlugin(): Plugin {
                         attributes: {
                             type: "text/javascript",
                         },
-                        innerHTML: `(function(m,e,t,r,i,k,a){
-    m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-    m[i].l=1*new Date();
-    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-})(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=${yandexMetrikaId}', 'ym');
-ym(${yandexMetrikaId}, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});`,
+                        innerHTML: `(function(w,d,t,r,i,k,a){
+    var started=false;
+    var events=['pointerdown','keydown','touchstart','scroll'];
+    function load(){
+        if(started){return;}
+        started=true;
+        for(var j=0;j<events.length;j++){w.removeEventListener(events[j],queue);}
+        w[i]=w[i]||function(){(w[i].a=w[i].a||[]).push(arguments)};
+        w[i].l=1*new Date();
+        k=d.createElement(t),a=d.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a);
+        w[i](${yandexMetrikaId},'init',{ssr:true,webvisor:true,clickmap:true,ecommerce:"dataLayer",accurateTrackBounce:true,trackLinks:true});
+    }
+    function queue(){
+        if('requestIdleCallback' in w){w.requestIdleCallback(load,{timeout:2000});}else{w.setTimeout(load,0);}
+    }
+    for(var j=0;j<events.length;j++){w.addEventListener(events[j],queue,{once:true,passive:true});}
+    w.addEventListener('load',function(){w.setTimeout(queue,10000);},{once:true});
+})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=${yandexMetrikaId}','ym');`,
                     },
                 ],
                 postBodyTags: [
@@ -206,13 +217,23 @@ const config: Config = {
         navbar: {
             title: "Laravel Feeds",
             logo: {
-                alt: "Laravel Feeds",
+                alt: "Project logo",
                 src: "img/logo.svg",
             },
             items: [
                 {
+                    to: "/introduction/",
+                    label: "Documentation",
+                    position: "left",
+                    className: "navbar-docs-link",
+                },
+                {
                     type: "docsVersionDropdown",
                     position: "left",
+                },
+                {
+                    type: "custom-docSearch",
+                    position: "right",
                 },
                 {
                     type: "localeDropdown",
@@ -267,8 +288,8 @@ const config: Config = {
             copyright: `Copyright © ${new Date().getFullYear()} The Dragon Code`,
         },
         prism: {
-            theme: prismThemes.github,
-            darkTheme: prismThemes.dracula,
+            theme: prismThemes.vsLight,
+            darkTheme: prismThemes.vsDark,
         },
     } satisfies Preset.ThemeConfig,
 };

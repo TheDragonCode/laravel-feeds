@@ -1,6 +1,10 @@
 ---
 title: "Emplacement"
 description: "Configurer le disque de stockage et le nom des fichiers de sortie des flux générés"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["storage", "filesystem", "filename", "publication"]
 ---
 
 [← Précédent](./eloquent.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./presets.mdx)
@@ -38,7 +42,7 @@ class UserFeed extends Feed
 La génération des flux prend en charge les disques Laravel résolus en `Illuminate\Filesystem\FilesystemAdapter`. Cela comprend les pilotes `local`, `s3`, `sftp` et `ftp` lorsque leurs adaptateurs Flysystem sont installés et configurés. Les adaptateurs personnalisés sont pris en charge s’ils fournissent des flux accessibles en écriture, le déplacement de fichiers, la gestion et l’énumération des répertoires ainsi que la suppression via Flysystem.
 
 :::warning
-Les disques en lecture seule et les disques personnalisés qui implémentent uniquement `Illuminate\Contracts\Filesystem\Filesystem` ne sont pas pris en charge. Un disque incompatible échoue avec une `UnsupportedStorageDiskException` avant le démarrage de la requête de base de données du flux.
+Les disques en lecture seule et les disques personnalisés qui implémentent uniquement `Illuminate\Contracts\Filesystem\Filesystem` ne sont pas pris en charge. Un disque personnalisé qui n’est pas résolu en `Illuminate\Filesystem\FilesystemAdapter` échoue avec `UnsupportedStorageDiskException` avant le démarrage de la requête de base de données du flux. Un disque Laravel en lecture seule est toujours résolu en `FilesystemAdapter` ; la requête du flux et la préparation locale se terminent donc avant l’échec de l’écriture lors de la publication. `GeneratorService` enveloppe cette erreur de stockage dans `FeedGenerationException`.
 :::
 
 ## Contrat des chemins {/* #path_contract */}

@@ -105,14 +105,23 @@ const neutralTerms = [
     "The Dragon Code",
     "FeedInfo",
     "FeedItem",
+    "ElementData",
+    "FeedFormatEnum",
+    "GeneratorService",
+    "FeedQuery",
+    "ScheduleFeedHelper",
+    "Transformer",
+    "OptionalData",
     "Macroable",
     "PhpStorm",
     "Composer",
+    "Configuration",
     "Copyright",
     "Directives",
     "Eloquent",
     "GitHub",
     "Instagram",
+    "Installation",
     "JSONL",
     "Laravel",
     "License",
@@ -166,6 +175,7 @@ const translatableLines = (content) => {
                 line &&
                 line !== "---" &&
                 line !== "slug: /" &&
+                !/^(?:slug|type|status|since|keywords):/.test(line) &&
                 !line.startsWith("import ") &&
                 !line.startsWith("export ") &&
                 !line.startsWith("alt=") &&
@@ -178,6 +188,17 @@ const translatableLines = (content) => {
                 line !== "/>" &&
                 /[A-Za-z]/.test(line),
         );
+};
+
+const translatableMdxAttributes = (content) => {
+    const withoutFences = normalize(content).replace(
+        /^```[^\r\n]*\r?\n[\s\S]*?^```\s*$/gm,
+        "",
+    );
+
+    return [...withoutFences.matchAll(
+        /\b(aria-label|alt|label|placeholder|title)\s*=\s*(["'])([\s\S]*?)\2/g,
+    )].map(([, name, , value]) => ({ name, value }));
 };
 
 let versions = [];
@@ -433,6 +454,31 @@ for (const locale of translatedLocales) {
             if (untranslatedLines.length > 0) {
                 errors.push(
                     `${locale}/${sourceVersion.name}/${file}: untranslated source lines: ${untranslatedLines.join(" | ")}`,
+                );
+            }
+
+            const sourceAttributes = translatableMdxAttributes(sourceText);
+            const localizedAttributes = translatableMdxAttributes(localizedText);
+
+            if (
+                JSON.stringify(sourceAttributes.map(({ name }) => name)) !==
+                JSON.stringify(localizedAttributes.map(({ name }) => name))
+            ) {
+                errors.push(
+                    `${locale}/${sourceVersion.name}/${file}: translatable MDX attributes changed`,
+                );
+                continue;
+            }
+
+            const untranslatedAttributes = sourceAttributes.filter(
+                ({ value }, index) =>
+                    value === localizedAttributes[index].value &&
+                    !isNeutralSourceLine(value),
+            );
+
+            if (untranslatedAttributes.length > 0) {
+                errors.push(
+                    `${locale}/${sourceVersion.name}/${file}: untranslated MDX attributes: ${untranslatedAttributes.map(({ name, value }) => `${name}="${value}"`).join(" | ")}`,
                 );
             }
         }

@@ -1,0 +1,69 @@
+---
+title: "Questions fréquentes"
+description: "Réponses courtes aux questions courantes sur la configuration, la génération, le stockage et les formats"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["FAQ", "generation", "storage", "formats", "memory"]
+---
+
+# Questions fréquentes
+
+<PageLead>
+Réponses courtes aux questions courantes sur la configuration, la génération, le stockage, les formats et la mémoire.
+</PageLead>
+
+<details className="faqItem" id="large-datasets">
+<summary>Laravel Feeds peut-il exporter des millions d’enregistrements ?</summary>
+
+Oui. Le paquet lit les résultats Eloquent par lots et écrit progressivement. Gardez `builder()` lazy, n’appelez pas `get()` ou `toArray()` sur le résultat complet et ajustez `chunkSize()` après avoir mesuré la mémoire et la charge de la base.
+
+Consultez [les performances sur les grands jeux de données](./performance.mdx).
+</details>
+
+<details className="faqItem" id="choose-format">
+<summary>Quel format choisir ?</summary>
+
+Utilisez le contrat demandé par le consommateur. XML et RSS gèrent les directives hiérarchiques, JSON conserve les données imbriquées, JSON Lines convient au traitement ligne par ligne et CSV exige un schéma de colonnes stable.
+
+Consultez [les formats pris en charge](./supported-formats.mdx).
+</details>
+
+<details className="faqItem" id="split-files">
+<summary>Un flux peut-il créer plusieurs fichiers ?</summary>
+
+Oui. Remplacez `perFile()` pour fixer le nombre d’enregistrements par fichier et `maxFiles()` pour définir une limite facultative. Les fichiers fractionnés reçoivent des suffixes séquentiels.
+
+Consultez [la répartition des fichiers](./elements.mdx#split_files).
+</details>
+
+<details className="faqItem" id="remote-storage">
+<summary>Puis-je stocker les flux sur S3 ou un autre disque distant ?</summary>
+
+Oui, si le disque Laravel configuré se résout en `FilesystemAdapter` accessible en écriture. Un déplacement distant peut être une copie suivie d’une suppression ; le remplacement atomique n’est donc pas garanti.
+
+Consultez [les disques pris en charge](./location.mdx#supported_disks).
+</details>
+
+<details className="faqItem" id="disabled-feed">
+<summary>Pourquoi un flux désactivé a-t-il été exécuté ?</summary>
+
+Transmettre un identifiant à `feed:generate` exécute ce flux même si son enregistrement est inactif. Sans identifiant, la commande ignore les enregistrements inactifs.
+
+Consultez [la génération d’un flux unique](./generation.mdx#single_feed).
+</details>
+
+<details className="faqItem" id="optional-field">
+<summary>Comment omettre un champ facultatif ?</summary>
+
+Renvoyez `DragonCode\LaravelFeed\Data\OptionalData` ou `Spatie\LaravelData\Optional` comme valeur. CSV conserve la colonne avec une valeur vide ; les formats d’objet et XML omettent le champ.
+
+Consultez [les valeurs facultatives](./create-feeds.mdx#optional_values).
+</details>
+
+## Voir aussi
+
+- [Dépannage](./troubleshooting.mdx)
+- [Référence de configuration](./api/configuration.mdx)
+- [Référence API](./api/index.mdx)
+

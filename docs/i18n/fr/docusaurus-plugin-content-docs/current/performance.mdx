@@ -1,0 +1,68 @@
+---
+title: "Performances sur les grands jeux de données"
+description: "Contrôler la mémoire, la charge de base de données, le fractionnement, les files d’attente et le stockage"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["performance", "memory", "chunks", "large datasets", "queues"]
+---
+
+# Performances sur les grands jeux de données
+
+<PageLead>
+Laravel Feeds écrit progressivement les enregistrements. La mémoire reste limitée uniquement si chaque étape en amont demeure lazy.
+</PageLead>
+
+## Garder la requête lazy {/* #lazy-query */}
+
+Renvoyez directement un `Builder` Eloquent :
+
+```php
+public function builder(): Builder
+{
+    return Product::query()
+        ->select(['id', 'title', 'updated_at'])
+        ->where('is_exportable', true);
+}
+```
+
+Ne matérialisez pas le résultat complet avant la génération. Sélectionnez uniquement les colonnes nécessaires et ne préchargez que les relations utilisées par `item()` afin d’éviter les requêtes N+1.
+
+## Ajuster la taille des lots {/* #chunk-size */}
+
+La valeur par défaut est de `1000` enregistrements. Une valeur plus basse réduit le pic de mémoire des modèles et augmente le nombre de requêtes. Une valeur plus haute réduit le coût des requêtes et augmente la mémoire. Mesurez avec des lignes proches de la production.
+
+```php
+public function chunkSize(): int
+{
+    return 500;
+}
+```
+
+## Fractionner les fichiers de sortie {/* #split-output */}
+
+Utilisez `perFile()` si les consommateurs acceptent plusieurs fichiers ou si une seule sortie devient difficile à publier et à relancer.
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+Laissez `maxFiles()` à sa valeur par défaut `0` lorsque tous les enregistrements correspondants doivent être exportés. Lorsque `perFile()` et `maxFiles()` sont tous deux supérieurs à zéro, Laravel Feeds exporte au plus leur produit et termine la génération avec succès sans signaler les enregistrements suivants omis. Définissez `maxFiles()` uniquement si cette limite du nombre d’enregistrements est volontaire.
+
+## Mettre les flux longs en file d’attente {/* #queue-long-running */}
+
+Le mode file d’attente déplace la génération hors de la commande, mais ne réduit pas la mémoire utilisée par un flux. Utilisez une connexion asynchrone, des workers avec des limites adaptées et un TTL d’unicité supérieur à la durée attendue.
+
+## Mesurer tout le parcours {/* #measure */}
+
+Mesurez séparément la base de données, l’hydratation des modèles, la transformation, la sérialisation et la publication. Un disque distant peut devenir le coût principal même si la génération est rapide.
+
+## Voir aussi
+
+- [Taille des lots Eloquent](./eloquent.mdx#chunk_size)
+- [Files d’attente de génération](./generation.mdx#queue)
+- [Garanties de publication](./location.mdx#publication_guarantees)
+

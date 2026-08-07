@@ -4,11 +4,15 @@
     "description": "导航栏中的标题"
   },
   "logo.alt": {
-    "message": "Laravel Feeds",
+    "message": "项目徽标",
     "description": "导航栏徽标的替代文本"
   },
   "item.label.GitHub": {
     "message": "GitHub",
     "description": "标签为 GitHub 的导航栏项目"
+  },
+  "item.label.Documentation": {
+    "message": "文档",
+    "description": "导航栏中的文档项目"
   }
 }

@@ -1,6 +1,10 @@
 ---
 title: "Расположение"
 description: "Настройка диска хранения и имени выходного файла для сгенерированных фидов"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["storage", "filesystem", "filename", "publication"]
 ---
 
 [← Предыдущая](./eloquent.mdx) · [Назад к README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Следующая →](./presets.mdx)
@@ -38,7 +42,7 @@ class UserFeed extends Feed
 Генерация фидов поддерживает диски Laravel, которые разрешаются в `Illuminate\Filesystem\FilesystemAdapter`. К ним относятся драйверы `local`, `s3`, `sftp` и `ftp`, если соответствующие адаптеры Flysystem установлены и настроены. Пользовательские адаптеры поддерживаются, если через Flysystem они предоставляют потоки для записи, перемещение файлов, управление каталогами и их списками, а также удаление.
 
 :::warning
-Диски только для чтения и пользовательские диски, реализующие только `Illuminate\Contracts\Filesystem\Filesystem`, не поддерживаются. Несовместимый диск приведёт к ошибке `UnsupportedStorageDiskException` ещё до начала запроса фида к базе данных.
+Диски только для чтения и пользовательские диски, реализующие только `Illuminate\Contracts\Filesystem\Filesystem`, не поддерживаются. Пользовательский диск, который не разрешается в `Illuminate\Filesystem\FilesystemAdapter`, приводит к `UnsupportedStorageDiskException` ещё до начала запроса фида к базе данных. Диск Laravel только для чтения всё равно разрешается в `FilesystemAdapter`, поэтому запрос фида и локальная подготовка завершаются до ошибки записи при публикации. `GeneratorService` оборачивает эту ошибку хранилища в `FeedGenerationException`.
 :::
 
 ## Контракт путей {/* #path_contract */}

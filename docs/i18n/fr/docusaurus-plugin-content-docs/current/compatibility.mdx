@@ -1,0 +1,52 @@
+---
+title: "Compatibilité"
+description: "Contrats pris en charge pour PHP, Laravel, le stockage, les files d’attente et les formats de Laravel Feeds 1.x"
+type: project
+status: stable
+since: "1.0"
+keywords: ["compatibility", "PHP", "Laravel", "Flysystem", "formats"]
+---
+
+# Compatibilité
+
+<PageLead>
+Utilisez le graphe de dépendances résolu par Composer comme vérification finale de compatibilité d’une application donnée.
+</PageLead>
+
+## Matrice d’exécution {/* #runtime-matrix */}
+
+<ResponsiveTable label="Compatibilité d’exécution de Laravel Feeds">
+
+| Composant | Versions prises en charge |
+| --- | --- |
+| PHP | `8.2` et versions `8.x` ultérieures autorisées par les contraintes du paquet installé |
+| Composants Laravel | `11.x`, `12.x`, `13.x` |
+| Base de données | Toute connexion Laravel prise en charge par le modèle Eloquent configuré et la migration |
+| Système de fichiers | Disques Laravel accessibles en écriture et résolus en `FilesystemAdapter` |
+
+</ResponsiveTable>
+
+Le fichier `composer.lock` installé fait autorité pour une application donnée. Composer refuse les combinaisons non prises en charge.
+
+## Formats de sortie {/* #output-formats */}
+
+| Format | Extension | Données imbriquées | Directives XML |
+| --- | --- | --- | --- |
+| XML | `.xml` | Oui | Oui |
+| JSON | `.json` | Oui | Non |
+| JSON Lines | `.jsonl` | Une valeur JSON par ligne | Non |
+| CSV | `.csv` | Non ; colonnes scalaires stables requises | Non |
+| RSS | `.rss` | Oui | Oui |
+
+## Intégrations facultatives {/* #optional-integrations */}
+
+- Laravel Queue n’est requis que lorsque le mode file d’attente est activé.
+- `make:feed` utilise Laravel Deploy Operations s’il est installé ; sinon, la commande crée une migration.
+- Les valeurs facultatives de Spatie Laravel Data sont reconnues si ce paquet est installé.
+
+## Voir aussi
+
+- [Installation](./installation.mdx)
+- [Formats pris en charge](./supported-formats.mdx)
+- [Guide de mise à niveau](./upgrade-guide.mdx)
+

@@ -1,0 +1,55 @@
+---
+title: "Dépannage"
+description: "Diagnostiquer les échecs de configuration, génération, stockage, file d’attente et sortie"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["troubleshooting", "errors", "queue", "storage", "diagnostics"]
+---
+
+# Dépannage
+
+<PageLead>
+Commencez par la première limite en échec : enregistrement, requête, conversion, stockage ou livraison. Conservez l’exception d’origine, car elle contient la classe du flux et le contexte de sortie.
+</PageLead>
+
+## La classe du flux est introuvable {/* #feed-class-not-found */}
+
+Vérifiez que l’enregistrement contient le nom complet, que l’autoloading Composer peut le résoudre et que la classe étend `DragonCode\LaravelFeed\Feeds\Feed` ou un préréglage. Exécutez `composer dump-autoload` après avoir déplacé une classe.
+
+## La génération utilise trop de mémoire {/* #high-memory */}
+
+- Renvoyez un `Builder` Eloquent depuis `builder()`.
+- N’appelez pas `get()`, `all()` ou `toArray()` sur toutes les données.
+- Réduisez `chunkSize()` et mesurez à nouveau.
+- Fractionnez les grandes sorties avec `perFile()`.
+- Passez à une file asynchrone seulement après avoir conservé le traitement en continu du flux.
+
+Consultez [les performances](./performance.mdx).
+
+## Un job de file d’attente ne s’exécute jamais {/* #queue-job */}
+
+Vérifiez `FEED_QUEUE_CONNECTION`, `FEED_QUEUE_NAME` et la commande du worker. La connexion `sync` s’exécute immédiatement et ne teste pas la livraison asynchrone. Un verrou d’unicité peut bloquer un autre job jusqu’à l’expiration de `FEED_QUEUE_UNIQUE_TTL`.
+
+## Le disque de stockage est refusé {/* #storage-disk */}
+
+Le disque doit se résoudre en `Illuminate\Filesystem\FilesystemAdapter` et gérer les flux inscriptibles, déplacements, répertoires, listes et suppressions. Une implémentation personnalisée qui n’est pas un `FilesystemAdapter` échoue avec `UnsupportedStorageDiskException` avant la requête de base de données. Un disque Laravel en lecture seule passe ce contrôle de type. Son écriture échoue lors de la publication, après la fin de la requête du flux et de la préparation locale ; `GeneratorService` enveloppe l’erreur de stockage dans `FeedGenerationException`.
+
+## La génération XML échoue {/* #xml-failure */}
+
+Validez le XML brut transmis via `@mixed`, le contenu CDATA et les contrats scalaires ou tableaux des directives. Préférez les valeurs échappées normales lorsque du XML brut n’est pas nécessaire.
+
+## Les lignes CSV échouent après le premier élément {/* #csv-schema */}
+
+CSV établit ses colonnes à partir du schéma de sortie. Chaque élément doit produire les mêmes clés. Les valeurs facultatives conservent une colonne vide au lieu de la supprimer.
+
+## Les fichiers publiés sont incomplets ou obsolètes {/* #publication */}
+
+Examinez l’exception de stockage d’origine et les permissions. Sur un disque distant, tenez compte de la cohérence éventuelle et des déplacements non atomiques par copie et suppression. Plusieurs hôtes publiant la même cible nécessitent un verrou distribué externe.
+
+## Voir aussi
+
+- [Événements et exceptions](./api/events-exceptions.mdx)
+- [Emplacement](./location.mdx)
+- [Questions fréquentes](./faq.mdx)
+

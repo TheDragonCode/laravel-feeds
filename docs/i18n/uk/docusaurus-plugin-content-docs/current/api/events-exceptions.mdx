@@ -1,0 +1,57 @@
+---
+title: "Події та винятки"
+description: "Довідка про події життєвого циклу генерування фіду та публічні типи винятків"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+---
+
+# Події та винятки
+
+<PageLead>
+Використовуйте події життєвого циклу для інтеграції із застосунком, а типи винятків — для відновлення на межі, яка здатна обробити помилку.
+</PageLead>
+
+## Події життєвого циклу {/* #lifecycle-events */}
+
+| Подія | Публічні дані | Момент надсилання |
+| --- | --- | --- |
+| `FeedStartingEvent` | `feed` | Після попередньої перевірки сховища й шляху, до визначення конвертера та підготовки файлів. |
+| `FeedFinishedEvent` | `feed`, `path`, `paths` | Після успішної публікації всіх згенерованих файлів. |
+
+`FeedFinishedEvent::$paths` містить усі опубліковані шляхи в належному порядку. `$path` збережено для сумісності, і він завжди містить перший шлях.
+
+## Помилки введення та пошуку {/* #input-and-lookup-failures */}
+
+| Виняток | Значення |
+| --- | --- |
+| `InvalidFeedArgumentException` | Ідентифікатор фіду в консолі недійсний. |
+| `FeedNotFoundException` | Реєстрації із запитаним ідентифікатором фіду не існує. |
+| `InvalidExpressionException` | Вираз розкладу недійсний. |
+| `UnknownFeedClassException` | Налаштований клас фіду неможливо визначити. |
+| `UnexpectedClassException` | Визначений клас не відповідає очікуваному контракту. |
+
+## Помилки серіалізації та сховища {/* #serialization-and-storage-failures */}
+
+| Виняток | Значення |
+| --- | --- |
+| `InvalidCsvRowException` | Рядок CSV не відповідає встановленій схемі стовпців. |
+| `InvalidCsvValueException` | Поле CSV неможливо серіалізувати як скалярне значення. |
+| `InvalidXmlCDataException` | Значення CDATA недійсне. |
+| `InvalidXmlFragmentException` | Необроблений фрагмент XML недійсний. |
+| `UnsupportedStorageDiskException` | Вибраний диск Laravel не визначається як `FilesystemAdapter`. |
+| `OpenFeedException` | Ресурс чернетки виведення неможливо відкрити. |
+| `WriteFeedException` | Повне виведення неможливо записати. |
+| `CloseFeedException` | Ресурс виведення неможливо закрити. |
+| `ResourceMetaException` | Потрібні метадані потоку недоступні. |
+| `FeedGenerationException` | Генерування певного класу фіду завершилося помилкою. |
+
+Перехоплюйте винятки лише там, де застосунок може додати відновлення або зрозумілий користувачу контекст. Дозвольте Laravel повідомляти про невідновні помилки генерування.
+
+## Дивіться також
+
+- [Посібник із подій](../events.mdx)
+- [Розв'язання проблем](../troubleshooting.mdx)
+- [Гарантії сховища](../location.mdx#publication_guarantees)
+

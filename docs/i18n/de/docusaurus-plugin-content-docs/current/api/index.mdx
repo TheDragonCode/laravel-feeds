@@ -1,0 +1,40 @@
+---
+title: "API-Referenz"
+description: "Übersicht öffentlicher Klassen, Verträge, Datenobjekte, Ereignisse und Ausnahmen von Laravel Feeds"
+slug: /api/
+type: reference
+status: stable
+since: "1.0"
+keywords: ["API", "reference", "Feed", "FeedItem", "FeedInfo"]
+---
+
+# API-Referenz
+
+<PageLead>
+Verwenden Sie diesen Bereich, wenn Sie den Ablauf bereits kennen und eine genaue Klasse, Methode, einen Konfigurationsschlüssel, ein Ereignis oder einen Fehlervertrag benötigen.
+</PageLead>
+
+| Bereich | Zentrale Einstiegspunkte | Referenz |
+| --- | --- | --- |
+| Konfiguration | `config/feeds.php` | [Konfiguration](./configuration.mdx) |
+| Feed-Klassen | `Feed`, `FeedItem`, `FeedInfo` | [Feeds und Daten](./feed.mdx) |
+| Ausgabestruktur | `ElementData`, XML-Direktiven | [Elemente](../elements.mdx), [Direktiven](../directives.mdx) |
+| Formate | `FeedFormatEnum`, Konverter | [Unterstützte Formate](../supported-formats.mdx) |
+| Laufzeit | `GeneratorService`, `FeedQuery`, `ScheduleFeedHelper` | [Laufzeitdienste und Verträge](./runtime.mdx) |
+| Lebenszyklus | Start- und Abschlussereignisse | [Ereignisse und Ausnahmen](./events-exceptions.mdx) |
+| Voreinstellungen | Sitemap, RSS, Instagram, Yandex | [Voreinstellungen](../presets.mdx) |
+
+## Erweiterungspunkte {/* #extension-points */}
+
+- Erweitern Sie `Feed` oder eine Voreinstellung, um Datenquelle und Ausgabevertrag zu definieren.
+- Erweitern Sie `FeedItem` und `FeedInfo`, um serialisierte Daten zu steuern.
+- Implementieren Sie `DragonCode\LaravelFeed\Contracts\Transformer` für eine eigene Umwandlung skalarer Werte.
+- Geben Sie `DragonCode\LaravelFeed\Data\OptionalData` zurück, wenn ein Feld ausgelassen werden soll.
+- Registrieren Sie Makros auf `Feed`, `FeedItem` oder `FeedInfo` für anwendungsspezifische Hilfsmethoden.
+
+## Siehe auch
+
+- [Feeds erstellen](../create-feeds.mdx)
+- [Funktionalität erweitern](../extending-functionality.mdx)
+- [Fehlerbehebung](../troubleshooting.mdx)
+

@@ -18,9 +18,12 @@ permissions:
 
 jobs:
     build:
-        name: Build Docusaurus
+        name: Documentation quality gates
         runs-on: ubuntu-latest
-        timeout-minutes: 10
+        container:
+            image: mcr.microsoft.com/playwright:v1.62.1-noble
+            options: --ipc=host
+        timeout-minutes: 25
         defaults:
             run:
                 working-directory: docs
@@ -46,3 +49,12 @@ jobs:
 
             -   name: Build documentation
                 run: npm run build
+
+            -   name: Check metadata and SEO
+                run: npm run check:seo
+
+            -   name: Run browser, accessibility, and visual tests
+                run: npm run test:browser
+
+            -   name: Check performance budgets
+                run: npm run test:performance

@@ -325,5 +325,98 @@
   "theme.tags.tagsPageTitle": {
     "message": "Tags",
     "description": "Titre de la page de liste des tags"
+  },
+  "homepage.install.copied": {
+    "message": "Copié"
+  },
+  "homepage.install.copy": {
+    "message": "Copier"
+  },
+  "homepage.install.copySuccess": {
+    "message": "Commande d’installation copiée dans le presse-papiers."
+  },
+  "homepage.install.copyFailure": {
+    "message": "Échec de la copie. Sélectionnez la commande manuellement."
+  },
+  "homepage.meta.title": {
+    "message": "Documentation de Laravel Feeds"
+  },
+  "homepage.meta.description": {
+    "message": "Exportez de grands jeux de données Laravel vers XML, JSON, JSON Lines, CSV, RSS et des flux de places de marché."
+  },
+  "homepage.eyebrow": {
+    "message": "Paquet Laravel · Documentation 1.x"
+  },
+  "homepage.title": {
+    "message": "Exportez de grands jeux de données sans les charger entièrement en mémoire"
+  },
+  "homepage.summary": {
+    "message": "Générez des flux XML, JSON, JSON Lines, CSV, RSS, Sitemap, Instagram et Yandex avec un traitement Laravel en continu."
+  },
+  "homepage.action.start": {
+    "message": "Démarrer en 5 minutes"
+  },
+  "homepage.action.formats": {
+    "message": "Choisir un format"
+  },
+  "homepage.example.php": {
+    "message": "ProductFeed.php"
+  },
+  "homepage.example.output": {
+    "message": "XML généré"
+  },
+  "homepage.paths.eyebrow": {
+    "message": "Choisissez votre parcours"
+  },
+  "homepage.paths.title": {
+    "message": "Commencez par une tâche, puis consultez la référence"
+  },
+  "homepage.card.quick.description": {
+    "message": "Installez le paquet et générez le premier flux."
+  },
+  "homepage.card.quick.title": {
+    "message": "Démarrage rapide"
+  },
+  "homepage.card.performance.description": {
+    "message": "Contrôlez les lots, la mémoire, les files d’attente et le fractionnement des fichiers."
+  },
+  "homepage.card.performance.title": {
+    "message": "Grands jeux de données"
+  },
+  "homepage.card.recipes.description": {
+    "message": "Utilisez des modèles prêts à l’emploi pour Sitemap, RSS, Instagram et Yandex."
+  },
+  "homepage.card.recipes.title": {
+    "message": "Formats et recettes"
+  },
+  "homepage.card.api.description": {
+    "message": "Trouvez les méthodes, clés de configuration, événements et erreurs exacts."
+  },
+  "homepage.card.api.title": {
+    "message": "Référence API"
+  },
+  "homepage.support.label": {
+    "message": "Compatibilité"
+  },
+  "homepage.support.details": {
+    "message": "Détails de compatibilité"
+  },
+  "search.trigger": {
+    "message": "Rechercher"
+  },
+  "search.dialog.label": {
+    "message": "Rechercher dans la documentation"
+  },
+  "search.input.label": {
+    "message": "Rechercher dans la documentation"
+  },
+  "search.input.placeholder": {
+    "message": "Rechercher dans les guides, l’API et le dépannage"
+  },
+  "search.close": {
+    "message": "Fermer"
+  },
+  "search.empty": {
+    "message": "Aucune documentation correspondante trouvée."
   }
 }

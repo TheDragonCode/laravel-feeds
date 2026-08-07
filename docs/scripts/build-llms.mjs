@@ -6,6 +6,7 @@ const documentIds = [
     "introduction",
     "installation",
     "create-feeds",
+    "performance",
     "generation",
     "supported-formats",
     "elements",
@@ -19,6 +20,15 @@ const documentIds = [
     "receipt-instagram",
     "receipt-yandex",
     "receipt-rss-atom",
+    "api/index",
+    "api/configuration",
+    "api/feed",
+    "api/runtime",
+    "api/events-exceptions",
+    "faq",
+    "troubleshooting",
+    "upgrade-guide",
+    "compatibility",
     "contributions",
     "machine-learning",
     "license",
@@ -69,11 +79,18 @@ const replaceThemedImages = (content) =>
 const stripNavigation = (content) =>
     content.replace(/^.*\[Back to README]\([^\n]+\).*\n?/gm, "");
 
-const rewriteInternalLinks = (content) =>
+const rewriteInternalLinks = (content, documentId) =>
     content.replace(
-        /\]\(\.\/([A-Za-z0-9-]+)\.mdx(#[^)]+)?\)/g,
-        (_, id, fragment = "") => {
-            const route = id === "introduction" ? "/" : `/${id}/`;
+        /\]\((\.\.?\/[^)#]+\.mdx)(#[^)]+)?\)/g,
+        (_, relativePath, fragment = "") => {
+            const sourceDirectory = path.posix.dirname(documentId);
+            const target = path.posix.normalize(
+                path.posix.join(
+                    sourceDirectory,
+                    relativePath.replace(/\.mdx$/, ""),
+                ),
+            );
+            const route = target === "api/index" ? "/api/" : `/${target}/`;
 
             return `](${siteUrl}${route}${fragment})`;
         },
@@ -103,7 +120,7 @@ const stripFenceMetadata = (content) =>
         })
         .join("\n");
 
-const prepareDocument = (content) =>
+const prepareDocument = (content, documentId) =>
     stripFenceMetadata(
         stripExplicitHeadingIds(
             rewriteInternalLinks(
@@ -114,6 +131,7 @@ const prepareDocument = (content) =>
                         ),
                     ),
                 ),
+                documentId,
             ),
         ),
     ).trim();
@@ -122,7 +140,10 @@ const markdownFiles = await listMarkdownFiles(sourceDirectory);
 const documentsById = new Map();
 
 for (const markdownFile of markdownFiles) {
-    const id = path.basename(markdownFile, path.extname(markdownFile));
+    const id = path
+        .relative(sourceDirectory, markdownFile)
+        .replace(/\\/g, "/")
+        .replace(/\.mdx?$/, "");
 
     if (documentsById.has(id)) {
         throw new Error(`Duplicate documentation id: ${id}`);
@@ -151,7 +172,9 @@ const documents = [];
 for (const id of documentIds) {
     const content = await readFile(documentsById.get(id), "utf8");
 
-    documents.push(prepareDocument(content.replace(/\r\n?/g, "\n")));
+    documents.push(
+        prepareDocument(content.replace(/\r\n?/g, "\n"), id),
+    );
 }
 
 const header = `# Laravel Feeds

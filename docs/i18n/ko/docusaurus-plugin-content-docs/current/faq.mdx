@@ -1,0 +1,69 @@
+---
+title: "자주 묻는 질문"
+description: "Laravel Feeds 설정, 생성, 저장소 및 형식에 관한 일반적인 질문과 답변"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["FAQ", "generation", "storage", "formats", "memory"]
+---
+
+# 자주 묻는 질문
+
+<PageLead>
+설정, 생성, 저장소, 형식 및 메모리에 관한 일반적인 질문의 짧은 답변입니다.
+</PageLead>
+
+<details className="faqItem" id="large-datasets">
+<summary>Laravel Feeds로 수백만 개의 레코드를 내보낼 수 있습니까?</summary>
+
+가능합니다. 패키지는 Eloquent 결과를 청크로 읽고 출력을 점진적으로 기록합니다. `builder()`를 지연 상태로 유지하고 전체 결과에 `get()`이나 `toArray()`를 호출하지 마십시오. 메모리와 데이터베이스 부하를 측정한 후 `chunkSize()`를 조정하십시오.
+
+[대규모 데이터셋 성능](./performance.mdx)을 참고하십시오.
+</details>
+
+<details className="faqItem" id="choose-format">
+<summary>어떤 형식을 사용해야 합니까?</summary>
+
+소비자가 요구하는 계약을 사용하십시오. XML과 RSS는 계층 디렉티브를 지원하고, JSON은 중첩 데이터를 유지하고, JSON Lines는 줄 단위 처리에 적합하며, CSV는 안정적인 열 스키마가 필요합니다.
+
+[지원 형식](./supported-formats.mdx)을 참고하십시오.
+</details>
+
+<details className="faqItem" id="split-files">
+<summary>하나의 피드가 여러 파일을 만들 수 있습니까?</summary>
+
+가능합니다. `perFile()`로 파일당 레코드 수를 설정하고 `maxFiles()`로 선택적 상한을 지정하십시오. 분할 파일에는 순차적인 접미사가 붙습니다.
+
+[파일 분할](./elements.mdx#split_files)을 참고하십시오.
+</details>
+
+<details className="faqItem" id="remote-storage">
+<summary>S3 또는 다른 원격 디스크에 피드를 저장할 수 있습니까?</summary>
+
+구성된 Laravel 디스크가 쓰기 가능한 `FilesystemAdapter`로 해석되면 가능합니다. 원격 이동은 복사 후 삭제 방식일 수 있으므로 원자적 교체가 보장되지 않습니다.
+
+[지원 디스크](./location.mdx#supported_disks)를 참고하십시오.
+</details>
+
+<details className="faqItem" id="disabled-feed">
+<summary>비활성 피드가 실행된 이유는 무엇입니까?</summary>
+
+`feed:generate`에 피드 ID를 전달하면 등록이 비활성이어도 해당 피드를 실행합니다. ID 없이 실행하면 비활성 등록을 건너뜁니다.
+
+[단일 피드 생성](./generation.mdx#single_feed)을 참고하십시오.
+</details>
+
+<details className="faqItem" id="optional-field">
+<summary>선택적 필드를 생략하려면 어떻게 합니까?</summary>
+
+필드 값으로 `DragonCode\LaravelFeed\Data\OptionalData` 또는 `Spatie\LaravelData\Optional`을 반환하십시오. CSV는 열을 유지하고 빈 값을 쓰며, 객체 형식과 XML은 필드를 생략합니다.
+
+[선택적 값](./create-feeds.mdx#optional_values)을 참고하십시오.
+</details>
+
+## 관련 문서
+
+- [문제 해결](./troubleshooting.mdx)
+- [구성 참조](./api/configuration.mdx)
+- [API 참조](./api/index.mdx)
+

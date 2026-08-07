@@ -1,0 +1,86 @@
+---
+title: "Feed 与数据"
+description: "Feed、FeedItem、FeedInfo、ElementData 和生成结果的公共契约"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+---
+
+# Feed 与数据
+
+<PageLead>
+核心 API 将数据源、Feed 项映射、Feed 级元数据、输出结构和生成结果分开处理。
+</PageLead>
+
+## Feed {/* #feed */}
+
+`DragonCode\LaravelFeed\Feeds\Feed` 是导出的基类。实现 `builder()`，并且只覆盖 Feed 所需的输出钩子。
+
+<ApiSignature>abstract public function builder(): Builder</ApiSignature>
+
+| 方法 | 默认值 | 契约 |
+| --- | --- | --- |
+| `builder(): Builder` | 抽象方法 | 返回用作数据源的 Eloquent 查询。 |
+| `item(Model $model): FeedItem` | 新的基础 `FeedItem` | 将一个模型映射为输出项。 |
+| `transformers(): array` | `[]` | 前置该 Feed 使用的转换器类名。 |
+| `chunkSize(): int` | `1000` | 数据库查询分块大小。 |
+| `perFile(): int` | `0` | 每个文件的记录数。零表示不按数量拆分。 |
+| `maxFiles(): int` | `0` | 输出文件的最大数量。零表示不限制。 |
+| `header(): string` | XML/RSS 使用 XML 声明 | 写入根元素和 Feed 项之前的内容。 |
+| `footer(): string` | 空字符串 | 写入根元素和 Feed 项之后的内容。 |
+| `root(): ElementData` | 从类名派生的元素名 | 定义根元素及其属性。 |
+| `info(): FeedInfo` | 空的 `FeedInfo` | 定义 Feed 级信息。 |
+| `filename(): string` | 从类名派生的文件名 | 返回相对于磁盘的输出文件名。 |
+| `path($suffix): string` | 适配器解析的路径 | 返回本地路径或适配器解析的路径。 |
+| `storagePath($suffix): string` | 相对于磁盘的文件名 | 返回存储操作使用的路径。 |
+| `storage(): FilesystemAdapter` | `public` 磁盘 | 解析并验证 Laravel 文件系统磁盘。 |
+| `format(): FeedFormatEnum` | `Xml` | 返回配置的输出格式。 |
+
+`Feed` 使用 Laravel 的 `Conditionable` 和 `Macroable`。
+
+## FeedItem 与 FeedInfo {/* #feed-item-and-feed-info */}
+
+`FeedItem` 接收当前 Eloquent 模型。其默认行为如下：
+
+- `name()` 返回 kebab case 格式的模型类基本名称；
+- `attributes()` 返回空数组；
+- `toArray()` 返回模型数组。
+
+`FeedInfo::toArray()` 返回空数组。这两个类都使用 `Conditionable` 和 `Macroable`；输出需要显式结构时，请继承它们。
+
+## ElementData {/* #element-data */}
+
+`ElementData` 是一个只读对象，具有三个构造函数属性：
+
+| 属性 | 类型 | 默认值 |
+| --- | --- | --- |
+| `name` | `?string` | `null` |
+| `attributes` | `array` | `[]` |
+| `beforeInfo` | `bool` | `true` |
+
+将 `name` 设为 `null` 或空字符串可隐藏根元素。将 `beforeInfo` 设为 `false` 可在根元素之前写入 Feed 信息。
+
+## 生成结果 {/* #generation-result */}
+
+`GeneratorService::feed()` 返回 `GenerationResultData`。其只读 `paths` 属性按输出顺序包含已发布文件。其只读 `records` 属性将每个路径映射到写入该文件的记录数。
+
+编程式生成和注册方法列在[运行时服务与契约](./runtime.mdx)中。
+
+## FeedFormatEnum {/* #feed-format-enum */}
+
+| 枚举项 | 值 |
+| --- | --- |
+| `Xml` | `xml` |
+| `Json` | `json` |
+| `JsonLines` | `jsonl` |
+| `Csv` | `csv` |
+| `Rss` | `rss` |
+
+## 另请参阅
+
+- [创建 Feed](../create-feeds.mdx)
+- [元素](../elements.mdx)
+- [存储位置](../location.mdx)
+- [运行时服务与契约](./runtime.mdx)
+

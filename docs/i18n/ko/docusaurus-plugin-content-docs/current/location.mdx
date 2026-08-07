@@ -1,6 +1,10 @@
 ---
 title: "저장 위치"
 description: "생성된 피드의 스토리지 디스크와 출력 파일 이름 구성"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["storage", "filesystem", "filename", "publication"]
 ---
 
 [← 이전](./eloquent.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./presets.mdx)
@@ -38,7 +42,7 @@ class UserFeed extends Feed
 피드 생성은 `Illuminate\Filesystem\FilesystemAdapter`로 해석되는 Laravel 디스크를 지원합니다. Flysystem 어댑터가 설치되고 구성된 `local`, `s3`, `sftp`, `ftp` 드라이버가 이에 포함됩니다. 쓰기 가능한 스트림, 파일 이동, 디렉터리 관리 및 목록 조회, Flysystem을 통한 삭제를 제공하는 사용자 지정 어댑터도 지원됩니다.
 
 :::warning
-읽기 전용 디스크와 `Illuminate\Contracts\Filesystem\Filesystem`만 구현한 사용자 지정 디스크는 지원되지 않습니다. 호환되지 않는 디스크는 피드 데이터베이스 쿼리가 시작되기 전에 `UnsupportedStorageDiskException`으로 실패합니다.
+읽기 전용 디스크와 `Illuminate\Contracts\Filesystem\Filesystem`만 구현한 사용자 지정 디스크는 지원되지 않습니다. `Illuminate\Filesystem\FilesystemAdapter`로 해석되지 않는 사용자 지정 디스크는 피드 데이터베이스 쿼리가 시작되기 전에 `UnsupportedStorageDiskException`으로 실패합니다. Laravel 읽기 전용 디스크는 여전히 `FilesystemAdapter`로 해석되므로 피드 쿼리와 로컬 스테이징이 완료된 후 게시 쓰기 작업에서 실패합니다. `GeneratorService`는 이 스토리지 오류를 `FeedGenerationException`으로 감쌉니다.
 :::
 
 ## 경로 계약 {/* #path_contract */}

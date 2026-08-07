@@ -1,0 +1,140 @@
+.trigger {
+    display: inline-flex;
+    min-block-size: 2.75rem;
+    align-items: center;
+    gap: var(--space-3);
+    border: 0;
+    background: transparent;
+    color: var(--color-text-muted);
+    font: inherit;
+    cursor: pointer;
+}
+
+.trigger:hover {
+    color: var(--color-action);
+}
+
+.trigger kbd {
+    padding: 0.15rem var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-muted);
+    box-shadow: none;
+    color: var(--color-text-muted);
+    font-size: 0.6875rem;
+}
+
+.dialog {
+    inline-size: min(42rem, calc(100% - 2rem));
+    max-block-size: min(75vh, 42rem);
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-md);
+}
+
+.dialog::backdrop {
+    background: color-mix(in srgb, var(--color-text) 42%, transparent);
+}
+
+.panel {
+    display: grid;
+    max-block-size: inherit;
+    grid-template-rows: auto minmax(0, 1fr);
+}
+
+.searchRow {
+    display: flex;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border-block-end: 1px solid var(--color-border);
+}
+
+.searchRow input {
+    min-block-size: 2.75rem;
+    min-inline-size: 0;
+    flex: 1;
+    padding-inline: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font: inherit;
+}
+
+.searchRow button {
+    min-block-size: 2.75rem;
+    padding-inline: var(--space-3);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-muted);
+    color: var(--color-action);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.results {
+    overflow-y: auto;
+    padding: var(--space-2);
+}
+
+.results a {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.results a:hover,
+.results a:focus-visible {
+    background: var(--color-surface-muted);
+    text-decoration: none;
+}
+
+.results strong {
+    color: var(--color-heading);
+}
+
+.results span,
+.results p {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.results p {
+    margin: var(--space-6);
+    text-align: center;
+}
+
+.visuallyHidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+    white-space: nowrap;
+}
+
+@media (max-width: 996px) {
+    .trigger {
+        inline-size: 100%;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 35rem) {
+    .searchRow {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}

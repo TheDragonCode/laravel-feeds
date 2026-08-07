@@ -4,11 +4,15 @@
     "description": "Título na barra de navegação"
   },
   "logo.alt": {
-    "message": "Laravel Feeds",
+    "message": "Logotipo do projeto",
     "description": "Texto alternativo do logotipo na barra de navegação"
   },
   "item.label.GitHub": {
     "message": "GitHub",
     "description": "Item da barra de navegação com o rótulo GitHub"
+  },
+  "item.label.Documentation": {
+    "message": "Documentação",
+    "description": "Item da barra de navegação com o rótulo Documentação"
   }
 }
