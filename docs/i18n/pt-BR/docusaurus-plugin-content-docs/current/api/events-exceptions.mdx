@@ -1,10 +1,10 @@
 ---
 title: "Eventos e exceções"
-description: "Referência dos eventos do ciclo de geração e dos tipos públicos de exceção"
+description: "Referência dos eventos do ciclo de vida da geração de feeds e alvos e dos tipos públicos de exceção"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 # Eventos e exceções
@@ -17,10 +17,10 @@ Use eventos do ciclo de vida para integrar a aplicação e os tipos de exceção
 
 | Evento | Dados públicos | Momento do disparo |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | Após a verificação preliminar do armazenamento e do caminho, antes da resolução do conversor e da preparação. |
-| `FeedFinishedEvent` | `feed`, `path`, `paths` | Depois da publicação bem-sucedida de todos os arquivos gerados. |
+| `FeedStartingEvent` | `feed`, `target` | Após a verificação preliminar do armazenamento e do caminho, antes da resolução do conversor e da preparação. |
+| `FeedFinishedEvent` | `feed`, `target`, `path`, `paths` | Depois da publicação bem-sucedida de todos os arquivos gerados. |
 
-`FeedFinishedEvent::$paths` contém todos os caminhos publicados em ordem. `$path` é mantido para compatibilidade e sempre contém o primeiro caminho.
+`$target` contém a chave do alvo para uma geração direcionada e `null` para um feed comum. `FeedFinishedEvent::$paths` contém todos os caminhos publicados em ordem. `$path` é mantido para compatibilidade e sempre contém o primeiro caminho.
 
 ## Falhas de entrada e busca {/* #input-and-lookup-failures */}
 
@@ -31,6 +31,8 @@ Use eventos do ciclo de vida para integrar a aplicação e os tipos de exceção
 | `InvalidExpressionException` | A expressão de agendamento é inválida. |
 | `UnknownFeedClassException` | A classe configurada não pode ser resolvida. |
 | `UnexpectedClassException` | A classe resolvida não atende ao contrato esperado. |
+
+A seleção de alvos usa exceções SPL. Quando `--target` é fornecido, `feed:generate` lança `InvalidArgumentException` se nenhum ID de registro do feed for informado, se uma chave de alvo estiver vazia ou se o feed selecionado não implementar `HasFeedTargets`. O comando lança `UnexpectedValueException` quando `findTarget()` retorna `null`.
 
 ## Falhas de serialização e armazenamento {/* #serialization-and-storage-failures */}
 
@@ -47,6 +49,8 @@ Use eventos do ciclo de vida para integrar a aplicação e os tipos de exceção
 | `ResourceMetaException` | Os metadados necessários do stream não estão disponíveis. |
 | `FeedGenerationException` | A geração falhou para uma classe de feed. |
 
+`FeedGenerationException::getFeed()` retorna a classe do feed. `getFeedTarget()` retorna a chave do alvo para uma geração direcionada e `null` para um feed comum. A falha original continua disponível por `getPrevious()`.
+
 Capture exceções somente onde a aplicação puder adicionar recuperação ou contexto útil. Deixe o Laravel reportar falhas irrecuperáveis.
 
 ## Veja também
@@ -54,4 +58,3 @@ Capture exceções somente onde a aplicação puder adicionar recuperação ou c
 - [Guia de eventos](../events.mdx)
 - [Solução de problemas](../troubleshooting.mdx)
 - [Garantias de armazenamento](../location.mdx#publication_guarantees)
-

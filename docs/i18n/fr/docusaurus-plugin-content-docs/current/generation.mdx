@@ -4,7 +4,7 @@ description: "Informations sur la génération de fichiers de flux destinés à 
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "targets", "feed:generate"]
 ---
 
 [← Précédent](./create-feeds.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./supported-formats.mdx)
@@ -36,6 +36,29 @@ Pour générer un flux particulier, appelez la commande `feed:generate` en lui p
 ```bash
 php artisan feed:generate 123
 ```
+
+## Sélection des cibles {/* #target_selection */}
+
+Pour un [flux ciblé](./create-feeds.mdx#targeted_feeds), l’identifiant d’enregistrement sélectionne la classe du flux et la clé de cible sélectionne une sortie.
+
+L’exécution du flux sans `--target` consomme `targets()` de manière différée et génère toutes les cibles :
+
+```bash
+php artisan feed:generate 123
+```
+
+Passez l’option répétable `--target` pour ne générer que les cibles sélectionnées :
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+Les clés explicites utilisent `findTarget()` au lieu d’énumérer `targets()`. Les clés en double sont traitées une seule fois, dans l’ordre de leur première apparition. Toutes les clés demandées sont résolues avant le début de la génération.
+
+`--target` exige un seul identifiant d’enregistrement de flux. La commande rejette les clés vides ou inconnues, ainsi que la sélection de cibles pour un flux qui n’implémente pas `HasFeedTargets`.
+
+L’énumération complète des cibles est traitée en continu et n’est pas atomique. Si `targets()` échoue après avoir produit certaines valeurs, les cibles précédentes peuvent déjà avoir été générées ou placées dans la file d’attente. Un itérable vide ne génère rien et ne crée aucune cible par défaut implicite.
 
 ## Sortie pour les agents d’IA {/* #ai_agent_output */}
 
@@ -74,6 +97,8 @@ La commande émet un JSON compact sur une seule ligne. L’exemple est mis en fo
 | `queued` | Le mode file d’attente est activé et le job du flux a été exécuté de manière synchrone pour l’agent. | Aucun |
 | `skipped` | Le flux est inactif et la commande a été exécutée sans identifiant de flux. | Aucun |
 
+Chaque entrée ciblée `generated` ou `queued` contient également un champ `target` avec la clé sélectionnée.
+
 :::note
 En mode file d’attente, le chemin propre à l’agent exécute chaque job actif de manière synchrone avant de renvoyer le résultat JSON. Le chemin habituel, formaté pour les humains, continue d’envoyer les jobs via la connexion de file d’attente configurée.
 :::
@@ -91,11 +116,11 @@ FEED_QUEUE_NAME=feeds
 FEED_QUEUE_UNIQUE_TTL=3600
 ```
 
-Lorsque le mode file d’attente est activé, `feed:generate` envoie un job pour chaque flux actif au lieu de générer directement les fichiers. Avec une connexion asynchrone, la commande se termine après l’envoi des jobs. Démarrez un [worker de file d’attente](https://laravel.com/docs/queues#running-the-queue-worker) pour la connexion et la file sélectionnées afin de traiter ces jobs.
+Lorsque le mode file d’attente est activé, `feed:generate` envoie un job pour chaque flux ordinaire actif et un job pour chaque cible sélectionnée d’un flux ciblé. Avec une connexion asynchrone, la commande se termine après l’envoi des jobs. Démarrez un [worker de file d’attente](https://laravel.com/docs/queues#running-the-queue-worker) pour la connexion et la file sélectionnées afin de traiter ces jobs.
 
 - `FEED_QUEUE_CONNECTION` sélectionne la connexion de file d’attente. À défaut, `QUEUE_CONNECTION`, puis `database`, sont utilisés.
 - `FEED_QUEUE_NAME` sélectionne une file sur cette connexion. Laissez cette variable non définie pour utiliser la file par défaut de la connexion.
-- `FEED_QUEUE_UNIQUE_TTL` définit en secondes la durée de vie maximale du verrou d’unicité. Tant que ce verrou est actif, aucun second job n’est ajouté pour le même flux.
+- `FEED_QUEUE_UNIQUE_TTL` définit en secondes la durée de vie maximale du verrou d’unicité. Les jobs ordinaires sont uniques selon la classe du flux. Les jobs ciblés sont uniques selon la classe du flux et la clé de cible ; les paramètres de la cible ne modifient pas cette identité.
 
 :::note
 La connexion `sync` exécute immédiatement chaque job dans le processus de console. Sélectionnez une connexion asynchrone pour transférer la génération à un worker. Définissez `FEED_QUEUE_ENABLED=false` pour générer directement les flux sans envoyer de jobs.
@@ -118,7 +143,7 @@ Schedule::call(function () {
 })->everySecond();
 ```
 
-Vous pourrez ainsi enregistrer les appels de tous les flux actifs selon la planification indiquée dans la colonne `expression` de la base de données.
+Tous les flux actifs sont ainsi enregistrés selon la planification de la colonne `expression` de la base de données. Un flux ciblé planifié génère chaque valeur renvoyée par `targets()`.
 
 ### Manuelle {/* #manual */}
 

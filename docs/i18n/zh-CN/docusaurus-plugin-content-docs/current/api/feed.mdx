@@ -1,10 +1,10 @@
 ---
 title: "Feed 与数据"
-description: "Feed、FeedItem、FeedInfo、ElementData 和生成结果的公共契约"
+description: "Feed、Feed 目标、FeedItem、FeedInfo、ElementData 和生成结果的公共契约"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
 ---
 
 # Feed 与数据
@@ -38,6 +38,23 @@ keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"
 | `format(): FeedFormatEnum` | `Xml` | 返回配置的输出格式。 |
 
 `Feed` 使用 Laravel 的 `Conditionable` 和 `Macroable`。
+
+## Feed 目标 {/* #feed-targets */}
+
+`DragonCode\LaravelFeed\Feeds\FeedTarget` 标识一个独立生成的输出。其构造函数接受非空字符串键和可选参数数组：
+
+<ApiSignature>public function __construct(public readonly string $key, public readonly array $parameters = [])</ApiSignature>
+
+需要目标的 Feed 类应实现 `DragonCode\LaravelFeed\Contracts\HasFeedTargets`。可选的 `DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets` trait 实现 `forTarget()` 和 `target()`；Feed 类负责发现目标：
+
+| 方法 | 契约 |
+| --- | --- |
+| `targets(): iterable` | 当命令或调度任务生成全部目标时，惰性返回所有可用的 `FeedTarget`。 |
+| `findTarget(string $key): ?FeedTarget` | 直接解析一个具有相同键的显式命令目标，找不到时返回 `null`。 |
+| `forTarget(FeedTarget $target): static` | 返回配置后的克隆，并重置缓存的文件名。 |
+| `target(): FeedTarget` | 返回已配置的目标；未设置目标时抛出 `LogicException`。 |
+
+构造函数会拒绝空键和仅含空白字符的键，但不会规范化或清理其他值。目标参数对软件包不透明，并会作为队列任务快照进行序列化。目标键用于标识目标，因此必须稳定且在 Feed 类内唯一。请参阅[目标 Feed 设置](../create-feeds.mdx#targeted_feeds)和[命令目标选择](../generation.mdx#target_selection)。
 
 ## FeedItem 与 FeedInfo {/* #feed-item-and-feed-info */}
 
@@ -83,4 +100,3 @@ keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"
 - [元素](../elements.mdx)
 - [存储位置](../location.mdx)
 - [运行时服务与契约](./runtime.mdx)
-

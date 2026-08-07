@@ -4,7 +4,7 @@ description: "Instructions for creating and populating the feed, feed item, and 
 type: guide
 status: stable
 since: "1.0"
-keywords: ["feed", "FeedItem", "FeedInfo", "make:feed"]
+keywords: ["feed", "FeedItem", "FeedInfo", "FeedTarget", "make:feed"]
 ---
 
 import ThemedImage from '@theme/ThemedImage';
@@ -157,6 +157,82 @@ use Spatie\LaravelData\Optional;
 
 'updatedAt' => $this->model->updated_at ?? Optional::create(),
 ```
+
+## Targeted feeds {/* #targeted_feeds */}
+
+Use a targeted feed when one registered feed class must generate an independent output for each partner, store, locale, or other application-defined target. The `feeds` table still contains one row for the feed class.
+
+Implement `HasFeedTargets`. The packaged `InteractsWithFeedTargets` trait provides the standard `forTarget()` and `target()` behavior; the feed class supplies lazy enumeration and direct lookup:
+
+```php source="docs/snippets/targeted-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        if (! $partner || (string) $partner->getKey() !== $key) {
+            return null;
+        }
+
+        return $this->makeTarget($partner);
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+- `targets()` is called on the unconfigured feed definition and consumed lazily when a command or schedule generates every target.
+- `findTarget()` performs a case-sensitive lookup for each explicit `--target` key. Return `null` when the key does not exist; otherwise return a target with the requested key.
+- `FeedTarget::$key` must be non-empty, stable, unique within the feed class, and safe to expose. Keys are not normalized or sanitized and appear in console output, agent JSON, events, and failure context.
+- `FeedTarget::$parameters` is an application-owned snapshot stored in queued jobs. The package does not interpret it. Keep it small, serializable, and free of secrets; store identifiers instead of Eloquent models.
+- `target()` returns the active target inside `builder()`, `filename()`, and other execution hooks. It throws `LogicException` before the feed is configured with `forTarget()`.
+
+:::warning
+Every target must resolve to a different output filename. Otherwise, later targets overwrite earlier outputs. Only use a target key in a path when the application controls its format.
+:::
+
+Normal file splitting still applies per target. For example, `partners/42.xml` becomes `partners/42-1.xml`, `partners/42-2.xml`, and so on.
+
+Ordinary feed classes do not implement `HasFeedTargets` and require no changes.
 
 ## File format {/* #file_format */}
 

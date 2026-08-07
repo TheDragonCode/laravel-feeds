@@ -270,6 +270,82 @@ use Spatie\LaravelData\Optional;
 'updatedAt' => $this->model->updated_at ?? Optional::create(),
 ```
 
+## Targeted feeds
+
+Use a targeted feed when one registered feed class must generate an independent output for each partner, store, locale, or other application-defined target. The `feeds` table still contains one row for the feed class.
+
+Implement `HasFeedTargets`. The packaged `InteractsWithFeedTargets` trait provides the standard `forTarget()` and `target()` behavior; the feed class supplies lazy enumeration and direct lookup:
+
+```php
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        if (! $partner || (string) $partner->getKey() !== $key) {
+            return null;
+        }
+
+        return $this->makeTarget($partner);
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+- `targets()` is called on the unconfigured feed definition and consumed lazily when a command or schedule generates every target.
+- `findTarget()` performs a case-sensitive lookup for each explicit `--target` key. Return `null` when the key does not exist; otherwise return a target with the requested key.
+- `FeedTarget::$key` must be non-empty, stable, unique within the feed class, and safe to expose. Keys are not normalized or sanitized and appear in console output, agent JSON, events, and failure context.
+- `FeedTarget::$parameters` is an application-owned snapshot stored in queued jobs. The package does not interpret it. Keep it small, serializable, and free of secrets; store identifiers instead of Eloquent models.
+- `target()` returns the active target inside `builder()`, `filename()`, and other execution hooks. It throws `LogicException` before the feed is configured with `forTarget()`.
+
+:::warning
+Every target must resolve to a different output filename. Otherwise, later targets overwrite earlier outputs. Only use a target key in a path when the application controls its format.
+:::
+
+Normal file splitting still applies per target. For example, `partners/42.xml` becomes `partners/42-1.xml`, `partners/42-2.xml`, and so on.
+
+Ordinary feed classes do not implement `HasFeedTargets` and require no changes.
+
 ## File format
 
 :::tip
@@ -395,6 +471,29 @@ To generate a specific feed, call the `feed:generate` console command, passing t
 php artisan feed:generate 123
 ```
 
+## Target selection
+
+For a [targeted feed](https://feeds.dragon-code.pro/create-feeds/#targeted_feeds), the registration ID selects the feed class and the target key selects one output.
+
+Running the feed without `--target` consumes `targets()` lazily and generates every target:
+
+```bash
+php artisan feed:generate 123
+```
+
+Pass the repeatable `--target` option to generate only selected targets:
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+Explicit keys use `findTarget()` instead of enumerating `targets()`. Duplicate keys are processed once, in first-seen order. All requested keys are resolved before generation starts.
+
+`--target` requires one feed registration ID. The command rejects empty or unknown keys and rejects target selection for a feed that does not implement `HasFeedTargets`.
+
+Full target enumeration is streamed rather than atomic. If `targets()` fails after yielding some values, earlier targets may already be generated or queued. An empty iterable generates nothing and does not create an implicit default target.
+
 ## AI agent output
 
 When `feed:generate` runs inside an AI coding agent recognized by [Laravel Agent Detector](https://github.com/laravel/agent-detector), it automatically writes a single JSON object instead of progress bars and formatted status lines. No command option is required. Outside a recognized agent, the regular console output remains unchanged.
@@ -432,6 +531,8 @@ The command emits compact JSON on one line. The example is formatted only for re
 | `queued` | Queue mode is enabled and the feed job was dispatched synchronously for the agent. | None |
 | `skipped` | The feed is inactive and the command was run without a feed ID. | None |
 
+Each targeted `generated` or `queued` entry also contains a `target` field with the selected key.
+
 :::note
 In queue mode, the agent-aware path runs each enabled job synchronously before returning the JSON result. The regular human-oriented path continues to dispatch jobs through the configured queue connection.
 :::
@@ -449,11 +550,11 @@ FEED_QUEUE_NAME=feeds
 FEED_QUEUE_UNIQUE_TTL=3600
 ```
 
-When queue mode is enabled, `feed:generate` dispatches one job for every active feed instead of generating the files directly. With an asynchronous connection, the command returns after the jobs have been dispatched. Start a [queue worker](https://laravel.com/docs/queues#running-the-queue-worker) for the selected connection and queue to process those jobs.
+When queue mode is enabled, `feed:generate` dispatches one job for every ordinary active feed and one job for every selected target of a targeted feed. With an asynchronous connection, the command returns after the jobs have been dispatched. Start a [queue worker](https://laravel.com/docs/queues#running-the-queue-worker) for the selected connection and queue to process those jobs.
 
 - `FEED_QUEUE_CONNECTION` selects the queue connection. It falls back to `QUEUE_CONNECTION` and then to `database`.
 - `FEED_QUEUE_NAME` selects a queue on that connection. Leave it unset to use the connection's default queue.
-- `FEED_QUEUE_UNIQUE_TTL` sets the maximum lifetime of the uniqueness lock in seconds. A second job for the same feed is not queued while that lock is active.
+- `FEED_QUEUE_UNIQUE_TTL` sets the maximum lifetime of the uniqueness lock in seconds. Ordinary jobs are unique by feed class. Targeted jobs are unique by feed class and target key; target parameters do not change that identity.
 
 :::note
 The `sync` connection executes each job immediately in the console process. Select an asynchronous connection to move generation to a worker. Set `FEED_QUEUE_ENABLED=false` to generate feeds directly without dispatching jobs.
@@ -476,7 +577,7 @@ Schedule::call(function () {
 })->everySecond();
 ```
 
-This will enable you to register calls to all active feeds according to the schedule you specified in the `expression` column of the database.
+This registers all active feeds according to the schedule in the database `expression` column. A scheduled targeted feed generates every value returned by `targets()`.
 
 ### Manual
 
@@ -1988,11 +2089,12 @@ Feeds dispatch two events when running the command:
 - **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — The `FeedStartingEvent` is dispatched after storage and path preflight, before converter resolution and staging. It does not mean that a draft file exists.
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — The `FeedFinishedEvent` is dispatched after every generated file has been published successfully. A failed generation does not dispatch this event.
 
+Both events expose `$feed` with the generated feed class and nullable `$target` with the target key. `$target` is `null` for an ordinary feed.
+
 ## Finished event contract
 
 The finished event exposes these public properties:
 
-- `$feed` contains the generated feed class.
 - `$paths` contains every published file path in output order.
 - `$path` remains available for backward compatibility and contains the first published path. Use `$paths` when a feed can be split across files.
 
@@ -3001,6 +3103,23 @@ The core API separates the data source, item mapping, feed-level metadata, outpu
 
 `Feed` uses Laravel `Conditionable` and `Macroable`.
 
+## Feed targets
+
+`DragonCode\LaravelFeed\Feeds\FeedTarget` identifies one independently generated output. Its constructor accepts a non-empty string key and an optional parameter array:
+
+<ApiSignature>public function __construct(public readonly string $key, public readonly array $parameters = [])</ApiSignature>
+
+Implement `DragonCode\LaravelFeed\Contracts\HasFeedTargets` on an opt-in feed class. The optional `DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets` trait implements `forTarget()` and `target()`; the feed class implements discovery:
+
+| Method | Contract |
+| --- | --- |
+| `targets(): iterable` | Lazily returns every available `FeedTarget` for full command and scheduled runs. |
+| `findTarget(string $key): ?FeedTarget` | Directly resolves one explicit command target with the same key or returns `null`. |
+| `forTarget(FeedTarget $target): static` | Returns a configured clone and resets its memoized filename. |
+| `target(): FeedTarget` | Returns the configured target or throws `LogicException` when none is set. |
+
+The constructor rejects empty and whitespace-only keys but does not normalize or sanitize other values. Target parameters are opaque to the package and serialized as a queue-job snapshot. The key is the target identity, so it must be stable and unique within the feed class. See [targeted feed setup](https://feeds.dragon-code.pro/create-feeds/#targeted_feeds) and [command selection](https://feeds.dragon-code.pro/generation/#target_selection).
+
 ## FeedItem and FeedInfo
 
 `FeedItem` receives the current Eloquent model. Its defaults are:
@@ -3060,7 +3179,7 @@ These entry points support programmatic generation, feed registration, scheduler
 
 <ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
 
-The method publishes all parts as one operation, updates the registration's last activity, dispatches lifecycle events, and returns paths with per-file record counts. Storage resolution and output path lookup happen before generation starts; exceptions raised during this preflight, including `UnsupportedStorageDiskException`, are thrown directly. After preflight succeeds, generation failures are wrapped in `FeedGenerationException`, with the original exception as its previous throwable.
+The method publishes all parts as one operation, updates the registration's last activity, dispatches lifecycle events, and returns paths with per-file record counts. Storage resolution and output path lookup happen before generation starts. For an ordinary feed, exceptions raised during this preflight, including `UnsupportedStorageDiskException`, are thrown directly. For a configured feed that implements `HasFeedTargets`, preflight failures are wrapped in `FeedGenerationException` so the target key remains available. After preflight succeeds, generation failures are wrapped for every feed, with the original exception as the previous throwable.
 
 Resolve the service through Laravel's container instead of constructing its internal collaborators.
 
@@ -3073,6 +3192,22 @@ $result = app(GeneratorService::class)->feed(app(UserFeed::class));
 foreach ($result->records as $path => $count) {
     processFeedResult($path, $count);
 }
+```
+
+`GeneratorService` generates one configured feed and does not enumerate targets. Resolve a target first when calling it directly:
+
+```php
+use App\Feeds\PartnerFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+use RuntimeException;
+
+$feed = app(PartnerFeed::class);
+$target = $feed->findTarget('42')
+    ?? throw new RuntimeException('Feed target [42] not found.');
+
+$result = app(GeneratorService::class)->feed(
+    $feed->forTarget($target),
+);
 ```
 
 ## FeedQuery
@@ -3131,10 +3266,10 @@ Use lifecycle events for application integration and exception types for recover
 
 | Event | Public data | Dispatch point |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | After storage and path preflight, before converter resolution and staging. |
-| `FeedFinishedEvent` | `feed`, `path`, `paths` | After every generated file is published successfully. |
+| `FeedStartingEvent` | `feed`, `target` | After storage and path preflight, before converter resolution and staging. |
+| `FeedFinishedEvent` | `feed`, `target`, `path`, `paths` | After every generated file is published successfully. |
 
-`FeedFinishedEvent::$paths` contains all published paths in order. `$path` is retained for compatibility and always contains the first path.
+`$target` contains the target key for targeted generation and `null` for an ordinary feed. `FeedFinishedEvent::$paths` contains all published paths in order. `$path` is retained for compatibility and always contains the first path.
 
 ## Input and lookup failures
 
@@ -3145,6 +3280,8 @@ Use lifecycle events for application integration and exception types for recover
 | `InvalidExpressionException` | A schedule expression is invalid. |
 | `UnknownFeedClassException` | A configured feed class cannot be resolved. |
 | `UnexpectedClassException` | A resolved class does not satisfy the expected contract. |
+
+Target selection uses SPL exceptions. When `--target` is provided, `feed:generate` throws `InvalidArgumentException` if no feed registration ID is supplied, a target key is empty, or the selected feed does not implement `HasFeedTargets`. It throws `UnexpectedValueException` when `findTarget()` returns `null`.
 
 ## Serialization and storage failures
 
@@ -3160,6 +3297,8 @@ Use lifecycle events for application integration and exception types for recover
 | `CloseFeedException` | The output resource cannot be closed. |
 | `ResourceMetaException` | Required stream metadata is unavailable. |
 | `FeedGenerationException` | Generation failed for a specific feed class. |
+
+`FeedGenerationException::getFeed()` returns the feed class. `getFeedTarget()` returns the target key for targeted generation and `null` for an ordinary feed. The original failure remains available through `getPrevious()`.
 
 Catch exceptions only where the application can add recovery or user-facing context. Let Laravel report unrecoverable generation failures.
 

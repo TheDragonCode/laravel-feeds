@@ -1,10 +1,10 @@
 ---
 title: "Падзеі і выключэнні"
-description: "Даведнік па падзеях жыццёвага цыкла генерацыі і публічных тыпах выключэнняў"
+description: "Даведнік па падзеях жыццёвага цыкла генерацыі стужак і мэт, а таксама па публічных тыпах выключэнняў"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 # Падзеі і выключэнні
@@ -17,10 +17,10 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 
 | Падзея | Публічныя даныя | Момант адпраўкі |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | Пасля папярэдняй праверкі сховішча і шляху, перад вызначэннем канвертара і падрыхтоўкай файлаў. |
-| `FeedFinishedEvent` | `feed`, `path`, `paths` | Пасля паспяховай публікацыі ўсіх згенераваных файлаў. |
+| `FeedStartingEvent` | `feed`, `target` | Пасля папярэдняй праверкі сховішча і шляху, перад вызначэннем канвертара і падрыхтоўкай файлаў. |
+| `FeedFinishedEvent` | `feed`, `target`, `path`, `paths` | Пасля паспяховай публікацыі ўсіх згенераваных файлаў. |
 
-`FeedFinishedEvent::$paths` змяшчае ўсе апублікаваныя шляхі па парадку. `$path` захавана для сумяшчальнасці і заўсёды змяшчае першы шлях.
+`$target` змяшчае ключ мэты для мэтавай генерацыі і `null` для звычайнай стужкі. `FeedFinishedEvent::$paths` змяшчае ўсе апублікаваныя шляхі па парадку. `$path` захавана для сумяшчальнасці і заўсёды змяшчае першы шлях.
 
 ## Памылкі ўводу і пошуку {/* #input-and-lookup-failures */}
 
@@ -31,6 +31,8 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 | `InvalidExpressionException` | Выраз раскладу няправільны. |
 | `UnknownFeedClassException` | Наладжаны клас стужкі немагчыма атрымаць. |
 | `UnexpectedClassException` | Атрыманы клас не адпавядае чаканаму кантракту. |
+
+Выбар мэты выкарыстоўвае выключэнні SPL. Калі перададзены `--target`, `feed:generate` кідае `InvalidArgumentException`, калі не перададзены ідэнтыфікатар рэгістрацыі стужкі, ключ мэты пусты або выбраная стужка не рэалізуе `HasFeedTargets`. Метад кідае `UnexpectedValueException`, калі `findTarget()` вяртае `null`.
 
 ## Памылкі серыялізацыі і сховішча {/* #serialization-and-storage-failures */}
 
@@ -47,6 +49,8 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 | `ResourceMetaException` | Абавязковыя метаданыя патоку недаступныя. |
 | `FeedGenerationException` | Генерацыя пэўнага класа стужкі завяршылася памылкай. |
 
+`FeedGenerationException::getFeed()` вяртае клас стужкі. `getFeedTarget()` вяртае ключ мэты для мэтавай генерацыі і `null` для звычайнай стужкі. Зыходная памылка застаецца даступнай праз `getPrevious()`.
+
 Перахоплівайце выключэнні толькі там, дзе праграма можа дадаць аднаўленне або зразумелы карыстальніку кантэкст. Невыпраўляльныя памылкі генерацыі павінен паведамляць Laravel.
 
 ## Глядзіце таксама
@@ -54,4 +58,3 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 - [Кіраўніцтва па падзеях](../events.mdx)
 - [Вырашэнне праблем](../troubleshooting.mdx)
 - [Гарантыі сховішча](../location.mdx#publication_guarantees)
-

@@ -4,7 +4,7 @@ description: "Публічныя API генерацыі, рэгістрацыі,
 type: reference
 status: stable
 since: "1.0"
-keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+keywords: ["GeneratorService", "FeedTarget", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
 ---
 
 # Сэрвісы і кантракты выканання
@@ -19,7 +19,7 @@ keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer",
 
 <ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
 
-Метад публікуе ўсе часткі як адну аперацыю, абнаўляе час апошняй актыўнасці рэгістрацыі, адпраўляе падзеі жыццёвага цыкла і вяртае шляхі з колькасцю запісаў у кожным файле. Вызначэнне сховішча і атрыманне шляху вываду адбываюцца да пачатку генерацыі; выключэнні, якія ўзнікаюць падчас гэтай папярэдняй праверкі, у тым ліку `UnsupportedStorageDiskException`, выкідваюцца непасрэдна. Пасля паспяховай папярэдняй праверкі памылкі генерацыі абгортваюцца ў `FeedGenerationException`, а зыходнае выключэнне захоўваецца як папярэдняе.
+Метад публікуе ўсе часткі як адну аперацыю, абнаўляе час апошняй актыўнасці рэгістрацыі, адпраўляе падзеі жыццёвага цыкла і вяртае шляхі з колькасцю запісаў у кожным файле. Вызначэнне сховішча і атрыманне шляху вываду адбываюцца да пачатку генерацыі. Для звычайнай стужкі выключэнні падчас гэтай папярэдняй праверкі, у тым ліку `UnsupportedStorageDiskException`, выкідваюцца непасрэдна. Для наладжанай стужкі, якая рэалізуе `HasFeedTargets`, памылкі папярэдняй праверкі абгортваюцца ў `FeedGenerationException`, каб ключ мэты заставаўся даступным. Пасля паспяховай папярэдняй праверкі памылкі генерацыі абгортваюцца для кожнай стужкі, а зыходнае выключэнне захоўваецца як папярэдняе.
 
 Атрымлівайце сэрвіс праз кантэйнер Laravel, а не стварайце яго ўнутраныя залежнасці ўручную.
 
@@ -32,6 +32,22 @@ $result = app(GeneratorService::class)->feed(app(UserFeed::class));
 foreach ($result->records as $path => $count) {
     processFeedResult($path, $count);
 }
+```
+
+`GeneratorService` генеруе адну наладжаную стужку і не пералічвае мэты. Пры непасрэдным выкліку спачатку вызначце мэту:
+
+```php
+use App\Feeds\PartnerFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+use RuntimeException;
+
+$feed = app(PartnerFeed::class);
+$target = $feed->findTarget('42')
+    ?? throw new RuntimeException('Feed target [42] not found.');
+
+$result = app(GeneratorService::class)->feed(
+    $feed->forTarget($target),
+);
 ```
 
 ## FeedQuery {/* #feed-query */}
@@ -77,4 +93,3 @@ foreach ($result->records as $path => $count) {
 - [Канфігурацыя](./configuration.mdx)
 - [Падзеі і выключэнні](./events-exceptions.mdx)
 - [Генерацыя і расклад](../generation.mdx)
-

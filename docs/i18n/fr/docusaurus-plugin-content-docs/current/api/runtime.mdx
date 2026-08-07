@@ -4,7 +4,7 @@ description: "API publiques de génération, d’enregistrement, de planificatio
 type: reference
 status: stable
 since: "1.0"
-keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+keywords: ["GeneratorService", "FeedTarget", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
 ---
 
 # Services et contrats d’exécution
@@ -19,7 +19,7 @@ Ces points d’entrée couvrent la génération programmée, l’enregistrement 
 
 <ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
 
-La méthode publie toutes les parties comme une seule opération, met à jour la dernière activité de l’enregistrement, émet les événements du cycle de vie et renvoie les chemins avec le nombre d’enregistrements de chaque fichier. La résolution du disque et du chemin de sortie a lieu avant le début de la génération ; les exceptions levées pendant cette vérification préalable, notamment `UnsupportedStorageDiskException`, sont propagées directement. Une fois cette vérification réussie, les échecs de génération sont enveloppés dans `FeedGenerationException`, avec l’exception d’origine comme exception précédente.
+La méthode publie toutes les parties comme une seule opération, met à jour la dernière activité de l’enregistrement, émet les événements du cycle de vie et renvoie les chemins avec le nombre d’enregistrements de chaque fichier. La résolution du disque et du chemin de sortie a lieu avant le début de la génération. Pour un flux ordinaire, les exceptions levées pendant cette vérification préalable, notamment `UnsupportedStorageDiskException`, sont propagées directement. Pour un flux configuré qui implémente `HasFeedTargets`, les échecs de la vérification préalable sont enveloppés dans `FeedGenerationException` afin de conserver la clé de cible. Une fois cette vérification réussie, les échecs de génération sont enveloppés pour chaque flux, avec l’exception d’origine comme exception précédente.
 
 Résolvez le service via le conteneur Laravel au lieu de construire ses dépendances internes.
 
@@ -32,6 +32,22 @@ $result = app(GeneratorService::class)->feed(app(UserFeed::class));
 foreach ($result->records as $path => $count) {
     processFeedResult($path, $count);
 }
+```
+
+`GeneratorService` génère un flux configuré et n’énumère pas les cibles. Lors d’un appel direct, résolvez d’abord une cible :
+
+```php
+use App\Feeds\PartnerFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+use RuntimeException;
+
+$feed = app(PartnerFeed::class);
+$target = $feed->findTarget('42')
+    ?? throw new RuntimeException('Feed target [42] not found.');
+
+$result = app(GeneratorService::class)->feed(
+    $feed->forTarget($target),
+);
 ```
 
 ## FeedQuery {/* #feed-query */}
@@ -77,4 +93,3 @@ Renvoyez un nouvel objet `DragonCode\LaravelFeed\Data\OptionalData` pour un cham
 - [Configuration](./configuration.mdx)
 - [Événements et exceptions](./events-exceptions.mdx)
 - [Génération et planification](../generation.mdx)
-

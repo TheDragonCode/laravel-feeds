@@ -1,10 +1,10 @@
 ---
 title: "Feeds und Daten"
-description: "Öffentliche Verträge für Feed, FeedItem, FeedInfo, ElementData und Generierungsergebnisse"
+description: "Öffentliche Verträge für Feed, Feed-Ziele, FeedItem, FeedInfo, ElementData und Generierungsergebnisse"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
 ---
 
 # Feeds und Daten
@@ -38,6 +38,23 @@ Die Kern-API trennt Datenquelle, Elementabbildung, Metadaten des Feeds, Ausgabes
 | `format(): FeedFormatEnum` | `Xml` | Gibt das konfigurierte Ausgabeformat zurück. |
 
 `Feed` verwendet Laravel `Conditionable` und `Macroable`.
+
+## Feed-Ziele {/* #feed-targets */}
+
+`DragonCode\LaravelFeed\Feeds\FeedTarget` kennzeichnet eine eigenständig erzeugte Ausgabe. Sein Konstruktor akzeptiert einen nicht leeren Zeichenfolgenschlüssel und ein optionales Parameterarray:
+
+<ApiSignature>public function __construct(public readonly string $key, public readonly array $parameters = [])</ApiSignature>
+
+Implementieren Sie `DragonCode\LaravelFeed\Contracts\HasFeedTargets` in einer Feed-Klasse mit expliziter Zielunterstützung. Der optionale Trait `DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets` implementiert `forTarget()` und `target()`; die Feed-Klasse implementiert die Zielermittlung:
+
+| Methode | Vertrag |
+| --- | --- |
+| `targets(): iterable` | Gibt verzögert jedes verfügbare `FeedTarget` für vollständige Befehls- und Zeitplanläufe zurück. |
+| `findTarget(string $key): ?FeedTarget` | Löst ein explizites Befehlsziel mit demselben Schlüssel direkt auf oder gibt `null` zurück. |
+| `forTarget(FeedTarget $target): static` | Gibt einen konfigurierten Klon zurück und setzt dessen zwischengespeicherten Dateinamen zurück. |
+| `target(): FeedTarget` | Gibt das konfigurierte Ziel zurück oder löst eine `LogicException` aus, wenn kein Ziel gesetzt ist. |
+
+Der Konstruktor weist leere Schlüssel und Schlüssel nur aus Leerraum zurück, normalisiert oder bereinigt andere Werte jedoch nicht. Zielparameter werden vom Paket nicht ausgewertet und als Snapshot eines Queue-Jobs serialisiert. Der Schlüssel ist die Identität des Ziels und muss daher innerhalb der Feed-Klasse stabil und eindeutig sein. Siehe [Einrichtung zielbasierter Feeds](../create-feeds.mdx#targeted_feeds) und [Zielauswahl im Befehl](../generation.mdx#target_selection).
 
 ## FeedItem und FeedInfo {/* #feed-item-and-feed-info */}
 

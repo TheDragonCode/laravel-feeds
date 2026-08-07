@@ -4,7 +4,7 @@ description: "Öffentliche APIs für Generierung, Registrierung, Zeitplanung, Tr
 type: reference
 status: stable
 since: "1.0"
-keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+keywords: ["GeneratorService", "FeedTarget", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
 ---
 
 # Laufzeitdienste und Verträge
@@ -19,7 +19,7 @@ Diese Einstiegspunkte unterstützen programmgesteuerte Generierung, Feed-Registr
 
 <ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
 
-Die Methode veröffentlicht alle Teile als einen Vorgang, aktualisiert die letzte Aktivität der Registrierung, löst Lebenszyklusereignisse aus und gibt Pfade mit der Anzahl der Datensätze pro Datei zurück. Der Datenträger und der Ausgabepfad werden vor Beginn der Generierung aufgelöst; Ausnahmen aus dieser Vorabprüfung, einschließlich `UnsupportedStorageDiskException`, werden direkt ausgelöst. Nach erfolgreicher Vorabprüfung werden Generierungsfehler in `FeedGenerationException` eingeschlossen; die ursprüngliche Ausnahme bleibt als vorherige Ausnahme erhalten.
+Die Methode veröffentlicht alle Teile als einen Vorgang, aktualisiert die letzte Aktivität der Registrierung, löst Lebenszyklusereignisse aus und gibt Pfade mit der Anzahl der Datensätze pro Datei zurück. Der Datenträger und der Ausgabepfad werden vor Beginn der Generierung aufgelöst. Bei einem normalen Feed werden Ausnahmen aus dieser Vorabprüfung, einschließlich `UnsupportedStorageDiskException`, direkt ausgelöst. Bei einem konfigurierten Feed, der `HasFeedTargets` implementiert, werden Fehler der Vorabprüfung in `FeedGenerationException` eingeschlossen, damit der Zielschlüssel verfügbar bleibt. Nach erfolgreicher Vorabprüfung werden Generierungsfehler für jeden Feed eingeschlossen; die ursprüngliche Ausnahme bleibt als vorherige Ausnahme erhalten.
 
 Lösen Sie den Dienst über Laravels Container auf, anstatt seine internen Abhängigkeiten selbst zu erstellen.
 
@@ -32,6 +32,22 @@ $result = app(GeneratorService::class)->feed(app(UserFeed::class));
 foreach ($result->records as $path => $count) {
     processFeedResult($path, $count);
 }
+```
+
+`GeneratorService` erzeugt einen konfigurierten Feed und zählt keine Ziele auf. Lösen Sie bei einem direkten Aufruf zuerst ein Ziel auf:
+
+```php
+use App\Feeds\PartnerFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+use RuntimeException;
+
+$feed = app(PartnerFeed::class);
+$target = $feed->findTarget('42')
+    ?? throw new RuntimeException('Feed target [42] not found.');
+
+$result = app(GeneratorService::class)->feed(
+    $feed->forTarget($target),
+);
 ```
 
 ## FeedQuery {/* #feed-query */}
@@ -77,4 +93,3 @@ Geben Sie für ein Feld, das bei fehlendem Wert ausgelassen werden soll, ein neu
 - [Konfiguration](./configuration.mdx)
 - [Ereignisse und Ausnahmen](./events-exceptions.mdx)
 - [Generierung und Zeitplanung](../generation.mdx)
-

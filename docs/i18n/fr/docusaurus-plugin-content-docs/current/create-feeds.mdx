@@ -4,7 +4,7 @@ description: "Instructions pour créer et remplir les classes du flux, de ses é
 type: guide
 status: stable
 since: "1.0"
-keywords: ["feed", "FeedItem", "FeedInfo", "make:feed"]
+keywords: ["feed", "FeedItem", "FeedInfo", "FeedTarget", "make:feed"]
 ---
 
 import ThemedImage from '@theme/ThemedImage';
@@ -157,6 +157,82 @@ use Spatie\LaravelData\Optional;
 
 'updatedAt' => $this->model->updated_at ?? Optional::create(),
 ```
+
+## Flux ciblés {/* #targeted_feeds */}
+
+Utilisez un flux ciblé lorsqu’une seule classe de flux enregistrée doit produire une sortie indépendante pour chaque partenaire, boutique, paramètre régional ou autre cible définie par l’application. La table `feeds` contient toujours une seule ligne pour la classe du flux.
+
+Implémentez `HasFeedTargets`. Le trait fourni `InteractsWithFeedTargets` assure le comportement standard de `forTarget()` et `target()` ; la classe du flux fournit l’énumération différée et la recherche directe :
+
+```php source="docs/snippets/targeted-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        if (! $partner || (string) $partner->getKey() !== $key) {
+            return null;
+        }
+
+        return $this->makeTarget($partner);
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+- `targets()` est appelé sur la définition non configurée du flux et consommé de manière différée lorsqu’une commande ou une planification génère toutes les cibles.
+- `findTarget()` effectue une recherche sensible à la casse pour chaque clé `--target` explicite. Renvoyez `null` si la clé n’existe pas ; sinon, renvoyez une cible portant la clé demandée.
+- `FeedTarget::$key` doit être non vide, stable, unique dans la classe du flux et pouvoir être exposée sans risque. Les clés ne sont ni normalisées ni assainies et apparaissent dans la sortie de la console, le JSON de l’agent, les événements et le contexte des échecs.
+- `FeedTarget::$parameters` est un instantané appartenant à l’application et stocké dans les jobs de file d’attente. Le paquet ne l’interprète pas. Gardez-le petit, sérialisable et sans secret ; stockez des identifiants plutôt que des modèles Eloquent.
+- `target()` renvoie la cible active dans `builder()`, `filename()` et les autres points d’exécution. Il lève une `LogicException` tant que le flux n’a pas été configuré avec `forTarget()`.
+
+:::warning
+Chaque cible doit produire un nom de fichier de sortie distinct. Sinon, les cibles suivantes écrasent les sorties précédentes. N’utilisez une clé de cible dans un chemin que si l’application en contrôle le format.
+:::
+
+Le fractionnement habituel des fichiers s’applique toujours séparément à chaque cible. Par exemple, `partners/42.xml` devient `partners/42-1.xml`, `partners/42-2.xml`, et ainsi de suite.
+
+Les classes de flux ordinaires n’implémentent pas `HasFeedTargets` et ne nécessitent aucune modification.
 
 ## Format de fichier {/* #file_format */}
 

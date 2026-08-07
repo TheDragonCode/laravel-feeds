@@ -1,10 +1,10 @@
 ---
 title: "Фіди та дані"
-description: "Публічні контракти Feed, FeedItem, FeedInfo, ElementData і результатів генерування"
+description: "Публічні контракти для Feed, цілей фіду, FeedItem, FeedInfo, ElementData та результатів генерування"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
 ---
 
 # Фіди та дані
@@ -38,6 +38,23 @@ keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"
 | `format(): FeedFormatEnum` | `Xml` | Повертає налаштований формат виведення. |
 
 `Feed` використовує засоби Laravel `Conditionable` і `Macroable`.
+
+## Цілі фіду {/* #feed-targets */}
+
+`DragonCode\LaravelFeed\Feeds\FeedTarget` визначає один незалежно згенерований результат. Його конструктор приймає непорожній рядковий ключ і необов'язковий масив параметрів:
+
+<ApiSignature>public function __construct(public readonly string $key, public readonly array $parameters = [])</ApiSignature>
+
+Реалізуйте `DragonCode\LaravelFeed\Contracts\HasFeedTargets` у класі фіду, для якого потрібні цілі. Необов'язковий трейт `DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets` реалізує `forTarget()` і `target()`, а клас фіду — визначення цілей:
+
+| Метод | Контракт |
+| --- | --- |
+| `targets(): iterable` | Ліниво повертає всі доступні `FeedTarget`, коли команда або розклад генерує всі цілі. |
+| `findTarget(string $key): ?FeedTarget` | Безпосередньо визначає одну явно передану команді ціль із тим самим ключем або повертає `null`. |
+| `forTarget(FeedTarget $target): static` | Повертає налаштований клон і скидає кешовану назву файлу. |
+| `target(): FeedTarget` | Повертає налаштовану ціль або викидає `LogicException`, якщо її не задано. |
+
+Конструктор відхиляє порожні ключі й ключі лише з пробілів, але не нормалізує та не очищує інші значення. Параметри цілі непрозорі для пакета й серіалізуються як знімок стану завдання черги. Ключ визначає ідентичність цілі, тому має бути стабільним і унікальним у межах класу фіду. Дивіться [налаштування цільового фіду](../create-feeds.mdx#targeted_feeds) і [вибір цілі в команді](../generation.mdx#target_selection).
 
 ## FeedItem і FeedInfo {/* #feed-item-and-feed-info */}
 
@@ -83,4 +100,3 @@ keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"
 - [Елементи](../elements.mdx)
 - [Розташування](../location.mdx)
 - [Служби та контракти виконання](./runtime.mdx)
-

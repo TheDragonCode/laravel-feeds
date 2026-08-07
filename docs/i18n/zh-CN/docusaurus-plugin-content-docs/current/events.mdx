@@ -4,7 +4,7 @@ description: "Feed 生成期间分发的事件"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 [← 上一页](./presets.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./extending-functionality.mdx)
@@ -16,11 +16,12 @@ Feed 在运行命令时会分发两个事件：
 - **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — `FeedStartingEvent` 在存储和路径预检完成后、解析转换器和开始暂存之前分发。此时不保证草稿文件已经存在。
 - **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — `FeedFinishedEvent` 在所有生成的文件成功发布后分发。生成失败时不会分发此事件。
 
+两个事件都公开 `$feed` 和可为 `null` 的 `$target`：前者包含生成的 Feed 类，后者包含目标键。对于普通 Feed，`$target` 为 `null`。
+
 ## 完成事件契约 {/* #finished_event_contract */}
 
 完成事件公开以下 public 属性：
 
-- `$feed` 包含生成的 Feed 类。
 - `$paths` 按输出顺序包含所有已发布文件的路径。
 - `$path` 为保持向后兼容而保留，其中包含第一个发布路径。当 Feed 可能拆分为多个文件时，请使用 `$paths`。
 

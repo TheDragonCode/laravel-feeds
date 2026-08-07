@@ -1,10 +1,10 @@
 ---
 title: "Події та винятки"
-description: "Довідка про події життєвого циклу генерування фіду та публічні типи винятків"
+description: "Довідка про події життєвого циклу генерування фідів і цілей та публічні типи винятків"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 # Події та винятки
@@ -17,10 +17,10 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 
 | Подія | Публічні дані | Момент надсилання |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | Після попередньої перевірки сховища й шляху, до визначення конвертера та підготовки файлів. |
-| `FeedFinishedEvent` | `feed`, `path`, `paths` | Після успішної публікації всіх згенерованих файлів. |
+| `FeedStartingEvent` | `feed`, `target` | Після попередньої перевірки сховища й шляху, до визначення конвертера та підготовки файлів. |
+| `FeedFinishedEvent` | `feed`, `target`, `path`, `paths` | Після успішної публікації всіх згенерованих файлів. |
 
-`FeedFinishedEvent::$paths` містить усі опубліковані шляхи в належному порядку. `$path` збережено для сумісності, і він завжди містить перший шлях.
+`$target` містить ключ цілі для цільового генерування та `null` для звичайного фіду. `FeedFinishedEvent::$paths` містить усі опубліковані шляхи в належному порядку. `$path` збережено для сумісності, і він завжди містить перший шлях.
 
 ## Помилки введення та пошуку {/* #input-and-lookup-failures */}
 
@@ -31,6 +31,8 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 | `InvalidExpressionException` | Вираз розкладу недійсний. |
 | `UnknownFeedClassException` | Налаштований клас фіду неможливо визначити. |
 | `UnexpectedClassException` | Визначений клас не відповідає очікуваному контракту. |
+
+Для вибору цілі використовуються винятки SPL. Якщо передано `--target`, `feed:generate` викидає `InvalidArgumentException`, коли не вказано ідентифікатор реєстрації фіду, ключ цілі порожній чи вибраний фід не реалізує `HasFeedTargets`. Якщо `findTarget()` повертає `null`, викидається `UnexpectedValueException`.
 
 ## Помилки серіалізації та сховища {/* #serialization-and-storage-failures */}
 
@@ -47,6 +49,8 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 | `ResourceMetaException` | Потрібні метадані потоку недоступні. |
 | `FeedGenerationException` | Генерування певного класу фіду завершилося помилкою. |
 
+`FeedGenerationException::getFeed()` повертає клас фіду. `getFeedTarget()` повертає ключ цілі для цільового генерування та `null` для звичайного фіду. Початкова помилка залишається доступною через `getPrevious()`.
+
 Перехоплюйте винятки лише там, де застосунок може додати відновлення або зрозумілий користувачу контекст. Дозвольте Laravel повідомляти про невідновні помилки генерування.
 
 ## Дивіться також
@@ -54,4 +58,3 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
 - [Посібник із подій](../events.mdx)
 - [Розв'язання проблем](../troubleshooting.mdx)
 - [Гарантії сховища](../location.mdx#publication_guarantees)
-

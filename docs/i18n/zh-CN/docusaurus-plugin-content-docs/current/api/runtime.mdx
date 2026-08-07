@@ -4,7 +4,7 @@ description: "公共生成、注册、调度、转换和可选值 API"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+keywords: ["GeneratorService", "FeedTarget", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
 ---
 
 # 运行时服务与契约
@@ -19,7 +19,7 @@ keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer",
 
 <ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
 
-该方法将所有分片作为一个操作发布，更新注册记录的最后活动时间，分发生命周期事件，并返回路径以及每个文件的记录数。系统会在生成开始前解析存储磁盘并查找输出路径；此前置检查中发生的异常（包括 `UnsupportedStorageDiskException`）会直接抛出。前置检查成功后，生成失败会包装为 `FeedGenerationException`，原始异常作为其前一个 throwable 保留。
+该方法将所有分片作为一个操作发布，更新注册记录的最后活动时间，分发生命周期事件，并返回路径以及每个文件的记录数。系统会在生成开始前解析存储磁盘并查找输出路径。对于普通 Feed，此前置检查中发生的异常（包括 `UnsupportedStorageDiskException`）会直接抛出。对于已配置且实现 `HasFeedTargets` 的 Feed，前置检查失败会包装为 `FeedGenerationException`，以保留目标键。前置检查成功后，所有 Feed 的生成失败都会被包装，原始异常则作为前一个异常保留。
 
 应通过 Laravel 容器解析该服务，不要自行构造其内部协作对象。
 
@@ -32,6 +32,22 @@ $result = app(GeneratorService::class)->feed(app(UserFeed::class));
 foreach ($result->records as $path => $count) {
     processFeedResult($path, $count);
 }
+```
+
+`GeneratorService` 只生成一个已配置的 Feed，不会枚举目标。直接调用时，请先解析目标：
+
+```php
+use App\Feeds\PartnerFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+use RuntimeException;
+
+$feed = app(PartnerFeed::class);
+$target = $feed->findTarget('42')
+    ?? throw new RuntimeException('Feed target [42] not found.');
+
+$result = app(GeneratorService::class)->feed(
+    $feed->forTarget($target),
+);
 ```
 
 ## FeedQuery {/* #feed-query */}
@@ -77,4 +93,3 @@ foreach ($result->records as $path => $count) {
 - [配置](./configuration.mdx)
 - [事件与异常](./events-exceptions.mdx)
 - [生成与调度](../generation.mdx)
-

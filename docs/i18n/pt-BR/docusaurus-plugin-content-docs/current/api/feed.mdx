@@ -1,10 +1,10 @@
 ---
 title: "Feeds e dados"
-description: "Contratos públicos de Feed, FeedItem, FeedInfo, ElementData e resultados de geração"
+description: "Contratos públicos de Feed, alvos de feed, FeedItem, FeedInfo, ElementData e resultados de geração"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["Feed", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
+keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "ElementData", "GenerationResultData"]
 ---
 
 # Feeds e dados
@@ -38,6 +38,23 @@ A API principal separa a fonte de dados, o mapeamento dos itens, os metadados do
 | `format(): FeedFormatEnum` | `Xml` | Retorna o formato de saída configurado. |
 
 `Feed` usa `Conditionable` e `Macroable` do Laravel.
+
+## Alvos de feed {/* #feed-targets */}
+
+`DragonCode\LaravelFeed\Feeds\FeedTarget` identifica uma saída gerada de forma independente. Seu construtor recebe uma chave string não vazia e um array opcional de parâmetros:
+
+<ApiSignature>public function __construct(public readonly string $key, public readonly array $parameters = [])</ApiSignature>
+
+Implemente `DragonCode\LaravelFeed\Contracts\HasFeedTargets` em uma classe de feed que adote esse recurso. O trait opcional `DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets` implementa `forTarget()` e `target()`; a classe do feed implementa a descoberta:
+
+| Método | Contrato |
+| --- | --- |
+| `targets(): iterable` | Retorna sob demanda todos os `FeedTarget` disponíveis para execuções completas por comando e agendamento. |
+| `findTarget(string $key): ?FeedTarget` | Resolve diretamente um alvo explícito do comando com a mesma chave ou retorna `null`. |
+| `forTarget(FeedTarget $target): static` | Retorna um clone configurado e redefine seu nome de arquivo memorizado. |
+| `target(): FeedTarget` | Retorna o alvo configurado ou lança `LogicException` quando nenhum estiver definido. |
+
+O construtor rejeita chaves vazias ou formadas apenas por espaços, mas não normaliza nem sanitiza outros valores. Os parâmetros do alvo são opacos para o pacote e serializados como um snapshot do job da fila. A chave identifica o alvo e, por isso, deve ser estável e exclusiva dentro da classe do feed. Consulte a [configuração de feeds direcionados](../create-feeds.mdx#targeted_feeds) e a [seleção de alvos no comando](../generation.mdx#target_selection).
 
 ## FeedItem e FeedInfo {/* #feed-item-and-feed-info */}
 

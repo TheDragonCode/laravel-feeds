@@ -4,7 +4,7 @@ description: "Інструкцыі па стварэнні і запаўненн
 type: guide
 status: stable
 since: "1.0"
-keywords: ["feed", "FeedItem", "FeedInfo", "make:feed"]
+keywords: ["feed", "FeedItem", "FeedInfo", "FeedTarget", "make:feed"]
 ---
 
 import ThemedImage from '@theme/ThemedImage';
@@ -157,6 +157,82 @@ use Spatie\LaravelData\Optional;
 
 'updatedAt' => $this->model->updated_at ?? Optional::create(),
 ```
+
+## Мэтавыя стужкі {/* #targeted_feeds */}
+
+Выкарыстоўвайце мэтавую стужку, калі адзін зарэгістраваны клас стужкі павінен ствараць незалежны вынік для кожнага партнёра, крамы, лакалі або іншай вызначанай праграмай мэты. У табліцы `feeds` па-ранейшаму застаецца адзін радок для класа стужкі.
+
+Рэалізуйце `HasFeedTargets`. Убудаваны трэйт `InteractsWithFeedTargets` забяспечвае стандартныя паводзіны `forTarget()` і `target()`, а клас стужкі выконвае лянівае пералічэнне і прамы пошук:
+
+```php source="docs/snippets/targeted-feed.php" lines="5-"
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        if (! $partner || (string) $partner->getKey() !== $key) {
+            return null;
+        }
+
+        return $this->makeTarget($partner);
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+- `targets()` выклікаецца для неналаджанага вызначэння стужкі і апрацоўваецца ляніва, калі каманда або расклад генеруе ўсе мэты.
+- `findTarget()` выконвае адчувальны да рэгістра пошук для кожнага яўнага ключа `--target`. Вяртайце `null`, калі ключа не існуе; у іншым выпадку вяртайце мэту з запытаным ключом.
+- `FeedTarget::$key` павінен быць непустым, стабільным, унікальным у межах класа стужкі і бяспечным для паказу. Ключы не нармалізуюцца і не ачышчаюцца; яны з'яўляюцца ў кансольным вывадзе, JSON агента, падзеях і кантэксце памылак.
+- `FeedTarget::$parameters` — гэта здымак даных праграмы, які захоўваецца ў задачах чаргі. Пакет не інтэрпрэтуе яго. Захоўвайце яго невялікім, прыдатным да серыялізацыі і без сакрэтаў; выкарыстоўвайце ідэнтыфікатары замест мадэляў Eloquent.
+- `target()` вяртае актыўную мэту ў `builder()`, `filename()` і іншых пунктах выканання. Да наладжвання стужкі праз `forTarget()` метад кідае `LogicException`.
+
+:::warning
+Кожная мэта павінна мець асобнае імя выходнага файла. Інакш наступныя мэты перазапішуць вынікі папярэдніх. Выкарыстоўвайце ключ мэты ў шляху толькі тады, калі праграма кантралюе яго фармат.
+:::
+
+Звычайны падзел файлаў па-ранейшаму ўжываецца асобна для кожнай мэты. Напрыклад, `partners/42.xml` ператвараецца ў `partners/42-1.xml`, `partners/42-2.xml` і гэтак далей.
+
+Звычайныя класы стужак не рэалізуюць `HasFeedTargets` і не патрабуюць змяненняў.
 
 ## Фармат файла {/* #file_format */}
 

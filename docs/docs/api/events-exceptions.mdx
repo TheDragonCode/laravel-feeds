@@ -1,10 +1,10 @@
 ---
 title: "Events and exceptions"
-description: "Reference for feed generation lifecycle events and public exception types"
+description: "Reference for feed and target generation lifecycle events and public exception types"
 type: reference
 status: stable
 since: "1.0"
-keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent"]
+keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "target"]
 ---
 
 # Events and exceptions
@@ -17,10 +17,10 @@ Use lifecycle events for application integration and exception types for recover
 
 | Event | Public data | Dispatch point |
 | --- | --- | --- |
-| `FeedStartingEvent` | `feed` | After storage and path preflight, before converter resolution and staging. |
-| `FeedFinishedEvent` | `feed`, `path`, `paths` | After every generated file is published successfully. |
+| `FeedStartingEvent` | `feed`, `target` | After storage and path preflight, before converter resolution and staging. |
+| `FeedFinishedEvent` | `feed`, `target`, `path`, `paths` | After every generated file is published successfully. |
 
-`FeedFinishedEvent::$paths` contains all published paths in order. `$path` is retained for compatibility and always contains the first path.
+`$target` contains the target key for targeted generation and `null` for an ordinary feed. `FeedFinishedEvent::$paths` contains all published paths in order. `$path` is retained for compatibility and always contains the first path.
 
 ## Input and lookup failures {/* #input-and-lookup-failures */}
 
@@ -31,6 +31,8 @@ Use lifecycle events for application integration and exception types for recover
 | `InvalidExpressionException` | A schedule expression is invalid. |
 | `UnknownFeedClassException` | A configured feed class cannot be resolved. |
 | `UnexpectedClassException` | A resolved class does not satisfy the expected contract. |
+
+Target selection uses SPL exceptions. When `--target` is provided, `feed:generate` throws `InvalidArgumentException` if no feed registration ID is supplied, a target key is empty, or the selected feed does not implement `HasFeedTargets`. It throws `UnexpectedValueException` when `findTarget()` returns `null`.
 
 ## Serialization and storage failures {/* #serialization-and-storage-failures */}
 
@@ -46,6 +48,8 @@ Use lifecycle events for application integration and exception types for recover
 | `CloseFeedException` | The output resource cannot be closed. |
 | `ResourceMetaException` | Required stream metadata is unavailable. |
 | `FeedGenerationException` | Generation failed for a specific feed class. |
+
+`FeedGenerationException::getFeed()` returns the feed class. `getFeedTarget()` returns the target key for targeted generation and `null` for an ordinary feed. The original failure remains available through `getPrevious()`.
 
 Catch exceptions only where the application can add recovery or user-facing context. Let Laravel report unrecoverable generation failures.
 

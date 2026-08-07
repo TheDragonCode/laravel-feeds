@@ -4,7 +4,7 @@ description: "Публичные API генерации, регистрации,
 type: reference
 status: stable
 since: "1.0"
-keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+keywords: ["GeneratorService", "FeedTarget", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
 ---
 
 # Сервисы и контракты выполнения
@@ -19,7 +19,7 @@ keywords: ["GeneratorService", "FeedQuery", "ScheduleFeedHelper", "Transformer",
 
 <ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
 
-Метод публикует все части как одну операцию, обновляет время последней активности записи, отправляет события жизненного цикла и возвращает пути с количеством записей в каждом файле. Диск и выходной путь разрешаются до начала генерации; исключения этого предварительного этапа, включая `UnsupportedStorageDiskException`, выбрасываются напрямую. После успешной предварительной проверки ошибки генерации оборачиваются в `FeedGenerationException`, а исходное исключение сохраняется как предыдущее.
+Метод публикует все части как одну операцию, обновляет время последней активности записи, отправляет события жизненного цикла и возвращает пути с количеством записей в каждом файле. Диск и выходной путь разрешаются до начала генерации. Для обычного фида исключения этого предварительного этапа, включая `UnsupportedStorageDiskException`, выбрасываются напрямую. Для настроенного фида, реализующего `HasFeedTargets`, ошибки предварительного этапа оборачиваются в `FeedGenerationException`, чтобы сохранить ключ цели. После успешной предварительной проверки ошибки генерации оборачиваются для каждого фида, а исходное исключение сохраняется как предыдущее.
 
 Получайте сервис через контейнер Laravel, а не создавайте его внутренние зависимости вручную.
 
@@ -32,6 +32,22 @@ $result = app(GeneratorService::class)->feed(app(UserFeed::class));
 foreach ($result->records as $path => $count) {
     processFeedResult($path, $count);
 }
+```
+
+`GeneratorService` генерирует один настроенный фид и не перечисляет цели. При прямом вызове сначала разрешите цель:
+
+```php
+use App\Feeds\PartnerFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+use RuntimeException;
+
+$feed = app(PartnerFeed::class);
+$target = $feed->findTarget('42')
+    ?? throw new RuntimeException('Feed target [42] not found.');
+
+$result = app(GeneratorService::class)->feed(
+    $feed->forTarget($target),
+);
 ```
 
 ## FeedQuery {/* #feed-query */}
@@ -77,4 +93,3 @@ foreach ($result->records as $path => $count) {
 - [Конфигурация](./configuration.mdx)
 - [События и исключения](./events-exceptions.mdx)
 - [Генерация и расписание](../generation.mdx)
-
