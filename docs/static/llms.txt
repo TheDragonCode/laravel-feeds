@@ -302,7 +302,11 @@ class PartnerFeed extends Feed implements HasFeedTargets
     {
         $partner = Partner::query()->find($key);
 
-        return $partner ? $this->makeTarget($partner) : null;
+        if (! $partner || (string) $partner->getKey() !== $key) {
+            return null;
+        }
+
+        return $this->makeTarget($partner);
     }
 
     public function builder(): Builder
