@@ -32,7 +32,7 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "ta
 | `UnknownFeedClassException` | Настроенный класс фида невозможно получить. |
 | `UnexpectedClassException` | Полученный класс не соответствует ожидаемому контракту. |
 
-При выборе цели используются исключения SPL. `feed:generate --target` выбрасывает `InvalidArgumentException`, если отсутствует идентификатор фида или ключ, ключ пуст либо фид не реализует `HasFeedTargets`. Если `findTarget()` возвращает `null`, выбрасывается `UnexpectedValueException`.
+При выборе цели используются исключения SPL. Если передан `--target`, `feed:generate` выбрасывает `InvalidArgumentException`, когда не указан идентификатор регистрации фида, ключ цели пуст либо выбранный фид не реализует `HasFeedTargets`. Если `findTarget()` возвращает `null`, выбрасывается `UnexpectedValueException`.
 
 ## Ошибки сериализации и хранилища {/* #serialization-and-storage-failures */}
 

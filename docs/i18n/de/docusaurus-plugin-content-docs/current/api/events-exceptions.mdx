@@ -32,7 +32,7 @@ Verwenden Sie Lebenszyklusereignisse für die Anwendungsintegration und Ausnahme
 | `UnknownFeedClassException` | Eine konfigurierte Feed-Klasse kann nicht aufgelöst werden. |
 | `UnexpectedClassException` | Eine aufgelöste Klasse erfüllt den erwarteten Vertrag nicht. |
 
-Die Zielauswahl verwendet SPL-Ausnahmen. `feed:generate --target` löst eine `InvalidArgumentException` aus, wenn die Feed-ID oder der Schlüssel fehlt, der Schlüssel leer ist oder der Feed `HasFeedTargets` nicht implementiert. Der Befehl löst eine `UnexpectedValueException` aus, wenn `findTarget()` `null` zurückgibt.
+Die Zielauswahl verwendet SPL-Ausnahmen. Wenn `--target` angegeben wird, löst `feed:generate` eine `InvalidArgumentException` aus, wenn keine Feed-Registrierungs-ID angegeben wurde, ein Zielschlüssel leer ist oder der ausgewählte Feed `HasFeedTargets` nicht implementiert. Der Befehl löst eine `UnexpectedValueException` aus, wenn `findTarget()` `null` zurückgibt.
 
 ## Serialisierungs- und Speicherfehler {/* #serialization-and-storage-failures */}
 

@@ -32,7 +32,7 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "ta
 | `UnknownFeedClassException` | Наладжаны клас стужкі немагчыма атрымаць. |
 | `UnexpectedClassException` | Атрыманы клас не адпавядае чаканаму кантракту. |
 
-Выбар мэты выкарыстоўвае выключэнні SPL. `feed:generate --target` кідае `InvalidArgumentException`, калі адсутнічае ідэнтыфікатар стужкі або ключ, ключ пусты ці стужка не рэалізуе `HasFeedTargets`. Метад кідае `UnexpectedValueException`, калі `findTarget()` вяртае `null`.
+Выбар мэты выкарыстоўвае выключэнні SPL. Калі перададзены `--target`, `feed:generate` кідае `InvalidArgumentException`, калі не перададзены ідэнтыфікатар рэгістрацыі стужкі, ключ мэты пусты або выбраная стужка не рэалізуе `HasFeedTargets`. Метад кідае `UnexpectedValueException`, калі `findTarget()` вяртае `null`.
 
 ## Памылкі серыялізацыі і сховішча {/* #serialization-and-storage-failures */}
 

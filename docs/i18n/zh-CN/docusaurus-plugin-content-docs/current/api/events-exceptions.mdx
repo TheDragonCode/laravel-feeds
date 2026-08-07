@@ -32,7 +32,7 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "ta
 | `UnknownFeedClassException` | 无法解析配置的 Feed 类。 |
 | `UnexpectedClassException` | 解析出的类不符合预期契约。 |
 
-目标选择使用 SPL 异常。缺少 Feed ID 或目标键、目标键为空，或者 Feed 未实现 `HasFeedTargets` 时，`feed:generate --target` 会抛出 `InvalidArgumentException`。`findTarget()` 返回 `null` 时会抛出 `UnexpectedValueException`。
+目标选择使用 SPL 异常。提供 `--target` 时，如果未提供 Feed 注册 ID、目标键为空，或者所选 Feed 未实现 `HasFeedTargets`，`feed:generate` 会抛出 `InvalidArgumentException`。当 `findTarget()` 返回 `null` 时，会抛出 `UnexpectedValueException`。
 
 ## 序列化与存储失败 {/* #serialization-and-storage-failures */}
 

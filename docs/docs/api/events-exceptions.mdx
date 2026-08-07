@@ -32,7 +32,7 @@ Use lifecycle events for application integration and exception types for recover
 | `UnknownFeedClassException` | A configured feed class cannot be resolved. |
 | `UnexpectedClassException` | A resolved class does not satisfy the expected contract. |
 
-Target selection uses SPL exceptions. `feed:generate --target` throws `InvalidArgumentException` when the feed ID or key is missing, the key is empty, or the feed does not implement `HasFeedTargets`. It throws `UnexpectedValueException` when `findTarget()` returns `null`.
+Target selection uses SPL exceptions. When `--target` is provided, `feed:generate` throws `InvalidArgumentException` if no feed registration ID is supplied, a target key is empty, or the selected feed does not implement `HasFeedTargets`. It throws `UnexpectedValueException` when `findTarget()` returns `null`.
 
 ## Serialization and storage failures {/* #serialization-and-storage-failures */}
 

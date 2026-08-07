@@ -32,7 +32,7 @@ Use eventos do ciclo de vida para integrar a aplicação e os tipos de exceção
 | `UnknownFeedClassException` | A classe configurada não pode ser resolvida. |
 | `UnexpectedClassException` | A classe resolvida não atende ao contrato esperado. |
 
-A seleção de alvos usa exceções SPL. `feed:generate --target` lança `InvalidArgumentException` quando o ID do feed ou a chave estiver ausente, a chave estiver vazia ou o feed não implementar `HasFeedTargets`. O comando lança `UnexpectedValueException` quando `findTarget()` retorna `null`.
+A seleção de alvos usa exceções SPL. Quando `--target` é fornecido, `feed:generate` lança `InvalidArgumentException` se nenhum ID de registro do feed for informado, se uma chave de alvo estiver vazia ou se o feed selecionado não implementar `HasFeedTargets`. O comando lança `UnexpectedValueException` quando `findTarget()` retorna `null`.
 
 ## Falhas de serialização e armazenamento {/* #serialization-and-storage-failures */}
 

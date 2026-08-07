@@ -32,7 +32,7 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "ta
 | `UnknownFeedClassException` | 구성된 피드 클래스를 해석할 수 없습니다. |
 | `UnexpectedClassException` | 해석된 클래스가 예상 계약을 충족하지 않습니다. |
 
-대상 선택에는 SPL 예외가 사용됩니다. 피드 ID나 키가 누락되었거나, 키가 비어 있거나, 피드가 `HasFeedTargets`를 구현하지 않으면 `feed:generate --target`이 `InvalidArgumentException`을 발생시킵니다. `findTarget()`이 `null`을 반환하면 `UnexpectedValueException`을 발생시킵니다.
+대상 선택에는 SPL 예외가 사용됩니다. `--target`을 전달했을 때 피드 등록 ID를 제공하지 않았거나, 대상 키가 비어 있거나, 선택한 피드가 `HasFeedTargets`를 구현하지 않으면 `feed:generate` 명령은 `InvalidArgumentException`을 발생시킵니다. `findTarget()`이 `null`을 반환하면 `UnexpectedValueException`이 발생합니다.
 
 ## 직렬화 및 저장소 오류 {/* #serialization-and-storage-failures */}
 

@@ -32,7 +32,7 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "ta
 | `UnknownFeedClassException` | Налаштований клас фіду неможливо визначити. |
 | `UnexpectedClassException` | Визначений клас не відповідає очікуваному контракту. |
 
-Для вибору цілі використовуються винятки SPL. `feed:generate --target` викидає `InvalidArgumentException`, якщо відсутній ідентифікатор фіду або ключ, ключ порожній чи фід не реалізує `HasFeedTargets`. Команда викидає `UnexpectedValueException`, якщо `findTarget()` повертає `null`.
+Для вибору цілі використовуються винятки SPL. Якщо передано `--target`, `feed:generate` викидає `InvalidArgumentException`, коли не вказано ідентифікатор реєстрації фіду, ключ цілі порожній чи вибраний фід не реалізує `HasFeedTargets`. Якщо `findTarget()` повертає `null`, викидається `UnexpectedValueException`.
 
 ## Помилки серіалізації та сховища {/* #serialization-and-storage-failures */}
 

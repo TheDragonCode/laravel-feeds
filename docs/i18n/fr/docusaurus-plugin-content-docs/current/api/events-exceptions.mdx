@@ -32,7 +32,7 @@ Utilisez les événements du cycle de vie pour intégrer l’application et les 
 | `UnknownFeedClassException` | Une classe de flux configurée ne peut pas être résolue. |
 | `UnexpectedClassException` | Une classe résolue ne respecte pas le contrat attendu. |
 
-La sélection de cible utilise des exceptions SPL. `feed:generate --target` lève une `InvalidArgumentException` si l’identifiant du flux ou la clé manque, si la clé est vide ou si le flux n’implémente pas `HasFeedTargets`. La commande lève une `UnexpectedValueException` lorsque `findTarget()` renvoie `null`.
+La sélection de cible utilise des exceptions SPL. Lorsque `--target` est fourni, `feed:generate` lève une `InvalidArgumentException` si aucun identifiant d’enregistrement de flux n’est fourni, si une clé de cible est vide ou si le flux sélectionné n’implémente pas `HasFeedTargets`. La commande lève une `UnexpectedValueException` lorsque `findTarget()` renvoie `null`.
 
 ## Échecs de sérialisation et de stockage {/* #serialization-and-storage-failures */}
 
