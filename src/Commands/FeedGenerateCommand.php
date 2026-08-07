@@ -35,6 +35,7 @@ use function filter_var;
 use function get_class;
 use function is_int;
 use function is_string;
+use function is_subclass_of;
 use function json_encode;
 use function preg_match;
 use function sprintf;
@@ -105,16 +106,18 @@ final class FeedGenerateCommand extends Command
                 continue;
             }
 
+            if ($usesQueue) {
+                foreach ($this->executionTargets($feed->class, $targetKeys) as $target) {
+                    $this->dispatchFeed($feed->class, $target);
+                }
+
+                continue;
+            }
+
             /** @var FeedDefinition $definition */
             $definition = app($feed->class);
 
             foreach ($this->executionTargets($definition, $targetKeys) as $target) {
-                if ($usesQueue) {
-                    $this->dispatchFeed($feed->class, $target);
-
-                    continue;
-                }
-
                 $this->generateFeed($generator, $definition, $target, $usesProgressBar);
             }
         }
@@ -159,11 +162,8 @@ final class FeedGenerateCommand extends Command
             return;
         }
 
-        /** @var FeedDefinition $definition */
-        $definition = app($feed->class);
-
-        foreach ($this->executionTargets($definition, $targetKeys) as $target) {
-            if ($usesQueue) {
+        if ($usesQueue) {
+            foreach ($this->executionTargets($feed->class, $targetKeys) as $target) {
                 FeedJob::dispatchSync($feed->class, $target);
 
                 $result = ['class' => $feed->class];
@@ -175,10 +175,15 @@ final class FeedGenerateCommand extends Command
                 $result['status'] = 'queued';
 
                 yield $result;
-
-                continue;
             }
 
+            return;
+        }
+
+        /** @var FeedDefinition $definition */
+        $definition = app($feed->class);
+
+        foreach ($this->executionTargets($definition, $targetKeys) as $target) {
             $execution = $target === null
                 ? $definition
                 : $definition->forTarget($target);
@@ -280,8 +285,26 @@ final class FeedGenerateCommand extends Command
     }
 
     /** @return iterable<FeedTarget|null> */
-    protected function executionTargets(FeedDefinition $feed, array $targetKeys): iterable
+    protected function executionTargets(FeedDefinition|string $feed, array $targetKeys): iterable
     {
+        if (is_string($feed)) {
+            if (! is_subclass_of($feed, HasFeedTargets::class)) {
+                if ($targetKeys !== []) {
+                    throw new InvalidArgumentException(sprintf(
+                        'Feed [%s] does not support target [%s].',
+                        $feed,
+                        $targetKeys[0],
+                    ));
+                }
+
+                yield null;
+
+                return;
+            }
+
+            $feed = app($feed);
+        }
+
         if (! $feed instanceof HasFeedTargets) {
             if ($targetKeys !== []) {
                 throw new InvalidArgumentException(sprintf(

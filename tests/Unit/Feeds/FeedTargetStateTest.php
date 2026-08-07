@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
+use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Application;
 use Tests\Support\TargetedFeed;
+use Workbench\App\Models\User;
 
 test('configures a cloned feed without mutating the definition', function () {
     $feed   = app(TargetedFeed::class);
@@ -48,6 +51,30 @@ test('preserves subclass properties named target', function () {
         ->toBe('custom')
         ->and($configured->target()->key)
         ->toBe('42');
+});
+
+test('preserves ordinary feed methods named target and for target', function () {
+    $feed = new class (app(Application::class)) extends Feed {
+        public function target(string $value): string
+        {
+            return $value;
+        }
+
+        public function forTarget(): string
+        {
+            return 'custom';
+        }
+
+        public function builder(): Builder
+        {
+            return User::query();
+        }
+    };
+
+    expect($feed->target('value'))
+        ->toBe('value')
+        ->and($feed->forTarget())
+        ->toBe('custom');
 });
 
 test('resets the memoized filename for each target clone', function () {

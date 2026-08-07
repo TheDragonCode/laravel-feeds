@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Support;
 
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
 use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\FeedTarget;
@@ -15,6 +16,8 @@ use function sprintf;
 
 class TargetedFeed extends Feed implements HasFeedTargets
 {
+    use InteractsWithFeedTargets;
+
     public static array $keys = ['42', '81'];
 
     public static array $yieldedKeys = [];

@@ -127,6 +127,8 @@ test('rejects invalid target requests before generation', function () {
         'Feed [' . TargetedFeed::class . '] target [404] not found.',
     );
 
+    config()->set('feeds.queue.enabled', true);
+
     expect(fn () => artisan(FeedGenerateCommand::class, [
         'feed'     => (string) $ordinary->id,
         '--target' => ['42'],

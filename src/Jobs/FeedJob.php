@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Jobs;
 
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use DragonCode\LaravelFeed\Services\GeneratorService;
@@ -13,10 +14,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use LogicException;
 
 use function app;
 use function config;
 use function hash;
+use function sprintf;
 
 final class FeedJob implements ShouldBeUnique, ShouldQueue
 {
@@ -62,8 +65,14 @@ final class FeedJob implements ShouldBeUnique, ShouldQueue
     {
         $feed = app($this->feedClass);
 
-        return $this->target === null
-            ? $feed
-            : $feed->forTarget($this->target);
+        if ($this->target === null) {
+            return $feed;
+        }
+
+        if (! $feed instanceof HasFeedTargets) {
+            throw new LogicException(sprintf('Feed [%s] does not support targets.', $this->feedClass));
+        }
+
+        return $feed->forTarget($this->target);
     }
 }

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
 use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
 use DragonCode\LaravelFeed\Exceptions\FeedGenerationException;
 use DragonCode\LaravelFeed\Feeds\Feed as BaseFeed;
@@ -54,6 +55,8 @@ final class FailedAfterDraftFeedItem extends FeedItem
 
 final class FailedTargetedFeed extends BaseFeed implements HasFeedTargets
 {
+    use InteractsWithFeedTargets;
+
     public function targets(): iterable
     {
         yield new FeedTarget('42');

@@ -6,6 +6,7 @@ use DragonCode\LaravelFeed\Data\GenerationResultData;
 use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use DragonCode\LaravelFeed\Jobs\FeedJob;
 use DragonCode\LaravelFeed\Services\GeneratorService;
+use Tests\Support\TargetedFeed;
 use Workbench\App\Feeds\FullFeed;
 use Workbench\App\Feeds\SitemapFeed;
 
@@ -79,32 +80,39 @@ test('generation without target', function () {
 });
 
 test('generation with target uses a configured clone', function () {
-    $feed   = app(FullFeed::class);
+    $feed   = app(TargetedFeed::class);
     $target = new FeedTarget('42', ['partner_id' => 42]);
 
-    app()->instance(FullFeed::class, $feed);
+    app()->instance(TargetedFeed::class, $feed);
 
     $generated = null;
 
     $generator = mock(GeneratorService::class);
     $generator->shouldReceive('feed')
         ->once()
-        ->withArgs(function (FullFeed $resolved) use (&$generated) {
+        ->withArgs(function (TargetedFeed $resolved) use (&$generated) {
             $generated = $resolved;
 
             return true;
         })
         ->andReturn(new GenerationResultData([], []));
 
-    (new FeedJob(FullFeed::class, $target))->handle($generator);
+    (new FeedJob(TargetedFeed::class, $target))->handle($generator);
 
-    expect($generated)->toBeInstanceOf(FullFeed::class)
+    expect($generated)->toBeInstanceOf(TargetedFeed::class)
         ->not->toBe($feed)
         ->and($generated->target())->toBe($target);
 
     expect(fn () => $feed->target())
-        ->toThrow(LogicException::class, 'Feed [' . FullFeed::class . '] has no target.');
+        ->toThrow(LogicException::class, 'Feed [' . TargetedFeed::class . '] has no target.');
 });
+
+test('generation with target requires a targeted feed', function () {
+    $generator = mock(GeneratorService::class);
+    $generator->shouldNotReceive('feed');
+
+    (new FeedJob(FullFeed::class, new FeedTarget('42')))->handle($generator);
+})->throws(LogicException::class, 'Feed [' . FullFeed::class . '] does not support targets.');
 
 test('unique id preserves the legacy feed id and hashes targeted jobs using xxh128', function () {
     $plain          = new FeedJob(FullFeed::class);

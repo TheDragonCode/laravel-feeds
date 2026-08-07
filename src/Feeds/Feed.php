@@ -17,12 +17,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
-use LogicException;
 
 use function class_basename;
 use function get_debug_type;
 use function pathinfo;
-use function sprintf;
 
 abstract class Feed
 {
@@ -35,27 +33,9 @@ abstract class Feed
 
     protected ?string $filename = null;
 
-    private ?FeedTarget $feedTarget = null;
-
     public function __construct(
         protected Application $laravel
     ) {}
-
-    public function forTarget(FeedTarget $target): static
-    {
-        $feed = clone $this;
-
-        $feed->feedTarget = $target;
-        $feed->filename   = null;
-
-        return $feed;
-    }
-
-    public function target(): FeedTarget
-    {
-        return $this->feedTarget
-            ?? throw new LogicException(sprintf('Feed [%s] has no target.', static::class));
-    }
 
     abstract public function builder(): Builder;
 

@@ -8,6 +8,10 @@ use DragonCode\LaravelFeed\Feeds\FeedTarget;
 
 interface HasFeedTargets
 {
+    public function forTarget(FeedTarget $target): static;
+
+    public function target(): FeedTarget;
+
     /** @return iterable<FeedTarget> */
     public function targets(): iterable;
 
