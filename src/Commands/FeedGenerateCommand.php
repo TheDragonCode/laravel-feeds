@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Commands;
 
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
 use DragonCode\LaravelFeed\Data\GenerationResultData;
 use DragonCode\LaravelFeed\Exceptions\InvalidFeedArgumentException;
+use DragonCode\LaravelFeed\Feeds\Feed as FeedDefinition;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use DragonCode\LaravelFeed\Jobs\FeedJob;
 use DragonCode\LaravelFeed\Models\Feed;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
@@ -13,18 +16,30 @@ use DragonCode\LaravelFeed\Services\AgentDetectorService;
 use DragonCode\LaravelFeed\Services\GeneratorService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
+use InvalidArgumentException;
 use Laravel\Prompts\Concerns\Colors;
+use RuntimeException;
+use SplFileObject;
+use SplTempFileObject;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use UnexpectedValueException;
 
 use function app;
+use function array_unique;
+use function array_values;
 use function config;
 use function filter_var;
+use function get_class;
 use function is_int;
 use function is_string;
+use function is_subclass_of;
 use function json_encode;
 use function preg_match;
+use function sprintf;
+use function trim;
 
 #[AsCommand('feed:generate', 'Generate XML feeds')]
 final class FeedGenerateCommand extends Command
@@ -37,14 +52,22 @@ final class FeedGenerateCommand extends Command
 
     public function handle(GeneratorService $generator, FeedQuery $query, AgentDetectorService $agentDetector): int
     {
-        $feedId        = $this->feedId();
-        $feeds         = $this->selectedFeeds($query, $feedId);
-        $isTargetedRun = $feedId !== null;
-        $usesQueue     = $this->usesQueue();
+        $feedId          = $this->feedId();
+        $targetKeys      = $this->targetKeys($feedId);
+        $feeds           = $this->selectedFeeds($query, $feedId);
+        $isSpecifiedFeed = $feedId !== null;
+        $usesQueue       = $this->usesQueue();
 
         $agentDetector->isAgent()
-            ? $this->runForAgent($generator, $feeds, $isTargetedRun, $usesQueue)
-            : $this->runForConsole($generator, $feeds, $isTargetedRun, $usesQueue, $this->usesProgressBar());
+            ? $this->runForAgent($generator, $feeds, $isSpecifiedFeed, $usesQueue, $targetKeys)
+            : $this->runForConsole(
+                $generator,
+                $feeds,
+                $isSpecifiedFeed,
+                $usesQueue,
+                $this->usesProgressBar(),
+                $targetKeys,
+            );
 
         return self::SUCCESS;
     }
@@ -56,81 +79,153 @@ final class FeedGenerateCommand extends Command
         ];
     }
 
+    protected function getOptions(): array
+    {
+        return [
+            [
+                'target',
+                null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Generate only the selected feed targets',
+            ],
+        ];
+    }
+
     protected function runForConsole(
         GeneratorService $generator,
         Collection $feeds,
-        bool $isTargetedRun,
+        bool $isSpecifiedFeed,
         bool $usesQueue,
         bool $usesProgressBar,
+        array $targetKeys,
     ): void {
         foreach ($feeds as $feed) {
-            if (! $isTargetedRun && ! $feed->is_active) {
+            if (! $isSpecifiedFeed && ! $feed->is_active) {
                 $this->showSkippedFeed($feed->class);
 
                 continue;
             }
 
             if ($usesQueue) {
-                $this->dispatchFeed($feed->class);
+                foreach ($this->executionTargets($feed->class, $targetKeys) as $target) {
+                    $this->dispatchFeed($feed->class, $target);
+                }
 
                 continue;
             }
 
-            $this->generateFeed($generator, $feed->class, $usesProgressBar);
+            /** @var FeedDefinition $definition */
+            $definition = app($feed->class);
+
+            foreach ($this->executionTargets($definition, $targetKeys) as $target) {
+                $this->generateFeed($generator, $definition, $target, $usesProgressBar);
+            }
         }
     }
 
     protected function runForAgent(
         GeneratorService $generator,
         Collection $feeds,
-        bool $isTargetedRun,
+        bool $isSpecifiedFeed,
         bool $usesQueue,
+        array $targetKeys,
     ): void {
-        $results = [];
+        $results = new SplTempFileObject;
 
         foreach ($feeds as $feed) {
-            $results[] = $this->runFeedForAgent($generator, $feed, $isTargetedRun, $usesQueue);
+            foreach ($this->runFeedForAgent($generator, $feed, $isSpecifiedFeed, $usesQueue, $targetKeys) as $result) {
+                $encoded = json_encode($result, self::AGENT_JSON_FLAGS) . PHP_EOL;
+
+                if ($results->fwrite($encoded) === false) {
+                    throw new RuntimeException('Unable to buffer agent output.');
+                }
+            }
         }
 
         $this->writeAgentOutput($results);
     }
 
+    /** @return iterable<array<string, mixed>> */
     protected function runFeedForAgent(
         GeneratorService $generator,
         Feed $feed,
-        bool $isTargetedRun,
+        bool $isSpecifiedFeed,
         bool $usesQueue,
-    ): array {
-        if (! $isTargetedRun && ! $feed->is_active) {
-            return [
+        array $targetKeys,
+    ): iterable {
+        if (! $isSpecifiedFeed && ! $feed->is_active) {
+            yield [
                 'class'  => $feed->class,
                 'status' => 'skipped',
             ];
+
+            return;
         }
 
         if ($usesQueue) {
-            FeedJob::dispatchSync($feed->class);
+            foreach ($this->executionTargets($feed->class, $targetKeys) as $target) {
+                FeedJob::dispatchSync($feed->class, $target);
 
-            return [
-                'class'  => $feed->class,
-                'status' => 'queued',
-            ];
+                $result = ['class' => $feed->class];
+
+                if ($target !== null) {
+                    $result['target'] = $target->key;
+                }
+
+                $result['status'] = 'queued';
+
+                yield $result;
+            }
+
+            return;
         }
 
-        return $this->generatedAgentResult($feed->class, $generator->feed(app($feed->class)));
+        /** @var FeedDefinition $definition */
+        $definition = app($feed->class);
+
+        foreach ($this->executionTargets($definition, $targetKeys) as $target) {
+            $execution = $target === null
+                ? $definition
+                : $definition->forTarget($target);
+
+            yield $this->generatedAgentResult(
+                $feed->class,
+                $generator->feed($execution),
+                $target,
+            );
+        }
     }
 
-    protected function writeAgentOutput(array $feeds): void
+    protected function writeAgentOutput(SplTempFileObject $feeds): void
     {
-        $this->output->writeln(json_encode([
-            'tool'   => 'feed:generate',
-            'result' => 'success',
-            'feeds'  => $feeds,
-        ], self::AGENT_JSON_FLAGS), OutputInterface::OUTPUT_RAW);
+        $this->output->write(
+            '{"tool":"feed:generate","result":"success","feeds":[',
+            false,
+            OutputInterface::OUTPUT_RAW,
+        );
+
+        $feeds->setFlags(SplFileObject::DROP_NEW_LINE | SplFileObject::READ_AHEAD | SplFileObject::SKIP_EMPTY);
+
+        $first = true;
+
+        foreach ($feeds as $feed) {
+            $this->output->write(
+                ($first ? '' : ',') . $feed,
+                false,
+                OutputInterface::OUTPUT_RAW,
+            );
+
+            $first = false;
+        }
+
+        $this->output->writeln(']}', OutputInterface::OUTPUT_RAW);
     }
 
-    protected function generatedAgentResult(string $feed, GenerationResultData $result): array
-    {
+    protected function generatedAgentResult(
+        string $feed,
+        GenerationResultData $result,
+        ?FeedTarget $target = null,
+    ): array {
         $files = [];
 
         foreach ($result->records as $path => $records) {
@@ -140,11 +235,16 @@ final class FeedGenerateCommand extends Command
             ];
         }
 
-        return [
-            'class'  => $feed,
-            'status' => 'generated',
-            'files'  => $files,
-        ];
+        $response = ['class' => $feed];
+
+        if ($target !== null) {
+            $response['target'] = $target->key;
+        }
+
+        $response['status'] = 'generated';
+        $response['files']  = $files;
+
+        return $response;
     }
 
     protected function showSkippedFeed(string $feed): void
@@ -152,24 +252,103 @@ final class FeedGenerateCommand extends Command
         $this->components->twoColumnDetail($feed, $this->textYellow('SKIP'));
     }
 
-    protected function dispatchFeed(string $feed): void
+    protected function dispatchFeed(string $feed, ?FeedTarget $target): void
     {
-        $this->components->twoColumnDetail($feed, $this->textGreen('QUEUED'));
+        $this->components->twoColumnDetail(
+            $this->executionName($feed, $target),
+            $this->textGreen('QUEUED'),
+        );
 
-        FeedJob::dispatch($feed);
+        FeedJob::dispatch($feed, $target);
     }
 
-    protected function generateFeed(GeneratorService $generator, string $feed, bool $usesProgressBar): void
-    {
-        if ($usesProgressBar) {
-            $this->components->info($feed);
+    protected function generateFeed(
+        GeneratorService $generator,
+        FeedDefinition $feed,
+        ?FeedTarget $target,
+        bool $usesProgressBar,
+    ): void {
+        $execution = $target === null
+            ? $feed
+            : $feed->forTarget($target);
+        $name = $this->executionName(get_class($feed), $target);
 
-            $generator->feed(app($feed), $this->output);
+        if ($usesProgressBar) {
+            $this->components->info($name);
+
+            $generator->feed($execution, $this->output);
 
             return;
         }
 
-        $this->components->task($feed, fn () => $generator->feed(app($feed)));
+        $this->components->task($name, fn () => $generator->feed($execution));
+    }
+
+    /** @return iterable<FeedTarget|null> */
+    protected function executionTargets(FeedDefinition|string $feed, array $targetKeys): iterable
+    {
+        if (is_string($feed)) {
+            if (! is_subclass_of($feed, HasFeedTargets::class)) {
+                if ($targetKeys !== []) {
+                    throw new InvalidArgumentException(sprintf(
+                        'Feed [%s] does not support target [%s].',
+                        $feed,
+                        $targetKeys[0],
+                    ));
+                }
+
+                yield null;
+
+                return;
+            }
+
+            $feed = app($feed);
+        }
+
+        if (! $feed instanceof HasFeedTargets) {
+            if ($targetKeys !== []) {
+                throw new InvalidArgumentException(sprintf(
+                    'Feed [%s] does not support target [%s].',
+                    get_class($feed),
+                    $targetKeys[0],
+                ));
+            }
+
+            yield null;
+
+            return;
+        }
+
+        if ($targetKeys === []) {
+            yield from $feed->targets();
+
+            return;
+        }
+
+        $targets = [];
+
+        foreach ($targetKeys as $key) {
+            $target = $feed->findTarget($key);
+
+            if ($target === null) {
+                throw new UnexpectedValueException(sprintf(
+                    'Feed [%s] target [%s] not found.',
+                    get_class($feed),
+                    $key,
+                ));
+            }
+
+            $targets[] = $target;
+        }
+
+        yield from $targets;
+    }
+
+    protected function executionName(string $feed, ?FeedTarget $target): string
+    {
+        return $target === null
+            ? $feed
+            : sprintf('%s [target: %s]', $feed, $target->key);
     }
 
     protected function selectedFeeds(FeedQuery $query, ?int $feedId): Collection
@@ -179,6 +358,37 @@ final class FeedGenerateCommand extends Command
         }
 
         return new Collection([$query->find($feedId)]);
+    }
+
+    /** @return list<string> */
+    protected function targetKeys(?int $feedId): array
+    {
+        /** @var array<int, string|null> $values */
+        $values = $this->option('target');
+        $keys   = [];
+
+        foreach ($values as $key) {
+            if ($key === null || trim($key) === '') {
+                throw new InvalidArgumentException(sprintf(
+                    'Feed registration [%s] target key [%s] cannot be empty.',
+                    $feedId ?? 'unspecified',
+                    $key    ?? '',
+                ));
+            }
+
+            $keys[] = $key;
+        }
+
+        $keys = array_values(array_unique($keys, SORT_STRING));
+
+        if ($keys !== [] && $feedId === null) {
+            throw new InvalidArgumentException(sprintf(
+                'Feed target [%s] requires one feed registration ID; none was provided.',
+                $keys[0],
+            ));
+        }
+
+        return $keys;
     }
 
     protected function feedId(): ?int

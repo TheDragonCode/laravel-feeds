@@ -42,3 +42,34 @@ test('rejects publication that finishes without producing a generation result', 
     expect(fn () => (new GeneratorService($filesystem, $helper, $query))->feed($feed))
         ->toThrow(FeedGenerationException::class, 'Feed generation did not produce a result.');
 });
+
+test('preserves subclass members named target', function () {
+    $exception = new class (Feed::class, new RuntimeException('Failed.'), '42') extends FeedGenerationException {
+        protected string $target = 'custom';
+
+        protected function getTarget(): string
+        {
+            return $this->target;
+        }
+
+        public function customTarget(): string
+        {
+            return $this->getTarget();
+        }
+    };
+
+    expect($exception->customTarget())
+        ->toBe('custom')
+        ->and($exception->getFeedTarget())
+        ->toBe('42');
+});
+
+test('serialized legacy exceptions keep a null target', function () {
+    $class     = FeedGenerationException::class;
+    $exception = unserialize(sprintf('O:%d:"%s":0:{}', strlen($class), $class));
+
+    expect($exception)
+        ->toBeInstanceOf(FeedGenerationException::class)
+        ->and($exception->getFeedTarget())
+        ->toBeNull();
+});

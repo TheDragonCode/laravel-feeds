@@ -8,6 +8,8 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 
 final class FeedStartingEvent
 {
+    public ?string $target = null;
+
     /**
      * Create a new event instance.
      *
@@ -16,5 +18,8 @@ final class FeedStartingEvent
      */
     public function __construct(
         public string $feed,
-    ) {}
+        ?string $target = null,
+    ) {
+        $this->target = $target;
+    }
 }

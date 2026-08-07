@@ -6,9 +6,11 @@ use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use DragonCode\LaravelFeed\Data\GenerationResultData;
 use DragonCode\LaravelFeed\Events\FeedFinishedEvent;
 use DragonCode\LaravelFeed\Events\FeedStartingEvent;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use DragonCode\LaravelFeed\Models\Feed;
 use DragonCode\LaravelFeed\Services\GeneratorService;
 use Illuminate\Support\Facades\Event;
+use Tests\Support\TargetedFeed;
 use Workbench\App\Data\NewsFakeData;
 use Workbench\App\Feeds\JsonFeed;
 use Workbench\App\Feeds\SplitJsonFeed;
@@ -24,11 +26,13 @@ test('dispatches FeedStarting and FeedFinished events for each generated feed', 
 
     getAllFeeds()->each(function (Feed $feed) {
         Event::assertDispatched(FeedStartingEvent::class, static function (FeedStartingEvent $event) use ($feed) {
-            return $event->feed === $feed->class;
+            return $event->feed   === $feed->class
+                && $event->target === null;
         });
 
         Event::assertDispatched(FeedFinishedEvent::class, static function (FeedFinishedEvent $event) use ($feed) {
-            return $event->feed === $feed->class
+            return $event->feed   === $feed->class
+                && $event->target === null
                 && $event->paths !== []
                 && $event->path === $event->paths[0]
                 && collect($event->paths)->every(static fn (string $path) => is_file($path));
@@ -65,6 +69,7 @@ test('reports every published path and its record count', function (string $feed
 test('keeps the legacy finished event path compatible', function () {
     $legacy = new FeedFinishedEvent(JsonFeed::class, 'feed.json');
     $split  = new FeedFinishedEvent(JsonFeed::class, 'feed.json', ['feed-1.json', 'feed-2.json']);
+    $target = new FeedFinishedEvent(JsonFeed::class, 'feed.json', [], '42');
 
     expect($legacy->path)
         ->toBe('feed.json')
@@ -73,5 +78,29 @@ test('keeps the legacy finished event path compatible', function () {
         ->and($split->path)
         ->toBe('feed-1.json')
         ->and($split->paths)
-        ->toBe(['feed-1.json', 'feed-2.json']);
+        ->toBe(['feed-1.json', 'feed-2.json'])
+        ->and($legacy->target)
+        ->toBeNull()
+        ->and($target->target)
+        ->toBe('42');
+});
+
+test('includes the target key in generation events', function () {
+    Event::fake();
+
+    $target = new FeedTarget('42', ['partner_id' => 42]);
+    $feed   = app(TargetedFeed::class)->forTarget($target);
+
+    app(GeneratorService::class)->feed($feed);
+
+    Event::assertDispatched(
+        FeedStartingEvent::class,
+        static fn (FeedStartingEvent $event) => $event->feed === TargetedFeed::class
+            && $event->target                                === '42',
+    );
+    Event::assertDispatched(
+        FeedFinishedEvent::class,
+        static fn (FeedFinishedEvent $event) => $event->feed === TargetedFeed::class
+            && $event->target                                === '42',
+    );
 });

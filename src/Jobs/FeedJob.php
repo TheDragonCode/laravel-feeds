@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Jobs;
 
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
 use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use DragonCode\LaravelFeed\Services\GeneratorService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -12,9 +14,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use LogicException;
 
 use function app;
 use function config;
+use function hash;
+use function sprintf;
 
 final class FeedJob implements ShouldBeUnique, ShouldQueue
 {
@@ -23,9 +28,14 @@ final class FeedJob implements ShouldBeUnique, ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public ?FeedTarget $target = null;
+
     public function __construct(
-        public string $feedClass
+        public string $feedClass,
+        ?FeedTarget $target = null,
     ) {
+        $this->target = $target;
+
         $this->onConnection(config('feeds.queue.connection'));
         $this->onQueue(config('feeds.queue.name'));
     }
@@ -39,7 +49,11 @@ final class FeedJob implements ShouldBeUnique, ShouldQueue
 
     public function uniqueId(): string
     {
-        return $this->feedClass;
+        if ($this->target === null) {
+            return $this->feedClass;
+        }
+
+        return hash('xxh128', $this->feedClass . "\0target\0" . $this->target->key);
     }
 
     public function uniqueFor(): int
@@ -49,6 +63,16 @@ final class FeedJob implements ShouldBeUnique, ShouldQueue
 
     protected function resolve(): Feed
     {
-        return app($this->feedClass);
+        $feed = app($this->feedClass);
+
+        if ($this->target === null) {
+            return $feed;
+        }
+
+        if (! $feed instanceof HasFeedTargets) {
+            throw new LogicException(sprintf('Feed [%s] does not support targets.', $this->feedClass));
+        }
+
+        return $feed->forTarget($this->target);
     }
 }
