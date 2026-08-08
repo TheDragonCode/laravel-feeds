@@ -73,3 +73,35 @@ jobs:
             -   name: Deploy documentation
                 id: deployment
                 uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128
+
+    context7:
+        name: Refresh Context7
+        needs: deploy
+        permissions:
+            id-token: write
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+
+        steps:
+            -   name: Refresh documentation
+                env:
+                    CONTEXT7_API_KEY: ${{ secrets.CONTEXT7_API_KEY }}
+                run: |
+                    response=$(curl --silent --show-error \
+                        --request POST \
+                        --url https://context7.com/api/v1/refresh \
+                        --header "Authorization: Bearer ${CONTEXT7_API_KEY}" \
+                        --header "Content-Type: application/json" \
+                        --data '{"libraryName":"/llmstxt/feeds_dragon-code_pro_llms_txt"}' \
+                        --write-out '\n%{http_code}')
+                    status="${response##*$'\n'}"
+                    body="${response%$'\n'*}"
+
+                    if [[ "${status}" == 2* ]]; then
+                        printf '%s\n' "${body}"
+                    elif [[ "${status}" == "400" && "${body}" == *"user-has-active-task"* ]]; then
+                        printf '%s\n' "Context7 refresh is already in progress."
+                    else
+                        printf '%s\n' "${body}" >&2
+                        exit 1
+                    fi
