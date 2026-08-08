@@ -28,6 +28,17 @@ function documentationActionStep(array $steps, string $action): array
     throw new RuntimeException("Documentation workflow action not found: [$action].");
 }
 
+function documentationRunStep(array $steps, string $command): array
+{
+    foreach ($steps as $step) {
+        if (str_contains($step['run'] ?? '', $command)) {
+            return $step;
+        }
+    }
+
+    throw new RuntimeException("Documentation workflow command not found: [$command].");
+}
+
 function expectDocumentationActionsPinned(array $steps): void
 {
     foreach ($steps as $step) {
@@ -44,16 +55,18 @@ function expectDocumentationActionsPinned(array $steps): void
 test('builds and deploys Docusaurus through GitHub Pages', function () {
     [$workflow, $contents] = loadDocumentationWorkflow('docs.yml');
 
-    $build       = $workflow['jobs']['build'];
-    $deploy      = $workflow['jobs']['deploy'];
-    $buildSteps  = $build['steps'];
-    $deploySteps = $deploy['steps'];
-    $checkout    = documentationActionStep($buildSteps, 'actions/checkout');
-    $setupNode   = documentationActionStep($buildSteps, 'actions/setup-node');
-    $upload      = documentationActionStep($buildSteps, 'actions/upload-pages-artifact');
-    $deployment  = documentationActionStep($deploySteps, 'actions/deploy-pages');
-    $refresh     = $deploySteps[1];
-    $commands    = array_column($buildSteps, 'run');
+    $build         = $workflow['jobs']['build'];
+    $deploy        = $workflow['jobs']['deploy'];
+    $context7      = $workflow['jobs']['context7'];
+    $buildSteps    = $build['steps'];
+    $deploySteps   = $deploy['steps'];
+    $context7Steps = $context7['steps'];
+    $checkout      = documentationActionStep($buildSteps, 'actions/checkout');
+    $setupNode     = documentationActionStep($buildSteps, 'actions/setup-node');
+    $upload        = documentationActionStep($buildSteps, 'actions/upload-pages-artifact');
+    $deployment    = documentationActionStep($deploySteps, 'actions/deploy-pages');
+    $refresh       = documentationRunStep($context7Steps, 'https://context7.com/api/v1/refresh');
+    $commands      = array_column($buildSteps, 'run');
 
     expect($workflow['on']['push']['branches'])->toContain('main')
         ->and(array_key_exists('workflow_dispatch', $workflow['on']))->toBeTrue()
@@ -83,6 +96,8 @@ test('builds and deploys Docusaurus through GitHub Pages', function () {
         ])
         ->and($deploy['environment']['name'])->toBe('github-pages')
         ->and($deployment['id'])->toBe('deployment')
+        ->and($context7['needs'])->toBe('deploy')
+        ->and($context7['permissions'])->toBe(['id-token' => 'write'])
         ->and($refresh['env'])->toBe([
             'CONTEXT7_API_KEY' => '${{ secrets.CONTEXT7_API_KEY }}',
         ])
@@ -97,7 +112,7 @@ test('builds and deploys Docusaurus through GitHub Pages', function () {
         expect(strtolower($contents))->not->toContain($forbidden);
     }
 
-    expectDocumentationActionsPinned([...$buildSteps, ...$deploySteps]);
+    expectDocumentationActionsPinned([...$buildSteps, ...$deploySteps, ...$context7Steps]);
 });
 
 test('validates Docusaurus for documentation pull requests and manual runs', function () {
