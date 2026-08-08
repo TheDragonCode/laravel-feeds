@@ -54,7 +54,7 @@ keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "Elem
 | `forTarget(FeedTarget $target): static` | 返回配置后的克隆，并重置缓存的文件名。 |
 | `target(): FeedTarget` | 返回已配置的目标；未设置目标时抛出 `LogicException`。 |
 
-构造函数会拒绝空键和仅含空白字符的键，但不会规范化或清理其他值。目标参数对软件包不透明，并会作为队列任务快照进行序列化。目标键用于标识目标，因此必须稳定且在 Feed 类内唯一。请参阅[目标 Feed 设置](../create-feeds.mdx#targeted_feeds)和[命令目标选择](../generation.mdx#target_selection)。
+构造函数会拒绝空键和仅含空白字符的键，但不会规范化或清理其他值。目标参数对软件包不透明，并会作为队列任务快照进行序列化。目标键用于标识目标，因此必须稳定且在 Feed 类内唯一。请参阅[独立输出文件设置](../feed-targets.mdx)和[命令目标选择](../generation.mdx#target_selection)。
 
 ## FeedItem 与 FeedInfo {/* #feed-item-and-feed-info */}
 
@@ -96,7 +96,7 @@ keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "Elem
 
 ## 另请参阅
 
-- [创建 Feed](../create-feeds.mdx)
+- [独立输出文件](../feed-targets.mdx)
 - [元素](../elements.mdx)
 - [存储位置](../location.mdx)
 - [运行时服务与契约](./runtime.mdx)

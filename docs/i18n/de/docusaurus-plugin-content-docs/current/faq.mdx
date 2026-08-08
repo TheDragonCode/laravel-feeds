@@ -32,9 +32,13 @@ Siehe [Unterstützte Formate](./supported-formats.mdx).
 <details className="faqItem" id="split-files">
 <summary>Kann ein Feed mehrere Dateien erzeugen?</summary>
 
-Ja. Überschreiben Sie `perFile()`, um die Anzahl der Datensätze pro Datei festzulegen, und `maxFiles()`, um die Anzahl bei Bedarf zu begrenzen. Aufgeteilte Dateien erhalten fortlaufende Suffixe.
+Ja, aber wählen Sie den Mechanismus danach aus, warum sich die Dateien unterscheiden:
 
-Siehe [Dateien aufteilen](./elements.mdx#split_files).
+- Verwenden Sie `perFile()` und optional `maxFiles()`, um einen Datensatzbestand in fortlaufende Teile mit einer festen Anzahl von Datensätzen aufzuteilen.
+- Verwenden Sie [Feed-Ziele](./feed-targets.mdx), um für jeden Partner, Shop, jedes Gebietsschema oder einen anderen Geschäftsschlüssel eine separate gefilterte Ausgabe zu erzeugen.
+- Kombinieren Sie beide Mechanismen, wenn die Ausgabe jedes Partners zusätzlich aus mehreren Teilen nach Datensatzanzahl bestehen kann.
+
+Ein vollständiges Beispiel finden Sie im [Rezept für eine Feed-Datei pro Partner](./receipt-partner-feeds.mdx).
 </details>
 
 <details className="faqItem" id="remote-storage">
@@ -66,4 +70,3 @@ Siehe [Optionale Werte](./create-feeds.mdx#optional_values).
 - [Fehlerbehebung](./troubleshooting.mdx)
 - [Konfigurationsreferenz](./api/configuration.mdx)
 - [API-Referenz](./api/index.mdx)
-

@@ -32,9 +32,13 @@ keywords: ["FAQ", "generation", "storage", "formats", "memory"]
 <details className="faqItem" id="split-files">
 <summary>一个 Feed 能否创建多个文件？</summary>
 
-可以。覆盖 `perFile()` 以设置每个文件的记录数，覆盖 `maxFiles()` 以设置可选上限。拆分文件会获得连续后缀。
+可以，但应根据文件不同的原因选择相应机制：
 
-请参阅[拆分文件](./elements.mdx#split_files)。
+- 使用 `perFile()` 和可选的 `maxFiles()`，将一个数据集按固定记录数拆分为连续分片。
+- 使用 [Feed 目标](./feed-targets.mdx)，为每个合作方、商店、语言区域或其他业务键创建独立且经过筛选的输出。
+- 如果每个合作方的输出还需要按记录数拆分为多个分片，请结合使用这两种机制。
+
+完整示例请参阅[每个合作方一个 Feed 文件示例](./receipt-partner-feeds.mdx)。
 </details>
 
 <details className="faqItem" id="remote-storage">
@@ -66,4 +70,3 @@ keywords: ["FAQ", "generation", "storage", "formats", "memory"]
 - [故障排除](./troubleshooting.mdx)
 - [配置参考](./api/configuration.mdx)
 - [API 参考](./api/index.mdx)
-

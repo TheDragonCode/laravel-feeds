@@ -1,0 +1,146 @@
+---
+title: "Um arquivo de feed por parceiro"
+description: "Receita para gerar arquivos de feed filtrados e separados para cada parceiro a partir de um único feed registrado"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["partner feed", "separate files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← Anterior](./extending-functionality.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./receipt-sitemap.mdx)
+
+# Um arquivo de feed por parceiro
+
+Esta receita registra um único `PartnerFeed` e gera um arquivo XML separado e filtrado para cada parceiro. Por exemplo:
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## Criar o feed {/* #create-feed */}
+
+```bash
+php artisan make:feed Partner
+```
+
+## Configurar saídas por parceiro {/* #configure-partner-outputs */}
+
+Substitua a classe de feed gerada por:
+
+```php source="docs/snippets/targeted-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        if (! $partner || (string) $partner->getKey() !== $key) {
+            return null;
+        }
+
+        return $this->makeTarget($partner);
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+`targets()` enumera os parceiros sob demanda nas execuções completas. `findTarget()` resolve as chaves solicitadas explicitamente sem carregar todos os parceiros. `builder()` filtra os produtos do parceiro ativo, e `filename()` atribui um caminho exclusivo a cada parceiro.
+
+## Ativar {/* #activate */}
+
+Revise o arquivo de [operação ou migração](./create-feeds.mdx) gerado e execute o comando adequado:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Gerar todos os arquivos de parceiros {/* #generate-all */}
+
+Passe o ID de registro do feed. O comando gera todos os parceiros retornados por `targets()`:
+
+```bash
+php artisan feed:generate 123
+```
+
+Com os parceiros `42` e `81`, os caminhos gerados são:
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## Gerar arquivos de parceiros selecionados {/* #generate-selected */}
+
+Use a opção repetível `--target` quando apenas parceiros específicos precisarem de arquivos atualizados:
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+## Dividir cada saída de parceiro por quantidade de registros {/* #split-each-output */}
+
+Adicione `perFile()` quando a saída de um único parceiro também puder ficar grande demais:
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+O parceiro `42` poderá gerar `partners/42-1.xml`, `partners/42-2.xml` e as partes seguintes. Essa divisão por quantidade de registros é aplicada separadamente a cada parceiro.
+
+## Veja também
+
+- [Guia de arquivos de saída separados](./feed-targets.mdx)
+- [Geração e agendamento](./generation.mdx)
+- [API de feeds e dados](./api/feed.mdx#feed-targets)

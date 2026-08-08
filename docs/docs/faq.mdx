@@ -32,9 +32,13 @@ See [supported formats](./supported-formats.mdx).
 <details className="faqItem" id="split-files">
 <summary>Can one feed create multiple files?</summary>
 
-Yes. Override `perFile()` to set the number of records per file and `maxFiles()` to set an optional cap. Split files receive sequential suffixes.
+Yes, but choose the mechanism based on why the files differ:
 
-See [split files](./elements.mdx#split_files).
+- Use `perFile()` and optionally `maxFiles()` to split one dataset into sequential parts with a fixed number of records.
+- Use [feed targets](./feed-targets.mdx) to create a separate filtered output for each partner, store, locale, or other business key.
+- Combine both mechanisms when each partner output may also need several record-count parts.
+
+See the [one feed file per partner recipe](./receipt-partner-feeds.mdx) for a complete example.
 </details>
 
 <details className="faqItem" id="remote-storage">

@@ -4,10 +4,10 @@ description: "Informações sobre a geração de arquivos de feed para distribui
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "targets", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← Anterior](./create-feeds.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./supported-formats.mdx)
+[← Anterior](./create-feeds.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./feed-targets.mdx)
 
 # Geração e agendamento
 
@@ -37,9 +37,9 @@ Para gerar um feed específico, chame o comando `feed:generate` e passe como par
 php artisan feed:generate 123
 ```
 
-## Seleção de alvos {/* #target_selection */}
+## Gerar arquivos de saída selecionados {/* #target_selection */}
 
-Em um [feed direcionado](./create-feeds.mdx#targeted_feeds), o ID do registro seleciona a classe do feed e a chave do alvo seleciona uma saída.
+Em um feed configurado com [arquivos de saída separados](./feed-targets.mdx), o ID do registro seleciona a classe do feed e a chave do alvo seleciona um parceiro, uma loja, uma localidade ou outra saída.
 
 Executar o feed sem `--target` consome `targets()` sob demanda e gera todos os alvos:
 
@@ -171,5 +171,6 @@ Schedule::call(function () {
 ## Veja também
 
 - [Criar feeds](./create-feeds.mdx)
+- [Arquivos de saída separados](./feed-targets.mdx)
 - [Eventos](./events.mdx)
 - [Armazenamento](./location.mdx)

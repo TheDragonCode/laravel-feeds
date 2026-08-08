@@ -4,10 +4,10 @@ description: "Informationen zum Erzeugen von Feed-Dateien für die spätere Vert
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "targets", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← Zurück](./create-feeds.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./supported-formats.mdx)
+[← Zurück](./create-feeds.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./feed-targets.mdx)
 
 # Generierung und Zeitplanung
 
@@ -37,9 +37,9 @@ Rufen Sie den Konsolenbefehl `feed:generate` mit der Feed-ID aus der Tabelle `fe
 php artisan feed:generate 123
 ```
 
-## Zielauswahl {/* #target_selection */}
+## Ausgewählte Ausgabedateien erzeugen {/* #target_selection */}
 
-Bei einem [zielbasierten Feed](./create-feeds.mdx#targeted_feeds) wählt die Registrierungs-ID die Feed-Klasse und der Zielschlüssel eine einzelne Ausgabe aus.
+Bei einem Feed mit [separaten Ausgabedateien](./feed-targets.mdx) wählt die Registrierungs-ID die Feed-Klasse und der Zielschlüssel einen Partner, Shop, ein Gebietsschema oder eine andere Ausgabe aus.
 
 Wird der Feed ohne `--target` ausgeführt, verarbeitet er `targets()` verzögert und erzeugt alle Ziele:
 
@@ -171,5 +171,6 @@ Schedule::call(function () {
 ## Siehe auch
 
 - [Feeds erstellen](./create-feeds.mdx)
+- [Separate Ausgabedateien](./feed-targets.mdx)
 - [Ereignisse](./events.mdx)
 - [Speicherort](./location.mdx)

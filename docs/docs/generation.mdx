@@ -4,10 +4,10 @@ description: "Information on generating feed files for later distribution"
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "targets", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← Previous](./create-feeds.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./supported-formats.mdx)
+[← Previous](./create-feeds.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./feed-targets.mdx)
 
 # Generation & schedule
 
@@ -37,9 +37,9 @@ To generate a specific feed, call the `feed:generate` console command, passing t
 php artisan feed:generate 123
 ```
 
-## Target selection {/* #target_selection */}
+## Generate selected output files {/* #target_selection */}
 
-For a [targeted feed](./create-feeds.mdx#targeted_feeds), the registration ID selects the feed class and the target key selects one output.
+For a feed configured with [separate output files](./feed-targets.mdx), the registration ID selects the feed class and the target key selects one partner, store, locale, or other output.
 
 Running the feed without `--target` consumes `targets()` lazily and generates every target:
 
@@ -171,5 +171,6 @@ Schedule::call(function () {
 ## See Also
 
 - [Create feeds](./create-feeds.mdx)
+- [Separate output files](./feed-targets.mdx)
 - [Events](./events.mdx)
 - [Location](./location.mdx)

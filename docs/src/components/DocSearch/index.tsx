@@ -42,6 +42,14 @@ export default function DocSearch({
         () =>
             (activeSearchIndex ?? []).map((route) => ({
                 ...route,
+                titleText: route.title.toLocaleLowerCase(i18n.currentLocale),
+                summaryText: [
+                    route.description,
+                    ...route.keywords,
+                    ...route.headings,
+                ]
+                    .join(" ")
+                    .toLocaleLowerCase(i18n.currentLocale),
                 searchText: [
                     route.title,
                     route.description,
@@ -58,6 +66,9 @@ export default function DocSearch({
         const normalizedQuery = query
             .trim()
             .toLocaleLowerCase(i18n.currentLocale);
+        const relevance = (route: (typeof searchableRoutes)[number]) =>
+            Number(route.titleText.includes(normalizedQuery)) * 2 +
+            Number(route.summaryText.includes(normalizedQuery));
 
         return searchableRoutes
             .filter(
@@ -65,6 +76,7 @@ export default function DocSearch({
                     normalizedQuery === "" ||
                     route.searchText.includes(normalizedQuery),
             )
+            .sort((left, right) => relevance(right) - relevance(left))
             .slice(0, 8);
     }, [i18n.currentLocale, query, searchableRoutes]);
 

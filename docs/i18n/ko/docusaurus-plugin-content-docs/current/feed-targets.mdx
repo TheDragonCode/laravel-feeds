@@ -1,0 +1,80 @@
+---
+title: "파트너, 스토어 또는 로케일별 출력 파일 분리"
+description: "등록된 피드 하나를 파트너, 스토어, 로케일 또는 기타 비즈니스 키별 파일로 분리"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["separate files", "multiple files", "split feed", "FeedTarget", "HasFeedTargets", "target"]
+---
+
+[← 이전](./generation.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./supported-formats.mdx)
+
+# 파트너, 스토어 또는 로케일별 출력 파일 분리
+
+<PageLead>
+등록된 피드 하나에서 파트너, 스토어, 로케일 또는 기타 비즈니스 키마다 독립적이고 필터링된 출력 파일을 생성해야 할 때 피드 대상을 사용하십시오.
+</PageLead>
+
+## 올바른 분리 방식 선택 {/* #choose-splitting */}
+
+“피드를 파일로 분리”한다는 표현은 서로 다른 두 가지 방식을 뜻할 수 있습니다.
+
+| 목표 | 사용 방법 |
+| --- | --- |
+| 파트너, 스토어, 로케일 또는 기타 비즈니스 키마다 필터링된 출력 하나 생성 | `HasFeedTargets` 및 `FeedTarget` |
+| 파일마다 고정된 수의 레코드를 담는 연속 파일 생성 | `perFile()` 및 선택적으로 `maxFiles()` |
+| 각 출력이 다시 여러 파일로 나뉠 수 있는 별도 출력 생성 | 피드 대상과 `perFile()` 함께 사용 |
+
+피드 대상은 애플리케이션의 의미에 따라 데이터를 분리합니다. `perFile()`은 이미 선택된 하나의 데이터셋을 레코드 수에 따라 분리합니다.
+
+## 피드 대상의 동작 방식 {/* #how-targets-work */}
+
+`feeds` 테이블에는 피드 클래스에 대한 행이 하나만 유지됩니다. 각 `FeedTarget`은 안정적인 키와 작은 매개변수 스냅샷으로 하나의 출력 변형을 설명합니다.
+
+피드 클래스에서 `HasFeedTargets`를 구현하십시오. 패키지에 포함된 `InteractsWithFeedTargets` 트레이트는 `forTarget()`과 `target()`을 제공하며, 피드 클래스는 탐색과 조회를 구현합니다.
+
+| 메서드 | 책임 |
+| --- | --- |
+| `targets(): iterable` | 전체 명령 및 스케줄 실행을 위해 사용 가능한 모든 출력을 지연 방식으로 반환합니다. |
+| `findTarget(string $key): ?FeedTarget` | 명시적으로 요청된 `--target` 키 하나를 해석하거나 `null`을 반환합니다. |
+| `forTarget(FeedTarget $target): static` | 대상이 설정된 피드 복제본을 반환합니다. |
+| `target(): FeedTarget` | `builder()`, `filename()` 및 기타 실행 훅 안에서 활성 대상을 반환합니다. |
+
+`FeedTarget::$key`는 비어 있지 않고 안정적이며 피드 클래스 안에서 고유해야 하고 외부에 노출해도 안전해야 합니다. 키는 정규화되거나 정제되지 않습니다. 콘솔 출력, 에이전트 JSON, 이벤트 및 오류 컨텍스트에 표시됩니다.
+
+`FeedTarget::$parameters`는 큐 작업에 저장되는 애플리케이션 소유의 스냅샷입니다. 작고 직렬화 가능하게 유지하고 비밀 정보를 넣지 마십시오. Eloquent 모델 대신 식별자를 저장하십시오.
+
+:::warning
+각 대상은 서로 다른 출력 파일 이름으로 해석되어야 합니다. 그렇지 않으면 나중 대상이 앞선 대상의 출력을 덮어씁니다. 애플리케이션이 형식을 제어하는 경우에만 경로에 대상 키를 사용하십시오.
+:::
+
+## 출력 파일 생성 {/* #generate-outputs */}
+
+`targets()`가 반환하는 모든 대상을 생성합니다.
+
+```bash
+php artisan feed:generate 123
+```
+
+선택한 대상 하나 이상을 생성합니다.
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+명시적인 키는 `targets()`를 열거하는 대신 `findTarget()`을 사용합니다. 중복 키는 처음 나타난 순서를 유지하며 한 번만 처리됩니다. 요청한 모든 키는 생성이 시작되기 전에 해석됩니다.
+
+전체 열거는 스트리밍되며 원자적이지 않습니다. `targets()`가 일부 값을 반환한 뒤 실패하면 앞선 대상은 이미 생성되었거나 큐에 추가되었을 수 있습니다. 스케줄에 등록된 피드는 모든 대상을 생성하고, 큐 모드는 대상마다 하나의 작업을 전달합니다.
+
+일반적인 레코드 수 기준 분할은 대상마다 따로 적용됩니다. 예를 들어 `partners/42.xml`은 `partners/42-1.xml`, `partners/42-2.xml` 등의 파일이 됩니다.
+
+## 완전한 예제 {/* #complete-example */}
+
+완전한 피드 클래스, 생성 명령 및 예상 출력 경로는 [파트너마다 하나의 피드 파일 만들기 레시피](./receipt-partner-feeds.mdx)를 따르십시오.
+
+## 관련 문서
+
+- [파트너마다 하나의 피드 파일 만들기 레시피](./receipt-partner-feeds.mdx)
+- [생성 및 스케줄](./generation.mdx)
+- [피드 및 데이터 API](./api/feed.mdx#feed-targets)

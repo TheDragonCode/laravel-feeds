@@ -187,3 +187,25 @@ test("localized search uses translated content", async ({ page }) => {
     ).toBeVisible();
     expect([...searchAssets]).toEqual(["/search/ru.json"]);
 });
+
+test("localized search finds separate output files by common wording", async ({
+    page,
+}) => {
+    await page.goto("/ru/");
+    await page.getByRole("button", { name: "Поиск" }).click();
+
+    const dialog = page.getByRole("dialog", { name: "Поиск по документации" });
+    const searchbox = dialog.getByRole("searchbox");
+    const firstResult = dialog.getByRole("link").first();
+
+    for (const query of ["разбивка на файлы", "разделение на файлы", "файлы"]) {
+        await searchbox.fill(query);
+        await expect(firstResult).toContainText(
+            "Отдельные файлы для партнёров, магазинов и локалей",
+        );
+    }
+
+    await firstResult.click();
+
+    await expect(page).toHaveURL(/\/ru\/feed-targets\/$/);
+});

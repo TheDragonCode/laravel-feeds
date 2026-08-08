@@ -54,7 +54,7 @@ Implement `DragonCode\LaravelFeed\Contracts\HasFeedTargets` on an opt-in feed cl
 | `forTarget(FeedTarget $target): static` | Returns a configured clone and resets its memoized filename. |
 | `target(): FeedTarget` | Returns the configured target or throws `LogicException` when none is set. |
 
-The constructor rejects empty and whitespace-only keys but does not normalize or sanitize other values. Target parameters are opaque to the package and serialized as a queue-job snapshot. The key is the target identity, so it must be stable and unique within the feed class. See [targeted feed setup](../create-feeds.mdx#targeted_feeds) and [command selection](../generation.mdx#target_selection).
+The constructor rejects empty and whitespace-only keys but does not normalize or sanitize other values. Target parameters are opaque to the package and serialized as a queue-job snapshot. The key is the target identity, so it must be stable and unique within the feed class. See [separate output file setup](../feed-targets.mdx) and [command selection](../generation.mdx#target_selection).
 
 ## FeedItem and FeedInfo {/* #feed-item-and-feed-info */}
 
@@ -96,7 +96,7 @@ Programmatic generation and registration methods are listed in [runtime services
 
 ## See Also
 
-- [Create feeds](../create-feeds.mdx)
+- [Separate output files](../feed-targets.mdx)
 - [Elements](../elements.mdx)
 - [Location](../location.mdx)
 - [Runtime services and contracts](./runtime.mdx)

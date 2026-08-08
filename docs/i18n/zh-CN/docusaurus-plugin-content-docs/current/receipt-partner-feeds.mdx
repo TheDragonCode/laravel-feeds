@@ -1,0 +1,146 @@
+---
+title: "每个合作方一个 Feed 文件"
+description: "使用一个已注册的 Feed 为每个合作方生成独立且经过筛选的 Feed 文件的示例"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["partner feed", "separate files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← 上一页](./extending-functionality.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./receipt-sitemap.mdx)
+
+# 每个合作方一个 Feed 文件
+
+本示例只注册一个 `PartnerFeed`，并为每个合作方生成独立且经过筛选的 XML 文件。例如：
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## 创建 Feed {/* #create-feed */}
+
+```bash
+php artisan make:feed Partner
+```
+
+## 配置合作方输出 {/* #configure-partner-outputs */}
+
+使用以下代码替换生成的 Feed 类：
+
+```php source="docs/snippets/targeted-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        if (! $partner || (string) $partner->getKey() !== $key) {
+            return null;
+        }
+
+        return $this->makeTarget($partner);
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+完整运行时，`targets()` 会惰性枚举合作方。`findTarget()` 无需加载所有合作方即可解析显式请求的键。`builder()` 筛选当前合作方的产品，`filename()` 则为每个合作方提供唯一路径。
+
+## 启用 {/* #activate */}
+
+检查生成的[操作类或迁移](./create-feeds.mdx)文件，然后运行相应的命令：
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## 生成所有合作方文件 {/* #generate-all */}
+
+传入 Feed 注册 ID。命令会为 `targets()` 返回的每个合作方生成文件：
+
+```bash
+php artisan feed:generate 123
+```
+
+如果合作方 ID 为 `42` 和 `81`，生成的路径如下：
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## 生成所选合作方文件 {/* #generate-selected */}
+
+只需刷新特定合作方的文件时，请重复传入 `--target` 选项：
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+## 按记录数拆分每个合作方的输出 {/* #split-each-output */}
+
+如果某个合作方的输出也可能过大，请添加 `perFile()`：
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+此时合作方 `42` 可以生成 `partners/42-1.xml`、`partners/42-2.xml` 以及后续分片。按记录数拆分会独立应用于每个合作方。
+
+## 另请参阅
+
+- [独立输出文件指南](./feed-targets.mdx)
+- [生成与调度](./generation.mdx)
+- [Feed 与数据 API](./api/feed.mdx#feed-targets)

@@ -1,0 +1,146 @@
+---
+title: "파트너마다 하나의 피드 파일 만들기"
+description: "등록된 피드 하나에서 각 파트너의 필터링된 피드 파일을 별도로 생성하는 레시피"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["partner feed", "separate files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← 이전](./extending-functionality.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./receipt-sitemap.mdx)
+
+# 파트너마다 하나의 피드 파일 만들기
+
+이 레시피는 하나의 `PartnerFeed`를 등록하고 파트너마다 필터링된 XML 파일을 별도로 생성합니다. 예:
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## 피드 생성 {/* #create-feed */}
+
+```bash
+php artisan make:feed Partner
+```
+
+## 파트너별 출력 구성 {/* #configure-partner-outputs */}
+
+생성된 피드 클래스를 다음 코드로 바꾸십시오.
+
+```php source="docs/snippets/targeted-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        if (! $partner || (string) $partner->getKey() !== $key) {
+            return null;
+        }
+
+        return $this->makeTarget($partner);
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+`targets()`는 전체 실행에서 파트너를 지연 방식으로 열거합니다. `findTarget()`은 모든 파트너를 불러오지 않고 명시적으로 요청된 키를 해석합니다. `builder()`는 활성 파트너의 제품만 조회하고, `filename()`은 파트너마다 고유한 경로를 지정합니다.
+
+## 활성화 {/* #activate */}
+
+생성된 [operation 또는 마이그레이션](./create-feeds.mdx) 파일을 검토한 다음 적절한 명령을 실행하십시오.
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## 모든 파트너 파일 생성 {/* #generate-all */}
+
+피드 등록 ID를 전달하십시오. 명령은 `targets()`가 반환하는 모든 파트너의 파일을 생성합니다.
+
+```bash
+php artisan feed:generate 123
+```
+
+파트너 `42`와 `81`이 있다면 다음 경로에 파일이 생성됩니다.
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## 선택한 파트너 파일 생성 {/* #generate-selected */}
+
+특정 파트너의 파일만 새로 만들어야 할 때는 반복 가능한 `--target` 옵션을 사용하십시오.
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+## 레코드 수에 따라 각 파트너 출력 분할 {/* #split-each-output */}
+
+한 파트너의 출력도 너무 커질 수 있다면 `perFile()`을 추가하십시오.
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+그러면 파트너 `42`는 `partners/42-1.xml`, `partners/42-2.xml` 및 이후 파일을 생성할 수 있습니다. 이 레코드 수 기준 분할은 각 파트너에 독립적으로 적용됩니다.
+
+## 관련 문서
+
+- [별도 출력 파일 가이드](./feed-targets.mdx)
+- [생성 및 스케줄](./generation.mdx)
+- [피드 및 데이터 API](./api/feed.mdx#feed-targets)

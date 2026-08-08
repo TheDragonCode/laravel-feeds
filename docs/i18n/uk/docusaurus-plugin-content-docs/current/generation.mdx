@@ -4,10 +4,10 @@ description: "Відомості про генерування файлів фі
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "targets", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← Попередня](./create-feeds.mdx) · [Назад до README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступна →](./supported-formats.mdx)
+[← Попередня](./create-feeds.mdx) · [Назад до README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступна →](./feed-targets.mdx)
 
 # Генерування й розклад
 
@@ -37,9 +37,9 @@ php artisan feed:generate
 php artisan feed:generate 123
 ```
 
-## Вибір цілі {/* #target_selection */}
+## Генерування вибраних вихідних файлів {/* #target_selection */}
 
-Для [цільового фіду](./create-feeds.mdx#targeted_feeds) ідентифікатор реєстрації вибирає клас фіду, а ключ цілі — один результат.
+Для фіду з налаштованими [окремими вихідними файлами](./feed-targets.mdx) ідентифікатор реєстрації вибирає клас фіду, а ключ цілі — окремий результат для партнера, магазину, локалі або іншої сутності.
 
 Запуск фіду без `--target` ліниво обробляє `targets()` і генерує всі цілі:
 
@@ -171,5 +171,6 @@ Schedule::call(function () {
 ## Дивіться також
 
 - [Створення фідів](./create-feeds.mdx)
+- [Окремі вихідні файли](./feed-targets.mdx)
 - [Події](./events.mdx)
 - [Розташування](./location.mdx)

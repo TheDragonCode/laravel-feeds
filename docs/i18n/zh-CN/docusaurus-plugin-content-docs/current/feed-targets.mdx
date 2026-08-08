@@ -1,0 +1,80 @@
+---
+title: "按合作方、商店或语言区域生成独立输出文件"
+description: "将一个已注册的 Feed 按合作方、商店、语言区域或其他业务键拆分为独立文件"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["separate files", "multiple files", "split feed", "FeedTarget", "HasFeedTargets", "target"]
+---
+
+[← 上一页](./generation.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./supported-formats.mdx)
+
+# 按合作方、商店或语言区域生成独立输出文件
+
+<PageLead>
+当一个已注册的 Feed 需要为每个合作方、商店、语言区域或其他业务键创建独立且经过筛选的输出文件时，请使用 Feed 目标。
+</PageLead>
+
+## 选择正确的拆分方式 {/* #choose-splitting */}
+
+“将 Feed 拆分为多个文件”可能指两种不同的机制：
+
+| 目标 | 使用方式 |
+| --- | --- |
+| 为每个合作方、商店、语言区域或其他业务键生成一个经过筛选的输出 | `HasFeedTargets` 和 `FeedTarget` |
+| 将数据按固定记录数拆分为连续文件 | `perFile()`，以及可选的 `maxFiles()` |
+| 生成多个独立输出，且每个输出还可能包含多个分片 | Feed 目标与 `perFile()` 结合使用 |
+
+Feed 目标按应用定义的业务含义拆分数据。`perFile()` 则按记录数拆分一个已经选定的数据集。
+
+## Feed 目标如何工作 {/* #how-targets-work */}
+
+`feeds` 表中仍只为 Feed 类保留一行记录。每个 `FeedTarget` 使用稳定键和精简的参数快照描述一种输出变体。
+
+在 Feed 类中实现 `HasFeedTargets`。软件包提供的 `InteractsWithFeedTargets` trait 实现 `forTarget()` 和 `target()`；Feed 类负责发现和查找目标：
+
+| 方法 | 职责 |
+| --- | --- |
+| `targets(): iterable` | 在完整运行命令或按计划运行时惰性生成所有可用输出。 |
+| `findTarget(string $key): ?FeedTarget` | 解析一个显式请求的 `--target` 键，找不到时返回 `null`。 |
+| `forTarget(FeedTarget $target): static` | 返回配置后的 Feed 克隆。 |
+| `target(): FeedTarget` | 返回 `builder()`、`filename()` 和其他执行钩子中的当前目标。 |
+
+`FeedTarget::$key` 必须非空、稳定、在 Feed 类内唯一，并且可以安全公开。键不会被规范化或清理，还会出现在控制台输出、代理 JSON、事件和失败上下文中。
+
+`FeedTarget::$parameters` 是由应用管理并存储在队列任务中的快照。请保持内容精简、可序列化且不包含机密信息。应存储标识符，而不是 Eloquent 模型。
+
+:::warning
+每个目标都必须解析为不同的输出文件名，否则后续目标会覆盖先前目标的输出。只有在应用能够控制目标键格式时，才能在路径中使用它。
+:::
+
+## 生成输出文件 {/* #generate-outputs */}
+
+生成 `targets()` 返回的全部目标：
+
+```bash
+php artisan feed:generate 123
+```
+
+生成一个或多个所选目标：
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+显式键使用 `findTarget()`，不会枚举 `targets()`。重复键只处理一次，并保留第一次出现的顺序。生成开始前会先解析全部请求键。
+
+完整枚举采用流式处理，并非原子操作。如果 `targets()` 在生成若干值后失败，先前的目标可能已经生成或进入队列。调度运行会生成全部目标，队列模式则为每个目标分派一个任务。
+
+常规的按记录数拆分会分别应用于每个目标。例如，`partners/42.xml` 会变为 `partners/42-1.xml`、`partners/42-2.xml`，依此类推。
+
+## 完整示例 {/* #complete-example */}
+
+请按照[每个合作方一个 Feed 文件示例](./receipt-partner-feeds.mdx)完成整个 Feed 类、生成命令和预期输出路径的配置。
+
+## 另请参阅
+
+- [每个合作方一个 Feed 文件示例](./receipt-partner-feeds.mdx)
+- [生成与调度](./generation.mdx)
+- [Feed 与数据 API](./api/feed.mdx#feed-targets)

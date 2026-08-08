@@ -97,7 +97,7 @@
             "FeedFormatEnum",
             "另请参阅"
         ],
-        "content": "Feed 与数据 核心 API 将数据源、Feed 项映射、Feed 级元数据、输出结构和生成结果分开处理。 Feed DragonCode\\LaravelFeed\\Feeds\\Feed 是导出的基类。实现 builder() ，并且只覆盖 Feed 所需的输出钩子。 abstract public function builder(): Builder 方法 默认值 契约 --- --- --- builder(): Builder 抽象方法 返回用作数据源的 Eloquent 查询。 item(Model $model): FeedItem 新的基础 FeedItem 将一个模型映射为输出项。 transformers(): array [] 前置该 Feed 使用的转换器类名。 chunkSize(): int 1000 数据库查询分块大小。 perFile(): int 0 每个文件的记录数。零表示不按数量拆分。 maxFiles(): int 0 输出文件的最大数量。零表示不限制。 header(): string XML/RSS 使用 XML 声明 写入根元素和 Feed 项之前的内容。 footer(): string 空字符串 写入根元素和 Feed 项之后的内容。 root(): ElementData 从类名派生的元素名 定义根元素及其属性。 info(): FeedInfo 空的 FeedInfo 定义 Feed 级信息。 filename(): string 从类名派生的文件名 返回相对于磁盘的输出文件名。 path($suffix): string 适配器解析的路径 返回本地路径或适配器解析的路径。 storagePath($suffix): string 相对于磁盘的文件名 返回存储操作使用的路径。 storage(): FilesystemAdapter public 磁盘 解析并验证 Laravel 文件系统磁盘。 format(): FeedFormatEnum Xml 返回配置的输出格式。 Feed 使用 Laravel 的 Conditionable 和 Macroable 。 Feed 目标 DragonCode\\LaravelFeed\\Feeds\\FeedTarget 标识一个独立生成的输出。其构造函数接受非空字符串键和可选参数数组： public function __construct(public readonly string $key, public readonly array $parameters = []) 需要目标的 Feed 类应实现 DragonCode\\LaravelFeed\\Contracts\\HasFeedTargets 。可选的 DragonCode\\LaravelFeed\\Concerns\\InteractsWithFeedTargets trait 实现 forTarget() 和 target() ；Feed 类负责发现目标： 方法 契约 --- --- targets(): iterable 当命令或调度任务生成全部目标时，惰性返回所有可用的 FeedTarget 。 findTarget(string $key): ?FeedTarget 直接解析一个具有相同键的显式命令目标，找不到时返回 null 。 forTarget(FeedTarget $target): static 返回配置后的克隆，并重置缓存的文件名。 target(): FeedTarget 返回已配置的目标；未设置目标时抛出 LogicException 。 构造函数会拒绝空键和仅含空白字符的键，但不会规范化或清理其他值。目标参数对软件包不透明，并会作为队列任务快照进行序列化。目标键用于标识目标，因此必须稳定且在 Feed 类内唯一。请参阅目标 Feed 设置和命令目标选择。 FeedItem 与 FeedInfo FeedItem 接收当前 Eloquent 模型。其默认行为如下： - name() 返回 kebab case 格式的模型类基本名称； - attributes() 返回空数组； - toArray() 返回模型数组。 FeedInfo::toArray() 返回空数组。这两个类都使用 Conditionable 和 Macroable ；输出需要显式结构时，请继承它们。 ElementData ElementData 是一个只读对象，具有三个构造函数属性： 属性 类型 默认值 --- --- --- name ?string null attributes array [] beforeInfo bool true 将 name 设为 null 或空字符串可隐藏根元素。将 beforeInfo 设为 false 可在根元素之前写入 Feed 信息。 生成结果 GeneratorService::feed() 返回 GenerationResultData 。其只读 paths 属性按输出顺序包含已发布文件。其只读 records 属性将每个路径映射到写入该文件的记录数。 编程式生成和注册方法列在运行时服务与契约中。 FeedFormatEnum 枚举项 值 --- --- Xml xml Json json JsonLines jsonl Csv csv Rss rss 另请参阅 - 创建 Feed - 元素 - 存储位置 - 运行时服务与契约"
+        "content": "Feed 与数据 核心 API 将数据源、Feed 项映射、Feed 级元数据、输出结构和生成结果分开处理。 Feed DragonCode\\LaravelFeed\\Feeds\\Feed 是导出的基类。实现 builder() ，并且只覆盖 Feed 所需的输出钩子。 abstract public function builder(): Builder 方法 默认值 契约 --- --- --- builder(): Builder 抽象方法 返回用作数据源的 Eloquent 查询。 item(Model $model): FeedItem 新的基础 FeedItem 将一个模型映射为输出项。 transformers(): array [] 前置该 Feed 使用的转换器类名。 chunkSize(): int 1000 数据库查询分块大小。 perFile(): int 0 每个文件的记录数。零表示不按数量拆分。 maxFiles(): int 0 输出文件的最大数量。零表示不限制。 header(): string XML/RSS 使用 XML 声明 写入根元素和 Feed 项之前的内容。 footer(): string 空字符串 写入根元素和 Feed 项之后的内容。 root(): ElementData 从类名派生的元素名 定义根元素及其属性。 info(): FeedInfo 空的 FeedInfo 定义 Feed 级信息。 filename(): string 从类名派生的文件名 返回相对于磁盘的输出文件名。 path($suffix): string 适配器解析的路径 返回本地路径或适配器解析的路径。 storagePath($suffix): string 相对于磁盘的文件名 返回存储操作使用的路径。 storage(): FilesystemAdapter public 磁盘 解析并验证 Laravel 文件系统磁盘。 format(): FeedFormatEnum Xml 返回配置的输出格式。 Feed 使用 Laravel 的 Conditionable 和 Macroable 。 Feed 目标 DragonCode\\LaravelFeed\\Feeds\\FeedTarget 标识一个独立生成的输出。其构造函数接受非空字符串键和可选参数数组： public function __construct(public readonly string $key, public readonly array $parameters = []) 需要目标的 Feed 类应实现 DragonCode\\LaravelFeed\\Contracts\\HasFeedTargets 。可选的 DragonCode\\LaravelFeed\\Concerns\\InteractsWithFeedTargets trait 实现 forTarget() 和 target() ；Feed 类负责发现目标： 方法 契约 --- --- targets(): iterable 当命令或调度任务生成全部目标时，惰性返回所有可用的 FeedTarget 。 findTarget(string $key): ?FeedTarget 直接解析一个具有相同键的显式命令目标，找不到时返回 null 。 forTarget(FeedTarget $target): static 返回配置后的克隆，并重置缓存的文件名。 target(): FeedTarget 返回已配置的目标；未设置目标时抛出 LogicException 。 构造函数会拒绝空键和仅含空白字符的键，但不会规范化或清理其他值。目标参数对软件包不透明，并会作为队列任务快照进行序列化。目标键用于标识目标，因此必须稳定且在 Feed 类内唯一。请参阅独立输出文件设置和命令目标选择。 FeedItem 与 FeedInfo FeedItem 接收当前 Eloquent 模型。其默认行为如下： - name() 返回 kebab case 格式的模型类基本名称； - attributes() 返回空数组； - toArray() 返回模型数组。 FeedInfo::toArray() 返回空数组。这两个类都使用 Conditionable 和 Macroable ；输出需要显式结构时，请继承它们。 ElementData ElementData 是一个只读对象，具有三个构造函数属性： 属性 类型 默认值 --- --- --- name ?string null attributes array [] beforeInfo bool true 将 name 设为 null 或空字符串可隐藏根元素。将 beforeInfo 设为 false 可在根元素之前写入 Feed 信息。 生成结果 GeneratorService::feed() 返回 GenerationResultData 。其只读 paths 属性按输出顺序包含已发布文件。其只读 records 属性将每个路径映射到写入该文件的记录数。 编程式生成和注册方法列在运行时服务与契约中。 FeedFormatEnum 枚举项 值 --- --- Xml xml Json json JsonLines jsonl Csv csv Rss rss 另请参阅 - 独立输出文件 - 元素 - 存储位置 - 运行时服务与契约"
     },
     {
         "route": "/zh-CN/api/runtime/",
@@ -167,7 +167,6 @@
             "feed",
             "FeedItem",
             "FeedInfo",
-            "FeedTarget",
             "make:feed"
         ],
         "headings": [
@@ -176,11 +175,11 @@
             "Feed",
             "Feed 项",
             "可选值",
-            "目标 Feed",
+            "独立输出文件",
             "文件格式",
             "另请参阅"
         ],
-        "content": "import ThemedImage from '@theme/ThemedImage'; ← 上一页 · 返回 README · 下一页 → 创建 Feed 创建所需类最方便的方法是使用 Laravel Idea 插件，并在 PhpStorm 中运行。 要创建 Feed 类，请使用 make:feed 控制台命令： 该命令会创建 Feed 文件，例如 app/Feeds/UserFeed.php 。 该控制台命令还可以在创建 Feed 类的同时创建项类和信息类。使用 --item 和 --info 选项即可。 也可以使用短选项： 创建 Feed 时，还会创建一个操作类或迁移，以便将它添加到数据库。 如果项目使用 Laravel Deploy Operations ，则会创建操作类；否则会创建迁移类。 这是在数据库中添加和管理 Feed 信息所必需的。 填充 Feed Feed 填充主 Feed 类。例如： Feed 项 填充 Feed 项类。例如： 可选值 当值不可用时，如需省略字段，请将 DragonCode\\LaravelFeed\\Data\\OptionalData 实例作为该字段的值返回： 可选字段会从 JSON 和 JSON Lines 对象以及 XML 和 RSS 元素中移除，普通嵌套字段也会被移除。CSV 会保留列位置并写入空字段。 如果应用使用 Spatie Laravel Data，也可以返回 Spatie\\LaravelData\\Optional 。这两种可选值类都会被自动处理。 目标 Feed 当一个已注册的 Feed 类需要为每个合作方、商店、语言区域或其他由应用定义的目标生成独立输出时，请使用目标 Feed。 feeds 表中仍只为该 Feed 类保留一行记录。 实现 HasFeedTargets 。软件包提供的 InteractsWithFeedTargets trait 实现标准的 forTarget() 和 target() 行为；Feed 类负责惰性枚举和直接查找： - 当命令或调度任务生成全部目标时，会在未配置的 Feed 定义上调用 targets() ，并惰性消费其结果。 - findTarget() 会针对每个显式传入的 --target 键执行区分大小写的查找。键不存在时返回 null ；否则返回键与请求一致的目标。 - FeedTarget::$key 必须非空、稳定、在 Feed 类内唯一，并且可以安全公开。键不会被规范化或清理，还会出现在控制台输出、代理 JSON、事件和失败上下文中。 - FeedTarget::$parameters 是由应用管理并存储在队列任务中的快照。软件包不会解释它。请保持内容精简、可序列化且不包含机密信息；应存储标识符，而不是 Eloquent 模型。 - target() 返回 builder() 、 filename() 和其他执行钩子中的当前目标。在通过 forTarget() 配置 Feed 之前调用它会抛出 LogicException 。 每个目标都必须解析为不同的输出文件名，否则后续目标会覆盖先前目标的输出。只有在应用能够控制目标键格式时，才能在路径中使用它。 常规文件拆分仍会分别应用于每个目标。例如， partners/42.xml 会变为 partners/42-1.xml 、 partners/42-2.xml ，依此类推。 普通 Feed 类不实现 HasFeedTargets ，无需更改。 文件格式 可在支持的格式页面查看可用格式列表。 可以生成不同格式的 Feed。Feed 类只能正确导出为其目标格式，这是由指令和其他格式特性决定的。 要应用所需格式，只需在 Feed 类中覆盖 $format 属性： 另请参阅 - 生成与调度 - 支持的格式 - 预设"
+        "content": "import ThemedImage from '@theme/ThemedImage'; ← 上一页 · 返回 README · 下一页 → 创建 Feed 创建所需类最方便的方法是使用 Laravel Idea 插件，并在 PhpStorm 中运行。 要创建 Feed 类，请使用 make:feed 控制台命令： 该命令会创建 Feed 文件，例如 app/Feeds/UserFeed.php 。 该控制台命令还可以在创建 Feed 类的同时创建项类和信息类。使用 --item 和 --info 选项即可。 也可以使用短选项： 创建 Feed 时，还会创建一个操作类或迁移，以便将它添加到数据库。 如果项目使用 Laravel Deploy Operations ，则会创建操作类；否则会创建迁移类。 这是在数据库中添加和管理 Feed 信息所必需的。 填充 Feed Feed 填充主 Feed 类。例如： Feed 项 填充 Feed 项类。例如： 可选值 当值不可用时，如需省略字段，请将 DragonCode\\LaravelFeed\\Data\\OptionalData 实例作为该字段的值返回： 可选字段会从 JSON 和 JSON Lines 对象以及 XML 和 RSS 元素中移除，普通嵌套字段也会被移除。CSV 会保留列位置并写入空字段。 如果应用使用 Spatie Laravel Data，也可以返回 Spatie\\LaravelData\\Optional 。这两种可选值类都会被自动处理。 独立输出文件 为每个合作方、商店或语言区域生成独立文件属于高级输出场景。请先阅读独立输出文件指南，再参照每个合作方一个 Feed 文件示例完成配置。 文件格式 可在支持的格式页面查看可用格式列表。 可以生成不同格式的 Feed。Feed 类只能正确导出为其目标格式，这是由指令和其他格式特性决定的。 要应用所需格式，只需在 Feed 类中覆盖 $format 属性： 另请参阅 - 生成与调度 - 独立输出文件 - 支持的格式"
     },
     {
         "route": "/zh-CN/directives/",
@@ -294,7 +293,29 @@
             "常见问题",
             "另请参阅"
         ],
-        "content": "常见问题 关于设置、生成、存储、格式和内存常见问题的简短答案。 Laravel Feeds 能否导出数百万条记录？ 可以。软件包分块读取 Eloquent 结果并增量写入输出。让 builder() 保持惰性，不要对完整结果调用 get() 或 toArray() ，并在测量内存和数据库负载后调整 chunkSize() 。 请参阅大型数据集性能。 应该使用哪种格式？ 使用数据使用方要求的契约。XML 和 RSS 支持层级指令，JSON 保留嵌套数据，JSON Lines 适合逐行处理，CSV 则要求稳定的列结构。 请参阅支持的格式。 一个 Feed 能否创建多个文件？ 可以。覆盖 perFile() 以设置每个文件的记录数，覆盖 maxFiles() 以设置可选上限。拆分文件会获得连续后缀。 请参阅拆分文件。 能否将 Feed 存储在 S3 或其他远程磁盘？ 可以，但配置的 Laravel 磁盘必须解析为可写的 FilesystemAdapter 。远程移动可能通过复制后删除实现，因此不保证原子替换。 请参阅支持的磁盘。 为什么已禁用的 Feed 仍然运行了？ 向 feed:generate 传入 Feed ID 会执行该 Feed，即使其注册记录未启用。不传 ID 运行命令时会跳过未启用的注册记录。 请参阅单个 Feed 生成。 如何省略可选字段？ 将 DragonCode\\LaravelFeed\\Data\\OptionalData 或 Spatie\\LaravelData\\Optional 作为字段值返回。CSV 会保留列并写入空值；对象格式和 XML 会省略该字段。 请参阅可选值。 另请参阅 - 故障排除 - 配置参考 - API 参考"
+        "content": "常见问题 关于设置、生成、存储、格式和内存常见问题的简短答案。 Laravel Feeds 能否导出数百万条记录？ 可以。软件包分块读取 Eloquent 结果并增量写入输出。让 builder() 保持惰性，不要对完整结果调用 get() 或 toArray() ，并在测量内存和数据库负载后调整 chunkSize() 。 请参阅大型数据集性能。 应该使用哪种格式？ 使用数据使用方要求的契约。XML 和 RSS 支持层级指令，JSON 保留嵌套数据，JSON Lines 适合逐行处理，CSV 则要求稳定的列结构。 请参阅支持的格式。 一个 Feed 能否创建多个文件？ 可以，但应根据文件不同的原因选择相应机制： - 使用 perFile() 和可选的 maxFiles() ，将一个数据集按固定记录数拆分为连续分片。 - 使用 Feed 目标，为每个合作方、商店、语言区域或其他业务键创建独立且经过筛选的输出。 - 如果每个合作方的输出还需要按记录数拆分为多个分片，请结合使用这两种机制。 完整示例请参阅每个合作方一个 Feed 文件示例。 能否将 Feed 存储在 S3 或其他远程磁盘？ 可以，但配置的 Laravel 磁盘必须解析为可写的 FilesystemAdapter 。远程移动可能通过复制后删除实现，因此不保证原子替换。 请参阅支持的磁盘。 为什么已禁用的 Feed 仍然运行了？ 向 feed:generate 传入 Feed ID 会执行该 Feed，即使其注册记录未启用。不传 ID 运行命令时会跳过未启用的注册记录。 请参阅单个 Feed 生成。 如何省略可选字段？ 将 DragonCode\\LaravelFeed\\Data\\OptionalData 或 Spatie\\LaravelData\\Optional 作为字段值返回。CSV 会保留列并写入空值；对象格式和 XML 会省略该字段。 请参阅可选值。 另请参阅 - 故障排除 - 配置参考 - API 参考"
+    },
+    {
+        "route": "/zh-CN/feed-targets/",
+        "title": "按合作方、商店或语言区域生成独立输出文件",
+        "description": "将一个已注册的 Feed 按合作方、商店、语言区域或其他业务键拆分为独立文件",
+        "keywords": [
+            "separate files",
+            "multiple files",
+            "split feed",
+            "FeedTarget",
+            "HasFeedTargets",
+            "target"
+        ],
+        "headings": [
+            "按合作方、商店或语言区域生成独立输出文件",
+            "选择正确的拆分方式",
+            "Feed 目标如何工作",
+            "生成输出文件",
+            "完整示例",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 按合作方、商店或语言区域生成独立输出文件 当一个已注册的 Feed 需要为每个合作方、商店、语言区域或其他业务键创建独立且经过筛选的输出文件时，请使用 Feed 目标。 选择正确的拆分方式 “将 Feed 拆分为多个文件”可能指两种不同的机制： 目标 使用方式 --- --- 为每个合作方、商店、语言区域或其他业务键生成一个经过筛选的输出 HasFeedTargets 和 FeedTarget 将数据按固定记录数拆分为连续文件 perFile() ，以及可选的 maxFiles() 生成多个独立输出，且每个输出还可能包含多个分片 Feed 目标与 perFile() 结合使用 Feed 目标按应用定义的业务含义拆分数据。 perFile() 则按记录数拆分一个已经选定的数据集。 Feed 目标如何工作 feeds 表中仍只为 Feed 类保留一行记录。每个 FeedTarget 使用稳定键和精简的参数快照描述一种输出变体。 在 Feed 类中实现 HasFeedTargets 。软件包提供的 InteractsWithFeedTargets trait 实现 forTarget() 和 target() ；Feed 类负责发现和查找目标： 方法 职责 --- --- targets(): iterable 在完整运行命令或按计划运行时惰性生成所有可用输出。 findTarget(string $key): ?FeedTarget 解析一个显式请求的 --target 键，找不到时返回 null 。 forTarget(FeedTarget $target): static 返回配置后的 Feed 克隆。 target(): FeedTarget 返回 builder() 、 filename() 和其他执行钩子中的当前目标。 FeedTarget::$key 必须非空、稳定、在 Feed 类内唯一，并且可以安全公开。键不会被规范化或清理，还会出现在控制台输出、代理 JSON、事件和失败上下文中。 FeedTarget::$parameters 是由应用管理并存储在队列任务中的快照。请保持内容精简、可序列化且不包含机密信息。应存储标识符，而不是 Eloquent 模型。 每个目标都必须解析为不同的输出文件名，否则后续目标会覆盖先前目标的输出。只有在应用能够控制目标键格式时，才能在路径中使用它。 生成输出文件 生成 targets() 返回的全部目标： 生成一个或多个所选目标： 显式键使用 findTarget() ，不会枚举 targets() 。重复键只处理一次，并保留第一次出现的顺序。生成开始前会先解析全部请求键。 完整枚举采用流式处理，并非原子操作。如果 targets() 在生成若干值后失败，先前的目标可能已经生成或进入队列。调度运行会生成全部目标，队列模式则为每个目标分派一个任务。 常规的按记录数拆分会分别应用于每个目标。例如， partners/42.xml 会变为 partners/42-1.xml 、 partners/42-2.xml ，依此类推。 完整示例 请按照每个合作方一个 Feed 文件示例完成整个 Feed 类、生成命令和预期输出路径的配置。 另请参阅 - 每个合作方一个 Feed 文件示例 - 生成与调度 - Feed 与数据 API"
     },
     {
         "route": "/zh-CN/generation/",
@@ -304,13 +325,14 @@
             "generation",
             "schedule",
             "queue",
-            "targets",
+            "FeedTarget",
+            "separate files",
             "feed:generate"
         ],
         "headings": [
             "生成与调度",
             "单个 Feed",
-            "目标选择",
+            "生成所选输出文件",
             "AI 代理输出",
             "队列",
             "调度",
@@ -318,7 +340,7 @@
             "手动调度",
             "另请参阅"
         ],
-        "content": "← 上一页 · 返回 README · 下一页 → 生成与调度 要生成所有已启用的 Feed，请使用控制台命令： 执行后， feeds 表中所有已启用的 Feed（ is_active = true ）都会运行。也可以使用 config/feeds.php 文件中指定的表。 不带参数调用命令时，控制台会显示所有 Feed 的链接，包括 is_active 属性设为 false 的 Feed。 但这些 Feed 不会运行，而会被标记为 SKIP 状态。 单个 Feed 即使指定的 Feed 在数据库的 feeds 表中已禁用，它也 仍会运行 。 要生成指定 Feed，请调用 feed:generate 控制台命令，并将 feeds 表中的 Feed ID 作为参数传入： 目标选择 对于目标 Feed，注册 ID 用于选择 Feed 类，目标键用于选择一个输出。 不传入 --target 运行该 Feed 时，会惰性消费 targets() 并生成全部目标： 重复传入 --target 选项可仅生成所选目标： 显式键使用 findTarget() ，不会枚举 targets() 。重复键只处理一次，并保留第一次出现的顺序。生成开始前会先解析全部请求键。 使用 --target 时必须提供一个 Feed 注册 ID。空键、未知键，以及对未实现 HasFeedTargets 的 Feed 选择目标都会被命令拒绝。 完整目标枚举采用流式处理，并非原子操作。如果 targets() 在生成若干值后失败，先前的目标可能已经生成或进入队列。空的可迭代对象不会生成任何内容，也不会创建隐式默认目标。 AI 代理输出 当 feed:generate 在 Laravel Agent Detector 识别到的 AI 编码代理中运行时，命令会自动输出单个 JSON 对象，而不是进度条和格式化状态行。不需要额外的命令选项。在未识别为代理的环境中，常规控制台输出保持不变。 直接生成时，每个已生成的 Feed 都会包含所有已发布文件及其记录数： 命令实际会在一行中输出紧凑的 JSON。上面的示例仅为便于阅读而进行了格式化。 状态 含义 附加字段 --- --- --- generated 直接生成了 Feed 文件。 files ，其中包含每个文件的 path 和 records queued 已启用队列模式，并为代理同步执行了 Feed 任务。 无 skipped Feed 未启用，并且命令运行时未传入 Feed ID。 无 每个目标 Feed 的 generated 或 queued 条目还包含 target 字段，其值为所选目标键。 在队列模式下，代理专用执行路径会先同步运行每个已启用的任务，再返回 JSON 结果。面向人工阅读的常规执行路径仍会通过配置的队列连接分派任务。 此 JSON 封装仅用于成功执行。如果生成过程抛出异常，Laravel 会照常处理命令错误，并且不会输出 JSON 错误封装。 队列 默认情况下，Feed 生成任务在控制台进程中运行。对于耗时较长或占用大量内存的 Feed，请在环境中启用 Laravel Queue 模式： 启用队列模式后， feed:generate 会为每个已启用的普通 Feed 分派一个任务，并为目标 Feed 的每个所选目标分派一个任务。使用异步连接时，任务分派完成后命令便会返回。请为所选连接和队列启动队列工作进程来处理这些任务。 - FEED_QUEUE_CONNECTION 选择队列连接。未设置时依次回退到 QUEUE_CONNECTION 和 database 。 - FEED_QUEUE_NAME 选择该连接上的队列。留空时使用连接的默认队列。 - FEED_QUEUE_UNIQUE_TTL 设置唯一性锁的最长有效时间，单位为秒。普通任务按 Feed 类保持唯一；目标任务按 Feed 类和目标键保持唯一，目标参数不会改变该标识。 sync 连接会在控制台进程中立即执行每个任务。选择异步连接可将生成任务交给工作进程。设置 FEED_QUEUE_ENABLED=false 可直接生成 Feed，而不分派任务。 调度 自动调度 要自动生成 Feed，请使用任务调度。在 routes/console.php 文件中调用辅助类即可；除非已更改配置，否则这是默认路径： 这会根据数据库 expression 列中的计划注册所有已启用的 Feed。已调度的目标 Feed 会生成 targets() 返回的每个值。 手动调度 也可以按自定义规则直接指定计划。此时只会运行指定的 Feed。 另请参阅 - 创建 Feed - 事件 - 存储位置"
+        "content": "← 上一页 · 返回 README · 下一页 → 生成与调度 要生成所有已启用的 Feed，请使用控制台命令： 执行后， feeds 表中所有已启用的 Feed（ is_active = true ）都会运行。也可以使用 config/feeds.php 文件中指定的表。 不带参数调用命令时，控制台会显示所有 Feed 的链接，包括 is_active 属性设为 false 的 Feed。 但这些 Feed 不会运行，而会被标记为 SKIP 状态。 单个 Feed 即使指定的 Feed 在数据库的 feeds 表中已禁用，它也 仍会运行 。 要生成指定 Feed，请调用 feed:generate 控制台命令，并将 feeds 表中的 Feed ID 作为参数传入： 生成所选输出文件 对于配置了独立输出文件的 Feed，注册 ID 用于选择 Feed 类，目标键用于选择一个合作方、商店、语言区域或其他输出。 不传入 --target 运行该 Feed 时，会惰性消费 targets() 并生成全部目标： 重复传入 --target 选项可仅生成所选目标： 显式键使用 findTarget() ，不会枚举 targets() 。重复键只处理一次，并保留第一次出现的顺序。生成开始前会先解析全部请求键。 使用 --target 时必须提供一个 Feed 注册 ID。空键、未知键，以及对未实现 HasFeedTargets 的 Feed 选择目标都会被命令拒绝。 完整目标枚举采用流式处理，并非原子操作。如果 targets() 在生成若干值后失败，先前的目标可能已经生成或进入队列。空的可迭代对象不会生成任何内容，也不会创建隐式默认目标。 AI 代理输出 当 feed:generate 在 Laravel Agent Detector 识别到的 AI 编码代理中运行时，命令会自动输出单个 JSON 对象，而不是进度条和格式化状态行。不需要额外的命令选项。在未识别为代理的环境中，常规控制台输出保持不变。 直接生成时，每个已生成的 Feed 都会包含所有已发布文件及其记录数： 命令实际会在一行中输出紧凑的 JSON。上面的示例仅为便于阅读而进行了格式化。 状态 含义 附加字段 --- --- --- generated 直接生成了 Feed 文件。 files ，其中包含每个文件的 path 和 records queued 已启用队列模式，并为代理同步执行了 Feed 任务。 无 skipped Feed 未启用，并且命令运行时未传入 Feed ID。 无 每个目标 Feed 的 generated 或 queued 条目还包含 target 字段，其值为所选目标键。 在队列模式下，代理专用执行路径会先同步运行每个已启用的任务，再返回 JSON 结果。面向人工阅读的常规执行路径仍会通过配置的队列连接分派任务。 此 JSON 封装仅用于成功执行。如果生成过程抛出异常，Laravel 会照常处理命令错误，并且不会输出 JSON 错误封装。 队列 默认情况下，Feed 生成任务在控制台进程中运行。对于耗时较长或占用大量内存的 Feed，请在环境中启用 Laravel Queue 模式： 启用队列模式后， feed:generate 会为每个已启用的普通 Feed 分派一个任务，并为目标 Feed 的每个所选目标分派一个任务。使用异步连接时，任务分派完成后命令便会返回。请为所选连接和队列启动队列工作进程来处理这些任务。 - FEED_QUEUE_CONNECTION 选择队列连接。未设置时依次回退到 QUEUE_CONNECTION 和 database 。 - FEED_QUEUE_NAME 选择该连接上的队列。留空时使用连接的默认队列。 - FEED_QUEUE_UNIQUE_TTL 设置唯一性锁的最长有效时间，单位为秒。普通任务按 Feed 类保持唯一；目标任务按 Feed 类和目标键保持唯一，目标参数不会改变该标识。 sync 连接会在控制台进程中立即执行每个任务。选择异步连接可将生成任务交给工作进程。设置 FEED_QUEUE_ENABLED=false 可直接生成 Feed，而不分派任务。 调度 自动调度 要自动生成 Feed，请使用任务调度。在 routes/console.php 文件中调用辅助类即可；除非已更改配置，否则这是默认路径： 这会根据数据库 expression 列中的计划注册所有已启用的 Feed。已调度的目标 Feed 会生成 targets() 返回的每个值。 手动调度 也可以按自定义规则直接指定计划。此时只会运行指定的 Feed。 另请参阅 - 创建 Feed - 独立输出文件 - 事件 - 存储位置"
     },
     {
         "route": "/zh-CN/installation/",
@@ -471,6 +493,30 @@
             "另请参阅"
         ],
         "content": "← 上一页 · 返回 README · 下一页 → Instagram 创建文件 填充 Feed 在生成的类中，将 extends Feed 替换为 extends InstagramFeedPreset ： 启用 检查生成的操作类或迁移文件，然后运行相应的控制台命令： 生成 Feed 运行以下控制台命令生成 Feed： 结果 另请参阅 - 预设 - Yandex 示例 - RSS Atom 示例"
+    },
+    {
+        "route": "/zh-CN/receipt-partner-feeds/",
+        "title": "每个合作方一个 Feed 文件",
+        "description": "使用一个已注册的 Feed 为每个合作方生成独立且经过筛选的 Feed 文件的示例",
+        "keywords": [
+            "partner feed",
+            "separate files",
+            "multiple files",
+            "FeedTarget",
+            "HasFeedTargets",
+            "recipe"
+        ],
+        "headings": [
+            "每个合作方一个 Feed 文件",
+            "创建 Feed",
+            "配置合作方输出",
+            "启用",
+            "生成所有合作方文件",
+            "生成所选合作方文件",
+            "按记录数拆分每个合作方的输出",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 每个合作方一个 Feed 文件 本示例只注册一个 PartnerFeed ，并为每个合作方生成独立且经过筛选的 XML 文件。例如： 创建 Feed 配置合作方输出 使用以下代码替换生成的 Feed 类： 完整运行时， targets() 会惰性枚举合作方。 findTarget() 无需加载所有合作方即可解析显式请求的键。 builder() 筛选当前合作方的产品， filename() 则为每个合作方提供唯一路径。 启用 检查生成的操作类或迁移文件，然后运行相应的命令： 生成所有合作方文件 传入 Feed 注册 ID。命令会为 targets() 返回的每个合作方生成文件： 如果合作方 ID 为 42 和 81 ，生成的路径如下： 生成所选合作方文件 只需刷新特定合作方的文件时，请重复传入 --target 选项： 按记录数拆分每个合作方的输出 如果某个合作方的输出也可能过大，请添加 perFile() ： 此时合作方 42 可以生成 partners/42-1.xml 、 partners/42-2.xml 以及后续分片。按记录数拆分会独立应用于每个合作方。 另请参阅 - 独立输出文件指南 - 生成与调度 - Feed 与数据 API"
     },
     {
         "route": "/zh-CN/receipt-rss-atom/",

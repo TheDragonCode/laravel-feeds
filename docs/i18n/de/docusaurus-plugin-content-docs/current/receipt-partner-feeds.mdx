@@ -1,0 +1,146 @@
+---
+title: "Eine Feed-Datei pro Partner"
+description: "Rezept zum Erzeugen separater, gefilterter Feed-Dateien für jeden Partner aus einem registrierten Feed"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["partner feed", "separate files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← Zurück](./extending-functionality.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./receipt-sitemap.mdx)
+
+# Eine Feed-Datei pro Partner
+
+Dieses Rezept registriert einen `PartnerFeed` und erzeugt für jeden Partner eine separate, gefilterte XML-Datei. Beispiel:
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## Feed erstellen {/* #create-feed */}
+
+```bash
+php artisan make:feed Partner
+```
+
+## Partnerausgaben konfigurieren {/* #configure-partner-outputs */}
+
+Ersetzen Sie die erzeugte Feed-Klasse durch:
+
+```php source="docs/snippets/targeted-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        if (! $partner || (string) $partner->getKey() !== $key) {
+            return null;
+        }
+
+        return $this->makeTarget($partner);
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+`targets()` zählt Partner für vollständige Läufe verzögert auf. `findTarget()` löst explizit angeforderte Schlüssel auf, ohne alle Partner zu laden. `builder()` filtert Produkte für den aktiven Partner, und `filename()` gibt jedem Partner einen eindeutigen Pfad.
+
+## Aktivieren {/* #activate */}
+
+Prüfen Sie die erzeugte Datei für die [Operation oder Migration](./create-feeds.mdx) und führen Sie anschließend den passenden Befehl aus:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Alle Partnerdateien erzeugen {/* #generate-all */}
+
+Übergeben Sie die Feed-Registrierungs-ID. Der Befehl erzeugt Dateien für alle von `targets()` zurückgegebenen Partner:
+
+```bash
+php artisan feed:generate 123
+```
+
+Für die Partner `42` und `81` werden folgende Pfade erzeugt:
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## Dateien ausgewählter Partner erzeugen {/* #generate-selected */}
+
+Verwenden Sie die wiederholbare Option `--target`, wenn nur die Dateien bestimmter Partner aktualisiert werden sollen:
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+## Jede Partnerausgabe nach Datensatzanzahl aufteilen {/* #split-each-output */}
+
+Fügen Sie `perFile()` hinzu, wenn die Ausgabe eines Partners ebenfalls zu groß werden kann:
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+Partner `42` kann dann `partners/42-1.xml`, `partners/42-2.xml` und weitere Teile erzeugen. Diese Aufteilung nach Datensatzanzahl wird unabhängig auf jeden Partner angewendet.
+
+## Siehe auch
+
+- [Leitfaden zu separaten Ausgabedateien](./feed-targets.mdx)
+- [Generierung und Zeitplanung](./generation.mdx)
+- [API für Feeds und Daten](./api/feed.mdx#feed-targets)

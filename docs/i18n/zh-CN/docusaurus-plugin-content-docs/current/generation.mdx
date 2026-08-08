@@ -4,10 +4,10 @@ description: "生成 Feed 文件以供后续分发的说明"
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "targets", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← 上一页](./create-feeds.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./supported-formats.mdx)
+[← 上一页](./create-feeds.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./feed-targets.mdx)
 
 # 生成与调度
 
@@ -37,9 +37,9 @@ php artisan feed:generate
 php artisan feed:generate 123
 ```
 
-## 目标选择 {/* #target_selection */}
+## 生成所选输出文件 {/* #target_selection */}
 
-对于[目标 Feed](./create-feeds.mdx#targeted_feeds)，注册 ID 用于选择 Feed 类，目标键用于选择一个输出。
+对于配置了[独立输出文件](./feed-targets.mdx)的 Feed，注册 ID 用于选择 Feed 类，目标键用于选择一个合作方、商店、语言区域或其他输出。
 
 不传入 `--target` 运行该 Feed 时，会惰性消费 `targets()` 并生成全部目标：
 
@@ -171,5 +171,6 @@ Schedule::call(function () {
 ## 另请参阅
 
 - [创建 Feed](./create-feeds.mdx)
+- [独立输出文件](./feed-targets.mdx)
 - [事件](./events.mdx)
 - [存储位置](./location.mdx)

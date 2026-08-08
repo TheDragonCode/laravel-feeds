@@ -32,9 +32,13 @@ Veja [formatos compatíveis](./supported-formats.mdx).
 <details className="faqItem" id="split-files">
 <summary>Um feed pode criar vários arquivos?</summary>
 
-Sim. Sobrescreva `perFile()` para definir os registros por arquivo e `maxFiles()` para impor um limite opcional. Arquivos divididos recebem sufixos sequenciais.
+Sim, mas escolha o mecanismo de acordo com o motivo pelo qual os arquivos são diferentes:
 
-Veja [dividir arquivos](./elements.mdx#split_files).
+- Use `perFile()` e, opcionalmente, `maxFiles()` para dividir um conjunto de dados em partes sequenciais com uma quantidade fixa de registros.
+- Use [alvos de feed](./feed-targets.mdx) para criar uma saída filtrada separada para cada parceiro, loja, localidade ou outra chave de negócio.
+- Combine os dois mecanismos quando a saída de cada parceiro também puder precisar de várias partes por quantidade de registros.
+
+Veja a [receita de um arquivo de feed por parceiro](./receipt-partner-feeds.mdx) para um exemplo completo.
 </details>
 
 <details className="faqItem" id="remote-storage">
@@ -66,4 +70,3 @@ Veja [valores opcionais](./create-feeds.mdx#optional_values).
 - [Solução de problemas](./troubleshooting.mdx)
 - [Referência de configuração](./api/configuration.mdx)
 - [Referência da API](./api/index.mdx)
-
