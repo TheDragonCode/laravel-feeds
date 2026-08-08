@@ -68,8 +68,9 @@ test('builds and deploys Docusaurus through GitHub Pages', function () {
     $refresh       = documentationRunStep($context7Steps, 'https://context7.com/api/v1/refresh');
     $commands      = array_column($buildSteps, 'run');
 
-    expect($workflow['on']['push']['branches'])->toContain('main')
-        ->and(array_key_exists('workflow_dispatch', $workflow['on']))->toBeTrue()
+    expect($workflow['on'])->toBe([
+        'release' => ['types' => ['published']],
+    ])
         ->and($workflow['permissions'])->toBe([])
         ->and($workflow['concurrency'])->toBe([
             'group'              => 'pages',
@@ -80,6 +81,7 @@ test('builds and deploys Docusaurus through GitHub Pages', function () {
             'pages'    => 'write',
         ])
         ->and($build['defaults']['run']['working-directory'])->toBe('docs')
+        ->and($checkout['with']['ref'])->toBe('${{ github.sha }}')
         ->and($checkout['with']['persist-credentials'])->toBeFalse()
         ->and($setupNode['uses'])->toBe('actions/setup-node@820762786026740c76f36085b0efc47a31fe5020')
         ->and($setupNode['with'])->toMatchArray([
@@ -118,7 +120,7 @@ test('builds and deploys Docusaurus through GitHub Pages', function () {
     expectDocumentationActionsPinned([...$buildSteps, ...$deploySteps, ...$context7Steps]);
 });
 
-test('validates Docusaurus for documentation pull requests and manual runs', function () {
+test('validates Docusaurus for documentation pushes, pull requests, and manual runs', function () {
     [$workflow, $contents] = loadDocumentationWorkflow('test-docs.yml');
 
     $build      = $workflow['jobs']['build'];
@@ -128,10 +130,10 @@ test('validates Docusaurus for documentation pull requests and manual runs', fun
     $commands   = array_column($steps, 'run');
     $eventNames = array_keys($workflow['on']);
 
-    expect($eventNames)->toContain('pull_request', 'workflow_dispatch')
-        ->and($eventNames)->not->toContain('push')
+    expect($eventNames)->toContain('push', 'pull_request', 'workflow_dispatch')
         ->and($workflow['permissions'])->toBe(['contents' => 'read'])
         ->and($workflow['concurrency']['cancel-in-progress'])->toBeTrue()
+        ->and($workflow['on']['push']['paths'])->toBe($workflow['on']['pull_request']['paths'])
         ->and($workflow['on']['pull_request']['paths'])->toContain(
             'docs/**',
             'src/**',
