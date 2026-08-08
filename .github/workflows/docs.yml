@@ -84,3 +84,23 @@ jobs:
                         --header "Authorization: Bearer ${CONTEXT7_API_KEY}" \
                         --header "Content-Type: application/json" \
                         --data '{"libraryName":"/llmstxt/feeds_dragon-code_pro_llms_txt"}'
+
+    context7:
+        name: Refresh Context7
+        needs: deploy
+        permissions:
+            id-token: write
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+
+        steps:
+            -   name: Refresh documentation
+                env:
+                    CONTEXT7_API_KEY: ${{ secrets.CONTEXT7_API_KEY }}
+                run: |
+                    curl --fail-with-body --silent --show-error \
+                        --request POST \
+                        --url https://context7.com/api/v1/refresh \
+                        --header "Authorization: Bearer ${CONTEXT7_API_KEY}" \
+                        --header "Content-Type: application/json" \
+                        --data '{"libraryName":"/llmstxt/feeds_dragon-code_pro_llms_txt"}'
