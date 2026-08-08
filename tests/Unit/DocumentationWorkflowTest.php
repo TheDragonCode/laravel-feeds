@@ -41,7 +41,7 @@ function expectDocumentationActionsPinned(array $steps): void
     }
 }
 
-test('builds and deploys Docusaurus through GitHub Pages without secrets', function () {
+test('builds and deploys Docusaurus through GitHub Pages', function () {
     [$workflow, $contents] = loadDocumentationWorkflow('docs.yml');
 
     $build       = $workflow['jobs']['build'];
@@ -52,6 +52,7 @@ test('builds and deploys Docusaurus through GitHub Pages without secrets', funct
     $setupNode   = documentationActionStep($buildSteps, 'actions/setup-node');
     $upload      = documentationActionStep($buildSteps, 'actions/upload-pages-artifact');
     $deployment  = documentationActionStep($deploySteps, 'actions/deploy-pages');
+    $refresh     = $deploySteps[1];
     $commands    = array_column($buildSteps, 'run');
 
     expect($workflow['on']['push']['branches'])->toContain('main')
@@ -81,9 +82,18 @@ test('builds and deploys Docusaurus through GitHub Pages without secrets', funct
             'pages'    => 'write',
         ])
         ->and($deploy['environment']['name'])->toBe('github-pages')
-        ->and($deployment['id'])->toBe('deployment');
+        ->and($deployment['id'])->toBe('deployment')
+        ->and($refresh['env'])->toBe([
+            'CONTEXT7_API_KEY' => '${{ secrets.CONTEXT7_API_KEY }}',
+        ])
+        ->and($refresh['run'])->toContain(
+            'curl --fail-with-body --silent --show-error',
+            'https://context7.com/api/v1/refresh',
+            'Authorization: Bearer ${CONTEXT7_API_KEY}',
+            '{"libraryName":"/llmstxt/feeds_dragon-code_pro_llms_txt"}',
+        );
 
-    foreach (['writerside', 'algolia', 'composer_token', 'secrets.'] as $forbidden) {
+    foreach (['writerside', 'algolia', 'composer_token', 'ctx7sk-'] as $forbidden) {
         expect(strtolower($contents))->not->toContain($forbidden);
     }
 
