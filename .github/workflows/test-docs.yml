@@ -1,6 +1,12 @@
 name: Test Documentation
 
 on:
+    push:
+        paths:
+            - docs/**
+            - src/**
+            - .github/workflows/docs.yml
+            - .github/workflows/test-docs.yml
     pull_request:
         paths:
             - docs/**
