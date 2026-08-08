@@ -87,9 +87,21 @@ jobs:
                 env:
                     CONTEXT7_API_KEY: ${{ secrets.CONTEXT7_API_KEY }}
                 run: |
-                    curl --fail-with-body --silent --show-error \
+                    response=$(curl --silent --show-error \
                         --request POST \
                         --url https://context7.com/api/v1/refresh \
                         --header "Authorization: Bearer ${CONTEXT7_API_KEY}" \
                         --header "Content-Type: application/json" \
-                        --data '{"libraryName":"/llmstxt/feeds_dragon-code_pro_llms_txt"}'
+                        --data '{"libraryName":"/llmstxt/feeds_dragon-code_pro_llms_txt"}' \
+                        --write-out '\n%{http_code}')
+                    status="${response##*$'\n'}"
+                    body="${response%$'\n'*}"
+
+                    if [[ "${status}" == 2* ]]; then
+                        printf '%s\n' "${body}"
+                    elif [[ "${status}" == "400" && "${body}" == *"user-has-active-task"* ]]; then
+                        printf '%s\n' "Context7 refresh is already in progress."
+                    else
+                        printf '%s\n' "${body}" >&2
+                        exit 1
+                    fi

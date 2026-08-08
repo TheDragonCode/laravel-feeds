@@ -102,11 +102,14 @@ test('builds and deploys Docusaurus through GitHub Pages', function () {
             'CONTEXT7_API_KEY' => '${{ secrets.CONTEXT7_API_KEY }}',
         ])
         ->and($refresh['run'])->toContain(
-            'curl --fail-with-body --silent --show-error',
+            'curl --silent --show-error',
             'https://context7.com/api/v1/refresh',
             'Authorization: Bearer ${CONTEXT7_API_KEY}',
             '{"libraryName":"/llmstxt/feeds_dragon-code_pro_llms_txt"}',
-        );
+            'user-has-active-task',
+            'exit 1',
+        )
+        ->and($refresh['run'])->not->toContain('--fail-with-body');
 
     foreach (['writerside', 'algolia', 'composer_token', 'ctx7sk-'] as $forbidden) {
         expect(strtolower($contents))->not->toContain($forbidden);
