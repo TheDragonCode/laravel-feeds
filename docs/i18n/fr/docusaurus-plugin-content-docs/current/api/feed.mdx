@@ -54,7 +54,7 @@ Implémentez `DragonCode\LaravelFeed\Contracts\HasFeedTargets` sur une classe de
 | `forTarget(FeedTarget $target): static` | Renvoie un clone configuré et réinitialise son nom de fichier mémorisé. |
 | `target(): FeedTarget` | Renvoie la cible configurée ou lève une `LogicException` lorsqu’aucune cible n’est définie. |
 
-Le constructeur rejette les clés vides ou composées uniquement de caractères d’espacement, mais ne normalise ni n’assainit les autres valeurs. Les paramètres de la cible sont opaques pour le paquet et sérialisés dans l’instantané d’un job de file d’attente. La clé constitue l’identité de la cible : elle doit donc être stable et unique dans la classe du flux. Consultez la [configuration d’un flux ciblé](../create-feeds.mdx#targeted_feeds) et la [sélection dans la commande](../generation.mdx#target_selection).
+Le constructeur rejette les clés vides ou composées uniquement de caractères d’espacement, mais ne normalise ni n’assainit les autres valeurs. Les paramètres de la cible sont opaques pour le paquet et sérialisés dans l’instantané d’un job de file d’attente. La clé constitue l’identité de la cible : elle doit donc être stable et unique dans la classe du flux. Consultez la [configuration de fichiers de sortie séparés](../feed-targets.mdx) et la [sélection dans la commande](../generation.mdx#target_selection).
 
 ## FeedItem et FeedInfo {/* #feed-item-and-feed-info */}
 
@@ -96,7 +96,7 @@ Les méthodes de génération et d’enregistrement programmatiques figurent dan
 
 ## Voir aussi
 
-- [Créer des flux](../create-feeds.mdx)
+- [Fichiers de sortie séparés](../feed-targets.mdx)
 - [Éléments](../elements.mdx)
 - [Emplacement](../location.mdx)
 - [Services et contrats d’exécution](./runtime.mdx)

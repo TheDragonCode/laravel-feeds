@@ -54,7 +54,7 @@ Implemente `DragonCode\LaravelFeed\Contracts\HasFeedTargets` em uma classe de fe
 | `forTarget(FeedTarget $target): static` | Retorna um clone configurado e redefine seu nome de arquivo memorizado. |
 | `target(): FeedTarget` | Retorna o alvo configurado ou lança `LogicException` quando nenhum estiver definido. |
 
-O construtor rejeita chaves vazias ou formadas apenas por espaços, mas não normaliza nem sanitiza outros valores. Os parâmetros do alvo são opacos para o pacote e serializados como um snapshot do job da fila. A chave identifica o alvo e, por isso, deve ser estável e exclusiva dentro da classe do feed. Consulte a [configuração de feeds direcionados](../create-feeds.mdx#targeted_feeds) e a [seleção de alvos no comando](../generation.mdx#target_selection).
+O construtor rejeita chaves vazias ou formadas apenas por espaços, mas não normaliza nem sanitiza outros valores. Os parâmetros do alvo são opacos para o pacote e serializados como um snapshot do job da fila. A chave identifica o alvo e, por isso, deve ser estável e exclusiva dentro da classe do feed. Consulte a [configuração de arquivos de saída separados](../feed-targets.mdx) e a [seleção de saída no comando](../generation.mdx#target_selection).
 
 ## FeedItem e FeedInfo {/* #feed-item-and-feed-info */}
 
@@ -96,7 +96,7 @@ Os métodos de geração e registro programáticos estão em [Serviços e contra
 
 ## Veja também
 
-- [Criar feeds](../create-feeds.mdx)
+- [Arquivos de saída separados](../feed-targets.mdx)
 - [Elementos](../elements.mdx)
 - [Armazenamento](../location.mdx)
 - [Serviços e contratos de execução](./runtime.mdx)

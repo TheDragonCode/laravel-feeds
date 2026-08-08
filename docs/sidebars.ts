@@ -20,6 +20,7 @@ const sidebars: SidebarsConfig = {
             label: "Guides",
             items: [
                 "generation",
+                "feed-targets",
                 "eloquent",
                 "location",
                 "events",
@@ -32,6 +33,7 @@ const sidebars: SidebarsConfig = {
             items: [
                 "supported-formats",
                 "presets",
+                "receipt-partner-feeds",
                 "receipt-sitemap",
                 "receipt-instagram",
                 "receipt-yandex",

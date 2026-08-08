@@ -4,10 +4,10 @@ description: "Звесткі пра генерацыю файлаў стужак
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "targets", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← Папярэдняя](./create-feeds.mdx) · [Назад да README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступная →](./supported-formats.mdx)
+[← Папярэдняя](./create-feeds.mdx) · [Назад да README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступная →](./feed-targets.mdx)
 
 # Генерацыя і расклад
 
@@ -37,9 +37,9 @@ php artisan feed:generate
 php artisan feed:generate 123
 ```
 
-## Выбар мэты {/* #target_selection */}
+## Генерацыя выбраных выходных файлаў {/* #target_selection */}
 
-Для [мэтавай стужкі](./create-feeds.mdx#targeted_feeds) ідэнтыфікатар рэгістрацыі выбірае клас стужкі, а ключ мэты — адзін вынік.
+Для стужкі, наладжанай на [асобныя выходныя файлы](./feed-targets.mdx), ідэнтыфікатар рэгістрацыі выбірае клас стужкі, а ключ мэты — аднаго партнёра, краму, лакаль або іншы варыянт вываду.
 
 Запуск стужкі без `--target` ляніва апрацоўвае `targets()` і генеруе ўсе мэты:
 
@@ -171,5 +171,6 @@ Schedule::call(function () {
 ## Глядзіце таксама
 
 - [Стварэнне стужак](./create-feeds.mdx)
+- [Асобныя выходныя файлы](./feed-targets.mdx)
 - [Падзеі](./events.mdx)
 - [Размяшчэнне](./location.mdx)

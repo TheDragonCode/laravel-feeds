@@ -1,0 +1,80 @@
+---
+title: "Separate Ausgabedateien pro Partner, Shop oder Gebietsschema"
+description: "Einen registrierten Feed in separate Dateien für Partner, Shops, Gebietsschemas oder andere Geschäftsschlüssel aufteilen"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["separate files", "multiple files", "split feed", "FeedTarget", "HasFeedTargets", "target"]
+---
+
+[← Zurück](./generation.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./supported-formats.mdx)
+
+# Separate Ausgabedateien pro Partner, Shop oder Gebietsschema
+
+<PageLead>
+Verwenden Sie Feed-Ziele, wenn ein registrierter Feed für jeden Partner, Shop, jedes Gebietsschema oder einen anderen Geschäftsschlüssel eine eigenständige, gefilterte Ausgabedatei erzeugen soll.
+</PageLead>
+
+## Passende Aufteilungsart wählen {/* #choose-splitting */}
+
+Die Formulierung „einen Feed in Dateien aufteilen“ kann zwei verschiedene Mechanismen bezeichnen:
+
+| Ziel | Verwenden Sie |
+| --- | --- |
+| Eine gefilterte Ausgabe pro Partner, Shop, Gebietsschema oder anderem Geschäftsschlüssel | `HasFeedTargets` und `FeedTarget` |
+| Fortlaufende Teile mit einer festen Anzahl von Datensätzen pro Datei | `perFile()` und optional `maxFiles()` |
+| Separate Ausgaben, die jeweils aus mehreren Teilen bestehen können | Feed-Ziele zusammen mit `perFile()` |
+
+Feed-Ziele teilen Daten nach ihrer fachlichen Bedeutung in der Anwendung auf. `perFile()` teilt einen bereits ausgewählten Datensatzbestand nach der Anzahl der Datensätze auf.
+
+## Funktionsweise von Feed-Zielen {/* #how-targets-work */}
+
+Die Tabelle `feeds` enthält weiterhin eine Zeile für die Feed-Klasse. Jedes `FeedTarget` beschreibt eine Ausgabevariante mit einem stabilen Schlüssel und einem kleinen Snapshot der Parameter.
+
+Implementieren Sie `HasFeedTargets` in der Feed-Klasse. Der mitgelieferte Trait `InteractsWithFeedTargets` stellt `forTarget()` und `target()` bereit; die Feed-Klasse implementiert Ermittlung und Suche:
+
+| Methode | Aufgabe |
+| --- | --- |
+| `targets(): iterable` | Gibt verzögert alle verfügbaren Ausgaben für vollständige Befehls- und Zeitplanläufe zurück. |
+| `findTarget(string $key): ?FeedTarget` | Löst einen explizit angeforderten `--target`-Schlüssel auf oder gibt `null` zurück. |
+| `forTarget(FeedTarget $target): static` | Gibt einen konfigurierten Klon des Feeds zurück. |
+| `target(): FeedTarget` | Gibt das aktive Ziel innerhalb von `builder()`, `filename()` und anderen Ausführungspunkten zurück. |
+
+`FeedTarget::$key` darf nicht leer sein, muss stabil, innerhalb der Feed-Klasse eindeutig und für die Ausgabe geeignet sein. Schlüssel werden weder normalisiert noch bereinigt. Sie erscheinen in der Konsolenausgabe, im Agenten-JSON, in Ereignissen und im Fehlerkontext.
+
+`FeedTarget::$parameters` ist ein anwendungseigener Snapshot, der in Queue-Jobs gespeichert wird. Halten Sie ihn klein, serialisierbar und frei von Geheimnissen. Speichern Sie Kennungen statt Eloquent-Modellen.
+
+:::warning
+Jedes Ziel muss einen eigenen Ausgabedateinamen ergeben. Andernfalls überschreibt ein späteres Ziel eine frühere Ausgabe. Verwenden Sie einen Zielschlüssel nur dann in einem Pfad, wenn die Anwendung sein Format kontrolliert.
+:::
+
+## Ausgabedateien erzeugen {/* #generate-outputs */}
+
+Erzeugen Sie alle von `targets()` zurückgegebenen Ziele:
+
+```bash
+php artisan feed:generate 123
+```
+
+Erzeugen Sie ein oder mehrere ausgewählte Ziele:
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+Explizite Schlüssel verwenden `findTarget()`, statt `targets()` aufzuzählen. Doppelte Schlüssel werden in der Reihenfolge ihres ersten Auftretens einmal verarbeitet. Alle angeforderten Schlüssel werden vor Beginn der Generierung aufgelöst.
+
+Die vollständige Aufzählung wird fortlaufend verarbeitet und ist nicht atomar. Wenn `targets()` nach einigen zurückgegebenen Werten fehlschlägt, wurden frühere Ziele möglicherweise bereits erzeugt oder in die Queue gestellt. Ein geplanter Feed erzeugt alle Ziele, und im Queue-Modus wird pro Ziel ein Job übermittelt.
+
+Die normale Aufteilung nach Datensatzanzahl gilt getrennt für jedes Ziel. Beispielsweise wird `partners/42.xml` zu `partners/42-1.xml`, `partners/42-2.xml` und so weiter.
+
+## Vollständiges Beispiel {/* #complete-example */}
+
+Ein vollständiges Beispiel mit Feed-Klasse, Generierungsbefehlen und erwarteten Ausgabepfaden finden Sie im [Rezept für eine Feed-Datei pro Partner](./receipt-partner-feeds.mdx).
+
+## Siehe auch
+
+- [Rezept für eine Feed-Datei pro Partner](./receipt-partner-feeds.mdx)
+- [Generierung und Zeitplanung](./generation.mdx)
+- [API für Feeds und Daten](./api/feed.mdx#feed-targets)

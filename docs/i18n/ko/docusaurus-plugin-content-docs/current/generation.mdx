@@ -4,10 +4,10 @@ description: "나중에 배포할 피드 파일을 생성하는 방법"
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "targets", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← 이전](./create-feeds.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./supported-formats.mdx)
+[← 이전](./create-feeds.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./feed-targets.mdx)
 
 # 생성 및 스케줄
 
@@ -37,9 +37,9 @@ php artisan feed:generate
 php artisan feed:generate 123
 ```
 
-## 대상 선택 {/* #target_selection */}
+## 선택한 출력 파일 생성 {/* #target_selection */}
 
-[대상별 피드](./create-feeds.mdx#targeted_feeds)에서는 등록 ID가 피드 클래스를 선택하고 대상 키가 하나의 출력을 선택합니다.
+[별도 출력 파일](./feed-targets.mdx)이 설정된 피드에서는 등록 ID가 피드 클래스를 선택하고 대상 키가 파트너, 스토어, 로케일 또는 기타 출력 하나를 선택합니다.
 
 `--target` 없이 피드를 실행하면 `targets()`를 지연 방식으로 소비하여 모든 대상을 생성합니다.
 
@@ -171,5 +171,6 @@ Schedule::call(function () {
 ## 관련 문서
 
 - [피드 생성](./create-feeds.mdx)
+- [별도 출력 파일](./feed-targets.mdx)
 - [이벤트](./events.mdx)
 - [저장 위치](./location.mdx)

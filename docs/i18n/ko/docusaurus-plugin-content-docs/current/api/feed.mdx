@@ -54,7 +54,7 @@ keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "Elem
 | `forTarget(FeedTarget $target): static` | 설정된 복제본을 반환하고 캐시된 파일 이름을 초기화합니다. |
 | `target(): FeedTarget` | 설정된 대상을 반환하며, 설정되지 않았으면 `LogicException`을 발생시킵니다. |
 
-생성자는 비어 있거나 공백만 있는 키를 거부하지만 다른 값은 정규화하거나 정제하지 않습니다. 대상 매개변수는 패키지에 불투명하며 큐 작업의 스냅샷으로 직렬화됩니다. 키는 대상의 식별자이므로 피드 클래스 안에서 안정적이고 고유해야 합니다. [대상별 피드 설정](../create-feeds.mdx#targeted_feeds)과 [명령 대상 선택](../generation.mdx#target_selection)을 참조하십시오.
+생성자는 비어 있거나 공백만 있는 키를 거부하지만 다른 값은 정규화하거나 정제하지 않습니다. 대상 매개변수는 패키지에 불투명하며 큐 작업의 스냅샷으로 직렬화됩니다. 키는 대상의 식별자이므로 피드 클래스 안에서 안정적이고 고유해야 합니다. [별도 출력 파일 설정](../feed-targets.mdx)과 [명령에서 출력 선택](../generation.mdx#target_selection)을 참조하십시오.
 
 ## FeedItem 및 FeedInfo {/* #feed-item-and-feed-info */}
 
@@ -96,7 +96,7 @@ keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "Elem
 
 ## 관련 문서
 
-- [피드 생성](../create-feeds.mdx)
+- [별도 출력 파일](../feed-targets.mdx)
 - [요소](../elements.mdx)
 - [저장 위치](../location.mdx)
 - [런타임 서비스 및 계약](./runtime.mdx)

@@ -370,7 +370,6 @@
                 "feed",
                 "FeedItem",
                 "FeedInfo",
-                "FeedTarget",
                 "make:feed"
             ],
             "headings": [
@@ -402,7 +401,7 @@
                 {
                     "level": 2,
                     "id": "targeted_feeds",
-                    "text": "Targeted feeds"
+                    "text": "Separate output files"
                 },
                 {
                     "level": 2,
@@ -679,6 +678,56 @@
             ]
         },
         {
+            "route": "/feed-targets/",
+            "source": "feed-targets.mdx",
+            "aliases": [],
+            "title": "Separate output files by partner, store, or locale",
+            "description": "Split one registered feed into separate files for partners, stores, locales, or other business keys",
+            "type": "guide",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "separate files",
+                "multiple files",
+                "split feed",
+                "FeedTarget",
+                "HasFeedTargets",
+                "target"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "separate-output-files-by-partner-store-or-locale",
+                    "text": "Separate output files by partner, store, or locale"
+                },
+                {
+                    "level": 2,
+                    "id": "choose-splitting",
+                    "text": "Choose the correct type of splitting"
+                },
+                {
+                    "level": 2,
+                    "id": "how-targets-work",
+                    "text": "How feed targets work"
+                },
+                {
+                    "level": 2,
+                    "id": "generate-outputs",
+                    "text": "Generate output files"
+                },
+                {
+                    "level": 2,
+                    "id": "complete-example",
+                    "text": "Complete example"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
             "route": "/generation/",
             "source": "generation.mdx",
             "aliases": [
@@ -693,7 +742,8 @@
                 "generation",
                 "schedule",
                 "queue",
-                "targets",
+                "FeedTarget",
+                "separate files",
                 "feed:generate"
             ],
             "headings": [
@@ -710,7 +760,7 @@
                 {
                     "level": 2,
                     "id": "target_selection",
-                    "text": "Target selection"
+                    "text": "Generate selected output files"
                 },
                 {
                     "level": 2,
@@ -1090,6 +1140,66 @@
                     "level": 2,
                     "id": "result",
                     "text": "Result"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/receipt-partner-feeds/",
+            "source": "receipt-partner-feeds.mdx",
+            "aliases": [],
+            "title": "One feed file per partner",
+            "description": "Recipe for generating separate filtered feed files for every partner from one registered feed",
+            "type": "recipe",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "partner feed",
+                "separate files",
+                "multiple files",
+                "FeedTarget",
+                "HasFeedTargets",
+                "recipe"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "one-feed-file-per-partner",
+                    "text": "One feed file per partner"
+                },
+                {
+                    "level": 2,
+                    "id": "create-feed",
+                    "text": "Create the feed"
+                },
+                {
+                    "level": 2,
+                    "id": "configure-partner-outputs",
+                    "text": "Configure partner outputs"
+                },
+                {
+                    "level": 2,
+                    "id": "activate",
+                    "text": "Activate"
+                },
+                {
+                    "level": 2,
+                    "id": "generate-all",
+                    "text": "Generate all partner files"
+                },
+                {
+                    "level": 2,
+                    "id": "generate-selected",
+                    "text": "Generate selected partner files"
+                },
+                {
+                    "level": 2,
+                    "id": "split-each-output",
+                    "text": "Split each partner output by record count"
                 },
                 {
                     "level": 2,

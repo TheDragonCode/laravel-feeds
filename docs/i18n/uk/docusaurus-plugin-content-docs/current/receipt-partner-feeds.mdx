@@ -1,0 +1,146 @@
+---
+title: "Один файл фіду для кожного партнера"
+description: "Приклад генерування окремих відфільтрованих файлів фіду для кожного партнера з одного зареєстрованого фіду"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["partner feed", "separate files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← Попередня](./extending-functionality.mdx) · [Назад до README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступна →](./receipt-sitemap.mdx)
+
+# Один файл фіду для кожного партнера
+
+У цьому прикладі реєструється один `PartnerFeed`, який генерує окремий відфільтрований XML-файл для кожного партнера. Наприклад:
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## Створення фіду {/* #create-feed */}
+
+```bash
+php artisan make:feed Partner
+```
+
+## Налаштування результатів для партнерів {/* #configure-partner-outputs */}
+
+Замініть згенерований клас фіду таким кодом:
+
+```php source="docs/snippets/targeted-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        if (! $partner || (string) $partner->getKey() !== $key) {
+            return null;
+        }
+
+        return $this->makeTarget($partner);
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+`targets()` ліниво перебирає партнерів під час повного запуску. `findTarget()` визначає явно запитані ключі без завантаження всіх партнерів. `builder()` фільтрує товари для активного партнера, а `filename()` задає кожному партнеру унікальний шлях.
+
+## Активація {/* #activate */}
+
+Перевірте згенерований файл [операції або міграції](./create-feeds.mdx), а потім виконайте відповідну команду:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Генерування файлів для всіх партнерів {/* #generate-all */}
+
+Передайте ідентифікатор реєстрації фіду. Команда згенерує файл для кожного партнера, повернутого методом `targets()`:
+
+```bash
+php artisan feed:generate 123
+```
+
+Для партнерів `42` і `81` буде створено такі шляхи:
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## Генерування файлів для вибраних партнерів {/* #generate-selected */}
+
+Використовуйте повторюваний параметр `--target`, коли потрібно оновити файли лише для певних партнерів:
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+## Розділення результату кожного партнера за кількістю записів {/* #split-each-output */}
+
+Додайте `perFile()`, якщо результат для одного партнера також може стати надто великим:
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+Тоді для партнера `42` можуть бути створені файли `partners/42-1.xml`, `partners/42-2.xml` і наступні частини. Таке розділення за кількістю записів застосовується незалежно до кожного партнера.
+
+## Дивіться також
+
+- [Посібник з окремих вихідних файлів](./feed-targets.mdx)
+- [Генерування й розклад](./generation.mdx)
+- [API фідів і даних](./api/feed.mdx#feed-targets)

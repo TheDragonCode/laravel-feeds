@@ -32,9 +32,13 @@ Consultez [les formats pris en charge](./supported-formats.mdx).
 <details className="faqItem" id="split-files">
 <summary>Un flux peut-il créer plusieurs fichiers ?</summary>
 
-Oui. Remplacez `perFile()` pour fixer le nombre d’enregistrements par fichier et `maxFiles()` pour définir une limite facultative. Les fichiers fractionnés reçoivent des suffixes séquentiels.
+Oui, mais choisissez le mécanisme selon la raison pour laquelle les fichiers diffèrent :
 
-Consultez [la répartition des fichiers](./elements.mdx#split_files).
+- Utilisez `perFile()` et éventuellement `maxFiles()` pour fractionner un jeu de données en parties séquentielles contenant chacune un nombre fixe d’enregistrements.
+- Utilisez les [cibles de flux](./feed-targets.mdx) pour créer une sortie filtrée distincte pour chaque partenaire, boutique, paramètre régional ou autre clé métier.
+- Combinez les deux mécanismes lorsque la sortie de chaque partenaire peut elle aussi nécessiter plusieurs parties selon le nombre d’enregistrements.
+
+Consultez la [recette d’un fichier de flux par partenaire](./receipt-partner-feeds.mdx) pour un exemple complet.
 </details>
 
 <details className="faqItem" id="remote-storage">
@@ -66,4 +70,3 @@ Consultez [les valeurs facultatives](./create-feeds.mdx#optional_values).
 - [Dépannage](./troubleshooting.mdx)
 - [Référence de configuration](./api/configuration.mdx)
 - [Référence API](./api/index.mdx)
-

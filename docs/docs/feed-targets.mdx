@@ -1,0 +1,80 @@
+---
+title: "Separate output files by partner, store, or locale"
+description: "Split one registered feed into separate files for partners, stores, locales, or other business keys"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["separate files", "multiple files", "split feed", "FeedTarget", "HasFeedTargets", "target"]
+---
+
+[← Previous](./generation.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./supported-formats.mdx)
+
+# Separate output files by partner, store, or locale
+
+<PageLead>
+Use feed targets when one registered feed must create an independent, filtered output file for each partner, store, locale, or other business key.
+</PageLead>
+
+## Choose the correct type of splitting {/* #choose-splitting */}
+
+The phrase “split a feed into files” can describe two different mechanisms:
+
+| Goal | Use |
+| --- | --- |
+| One filtered output per partner, store, locale, or other business key | `HasFeedTargets` and `FeedTarget` |
+| Sequential parts with a fixed number of records in each file | `perFile()` and optionally `maxFiles()` |
+| Separate outputs that may each contain several parts | Feed targets together with `perFile()` |
+
+Feed targets split data by application meaning. `perFile()` splits one already selected dataset by record count.
+
+## How feed targets work {/* #how-targets-work */}
+
+The `feeds` table still contains one row for the feed class. Each `FeedTarget` describes one output variant with a stable key and a small parameter snapshot.
+
+Implement `HasFeedTargets` on the feed class. The packaged `InteractsWithFeedTargets` trait provides `forTarget()` and `target()`; the feed class implements discovery and lookup:
+
+| Method | Responsibility |
+| --- | --- |
+| `targets(): iterable` | Lazily yields every available output for full command and scheduled runs. |
+| `findTarget(string $key): ?FeedTarget` | Resolves one explicitly requested `--target` key or returns `null`. |
+| `forTarget(FeedTarget $target): static` | Returns a configured clone of the feed. |
+| `target(): FeedTarget` | Returns the active target inside `builder()`, `filename()`, and other execution hooks. |
+
+`FeedTarget::$key` must be non-empty, stable, unique within the feed class, and safe to expose. Keys are not normalized or sanitized. They appear in console output, agent JSON, events, and failure context.
+
+`FeedTarget::$parameters` is an application-owned snapshot stored in queued jobs. Keep it small, serializable, and free of secrets. Store identifiers instead of Eloquent models.
+
+:::warning
+Every target must resolve to a different output filename. Otherwise, a later target overwrites an earlier output. Use a target key in a path only when the application controls its format.
+:::
+
+## Generate output files {/* #generate-outputs */}
+
+Generate every target returned by `targets()`:
+
+```bash
+php artisan feed:generate 123
+```
+
+Generate one or more selected targets:
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+Explicit keys use `findTarget()` instead of enumerating `targets()`. Duplicate keys are processed once, in first-seen order. All requested keys are resolved before generation starts.
+
+Full enumeration is streamed rather than atomic. If `targets()` fails after yielding some values, earlier targets may already be generated or queued. A scheduled feed generates every target, and queue mode dispatches one job per target.
+
+Normal record-count splitting applies separately to each target. For example, `partners/42.xml` becomes `partners/42-1.xml`, `partners/42-2.xml`, and so on.
+
+## Complete example {/* #complete-example */}
+
+Follow the [one feed file per partner recipe](./receipt-partner-feeds.mdx) for a complete feed class, generation commands, and expected output paths.
+
+## See Also
+
+- [One feed file per partner recipe](./receipt-partner-feeds.mdx)
+- [Generation & schedule](./generation.mdx)
+- [Feeds and data API](./api/feed.mdx#feed-targets)

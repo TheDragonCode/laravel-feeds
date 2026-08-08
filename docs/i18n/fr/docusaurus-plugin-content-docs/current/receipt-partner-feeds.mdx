@@ -1,0 +1,146 @@
+---
+title: "Un fichier de flux par partenaire"
+description: "Recette pour générer des fichiers de flux séparés et filtrés pour chaque partenaire à partir d’un seul flux enregistré"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["partner feed", "separate files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← Précédent](./extending-functionality.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./receipt-sitemap.mdx)
+
+# Un fichier de flux par partenaire
+
+Cette recette enregistre un seul `PartnerFeed` et génère un fichier XML séparé et filtré pour chaque partenaire. Par exemple :
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## Créer le flux {/* #create-feed */}
+
+```bash
+php artisan make:feed Partner
+```
+
+## Configurer les sorties des partenaires {/* #configure-partner-outputs */}
+
+Remplacez la classe de flux générée par :
+
+```php source="docs/snippets/targeted-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        if (! $partner || (string) $partner->getKey() !== $key) {
+            return null;
+        }
+
+        return $this->makeTarget($partner);
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+`targets()` énumère les partenaires de manière différée pour les exécutions complètes. `findTarget()` résout les clés explicitement demandées sans charger tous les partenaires. `builder()` filtre les produits pour le partenaire actif et `filename()` attribue un chemin unique à chaque partenaire.
+
+## Activer {/* #activate */}
+
+Vérifiez le fichier d’[opération ou de migration](./create-feeds.mdx) généré, puis exécutez la commande appropriée :
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Générer les fichiers de tous les partenaires {/* #generate-all */}
+
+Transmettez l’identifiant d’enregistrement du flux. La commande génère les fichiers de tous les partenaires renvoyés par `targets()` :
+
+```bash
+php artisan feed:generate 123
+```
+
+Avec les partenaires `42` et `81`, les chemins générés sont :
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## Générer les fichiers de partenaires sélectionnés {/* #generate-selected */}
+
+Utilisez l’option répétable `--target` lorsque seuls certains partenaires ont besoin de fichiers actualisés :
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+## Fractionner chaque sortie de partenaire par nombre d’enregistrements {/* #split-each-output */}
+
+Ajoutez `perFile()` lorsque la sortie d’un partenaire peut elle aussi devenir trop volumineuse :
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+Le partenaire `42` peut alors produire `partners/42-1.xml`, `partners/42-2.xml` et les parties suivantes. Ce fractionnement par nombre d’enregistrements s’applique indépendamment à chaque partenaire.
+
+## Voir aussi
+
+- [Guide des fichiers de sortie séparés](./feed-targets.mdx)
+- [Génération et planification](./generation.mdx)
+- [API des flux et des données](./api/feed.mdx#feed-targets)

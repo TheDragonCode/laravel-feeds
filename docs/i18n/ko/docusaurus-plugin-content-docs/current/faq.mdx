@@ -32,9 +32,13 @@ keywords: ["FAQ", "generation", "storage", "formats", "memory"]
 <details className="faqItem" id="split-files">
 <summary>하나의 피드가 여러 파일을 만들 수 있습니까?</summary>
 
-가능합니다. `perFile()`로 파일당 레코드 수를 설정하고 `maxFiles()`로 선택적 상한을 지정하십시오. 분할 파일에는 순차적인 접미사가 붙습니다.
+가능합니다. 단, 파일이 달라지는 이유에 따라 적절한 방식을 선택해야 합니다.
 
-[파일 분할](./elements.mdx#split_files)을 참고하십시오.
+- `perFile()`과 선택적으로 `maxFiles()`를 사용하면 하나의 데이터셋을 고정된 레코드 수의 연속 파일로 분할할 수 있습니다.
+- [피드 대상](./feed-targets.mdx)을 사용하면 파트너, 스토어, 로케일 또는 기타 비즈니스 키마다 필터링된 별도 출력을 생성할 수 있습니다.
+- 각 파트너의 출력도 레코드 수에 따라 여러 파일로 나눠야 한다면 두 방식을 함께 사용하십시오.
+
+완전한 예제는 [파트너마다 하나의 피드 파일 만들기 레시피](./receipt-partner-feeds.mdx)를 참고하십시오.
 </details>
 
 <details className="faqItem" id="remote-storage">
@@ -66,4 +70,3 @@ keywords: ["FAQ", "generation", "storage", "formats", "memory"]
 - [문제 해결](./troubleshooting.mdx)
 - [구성 참조](./api/configuration.mdx)
 - [API 참조](./api/index.mdx)
-

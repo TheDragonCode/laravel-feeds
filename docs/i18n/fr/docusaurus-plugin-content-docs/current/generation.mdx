@@ -4,10 +4,10 @@ description: "Informations sur la génération de fichiers de flux destinés à 
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "targets", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← Précédent](./create-feeds.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./supported-formats.mdx)
+[← Précédent](./create-feeds.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./feed-targets.mdx)
 
 # Génération et planification
 
@@ -37,9 +37,9 @@ Pour générer un flux particulier, appelez la commande `feed:generate` en lui p
 php artisan feed:generate 123
 ```
 
-## Sélection des cibles {/* #target_selection */}
+## Générer les fichiers de sortie sélectionnés {/* #target_selection */}
 
-Pour un [flux ciblé](./create-feeds.mdx#targeted_feeds), l’identifiant d’enregistrement sélectionne la classe du flux et la clé de cible sélectionne une sortie.
+Pour un flux configuré avec des [fichiers de sortie séparés](./feed-targets.mdx), l’identifiant d’enregistrement sélectionne la classe du flux et la clé de cible sélectionne un partenaire, une boutique, un paramètre régional ou une autre sortie.
 
 L’exécution du flux sans `--target` consomme `targets()` de manière différée et génère toutes les cibles :
 
@@ -171,5 +171,6 @@ Schedule::call(function () {
 ## Voir aussi
 
 - [Créer des flux](./create-feeds.mdx)
+- [Fichiers de sortie séparés](./feed-targets.mdx)
 - [Événements](./events.mdx)
 - [Emplacement](./location.mdx)

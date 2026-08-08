@@ -1,0 +1,146 @@
+---
+title: "One feed file per partner"
+description: "Recipe for generating separate filtered feed files for every partner from one registered feed"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["partner feed", "separate files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← Previous](./extending-functionality.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./receipt-sitemap.mdx)
+
+# One feed file per partner
+
+This recipe registers one `PartnerFeed` and generates a separate, filtered XML file for every partner. For example:
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## Create the feed {/* #create-feed */}
+
+```bash
+php artisan make:feed Partner
+```
+
+## Configure partner outputs {/* #configure-partner-outputs */}
+
+Replace the generated feed class with:
+
+```php source="docs/snippets/targeted-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Partner;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class PartnerFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    public function targets(): iterable
+    {
+        foreach (Partner::query()->select('id')->lazyById() as $partner) {
+            yield $this->makeTarget($partner);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        $partner = Partner::query()->find($key);
+
+        if (! $partner || (string) $partner->getKey() !== $key) {
+            return null;
+        }
+
+        return $this->makeTarget($partner);
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'partner_id',
+            $this->target()->parameters['partner_id'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "partners/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(Partner $partner): FeedTarget
+    {
+        return new FeedTarget(
+            key       : (string) $partner->getKey(),
+            parameters: ['partner_id' => $partner->getKey()],
+        );
+    }
+}
+```
+
+`targets()` enumerates partners lazily for full runs. `findTarget()` resolves explicitly requested keys without loading every partner. `builder()` filters products for the active partner, and `filename()` gives every partner a unique path.
+
+## Activate {/* #activate */}
+
+Review the generated [operation or migration](./create-feeds.mdx) file, then run the appropriate command:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Generate all partner files {/* #generate-all */}
+
+Pass the feed registration ID. The command generates every partner returned by `targets()`:
+
+```bash
+php artisan feed:generate 123
+```
+
+With partners `42` and `81`, the generated paths are:
+
+```text
+storage/app/public/partners/42.xml
+storage/app/public/partners/81.xml
+```
+
+## Generate selected partner files {/* #generate-selected */}
+
+Use the repeatable `--target` option when only specific partners need fresh files:
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+## Split each partner output by record count {/* #split-each-output */}
+
+Add `perFile()` when one partner output can also become too large:
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+Partner `42` can then produce `partners/42-1.xml`, `partners/42-2.xml`, and later parts. This record-count split is applied independently to every partner.
+
+## See Also
+
+- [Separate output files guide](./feed-targets.mdx)
+- [Generation & schedule](./generation.mdx)
+- [Feeds and data API](./api/feed.mdx#feed-targets)

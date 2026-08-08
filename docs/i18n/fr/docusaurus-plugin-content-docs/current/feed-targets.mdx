@@ -1,0 +1,80 @@
+---
+title: "Fichiers de sortie séparés par partenaire, boutique ou paramètre régional"
+description: "Fractionner un flux enregistré en fichiers séparés pour les partenaires, boutiques, paramètres régionaux ou autres clés métier"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["separate files", "multiple files", "split feed", "FeedTarget", "HasFeedTargets", "target"]
+---
+
+[← Précédent](./generation.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./supported-formats.mdx)
+
+# Fichiers de sortie séparés par partenaire, boutique ou paramètre régional
+
+<PageLead>
+Utilisez les cibles de flux lorsqu’un flux enregistré doit créer un fichier de sortie indépendant et filtré pour chaque partenaire, boutique, paramètre régional ou autre clé métier.
+</PageLead>
+
+## Choisir le bon type de fractionnement {/* #choose-splitting */}
+
+L’expression « fractionner un flux en fichiers » peut désigner deux mécanismes différents :
+
+| Objectif | Utilisez |
+| --- | --- |
+| Une sortie filtrée par partenaire, boutique, paramètre régional ou autre clé métier | `HasFeedTargets` et `FeedTarget` |
+| Des parties séquentielles contenant chacune un nombre fixe d’enregistrements | `perFile()` et éventuellement `maxFiles()` |
+| Des sorties séparées pouvant chacune comporter plusieurs parties | Les cibles de flux avec `perFile()` |
+
+Les cibles de flux séparent les données selon leur signification métier dans l’application. `perFile()` fractionne selon le nombre d’enregistrements un jeu de données déjà sélectionné.
+
+## Fonctionnement des cibles de flux {/* #how-targets-work */}
+
+La table `feeds` contient toujours une seule ligne pour la classe du flux. Chaque `FeedTarget` décrit une variante de sortie avec une clé stable et un petit instantané de paramètres.
+
+Implémentez `HasFeedTargets` dans la classe du flux. Le trait fourni `InteractsWithFeedTargets` assure `forTarget()` et `target()` ; la classe du flux implémente la découverte et la recherche :
+
+| Méthode | Responsabilité |
+| --- | --- |
+| `targets(): iterable` | Produit de manière différée toutes les sorties disponibles pour les exécutions complètes de la commande et de la planification. |
+| `findTarget(string $key): ?FeedTarget` | Résout une clé `--target` explicitement demandée ou renvoie `null`. |
+| `forTarget(FeedTarget $target): static` | Renvoie un clone configuré du flux. |
+| `target(): FeedTarget` | Renvoie la cible active dans `builder()`, `filename()` et les autres points d’exécution. |
+
+`FeedTarget::$key` doit être non vide, stable, unique dans la classe du flux et pouvoir être exposée sans risque. Les clés ne sont ni normalisées ni assainies. Elles apparaissent dans la sortie de la console, le JSON de l’agent, les événements et le contexte des échecs.
+
+`FeedTarget::$parameters` est un instantané appartenant à l’application et stocké dans les jobs de file d’attente. Gardez-le petit, sérialisable et sans secret. Stockez des identifiants plutôt que des modèles Eloquent.
+
+:::warning
+Chaque cible doit produire un nom de fichier de sortie distinct. Sinon, une cible ultérieure écrase une sortie précédente. N’utilisez une clé de cible dans un chemin que si l’application en contrôle le format.
+:::
+
+## Générer les fichiers de sortie {/* #generate-outputs */}
+
+Générez toutes les cibles renvoyées par `targets()` :
+
+```bash
+php artisan feed:generate 123
+```
+
+Générez une ou plusieurs cibles sélectionnées :
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+Les clés explicites utilisent `findTarget()` au lieu d’énumérer `targets()`. Les clés en double sont traitées une seule fois, dans l’ordre de leur première apparition. Toutes les clés demandées sont résolues avant le début de la génération.
+
+L’énumération complète est traitée en continu et n’est pas atomique. Si `targets()` échoue après avoir produit certaines valeurs, les cibles précédentes peuvent déjà avoir été générées ou placées dans la file d’attente. Un flux planifié génère toutes les cibles, et le mode file d’attente envoie un job par cible.
+
+Le fractionnement habituel par nombre d’enregistrements s’applique séparément à chaque cible. Par exemple, `partners/42.xml` devient `partners/42-1.xml`, `partners/42-2.xml`, et ainsi de suite.
+
+## Exemple complet {/* #complete-example */}
+
+Suivez la [recette d’un fichier de flux par partenaire](./receipt-partner-feeds.mdx) pour obtenir une classe de flux complète, les commandes de génération et les chemins de sortie attendus.
+
+## Voir aussi
+
+- [Recette d’un fichier de flux par partenaire](./receipt-partner-feeds.mdx)
+- [Génération et planification](./generation.mdx)
+- [API des flux et des données](./api/feed.mdx#feed-targets)

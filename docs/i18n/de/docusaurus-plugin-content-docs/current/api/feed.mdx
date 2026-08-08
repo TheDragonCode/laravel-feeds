@@ -54,7 +54,7 @@ Implementieren Sie `DragonCode\LaravelFeed\Contracts\HasFeedTargets` in einer Fe
 | `forTarget(FeedTarget $target): static` | Gibt einen konfigurierten Klon zurück und setzt dessen zwischengespeicherten Dateinamen zurück. |
 | `target(): FeedTarget` | Gibt das konfigurierte Ziel zurück oder löst eine `LogicException` aus, wenn kein Ziel gesetzt ist. |
 
-Der Konstruktor weist leere Schlüssel und Schlüssel nur aus Leerraum zurück, normalisiert oder bereinigt andere Werte jedoch nicht. Zielparameter werden vom Paket nicht ausgewertet und als Snapshot eines Queue-Jobs serialisiert. Der Schlüssel ist die Identität des Ziels und muss daher innerhalb der Feed-Klasse stabil und eindeutig sein. Siehe [Einrichtung zielbasierter Feeds](../create-feeds.mdx#targeted_feeds) und [Zielauswahl im Befehl](../generation.mdx#target_selection).
+Der Konstruktor weist leere Schlüssel und Schlüssel nur aus Leerraum zurück, normalisiert oder bereinigt andere Werte jedoch nicht. Zielparameter werden vom Paket nicht ausgewertet und als Snapshot eines Queue-Jobs serialisiert. Der Schlüssel ist die Identität des Ziels und muss daher innerhalb der Feed-Klasse stabil und eindeutig sein. Siehe [Einrichtung separater Ausgabedateien](../feed-targets.mdx) und [Zielauswahl im Befehl](../generation.mdx#target_selection).
 
 ## FeedItem und FeedInfo {/* #feed-item-and-feed-info */}
 
@@ -96,7 +96,7 @@ Methoden zur programmgesteuerten Generierung und Registrierung finden Sie unter 
 
 ## Siehe auch
 
-- [Feeds erstellen](../create-feeds.mdx)
+- [Separate Ausgabedateien](../feed-targets.mdx)
 - [Elemente](../elements.mdx)
 - [Speicherort](../location.mdx)
 - [Laufzeitdienste und Verträge](./runtime.mdx)

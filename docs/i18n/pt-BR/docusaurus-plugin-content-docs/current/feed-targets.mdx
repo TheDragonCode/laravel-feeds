@@ -1,0 +1,80 @@
+---
+title: "Separar arquivos de saída por parceiro, loja ou localidade"
+description: "Divida um único feed registrado em arquivos separados para parceiros, lojas, localidades ou outras chaves de negócio"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["separate files", "multiple files", "split feed", "FeedTarget", "HasFeedTargets", "target"]
+---
+
+[← Anterior](./generation.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./supported-formats.mdx)
+
+# Separar arquivos de saída por parceiro, loja ou localidade
+
+<PageLead>
+Use alvos de feed quando um único feed registrado precisar criar um arquivo de saída independente e filtrado para cada parceiro, loja, localidade ou outra chave de negócio.
+</PageLead>
+
+## Escolher o tipo correto de divisão {/* #choose-splitting */}
+
+A expressão “dividir um feed em arquivos” pode descrever dois mecanismos diferentes:
+
+| Objetivo | Use |
+| --- | --- |
+| Uma saída filtrada por parceiro, loja, localidade ou outra chave de negócio | `HasFeedTargets` e `FeedTarget` |
+| Partes sequenciais com uma quantidade fixa de registros em cada arquivo | `perFile()` e, opcionalmente, `maxFiles()` |
+| Saídas separadas que podem conter várias partes cada uma | Alvos de feed junto com `perFile()` |
+
+Os alvos de feed dividem os dados conforme o significado definido pela aplicação. `perFile()` divide por quantidade de registros um conjunto de dados já selecionado.
+
+## Como os alvos de feed funcionam {/* #how-targets-work */}
+
+A tabela `feeds` continua com uma única linha para a classe do feed. Cada `FeedTarget` descreve uma variação de saída com uma chave estável e um pequeno snapshot de parâmetros.
+
+Implemente `HasFeedTargets` na classe do feed. O trait `InteractsWithFeedTargets` fornecido pelo pacote implementa `forTarget()` e `target()`; a classe do feed implementa a descoberta e a busca:
+
+| Método | Responsabilidade |
+| --- | --- |
+| `targets(): iterable` | Retorna sob demanda todas as saídas disponíveis para execuções completas por comando e agendamento. |
+| `findTarget(string $key): ?FeedTarget` | Resolve uma chave `--target` solicitada explicitamente ou retorna `null`. |
+| `forTarget(FeedTarget $target): static` | Retorna um clone configurado do feed. |
+| `target(): FeedTarget` | Retorna o alvo ativo dentro de `builder()`, `filename()` e outros hooks de execução. |
+
+`FeedTarget::$key` deve ser não vazia, estável, exclusiva dentro da classe do feed e segura para exposição. As chaves não são normalizadas nem sanitizadas. Elas aparecem na saída do console, no JSON do agente, nos eventos e no contexto de falhas.
+
+`FeedTarget::$parameters` é um snapshot controlado pela aplicação e armazenado nos jobs da fila. Mantenha-o pequeno, serializável e sem dados sigilosos. Armazene identificadores em vez de modelos Eloquent.
+
+:::warning
+Cada alvo deve resultar em um nome de arquivo de saída diferente. Caso contrário, um alvo posterior sobrescreverá uma saída anterior. Use uma chave de alvo em um caminho somente quando a aplicação controlar seu formato.
+:::
+
+## Gerar arquivos de saída {/* #generate-outputs */}
+
+Gere todos os alvos retornados por `targets()`:
+
+```bash
+php artisan feed:generate 123
+```
+
+Gere um ou mais alvos selecionados:
+
+```bash
+php artisan feed:generate 123 --target=42
+php artisan feed:generate 123 --target=42 --target=81
+```
+
+As chaves explícitas usam `findTarget()` em vez de enumerar `targets()`. Chaves duplicadas são processadas uma única vez, na ordem em que aparecem pela primeira vez. Todas as chaves solicitadas são resolvidas antes do início da geração.
+
+A enumeração completa é processada como fluxo, não como uma operação atômica. Se `targets()` falhar depois de retornar alguns valores, os alvos anteriores já poderão ter sido gerados ou enfileirados. Um feed agendado gera todos os alvos, e o modo de fila despacha um job para cada alvo.
+
+A divisão normal por quantidade de registros é aplicada separadamente a cada alvo. Por exemplo, `partners/42.xml` se torna `partners/42-1.xml`, `partners/42-2.xml` e assim por diante.
+
+## Exemplo completo {/* #complete-example */}
+
+Siga a [receita de um arquivo de feed por parceiro](./receipt-partner-feeds.mdx) para ver uma classe de feed completa, os comandos de geração e os caminhos de saída esperados.
+
+## Veja também
+
+- [Receita de um arquivo de feed por parceiro](./receipt-partner-feeds.mdx)
+- [Geração e agendamento](./generation.mdx)
+- [API de feeds e dados](./api/feed.mdx#feed-targets)
