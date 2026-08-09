@@ -179,7 +179,7 @@
             "文件格式",
             "另请参阅"
         ],
-        "content": "import ThemedImage from '@theme/ThemedImage'; ← 上一页 · 返回 README · 下一页 → 创建 Feed 创建所需类最方便的方法是使用 Laravel Idea 插件，并在 PhpStorm 中运行。 要创建 Feed 类，请使用 make:feed 控制台命令： 该命令会创建 Feed 文件，例如 app/Feeds/UserFeed.php 。 该控制台命令还可以在创建 Feed 类的同时创建项类和信息类。使用 --item 和 --info 选项即可。 也可以使用短选项： 创建 Feed 时，还会创建一个操作类或迁移，以便将它添加到数据库。 如果项目使用 Laravel Deploy Operations ，则会创建操作类；否则会创建迁移类。 这是在数据库中添加和管理 Feed 信息所必需的。 填充 Feed Feed 填充主 Feed 类。例如： Feed 项 填充 Feed 项类。例如： 可选值 当值不可用时，如需省略字段，请将 DragonCode\\LaravelFeed\\Data\\OptionalData 实例作为该字段的值返回： 可选字段会从 JSON 和 JSON Lines 对象以及 XML 和 RSS 元素中移除，普通嵌套字段也会被移除。CSV 会保留列位置并写入空字段。 如果应用使用 Spatie Laravel Data，也可以返回 Spatie\\LaravelData\\Optional 。这两种可选值类都会被自动处理。 独立输出文件 为每个合作方、商店或语言区域生成独立文件属于高级输出场景。请先阅读独立输出文件指南，再参照每个合作方一个 Feed 文件示例完成配置。 文件格式 可在支持的格式页面查看可用格式列表。 可以生成不同格式的 Feed。Feed 类只能正确导出为其目标格式，这是由指令和其他格式特性决定的。 要应用所需格式，只需在 Feed 类中覆盖 $format 属性： 另请参阅 - 生成与调度 - 独立输出文件 - 支持的格式"
+        "content": "import ThemedImage from '@theme/ThemedImage'; ← 上一页 · 返回 README · 下一页 → 创建 Feed 创建所需类最方便的方法是使用 Laravel Idea 插件，并在 PhpStorm 中运行。 要创建 Feed 类，请使用 make:feed 控制台命令： 该命令会创建 Feed 文件，例如 app/Feeds/UserFeed.php 。 该控制台命令还可以在创建 Feed 类的同时创建项类和信息类。使用 --item 和 --info 选项即可。 也可以使用短选项： 创建 Feed 时，还会创建一个操作类或迁移，以便将它添加到数据库。 如果项目使用 Laravel Deploy Operations ，则会创建操作类；否则会创建迁移类。 这是在数据库中添加和管理 Feed 信息所必需的。 填充 Feed Feed 填充主 Feed 类。例如： Feed 项 填充 Feed 项类。例如： 可选值 当值不可用时，如需省略字段，请将 DragonCode\\LaravelFeed\\Data\\OptionalData 实例作为该字段的值返回： 可选字段会从 JSON 和 JSON Lines 对象以及 XML 和 RSS 元素中移除，普通嵌套字段也会被移除。CSV 会保留列位置并写入空字段。 如果应用使用 Spatie Laravel Data，也可以返回 Spatie\\LaravelData\\Optional 。这两种可选值类都会被自动处理。 独立输出文件 为每个合作方、商店或语言区域生成独立文件属于高级输出场景。请先阅读独立输出文件指南，再参照按目标生成多个 Feed 文件的示例完成配置。 文件格式 可在支持的格式页面查看可用格式列表。 可以生成不同格式的 Feed。Feed 类只能正确导出为其目标格式，这是由指令和其他格式特性决定的。 要应用所需格式，只需在 Feed 类中覆盖 $format 属性： 另请参阅 - 生成与调度 - 独立输出文件 - 支持的格式"
     },
     {
         "route": "/zh-CN/directives/",
@@ -293,7 +293,7 @@
             "常见问题",
             "另请参阅"
         ],
-        "content": "常见问题 关于设置、生成、存储、格式和内存常见问题的简短答案。 Laravel Feeds 能否导出数百万条记录？ 可以。软件包分块读取 Eloquent 结果并增量写入输出。让 builder() 保持惰性，不要对完整结果调用 get() 或 toArray() ，并在测量内存和数据库负载后调整 chunkSize() 。 请参阅大型数据集性能。 应该使用哪种格式？ 使用数据使用方要求的契约。XML 和 RSS 支持层级指令，JSON 保留嵌套数据，JSON Lines 适合逐行处理，CSV 则要求稳定的列结构。 请参阅支持的格式。 一个 Feed 能否创建多个文件？ 可以，但应根据文件不同的原因选择相应机制： - 使用 perFile() 和可选的 maxFiles() ，将一个数据集按固定记录数拆分为连续分片。 - 使用 Feed 目标，为每个合作方、商店、语言区域或其他业务键创建独立且经过筛选的输出。 - 如果每个合作方的输出还需要按记录数拆分为多个分片，请结合使用这两种机制。 完整示例请参阅每个合作方一个 Feed 文件示例。 能否将 Feed 存储在 S3 或其他远程磁盘？ 可以，但配置的 Laravel 磁盘必须解析为可写的 FilesystemAdapter 。远程移动可能通过复制后删除实现，因此不保证原子替换。 请参阅支持的磁盘。 为什么已禁用的 Feed 仍然运行了？ 向 feed:generate 传入 Feed ID 会执行该 Feed，即使其注册记录未启用。不传 ID 运行命令时会跳过未启用的注册记录。 请参阅单个 Feed 生成。 如何省略可选字段？ 将 DragonCode\\LaravelFeed\\Data\\OptionalData 或 Spatie\\LaravelData\\Optional 作为字段值返回。CSV 会保留列并写入空值；对象格式和 XML 会省略该字段。 请参阅可选值。 另请参阅 - 故障排除 - 配置参考 - API 参考"
+        "content": "常见问题 关于设置、生成、存储、格式和内存常见问题的简短答案。 Laravel Feeds 能否导出数百万条记录？ 可以。软件包分块读取 Eloquent 结果并增量写入输出。让 builder() 保持惰性，不要对完整结果调用 get() 或 toArray() ，并在测量内存和数据库负载后调整 chunkSize() 。 请参阅大型数据集性能。 应该使用哪种格式？ 使用数据使用方要求的契约。XML 和 RSS 支持层级指令，JSON 保留嵌套数据，JSON Lines 适合逐行处理，CSV 则要求稳定的列结构。 请参阅支持的格式。 一个 Feed 能否创建多个文件？ 可以，但应根据文件不同的原因选择相应机制： - 使用 perFile() 和可选的 maxFiles() ，将一个数据集按固定记录数拆分为连续分片。 - 使用 Feed 目标，为每个合作方、商店、语言区域或其他业务键创建独立且经过筛选的输出。 - 如果每个合作方的输出还需要按记录数拆分为多个分片，请结合使用这两种机制。 完整示例请参阅按目标生成多个 Feed 文件的示例。 能否将 Feed 存储在 S3 或其他远程磁盘？ 可以，但配置的 Laravel 磁盘必须解析为可写的 FilesystemAdapter 。远程移动可能通过复制后删除实现，因此不保证原子替换。 请参阅支持的磁盘。 为什么已禁用的 Feed 仍然运行了？ 向 feed:generate 传入 Feed ID 会执行该 Feed，即使其注册记录未启用。不传 ID 运行命令时会跳过未启用的注册记录。 请参阅单个 Feed 生成。 如何省略可选字段？ 将 DragonCode\\LaravelFeed\\Data\\OptionalData 或 Spatie\\LaravelData\\Optional 作为字段值返回。CSV 会保留列并写入空值；对象格式和 XML 会省略该字段。 请参阅可选值。 另请参阅 - 故障排除 - 配置参考 - API 参考"
     },
     {
         "route": "/zh-CN/feed-targets/",
@@ -315,7 +315,7 @@
             "完整示例",
             "另请参阅"
         ],
-        "content": "← 上一页 · 返回 README · 下一页 → 按合作方、商店或语言区域生成独立输出文件 当一个已注册的 Feed 需要为每个合作方、商店、语言区域或其他业务键创建独立且经过筛选的输出文件时，请使用 Feed 目标。 选择正确的拆分方式 “将 Feed 拆分为多个文件”可能指两种不同的机制： 目标 使用方式 --- --- 为每个合作方、商店、语言区域或其他业务键生成一个经过筛选的输出 HasFeedTargets 和 FeedTarget 将数据按固定记录数拆分为连续文件 perFile() ，以及可选的 maxFiles() 生成多个独立输出，且每个输出还可能包含多个分片 Feed 目标与 perFile() 结合使用 Feed 目标按应用定义的业务含义拆分数据。 perFile() 则按记录数拆分一个已经选定的数据集。 Feed 目标如何工作 feeds 表中仍只为 Feed 类保留一行记录。每个 FeedTarget 使用稳定键和精简的参数快照描述一种输出变体。 在 Feed 类中实现 HasFeedTargets 。软件包提供的 InteractsWithFeedTargets trait 实现 forTarget() 和 target() ；Feed 类负责发现和查找目标： 方法 职责 --- --- targets(): iterable 在完整运行命令或按计划运行时惰性生成所有可用输出。 findTarget(string $key): ?FeedTarget 解析一个显式请求的 --target 键，找不到时返回 null 。 forTarget(FeedTarget $target): static 返回配置后的 Feed 克隆。 target(): FeedTarget 返回 builder() 、 filename() 和其他执行钩子中的当前目标。 FeedTarget::$key 必须非空、稳定、在 Feed 类内唯一，并且可以安全公开。键不会被规范化或清理，还会出现在控制台输出、代理 JSON、事件和失败上下文中。 FeedTarget::$parameters 是由应用管理并存储在队列任务中的快照。请保持内容精简、可序列化且不包含机密信息。应存储标识符，而不是 Eloquent 模型。 每个目标都必须解析为不同的输出文件名，否则后续目标会覆盖先前目标的输出。只有在应用能够控制目标键格式时，才能在路径中使用它。 生成输出文件 生成 targets() 返回的全部目标： 生成一个或多个所选目标： 显式键使用 findTarget() ，不会枚举 targets() 。重复键只处理一次，并保留第一次出现的顺序。生成开始前会先解析全部请求键。 完整枚举采用流式处理，并非原子操作。如果 targets() 在生成若干值后失败，先前的目标可能已经生成或进入队列。调度运行会生成全部目标，队列模式则为每个目标分派一个任务。 常规的按记录数拆分会分别应用于每个目标。例如， partners/42.xml 会变为 partners/42-1.xml 、 partners/42-2.xml ，依此类推。 完整示例 请按照每个合作方一个 Feed 文件示例完成整个 Feed 类、生成命令和预期输出路径的配置。 另请参阅 - 每个合作方一个 Feed 文件示例 - 生成与调度 - Feed 与数据 API"
+        "content": "← 上一页 · 返回 README · 下一页 → 按合作方、商店或语言区域生成独立输出文件 当一个已注册的 Feed 需要为每个合作方、商店、语言区域或其他业务键创建独立且经过筛选的输出文件时，请使用 Feed 目标。 选择正确的拆分方式 “将 Feed 拆分为多个文件”可能指两种不同的机制： 目标 使用方式 --- --- 为每个合作方、商店、语言区域或其他业务键生成一个经过筛选的输出 HasFeedTargets 和 FeedTarget 将数据按固定记录数拆分为连续文件 perFile() ，以及可选的 maxFiles() 生成多个独立输出，且每个输出还可能包含多个分片 Feed 目标与 perFile() 结合使用 Feed 目标按应用定义的业务含义拆分数据。 perFile() 则按记录数拆分一个已经选定的数据集。 Feed 目标如何工作 feeds 表中仍只为 Feed 类保留一行记录。每个 FeedTarget 使用稳定键和精简的参数快照描述一种输出变体。 在 Feed 类中实现 HasFeedTargets 。软件包提供的 InteractsWithFeedTargets trait 实现 forTarget() 和 target() ；Feed 类负责发现和查找目标： 方法 职责 --- --- targets(): iterable 在完整运行命令或按计划运行时惰性生成所有可用输出。 findTarget(string $key): ?FeedTarget 解析一个显式请求的 --target 键，找不到时返回 null 。 forTarget(FeedTarget $target): static 返回配置后的 Feed 克隆。 target(): FeedTarget 返回 builder() 、 filename() 和其他执行钩子中的当前目标。 FeedTarget::$key 必须非空、稳定、在 Feed 类内唯一，并且可以安全公开。键不会被规范化或清理，还会出现在控制台输出、代理 JSON、事件和失败上下文中。 FeedTarget::$parameters 是由应用管理并存储在队列任务中的快照。请保持内容精简、可序列化且不包含机密信息。应存储标识符，而不是 Eloquent 模型。 每个目标都必须解析为不同的输出文件名，否则后续目标会覆盖先前目标的输出。只有在应用能够控制目标键格式时，才能在路径中使用它。 生成输出文件 生成 targets() 返回的全部目标： 生成一个或多个所选目标： 显式键使用 findTarget() ，不会枚举 targets() 。重复键只处理一次，并保留第一次出现的顺序。生成开始前会先解析全部请求键。 完整枚举采用流式处理，并非原子操作。如果 targets() 在生成若干值后失败，先前的目标可能已经生成或进入队列。调度运行会生成全部目标，队列模式则为每个目标分派一个任务。 常规的按记录数拆分会分别应用于每个目标。例如， partners/42.xml 会变为 partners/42-1.xml 、 partners/42-2.xml ，依此类推。 完整示例 请按照按目标生成多个 Feed 文件的示例完成整个 Feed 类、生成命令和预期输出路径的配置。 另请参阅 - 按目标生成多个 Feed 文件的示例 - 生成与调度 - Feed 与数据 API"
     },
     {
         "route": "/zh-CN/generation/",
@@ -496,18 +496,19 @@
     },
     {
         "route": "/zh-CN/receipt-partner-feeds/",
-        "title": "每个合作方一个 Feed 文件",
-        "description": "使用一个已注册的 Feed 为每个合作方生成独立且经过筛选的 Feed 文件的示例",
+        "title": "按目标生成多个 Feed 文件",
+        "description": "使用一个已注册的 Feed，按各自的查询条件生成多个 Feed 文件的示例",
         "keywords": [
-            "partner feed",
-            "separate files",
+            "targeted feeds",
+            "conditional files",
             "multiple files",
             "FeedTarget",
             "HasFeedTargets",
             "recipe"
         ],
         "headings": [
-            "每个合作方一个 Feed 文件",
+            "按目标生成多个 Feed 文件",
+            "Feed 目标与 perFile() 的区别",
             "创建 Feed",
             "配置合作方输出",
             "启用",
@@ -516,7 +517,7 @@
             "按记录数拆分每个合作方的输出",
             "另请参阅"
         ],
-        "content": "← 上一页 · 返回 README · 下一页 → 每个合作方一个 Feed 文件 本示例只注册一个 PartnerFeed ，并为每个合作方生成独立且经过筛选的 XML 文件。例如： 创建 Feed 配置合作方输出 使用以下代码替换生成的 Feed 类： 完整运行时， targets() 会惰性枚举合作方。 findTarget() 无需加载所有合作方即可解析显式请求的键。 builder() 筛选当前合作方的产品， filename() 则为每个合作方提供唯一路径。 启用 检查生成的操作类或迁移文件，然后运行相应的命令： 生成所有合作方文件 传入 Feed 注册 ID。命令会为 targets() 返回的每个合作方生成文件： 如果合作方 ID 为 42 和 81 ，生成的路径如下： 生成所选合作方文件 只需刷新特定合作方的文件时，请重复传入 --target 选项： 按记录数拆分每个合作方的输出 如果某个合作方的输出也可能过大，请添加 perFile() ： 此时合作方 42 可以生成 partners/42-1.xml 、 partners/42-2.xml 以及后续分片。按记录数拆分会独立应用于每个合作方。 另请参阅 - 独立输出文件指南 - 生成与调度 - Feed 与数据 API"
+        "content": "← 上一页 · 返回 README · 下一页 → 按目标生成多个 Feed 文件 本示例只注册一个 PartnerFeed ，并使用 Feed 目标生成多个 XML 文件。每个目标都会提供参数， builder() 使用这些参数设置该目标的查询条件， filename() 使用这些参数设置该目标的输出路径。合作方只是示例；目标也可以代表商店、语言区域、地区或任何其他业务条件。 Feed 目标与 perFile() 的区别 perFile() 按固定记录数将单次查询的结果拆分为连续文件。这些文件使用相同的查询和筛选条件。 FeedTarget 会为每个目标分别运行 Feed。因此，应用可以使用 target() 为每个输出更改查询条件和文件名。这两种机制也可以结合使用：先选择目标对应的数据集，再按记录数拆分该数据集。 本示例会为各目标生成以下文件： 创建 Feed 配置合作方输出 使用以下代码替换生成的 Feed 类： 完整运行时， targets() 会惰性枚举合作方。 findTarget() 无需加载所有合作方即可解析显式请求的键。 builder() 筛选当前合作方的产品， filename() 则为每个合作方提供唯一路径。 启用 检查生成的操作类或迁移文件，然后运行相应的命令： 生成所有合作方文件 传入 Feed 注册 ID。命令会为 targets() 返回的每个合作方生成文件： 如果合作方 ID 为 42 和 81 ，生成的路径如下： 生成所选合作方文件 只需刷新特定合作方的文件时，请重复传入 --target 选项： 按记录数拆分每个合作方的输出 如果某个合作方的输出也可能过大，请添加 perFile() ： 此时合作方 42 可以生成 partners/42-1.xml 、 partners/42-2.xml 以及后续分片。按记录数拆分会独立应用于每个合作方。 另请参阅 - 独立输出文件指南 - 生成与调度 - Feed 与数据 API"
     },
     {
         "route": "/zh-CN/receipt-rss-atom/",

@@ -125,7 +125,7 @@ Source: `docs/docs/`
 
 Feed targets guide: `docs/docs/feed-targets.mdx`
 
-Partner feed recipe: `docs/docs/receipt-partner-feeds.mdx`
+Targeted feed recipe: `docs/docs/receipt-partner-feeds.mdx`
 
 Localizations: `docs/i18n/<locale>/docusaurus-plugin-content-docs/current/`
 

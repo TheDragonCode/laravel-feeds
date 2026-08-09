@@ -1,17 +1,25 @@
 ---
-title: "每个合作方一个 Feed 文件"
-description: "使用一个已注册的 Feed 为每个合作方生成独立且经过筛选的 Feed 文件的示例"
+title: "按目标生成多个 Feed 文件"
+description: "使用一个已注册的 Feed，按各自的查询条件生成多个 Feed 文件的示例"
 type: recipe
 status: stable
 since: "1.0"
-keywords: ["partner feed", "separate files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
 ---
 
 [← 上一页](./extending-functionality.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./receipt-sitemap.mdx)
 
-# 每个合作方一个 Feed 文件
+# 按目标生成多个 Feed 文件
 
-本示例只注册一个 `PartnerFeed`，并为每个合作方生成独立且经过筛选的 XML 文件。例如：
+本示例只注册一个 `PartnerFeed`，并使用 Feed 目标生成多个 XML 文件。每个目标都会提供参数，`builder()` 使用这些参数设置该目标的查询条件，`filename()` 使用这些参数设置该目标的输出路径。合作方只是示例；目标也可以代表商店、语言区域、地区或任何其他业务条件。
+
+## Feed 目标与 perFile() 的区别 {/* #targets-vs-per-file */}
+
+`perFile()` 按固定记录数将单次查询的结果拆分为连续文件。这些文件使用相同的查询和筛选条件。
+
+`FeedTarget` 会为每个目标分别运行 Feed。因此，应用可以使用 `target()` 为每个输出更改查询条件和文件名。这两种机制也可以结合使用：先选择目标对应的数据集，再按记录数拆分该数据集。
+
+本示例会为各目标生成以下文件：
 
 ```text
 storage/app/public/partners/42.xml

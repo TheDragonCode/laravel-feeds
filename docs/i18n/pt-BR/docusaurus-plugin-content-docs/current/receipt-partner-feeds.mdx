@@ -1,17 +1,25 @@
 ---
-title: "Um arquivo de feed por parceiro"
-description: "Receita para gerar arquivos de feed filtrados e separados para cada parceiro a partir de um único feed registrado"
+title: "Vários arquivos de feed por alvo"
+description: "Receita para gerar vários arquivos de feed com condições de consulta individuais a partir de um único feed registrado"
 type: recipe
 status: stable
 since: "1.0"
-keywords: ["partner feed", "separate files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
 ---
 
 [← Anterior](./extending-functionality.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./receipt-sitemap.mdx)
 
-# Um arquivo de feed por parceiro
+# Vários arquivos de feed por alvo
 
-Esta receita registra um único `PartnerFeed` e gera um arquivo XML separado e filtrado para cada parceiro. Por exemplo:
+Esta receita registra um único `PartnerFeed` e usa alvos de feed para gerar vários arquivos XML. Cada alvo fornece parâmetros que `builder()` usa em suas próprias condições de consulta e que `filename()` usa em seu próprio caminho de saída. Os parceiros são apenas o exemplo: um alvo pode representar uma loja, uma localidade, uma região ou qualquer outra condição de negócio.
+
+## Alvos de feed versus perFile() {/* #targets-vs-per-file */}
+
+`perFile()` divide o resultado de uma única consulta em arquivos sequenciais com um limite fixo de registros por arquivo. A consulta e as condições de seleção permanecem as mesmas em todos esses arquivos.
+
+`FeedTarget` executa o feed separadamente para cada alvo. Assim, a aplicação pode usar `target()` para alterar as condições da consulta e o nome do arquivo de cada saída. Os dois mecanismos podem ser combinados: primeiro selecione um conjunto de dados específico do alvo e depois divida-o pela quantidade de registros.
+
+Este exemplo cria os seguintes arquivos de saída por alvo:
 
 ```text
 storage/app/public/partners/42.xml
@@ -104,7 +112,7 @@ php artisan migrate
 
 ## Gerar todos os arquivos de parceiros {/* #generate-all */}
 
-Passe o ID de registro do feed. O comando gera todos os parceiros retornados por `targets()`:
+Passe o ID de registro do feed. O comando gera um arquivo para cada parceiro retornado por `targets()`:
 
 ```bash
 php artisan feed:generate 123

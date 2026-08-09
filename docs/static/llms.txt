@@ -272,7 +272,7 @@ use Spatie\LaravelData\Optional;
 
 ## Separate output files
 
-Generating a separate file for each partner, store, or locale is an advanced output scenario. Read the [separate output files guide](https://feeds.dragon-code.pro/feed-targets/), then use the [one feed file per partner recipe](https://feeds.dragon-code.pro/receipt-partner-feeds/) as a complete example.
+Generating a separate file for each partner, store, or locale is an advanced output scenario. Read the [separate output files guide](https://feeds.dragon-code.pro/feed-targets/), then use the [multiple targeted feed files recipe](https://feeds.dragon-code.pro/receipt-partner-feeds/) as a complete example.
 
 ## File format
 
@@ -601,11 +601,11 @@ Normal record-count splitting applies separately to each target. For example, `p
 
 ## Complete example
 
-Follow the [one feed file per partner recipe](https://feeds.dragon-code.pro/receipt-partner-feeds/) for a complete feed class, generation commands, and expected output paths.
+Follow the [multiple targeted feed files recipe](https://feeds.dragon-code.pro/receipt-partner-feeds/) for a complete feed class, generation commands, and expected output paths.
 
 ## See Also
 
-- [One feed file per partner recipe](https://feeds.dragon-code.pro/receipt-partner-feeds/)
+- [Multiple targeted feed files recipe](https://feeds.dragon-code.pro/receipt-partner-feeds/)
 - [Generation & schedule](https://feeds.dragon-code.pro/generation/)
 - [Feeds and data API](https://feeds.dragon-code.pro/api/feed/#feed-targets)
 
@@ -2381,9 +2381,17 @@ A prepended transformer can therefore format a date first. The global date trans
 
 ---
 
-# One feed file per partner
+# Multiple targeted feed files
 
-This recipe registers one `PartnerFeed` and generates a separate, filtered XML file for every partner. For example:
+This recipe registers one `PartnerFeed` and uses feed targets to generate multiple XML files. Each target provides parameters that `builder()` uses for its own query conditions and `filename()` uses for its own output path. Partners are only the example; a target could represent a store, locale, region, or any other business condition.
+
+## Feed targets versus perFile()
+
+`perFile()` splits one query result into sequential files after a fixed number of records. The query and selection conditions stay the same across those files.
+
+`FeedTarget` runs the feed separately for every target. The application can therefore use `target()` to change the query conditions and filename for each output. Both mechanisms can be combined: select a target-specific dataset first, then split that dataset by record count.
+
+This example creates the following target files:
 
 ```text
 storage/app/public/partners/42.xml
@@ -2476,7 +2484,7 @@ php artisan migrate
 
 ## Generate all partner files
 
-Pass the feed registration ID. The command generates every partner returned by `targets()`:
+Pass the feed registration ID. The command generates a file for every partner returned by `targets()`:
 
 ```bash
 php artisan feed:generate 123
@@ -3480,7 +3488,7 @@ Yes, but choose the mechanism based on why the files differ:
 - Use [feed targets](https://feeds.dragon-code.pro/feed-targets/) to create a separate filtered output for each partner, store, locale, or other business key.
 - Combine both mechanisms when each partner output may also need several record-count parts.
 
-See the [one feed file per partner recipe](https://feeds.dragon-code.pro/receipt-partner-feeds/) for a complete example.
+See the [multiple targeted feed files recipe](https://feeds.dragon-code.pro/receipt-partner-feeds/) for a complete example.
 </details>
 
 <details className="faqItem" id="remote-storage">
