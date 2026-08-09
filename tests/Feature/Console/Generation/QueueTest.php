@@ -26,9 +26,9 @@ test('queue', function () {
 
     Queue::fake()->serializeAndRestore();
 
-    artisan(FeedGenerateCommand::class)
-        ->expectsOutputToContain('QUEUED')
-        ->expectsOutputToContain('SKIP')
+    artisan(FeedGenerateCommand::class, ['--ansi' => true])
+        ->expectsOutputToContain("\e[32mQUEUED\e[39m")
+        ->expectsOutputToContain("\e[33mSKIP\e[39m")
         ->assertSuccessful()
         ->run();
 
