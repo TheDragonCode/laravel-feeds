@@ -17,7 +17,6 @@ use DragonCode\LaravelFeed\Services\GeneratorService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use InvalidArgumentException;
-use Laravel\Prompts\Concerns\Colors;
 use RuntimeException;
 use SplFileObject;
 use SplTempFileObject;
@@ -44,8 +43,6 @@ use function trim;
 #[AsCommand('feed:generate', 'Generate XML feeds')]
 final class FeedGenerateCommand extends Command
 {
-    use Colors;
-
     private const AGENT_JSON_FLAGS = JSON_THROW_ON_ERROR
         | JSON_UNESCAPED_SLASHES
         | JSON_INVALID_UTF8_SUBSTITUTE;
@@ -249,14 +246,14 @@ final class FeedGenerateCommand extends Command
 
     protected function showSkippedFeed(string $feed): void
     {
-        $this->components->twoColumnDetail($feed, $this->textYellow('SKIP'));
+        $this->components->twoColumnDetail($feed, '<fg=yellow>SKIP</>');
     }
 
     protected function dispatchFeed(string $feed, ?FeedTarget $target): void
     {
         $this->components->twoColumnDetail(
             $this->executionName($feed, $target),
-            $this->textGreen('QUEUED'),
+            '<fg=green>QUEUED</>',
         );
 
         FeedJob::dispatch($feed, $target);
@@ -420,28 +417,6 @@ final class FeedGenerateCommand extends Command
         }
 
         return $id;
-    }
-
-    protected function textYellow(string $message): string
-    {
-        if ($this->option('no-ansi')) {
-            // @codeCoverageIgnoreStart
-            return $message;
-            // @codeCoverageIgnoreEnd
-        }
-
-        return $this->yellow($message);
-    }
-
-    protected function textGreen(string $message): string
-    {
-        if ($this->option('no-ansi')) {
-            // @codeCoverageIgnoreStart
-            return $message;
-            // @codeCoverageIgnoreEnd
-        }
-
-        return $this->green($message);
     }
 
     protected function usesProgressBar(): bool
