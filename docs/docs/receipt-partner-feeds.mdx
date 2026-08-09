@@ -1,17 +1,25 @@
 ---
-title: "One feed file per partner"
-description: "Recipe for generating separate filtered feed files for every partner from one registered feed"
+title: "Multiple targeted feed files"
+description: "Recipe for generating multiple feed files with individual query conditions from one registered feed"
 type: recipe
 status: stable
 since: "1.0"
-keywords: ["partner feed", "separate files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
 ---
 
 [← Previous](./extending-functionality.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./receipt-sitemap.mdx)
 
-# One feed file per partner
+# Multiple targeted feed files
 
-This recipe registers one `PartnerFeed` and generates a separate, filtered XML file for every partner. For example:
+This recipe registers one `PartnerFeed` and uses feed targets to generate multiple XML files. Each target provides parameters that `builder()` uses for its own query conditions and `filename()` uses for its own output path. Partners are only the example; a target could represent a store, locale, region, or any other business condition.
+
+## Feed targets versus perFile() {/* #targets-vs-per-file */}
+
+`perFile()` splits one query result into sequential files after a fixed number of records. The query and selection conditions stay the same across those files.
+
+`FeedTarget` runs the feed separately for every target. The application can therefore use `target()` to change the query conditions and filename for each output. Both mechanisms can be combined: select a target-specific dataset first, then split that dataset by record count.
+
+This example creates the following target files:
 
 ```text
 storage/app/public/partners/42.xml
@@ -104,7 +112,7 @@ php artisan migrate
 
 ## Generate all partner files {/* #generate-all */}
 
-Pass the feed registration ID. The command generates every partner returned by `targets()`:
+Pass the feed registration ID. The command generates a file for every partner returned by `targets()`:
 
 ```bash
 php artisan feed:generate 123

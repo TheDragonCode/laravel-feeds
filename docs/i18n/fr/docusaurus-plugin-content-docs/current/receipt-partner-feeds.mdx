@@ -1,17 +1,25 @@
 ---
-title: "Un fichier de flux par partenaire"
-description: "Recette pour générer des fichiers de flux séparés et filtrés pour chaque partenaire à partir d’un seul flux enregistré"
+title: "Plusieurs fichiers de flux ciblés"
+description: "Recette pour générer plusieurs fichiers de flux avec des conditions de requête propres à chacun à partir d’un seul flux enregistré"
 type: recipe
 status: stable
 since: "1.0"
-keywords: ["partner feed", "separate files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
 ---
 
 [← Précédent](./extending-functionality.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./receipt-sitemap.mdx)
 
-# Un fichier de flux par partenaire
+# Plusieurs fichiers de flux ciblés
 
-Cette recette enregistre un seul `PartnerFeed` et génère un fichier XML séparé et filtré pour chaque partenaire. Par exemple :
+Cette recette enregistre un seul `PartnerFeed` et utilise des cibles de flux pour générer plusieurs fichiers XML. Chaque cible fournit des paramètres que `builder()` utilise pour ses propres conditions de requête et que `filename()` utilise pour son propre chemin de sortie. Les partenaires ne sont qu’un exemple : une cible peut représenter une boutique, un paramètre régional, une région ou toute autre condition métier.
+
+## Cibles de flux et perFile() {/* #targets-vs-per-file */}
+
+`perFile()` fractionne le résultat d’une seule requête en fichiers séquentiels après un nombre fixe d’enregistrements. La requête et les conditions de sélection restent identiques pour tous ces fichiers.
+
+`FeedTarget` exécute le flux séparément pour chaque cible. L’application peut donc utiliser `target()` pour modifier les conditions de requête et le nom de fichier de chaque sortie. Les deux mécanismes peuvent être combinés : sélectionnez d’abord un jeu de données propre à la cible, puis fractionnez-le selon le nombre d’enregistrements.
+
+Cet exemple crée les fichiers ciblés suivants :
 
 ```text
 storage/app/public/partners/42.xml

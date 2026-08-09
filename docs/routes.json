@@ -1152,14 +1152,14 @@
             "route": "/receipt-partner-feeds/",
             "source": "receipt-partner-feeds.mdx",
             "aliases": [],
-            "title": "One feed file per partner",
-            "description": "Recipe for generating separate filtered feed files for every partner from one registered feed",
+            "title": "Multiple targeted feed files",
+            "description": "Recipe for generating multiple feed files with individual query conditions from one registered feed",
             "type": "recipe",
             "status": "stable",
             "since": "1.0",
             "keywords": [
-                "partner feed",
-                "separate files",
+                "targeted feeds",
+                "conditional files",
                 "multiple files",
                 "FeedTarget",
                 "HasFeedTargets",
@@ -1168,8 +1168,13 @@
             "headings": [
                 {
                     "level": 1,
-                    "id": "one-feed-file-per-partner",
-                    "text": "One feed file per partner"
+                    "id": "multiple-targeted-feed-files",
+                    "text": "Multiple targeted feed files"
+                },
+                {
+                    "level": 2,
+                    "id": "targets-vs-per-file",
+                    "text": "Feed targets versus perFile()"
                 },
                 {
                     "level": 2,

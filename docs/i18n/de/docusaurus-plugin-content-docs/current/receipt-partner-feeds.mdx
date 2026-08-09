@@ -1,17 +1,25 @@
 ---
-title: "Eine Feed-Datei pro Partner"
-description: "Rezept zum Erzeugen separater, gefilterter Feed-Dateien für jeden Partner aus einem registrierten Feed"
+title: "Mehrere zielbezogene Feed-Dateien"
+description: "Rezept zum Erzeugen mehrerer Feed-Dateien mit individuellen Abfragebedingungen aus einem registrierten Feed"
 type: recipe
 status: stable
 since: "1.0"
-keywords: ["partner feed", "separate files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
 ---
 
 [← Zurück](./extending-functionality.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./receipt-sitemap.mdx)
 
-# Eine Feed-Datei pro Partner
+# Mehrere zielbezogene Feed-Dateien
 
-Dieses Rezept registriert einen `PartnerFeed` und erzeugt für jeden Partner eine separate, gefilterte XML-Datei. Beispiel:
+Dieses Rezept registriert einen `PartnerFeed` und erzeugt mithilfe von Feed-Zielen mehrere XML-Dateien. Jedes Ziel stellt Parameter bereit, die `builder()` für eigene Abfragebedingungen und `filename()` für einen eigenen Ausgabepfad verwendet. Partner sind nur das Beispiel; ein Ziel kann einen Shop, ein Gebietsschema, eine Region oder eine andere fachliche Bedingung darstellen.
+
+## Feed-Ziele im Vergleich zu perFile() {/* #targets-vs-per-file */}
+
+`perFile()` teilt ein Abfrageergebnis nach einer festen Anzahl von Datensätzen in fortlaufende Dateien auf. Die Abfrage und die Auswahlbedingungen bleiben für diese Dateien gleich.
+
+`FeedTarget` führt den Feed für jedes Ziel separat aus. Die Anwendung kann daher mit `target()` die Abfragebedingungen und den Dateinamen für jede Ausgabe ändern. Beide Mechanismen lassen sich kombinieren: Zuerst wird ein zielspezifischer Datensatzbestand ausgewählt und anschließend nach Datensatzanzahl aufgeteilt.
+
+Dieses Beispiel erzeugt die folgenden Zieldateien:
 
 ```text
 storage/app/public/partners/42.xml
