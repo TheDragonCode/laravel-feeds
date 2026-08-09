@@ -49,6 +49,16 @@ test('queue', function () {
         FeedJob::class,
         fn (FeedJob $job) => in_array($job->feedClass, [SitemapFeed::class, YandexFeed::class], true)
     );
+
+    artisan(FeedGenerateCommand::class, ['--no-ansi' => true])
+        ->expectsOutputToContain('QUEUED')
+        ->expectsOutputToContain('SKIP')
+        ->doesntExpectOutputToContain("\e[")
+        ->doesntExpectOutputToContain('[32mQUEUED[39m')
+        ->doesntExpectOutputToContain('[33mSKIP[39m')
+        ->doesntExpectOutputToContain('<fg=')
+        ->assertSuccessful()
+        ->run();
 });
 
 test('does not resolve an ordinary feed before queueing', function () {
