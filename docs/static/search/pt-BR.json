@@ -179,7 +179,7 @@
             "Formato do arquivo",
             "Veja também"
         ],
-        "content": "import ThemedImage from '@theme/ThemedImage'; ← Anterior · Voltar ao README · Próximo → Criar feeds A maneira mais prática de criar as classes necessárias é usar o plugin Laravel Idea para o PhpStorm. Para criar uma classe de feed, use o comando make:feed no console: Isso criará um arquivo de feed, por exemplo, app/Feeds/UserFeed.php . Esse comando também pode criar as classes de item e de informações junto com a classe do feed. Para isso, use as opções --item e --info . Também existem opções abreviadas: Ao criar um feed, uma operação ou migração também será criada para adicioná-lo ao banco de dados. Se o projeto usa o Laravel Deploy Operations , uma classe de operação será criada. Caso contrário, será criada uma classe de migração. Isso é necessário para adicionar e gerenciar as informações do feed no banco de dados. Preencher feeds Feed Preencha a classe principal do feed. Exemplo: Item do feed Preencha a classe de item do feed. Exemplo: Valores opcionais Para omitir um campo quando seu valor não estiver disponível, retorne uma instância de DragonCode\\LaravelFeed\\Data\\OptionalData como valor: Os campos opcionais são removidos de objetos JSON e JSON Lines e de elementos XML e RSS, inclusive de campos aninhados comuns. O CSV mantém a posição da coluna e grava um campo vazio. Se a aplicação usa o Spatie Laravel Data, você pode retornar Spatie\\LaravelData\\Optional . As duas classes de valor opcional são processadas automaticamente. Arquivos de saída separados Gerar um arquivo separado para cada parceiro, loja ou localidade é um cenário avançado de saída. Leia o guia de arquivos de saída separados e depois use a receita de vários arquivos de feed por alvo como exemplo completo. Formato do arquivo A lista de formatos disponíveis está na página Formatos compatíveis. Você pode gerar feeds em formatos diferentes. Uma classe de feed só pode ser exportada corretamente para o formato ao qual se destina, devido ao uso de diretivas e a outras particularidades do formato. Para aplicar o formato necessário, basta sobrescrever a propriedade $format na classe do feed: Veja também - Geração e agendamento - Arquivos de saída separados - Formatos compatíveis"
+        "content": "import ThemedImage from '@theme/ThemedImage'; ← Anterior · Voltar ao README · Próximo → Criar feeds A maneira mais prática de criar as classes necessárias é usar o plugin Laravel Idea para o PhpStorm. Para criar uma classe de feed, use o comando make:feed no console: Isso criará um arquivo de feed, por exemplo, app/Feeds/UserFeed.php . Esse comando também pode criar as classes de item e de informações junto com a classe do feed. Para isso, use as opções --item e --info . Também existem opções abreviadas: Ao criar um feed, uma operação ou migração também será criada para adicioná-lo ao banco de dados. Se o projeto usa o Laravel Deploy Operations , uma classe de operação será criada. Caso contrário, será criada uma classe de migração. Isso é necessário para adicionar e gerenciar as informações do feed no banco de dados. Preencher feeds Feed Preencha a classe principal do feed. Exemplo: Item do feed Preencha a classe de item do feed. Exemplo: Valores opcionais Para omitir um campo quando seu valor não estiver disponível, retorne uma instância de DragonCode\\LaravelFeed\\Data\\OptionalData como valor: Os campos opcionais são removidos de objetos JSON e JSON Lines e de elementos XML e RSS, inclusive de campos aninhados comuns. O CSV mantém a posição da coluna e grava um campo vazio. Se a aplicação usa o Spatie Laravel Data, você pode retornar Spatie\\LaravelData\\Optional . As duas classes de valor opcional são processadas automaticamente. Arquivos de saída separados Gerar arquivos separados para diferentes condições de negócio é um cenário avançado de saída. Leia o guia de arquivos de saída separados e depois use a receita de vários arquivos de feed por alvo como exemplo completo. Formato do arquivo A lista de formatos disponíveis está na página Formatos compatíveis. Você pode gerar feeds em formatos diferentes. Uma classe de feed só pode ser exportada corretamente para o formato ao qual se destina, devido ao uso de diretivas e a outras particularidades do formato. Para aplicar o formato necessário, basta sobrescrever a propriedade $format na classe do feed: Veja também - Geração e agendamento - Arquivos de saída separados - Formatos compatíveis"
     },
     {
         "route": "/pt-BR/directives/",
@@ -495,31 +495,6 @@
         "content": "← Anterior · Voltar ao README · Próximo → Instagram Criar os arquivos Preencher o feed Substitua extends Feed por extends InstagramFeedPreset na classe gerada: Ativar Revise o arquivo de operação ou migration gerado e execute o comando de console adequado: Gerar o feed Gere o feed com o seguinte comando de console: Resultado Veja também - Predefinições - Receita do Yandex - Receita RSS Atom"
     },
     {
-        "route": "/pt-BR/receipt-partner-feeds/",
-        "title": "Vários arquivos de feed por alvo",
-        "description": "Receita para gerar vários arquivos de feed com condições de consulta individuais a partir de um único feed registrado",
-        "keywords": [
-            "targeted feeds",
-            "conditional files",
-            "multiple files",
-            "FeedTarget",
-            "HasFeedTargets",
-            "recipe"
-        ],
-        "headings": [
-            "Vários arquivos de feed por alvo",
-            "Alvos de feed versus perFile()",
-            "Criar o feed",
-            "Configurar saídas por parceiro",
-            "Ativar",
-            "Gerar todos os arquivos de parceiros",
-            "Gerar arquivos de parceiros selecionados",
-            "Dividir cada saída de parceiro por quantidade de registros",
-            "Veja também"
-        ],
-        "content": "← Anterior · Voltar ao README · Próximo → Vários arquivos de feed por alvo Esta receita registra um único PartnerFeed e usa alvos de feed para gerar vários arquivos XML. Cada alvo fornece parâmetros que builder() usa em suas próprias condições de consulta e que filename() usa em seu próprio caminho de saída. Os parceiros são apenas o exemplo: um alvo pode representar uma loja, uma localidade, uma região ou qualquer outra condição de negócio. Alvos de feed versus perFile() perFile() divide o resultado de uma única consulta em arquivos sequenciais com um limite fixo de registros por arquivo. A consulta e as condições de seleção permanecem as mesmas em todos esses arquivos. FeedTarget executa o feed separadamente para cada alvo. Assim, a aplicação pode usar target() para alterar as condições da consulta e o nome do arquivo de cada saída. Os dois mecanismos podem ser combinados: primeiro selecione um conjunto de dados específico do alvo e depois divida-o pela quantidade de registros. Este exemplo cria os seguintes arquivos de saída por alvo: Criar o feed Configurar saídas por parceiro Substitua a classe de feed gerada por: targets() enumera os parceiros sob demanda nas execuções completas. findTarget() resolve as chaves solicitadas explicitamente sem carregar todos os parceiros. builder() filtra os produtos do parceiro ativo, e filename() atribui um caminho exclusivo a cada parceiro. Ativar Revise o arquivo de operação ou migração gerado e execute o comando adequado: Gerar todos os arquivos de parceiros Passe o ID de registro do feed. O comando gera um arquivo para cada parceiro retornado por targets() : Com os parceiros 42 e 81 , os caminhos gerados são: Gerar arquivos de parceiros selecionados Use a opção repetível --target quando apenas parceiros específicos precisarem de arquivos atualizados: Dividir cada saída de parceiro por quantidade de registros Adicione perFile() quando a saída de um único parceiro também puder ficar grande demais: O parceiro 42 poderá gerar partners/42-1.xml , partners/42-2.xml e as partes seguintes. Essa divisão por quantidade de registros é aplicada separadamente a cada parceiro. Veja também - Guia de arquivos de saída separados - Geração e agendamento - API de feeds e dados"
-    },
-    {
         "route": "/pt-BR/receipt-rss-atom/",
         "title": "RSS Atom",
         "description": "Receita de geração de feed RSS Atom",
@@ -562,6 +537,31 @@
             "Veja também"
         ],
         "content": "← Anterior · Voltar ao README · Próximo → Sitemap Esta receita mostra como criar um feed de sitemap de produtos com o Laravel Feeds. Você vai: - Gerar as classes necessárias. - Implementar a lógica do feed. - Disponibilizar os arquivos pelo sistema de arquivos. - Referenciar opcionalmente o sitemap gerado em um arquivo sitemap.xml raiz. Criar os arquivos Gere o feed e a classe do item com o seguinte comando de console: Preencher o feed Substitua extends Feed por extends SitemapFeedPreset na classe gerada: Métodos disponíveis na classe FeedItem : - url - preenchimento obrigatório - modifiedAt - por padrão, $model- updated_at - priority - por padrão, 0.9 Ativar Revise o arquivo de operação ou migration gerado e execute o comando de console adequado: Links Adicione ao arquivo de configuração config/filesystems.php um disco do sistema de arquivos que aponte para o diretório dos seus sitemaps: Depois, crie o link simbólico público para que os arquivos fiquem acessíveis pelo navegador: Gerar o feed Gere o feed com o seguinte comando de console: Adicionar um link ao sitemap.xml raiz Se você mantém um arquivo sitemap.xml raiz que referencia outros sitemaps, adicione uma entrada como esta: Resultado O sitemap.xml gerado para os seus produtos terá esta aparência: Veja também - Predefinições - Receita do Yandex - Receita RSS Atom"
+    },
+    {
+        "route": "/pt-BR/receipt-target-feeds/",
+        "title": "Vários arquivos de feed por alvo",
+        "description": "Receita para gerar vários arquivos de feed com condições de consulta individuais a partir de um único feed registrado",
+        "keywords": [
+            "targeted feeds",
+            "conditional files",
+            "multiple files",
+            "FeedTarget",
+            "HasFeedTargets",
+            "recipe"
+        ],
+        "headings": [
+            "Vários arquivos de feed por alvo",
+            "Alvos de feed versus perFile()",
+            "Criar o feed",
+            "Configurar a saída",
+            "Ativar",
+            "Gerar arquivos",
+            "Gerar arquivos com filtragem",
+            "Dividir arquivos por quantidade de registros",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Vários arquivos de feed por alvo Esta receita registra um único ProductFeed e usa alvos de feed para gerar vários arquivos XML. Cada alvo fornece parâmetros que builder() usa em suas próprias condições de consulta e que filename() usa em seu próprio caminho de saída. Os alvos available e unavailable são apenas exemplos: um alvo pode representar qualquer condição de negócio. Alvos de feed versus perFile() perFile() divide o resultado de uma única consulta em arquivos sequenciais com um limite fixo de registros por arquivo. A consulta e as condições de seleção permanecem as mesmas em todos esses arquivos. FeedTarget executa o feed separadamente para cada alvo. Assim, a aplicação pode usar target() para alterar as condições da consulta e o nome do arquivo de cada saída. Os dois mecanismos podem ser combinados: primeiro selecione um conjunto de dados específico do alvo e depois divida-o pela quantidade de registros. Este exemplo cria os seguintes arquivos de saída por alvo: Criar o feed Configurar a saída Substitua a classe de feed gerada por: targets() enumera as chaves de alvo configuradas nas execuções completas. findTarget() resolve as chaves solicitadas explicitamente sem enumerar todos os alvos. builder() filtra os produtos do alvo ativo, e filename() atribui um caminho exclusivo a cada alvo. Ativar Revise o arquivo de operação ou migração gerado e execute o comando adequado: Gerar arquivos Passe o ID de registro do feed. O comando gera um arquivo para cada alvo retornado por targets() : Para os alvos available e unavailable , os arquivos são gerados nos seguintes caminhos: Gerar arquivos com filtragem Use a opção repetível --target para gerar arquivos somente para os alvos selecionados: Dividir arquivos por quantidade de registros Adicione perFile() quando o arquivo de um alvo puder ficar grande demais: Com isso, o alvo available pode gerar products/available-1.xml , products/available-2.xml e os arquivos seguintes. Essa divisão por quantidade de registros é aplicada separadamente a cada alvo. Veja também - Guia de arquivos de saída separados - Geração e agendamento - API de feeds e dados"
     },
     {
         "route": "/pt-BR/receipt-yandex/",

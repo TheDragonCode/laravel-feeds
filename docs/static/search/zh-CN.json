@@ -179,7 +179,7 @@
             "文件格式",
             "另请参阅"
         ],
-        "content": "import ThemedImage from '@theme/ThemedImage'; ← 上一页 · 返回 README · 下一页 → 创建 Feed 创建所需类最方便的方法是使用 Laravel Idea 插件，并在 PhpStorm 中运行。 要创建 Feed 类，请使用 make:feed 控制台命令： 该命令会创建 Feed 文件，例如 app/Feeds/UserFeed.php 。 该控制台命令还可以在创建 Feed 类的同时创建项类和信息类。使用 --item 和 --info 选项即可。 也可以使用短选项： 创建 Feed 时，还会创建一个操作类或迁移，以便将它添加到数据库。 如果项目使用 Laravel Deploy Operations ，则会创建操作类；否则会创建迁移类。 这是在数据库中添加和管理 Feed 信息所必需的。 填充 Feed Feed 填充主 Feed 类。例如： Feed 项 填充 Feed 项类。例如： 可选值 当值不可用时，如需省略字段，请将 DragonCode\\LaravelFeed\\Data\\OptionalData 实例作为该字段的值返回： 可选字段会从 JSON 和 JSON Lines 对象以及 XML 和 RSS 元素中移除，普通嵌套字段也会被移除。CSV 会保留列位置并写入空字段。 如果应用使用 Spatie Laravel Data，也可以返回 Spatie\\LaravelData\\Optional 。这两种可选值类都会被自动处理。 独立输出文件 为每个合作方、商店或语言区域生成独立文件属于高级输出场景。请先阅读独立输出文件指南，再参照按目标生成多个 Feed 文件的示例完成配置。 文件格式 可在支持的格式页面查看可用格式列表。 可以生成不同格式的 Feed。Feed 类只能正确导出为其目标格式，这是由指令和其他格式特性决定的。 要应用所需格式，只需在 Feed 类中覆盖 $format 属性： 另请参阅 - 生成与调度 - 独立输出文件 - 支持的格式"
+        "content": "import ThemedImage from '@theme/ThemedImage'; ← 上一页 · 返回 README · 下一页 → 创建 Feed 创建所需类最方便的方法是使用 Laravel Idea 插件，并在 PhpStorm 中运行。 要创建 Feed 类，请使用 make:feed 控制台命令： 该命令会创建 Feed 文件，例如 app/Feeds/UserFeed.php 。 该控制台命令还可以在创建 Feed 类的同时创建项类和信息类。使用 --item 和 --info 选项即可。 也可以使用短选项： 创建 Feed 时，还会创建一个操作类或迁移，以便将它添加到数据库。 如果项目使用 Laravel Deploy Operations ，则会创建操作类；否则会创建迁移类。 这是在数据库中添加和管理 Feed 信息所必需的。 填充 Feed Feed 填充主 Feed 类。例如： Feed 项 填充 Feed 项类。例如： 可选值 当值不可用时，如需省略字段，请将 DragonCode\\LaravelFeed\\Data\\OptionalData 实例作为该字段的值返回： 可选字段会从 JSON 和 JSON Lines 对象以及 XML 和 RSS 元素中移除，普通嵌套字段也会被移除。CSV 会保留列位置并写入空字段。 如果应用使用 Spatie Laravel Data，也可以返回 Spatie\\LaravelData\\Optional 。这两种可选值类都会被自动处理。 独立输出文件 针对不同业务条件生成独立文件属于高级输出场景。请先阅读独立输出文件指南，再参照按目标生成多个 Feed 文件的示例完成配置。 文件格式 可在支持的格式页面查看可用格式列表。 可以生成不同格式的 Feed。Feed 类只能正确导出为其目标格式，这是由指令和其他格式特性决定的。 要应用所需格式，只需在 Feed 类中覆盖 $format 属性： 另请参阅 - 生成与调度 - 独立输出文件 - 支持的格式"
     },
     {
         "route": "/zh-CN/directives/",
@@ -495,31 +495,6 @@
         "content": "← 上一页 · 返回 README · 下一页 → Instagram 创建文件 填充 Feed 在生成的类中，将 extends Feed 替换为 extends InstagramFeedPreset ： 启用 检查生成的操作类或迁移文件，然后运行相应的控制台命令： 生成 Feed 运行以下控制台命令生成 Feed： 结果 另请参阅 - 预设 - Yandex 示例 - RSS Atom 示例"
     },
     {
-        "route": "/zh-CN/receipt-partner-feeds/",
-        "title": "按目标生成多个 Feed 文件",
-        "description": "使用一个已注册的 Feed，按各自的查询条件生成多个 Feed 文件的示例",
-        "keywords": [
-            "targeted feeds",
-            "conditional files",
-            "multiple files",
-            "FeedTarget",
-            "HasFeedTargets",
-            "recipe"
-        ],
-        "headings": [
-            "按目标生成多个 Feed 文件",
-            "Feed 目标与 perFile() 的区别",
-            "创建 Feed",
-            "配置合作方输出",
-            "启用",
-            "生成所有合作方文件",
-            "生成所选合作方文件",
-            "按记录数拆分每个合作方的输出",
-            "另请参阅"
-        ],
-        "content": "← 上一页 · 返回 README · 下一页 → 按目标生成多个 Feed 文件 本示例只注册一个 PartnerFeed ，并使用 Feed 目标生成多个 XML 文件。每个目标都会提供参数， builder() 使用这些参数设置该目标的查询条件， filename() 使用这些参数设置该目标的输出路径。合作方只是示例；目标也可以代表商店、语言区域、地区或任何其他业务条件。 Feed 目标与 perFile() 的区别 perFile() 按固定记录数将单次查询的结果拆分为连续文件。这些文件使用相同的查询和筛选条件。 FeedTarget 会为每个目标分别运行 Feed。因此，应用可以使用 target() 为每个输出更改查询条件和文件名。这两种机制也可以结合使用：先选择目标对应的数据集，再按记录数拆分该数据集。 本示例会为各目标生成以下文件： 创建 Feed 配置合作方输出 使用以下代码替换生成的 Feed 类： 完整运行时， targets() 会惰性枚举合作方。 findTarget() 无需加载所有合作方即可解析显式请求的键。 builder() 筛选当前合作方的产品， filename() 则为每个合作方提供唯一路径。 启用 检查生成的操作类或迁移文件，然后运行相应的命令： 生成所有合作方文件 传入 Feed 注册 ID。命令会为 targets() 返回的每个合作方生成文件： 如果合作方 ID 为 42 和 81 ，生成的路径如下： 生成所选合作方文件 只需刷新特定合作方的文件时，请重复传入 --target 选项： 按记录数拆分每个合作方的输出 如果某个合作方的输出也可能过大，请添加 perFile() ： 此时合作方 42 可以生成 partners/42-1.xml 、 partners/42-2.xml 以及后续分片。按记录数拆分会独立应用于每个合作方。 另请参阅 - 独立输出文件指南 - 生成与调度 - Feed 与数据 API"
-    },
-    {
         "route": "/zh-CN/receipt-rss-atom/",
         "title": "RSS Atom",
         "description": "RSS Atom Feed 生成示例",
@@ -562,6 +537,31 @@
             "另请参阅"
         ],
         "content": "← 上一页 · 返回 README · 下一页 → 站点地图 本示例说明如何使用 Laravel Feeds 创建产品站点地图 Feed。你将完成以下操作： - 生成所需的类。 - 实现 Feed 逻辑。 - 通过文件系统公开文件。 - 可选：从根 sitemap.xml 文件引用生成的站点地图。 创建文件 使用以下控制台命令生成 Feed 及其项类： 填充 Feed 在生成的类中，将 extends Feed 替换为 extends SitemapFeedPreset ： FeedItem 类的可用方法： - url - 必须指定 - modifiedAt - 默认为 $model- updated_at - priority - 默认为 0.9 启用 检查生成的操作类或迁移文件，然后运行相应的控制台命令： 链接 在 config/filesystems.php 配置文件中添加一个文件系统磁盘，指向包含站点地图的目录： 然后创建公共符号链接，以便通过浏览器访问这些文件： 生成 Feed 运行以下控制台命令生成 Feed： 添加到根 sitemap.xml 的链接 如果根 sitemap.xml 文件引用其他站点地图，请添加如下条目： 结果 为产品生成的 sitemap.xml 如下所示： 另请参阅 - 预设 - Yandex 示例 - RSS Atom 示例"
+    },
+    {
+        "route": "/zh-CN/receipt-target-feeds/",
+        "title": "按目标生成多个 Feed 文件",
+        "description": "使用一个已注册的 Feed，按各自的查询条件生成多个 Feed 文件的示例",
+        "keywords": [
+            "targeted feeds",
+            "conditional files",
+            "multiple files",
+            "FeedTarget",
+            "HasFeedTargets",
+            "recipe"
+        ],
+        "headings": [
+            "按目标生成多个 Feed 文件",
+            "Feed 目标与 perFile() 的区别",
+            "创建 Feed",
+            "配置输出",
+            "启用",
+            "生成文件",
+            "筛选后生成文件",
+            "按记录数拆分文件",
+            "另请参阅"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 按目标生成多个 Feed 文件 本示例只注册一个 ProductFeed ，并使用 Feed 目标生成多个 XML 文件。每个目标都会提供参数， builder() 使用这些参数设置该目标的查询条件， filename() 使用这些参数设置该目标的输出路径。 available 和 unavailable 仅为示例；目标可以代表任何业务条件。 Feed 目标与 perFile() 的区别 perFile() 按固定记录数将单次查询的结果拆分为连续文件。这些文件使用相同的查询和筛选条件。 FeedTarget 会为每个目标分别运行 Feed。因此，应用可以使用 target() 为每个输出更改查询条件和文件名。这两种机制也可以结合使用：先选择目标对应的数据集，再按记录数拆分该数据集。 本示例会为各目标生成以下文件： 创建 Feed 配置输出 使用以下代码替换生成的 Feed 类： 完整运行时， targets() 会枚举已配置的目标键。 findTarget() 无需枚举所有目标即可解析显式请求的键。 builder() 筛选当前目标的产品， filename() 则为每个目标分配唯一路径。 启用 检查生成的操作类或迁移文件，然后运行相应的命令： 生成文件 传入 Feed 注册 ID。命令会为 targets() 返回的每个目标生成文件： 目标为 available 和 unavailable 时，文件会生成到以下路径： 筛选后生成文件 只需为选定目标生成文件时，请重复传入 --target 选项： 按记录数拆分文件 如果某个目标的文件可能过大，请添加 perFile() ： 此时，目标 available 的输出可以拆分为 products/available-1.xml 、 products/available-2.xml 以及后续分片。按记录数拆分会独立应用于每个目标。 另请参阅 - 独立输出文件指南 - 生成与调度 - Feed 与数据 API"
     },
     {
         "route": "/zh-CN/receipt-yandex/",

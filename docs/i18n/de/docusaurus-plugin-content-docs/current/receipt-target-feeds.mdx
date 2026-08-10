@@ -11,7 +11,7 @@ keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget"
 
 # Mehrere zielbezogene Feed-Dateien
 
-Dieses Rezept registriert einen `PartnerFeed` und erzeugt mithilfe von Feed-Zielen mehrere XML-Dateien. Jedes Ziel stellt Parameter bereit, die `builder()` für eigene Abfragebedingungen und `filename()` für einen eigenen Ausgabepfad verwendet. Partner sind nur das Beispiel; ein Ziel kann einen Shop, ein Gebietsschema, eine Region oder eine andere fachliche Bedingung darstellen.
+Dieses Rezept registriert einen `ProductFeed` und erzeugt mithilfe von Feed-Zielen mehrere XML-Dateien. Jedes Ziel stellt Parameter bereit, die `builder()` für eigene Abfragebedingungen und `filename()` für einen eigenen Ausgabepfad verwendet. Die Ziele `available` und `unavailable` sind nur Beispiele; ein Ziel kann eine beliebige fachliche Bedingung darstellen.
 
 ## Feed-Ziele im Vergleich zu perFile() {/* #targets-vs-per-file */}
 
@@ -22,17 +22,17 @@ Dieses Rezept registriert einen `PartnerFeed` und erzeugt mithilfe von Feed-Ziel
 Dieses Beispiel erzeugt die folgenden Zieldateien:
 
 ```text
-storage/app/public/partners/42.xml
-storage/app/public/partners/81.xml
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
 ```
 
 ## Feed erstellen {/* #create-feed */}
 
 ```bash
-php artisan make:feed Partner
+php artisan make:feed Product
 ```
 
-## Partnerausgaben konfigurieren {/* #configure-partner-outputs */}
+## Ausgabe konfigurieren {/* #configure-output */}
 
 Ersetzen Sie die erzeugte Feed-Klasse durch:
 
@@ -43,7 +43,6 @@ declare(strict_types=1);
 
 namespace App\Feeds;
 
-use App\Models\Partner;
 use App\Models\Product;
 use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
 use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
@@ -51,52 +50,51 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use Illuminate\Database\Eloquent\Builder;
 
-class PartnerFeed extends Feed implements HasFeedTargets
+class ProductFeed extends Feed implements HasFeedTargets
 {
     use InteractsWithFeedTargets;
 
+    private const TARGETS = [
+        'available' => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
     public function targets(): iterable
     {
-        foreach (Partner::query()->select('id')->lazyById() as $partner) {
-            yield $this->makeTarget($partner);
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
         }
     }
 
     public function findTarget(string $key): ?FeedTarget
     {
-        $partner = Partner::query()->find($key);
-
-        if (! $partner || (string) $partner->getKey() !== $key) {
-            return null;
-        }
-
-        return $this->makeTarget($partner);
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
     }
 
     public function builder(): Builder
     {
         return Product::query()->where(
-            'partner_id',
-            $this->target()->parameters['partner_id'],
+            'in_stock',
+            $this->target()->parameters['in_stock'],
         );
     }
 
     public function filename(): string
     {
-        return "partners/{$this->target()->key}.xml";
+        return "products/{$this->target()->key}.xml";
     }
 
-    private function makeTarget(Partner $partner): FeedTarget
+    private function makeTarget(string $key): FeedTarget
     {
         return new FeedTarget(
-            key       : (string) $partner->getKey(),
-            parameters: ['partner_id' => $partner->getKey()],
+            key       : $key,
+            parameters: self::TARGETS[$key],
         );
     }
 }
 ```
 
-`targets()` zählt Partner für vollständige Läufe verzögert auf. `findTarget()` löst explizit angeforderte Schlüssel auf, ohne alle Partner zu laden. `builder()` filtert Produkte für den aktiven Partner, und `filename()` gibt jedem Partner einen eindeutigen Pfad.
+`targets()` zählt die konfigurierten Zielschlüssel für vollständige Läufe auf. `findTarget()` löst explizit angeforderte Schlüssel auf, ohne alle Ziele aufzuzählen. `builder()` filtert Produkte für das aktive Ziel, und `filename()` weist jedem Ziel einen eindeutigen Pfad zu.
 
 ## Aktivieren {/* #activate */}
 
@@ -110,33 +108,33 @@ php artisan operations
 php artisan migrate
 ```
 
-## Alle Partnerdateien erzeugen {/* #generate-all */}
+## Dateien erzeugen {/* #generate-all */}
 
-Übergeben Sie die Feed-Registrierungs-ID. Der Befehl erzeugt Dateien für alle von `targets()` zurückgegebenen Partner:
+Übergeben Sie die Feed-Registrierungs-ID. Der Befehl erzeugt für jedes von `targets()` zurückgegebene Ziel eine Datei:
 
 ```bash
 php artisan feed:generate 123
 ```
 
-Für die Partner `42` und `81` werden folgende Pfade erzeugt:
+Für die Ziele `available` und `unavailable` werden folgende Pfade erzeugt:
 
 ```text
-storage/app/public/partners/42.xml
-storage/app/public/partners/81.xml
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
 ```
 
-## Dateien ausgewählter Partner erzeugen {/* #generate-selected */}
+## Dateien gefiltert erzeugen {/* #generate-selected */}
 
-Verwenden Sie die wiederholbare Option `--target`, wenn nur die Dateien bestimmter Partner aktualisiert werden sollen:
+Verwenden Sie die wiederholbare Option `--target`, wenn nur die Dateien ausgewählter Ziele aktualisiert werden sollen:
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate 123 --target=available
+php artisan feed:generate 123 --target=available --target=unavailable
 ```
 
-## Jede Partnerausgabe nach Datensatzanzahl aufteilen {/* #split-each-output */}
+## Dateien nach Datensatzanzahl aufteilen {/* #split-each-output */}
 
-Fügen Sie `perFile()` hinzu, wenn die Ausgabe eines Partners ebenfalls zu groß werden kann:
+Fügen Sie `perFile()` hinzu, wenn auch die Ausgabe eines Ziels zu groß werden kann:
 
 ```php
 public function perFile(): int
@@ -145,7 +143,7 @@ public function perFile(): int
 }
 ```
 
-Partner `42` kann dann `partners/42-1.xml`, `partners/42-2.xml` und weitere Teile erzeugen. Diese Aufteilung nach Datensatzanzahl wird unabhängig auf jeden Partner angewendet.
+Das Ziel `available` kann dann `products/available-1.xml`, `products/available-2.xml` und weitere Teile erzeugen. Diese Aufteilung nach Datensatzanzahl wird für jedes Ziel unabhängig angewendet.
 
 ## Siehe auch
 

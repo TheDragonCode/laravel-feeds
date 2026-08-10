@@ -11,7 +11,7 @@ keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget"
 
 # Несколько целевых файлов фида
 
-Этот рецепт регистрирует один `PartnerFeed` и с помощью целей фида создаёт несколько XML-файлов. Каждая цель передаёт параметры: `builder()` использует их для индивидуальных условий выборки, а `filename()` — для отдельного пути. Партнёр здесь только пример: целью может быть магазин, локаль, регион или любое другое бизнес-условие.
+Этот рецепт регистрирует один `ProductFeed` и с помощью целей фида создаёт несколько XML-файлов. Каждая цель передаёт параметры: `builder()` использует их для индивидуальных условий выборки, а `filename()` — для отдельного пути. Цели `available` и `unavailable` — лишь примеры: целью может быть любое бизнес-условие.
 
 ## Цели фида и perFile() {/* #targets-vs-per-file */}
 
@@ -22,17 +22,17 @@ keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget"
 В этом примере создаются следующие целевые файлы:
 
 ```text
-storage/app/public/partners/42.xml
-storage/app/public/partners/81.xml
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
 ```
 
 ## Создание фида {/* #create-feed */}
 
 ```bash
-php artisan make:feed Partner
+php artisan make:feed Product
 ```
 
-## Настройка вывода по партнёрам {/* #configure-partner-outputs */}
+## Настройка вывода {/* #configure-output */}
 
 Замените сгенерированный класс фида следующим кодом:
 
@@ -43,7 +43,6 @@ declare(strict_types=1);
 
 namespace App\Feeds;
 
-use App\Models\Partner;
 use App\Models\Product;
 use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
 use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
@@ -51,52 +50,51 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use Illuminate\Database\Eloquent\Builder;
 
-class PartnerFeed extends Feed implements HasFeedTargets
+class ProductFeed extends Feed implements HasFeedTargets
 {
     use InteractsWithFeedTargets;
 
+    private const TARGETS = [
+        'available' => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
     public function targets(): iterable
     {
-        foreach (Partner::query()->select('id')->lazyById() as $partner) {
-            yield $this->makeTarget($partner);
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
         }
     }
 
     public function findTarget(string $key): ?FeedTarget
     {
-        $partner = Partner::query()->find($key);
-
-        if (! $partner || (string) $partner->getKey() !== $key) {
-            return null;
-        }
-
-        return $this->makeTarget($partner);
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
     }
 
     public function builder(): Builder
     {
         return Product::query()->where(
-            'partner_id',
-            $this->target()->parameters['partner_id'],
+            'in_stock',
+            $this->target()->parameters['in_stock'],
         );
     }
 
     public function filename(): string
     {
-        return "partners/{$this->target()->key}.xml";
+        return "products/{$this->target()->key}.xml";
     }
 
-    private function makeTarget(Partner $partner): FeedTarget
+    private function makeTarget(string $key): FeedTarget
     {
         return new FeedTarget(
-            key       : (string) $partner->getKey(),
-            parameters: ['partner_id' => $partner->getKey()],
+            key       : $key,
+            parameters: self::TARGETS[$key],
         );
     }
 }
 ```
 
-`targets()` лениво перечисляет партнёров для полного запуска. `findTarget()` находит явно запрошенные ключи без загрузки всех партнёров. `builder()` фильтрует товары для активного партнёра, а `filename()` задаёт каждому партнёру уникальный путь.
+`targets()` перечисляет настроенные ключи целей для полного запуска. `findTarget()` находит явно запрошенные ключи без перебора всех целей. `builder()` фильтрует товары для активной цели, а `filename()` задаёт каждой цели уникальный путь.
 
 ## Активация {/* #activate */}
 
@@ -110,33 +108,33 @@ php artisan operations
 php artisan migrate
 ```
 
-## Генерация файлов всех партнёров {/* #generate-all */}
+## Генерация файлов {/* #generate-all */}
 
-Передайте идентификатор регистрации фида. Команда сгенерирует файл для каждого партнёра, возвращённого `targets()`:
+Передайте идентификатор регистрации фида. Команда сгенерирует файл для каждой цели, возвращённой `targets()`:
 
 ```bash
 php artisan feed:generate 123
 ```
 
-Для партнёров `42` и `81` будут созданы следующие пути:
+Для целей `available` и `unavailable` файлы будут созданы по следующим путям:
 
 ```text
-storage/app/public/partners/42.xml
-storage/app/public/partners/81.xml
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
 ```
 
-## Генерация файлов выбранных партнёров {/* #generate-selected */}
+## Генерация файлов с фильтрацией {/* #generate-selected */}
 
-Используйте повторяемый параметр `--target`, если нужно обновить файлы только определённых партнёров:
+Используйте повторяемый параметр `--target`, чтобы сгенерировать файлы только для выбранных целей:
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate 123 --target=available
+php artisan feed:generate 123 --target=available --target=unavailable
 ```
 
-## Разделение вывода партнёра по количеству записей {/* #split-each-output */}
+## Разделение файлов по количеству записей {/* #split-each-output */}
 
-Добавьте `perFile()`, если вывод одного партнёра также может стать слишком большим:
+Добавьте `perFile()`, если файл для одной цели может стать слишком большим:
 
 ```php
 public function perFile(): int
@@ -145,7 +143,7 @@ public function perFile(): int
 }
 ```
 
-Тогда партнёр `42` может создать `partners/42-1.xml`, `partners/42-2.xml` и следующие части. Такое разделение по количеству записей применяется независимо для каждого партнёра.
+Тогда для цели `available` будут созданы `products/available-1.xml`, `products/available-2.xml` и последующие части. Такое разделение по количеству записей применяется независимо для каждой цели.
 
 ## Смотрите также
 

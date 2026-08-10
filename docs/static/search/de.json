@@ -179,7 +179,7 @@
             "Dateiformat",
             "Siehe auch"
         ],
-        "content": "import ThemedImage from '@theme/ThemedImage'; ← Zurück · Zurück zur README · Weiter → Feeds erstellen Am bequemsten lassen sich die benötigten Klassen mit dem Plugin Laravel Idea für PhpStorm erstellen. Verwenden Sie den Konsolenbefehl make:feed , um eine Feed-Klasse zu erstellen: Dadurch wird eine Feed-Datei erstellt, beispielsweise app/Feeds/UserFeed.php . Dieser Konsolenbefehl kann zusammen mit der Feed-Klasse auch die Klassen für Elemente und Informationen erstellen. Verwenden Sie dazu die Optionen --item und --info . Außerdem stehen Kurzformen zur Verfügung: Beim Erstellen eines Feeds wird zusätzlich eine Operation oder eine Migration erzeugt, um ihn zur Datenbank hinzuzufügen. Wenn das Projekt Laravel Deploy Operations verwendet, wird eine Operationsklasse erstellt. Andernfalls wird eine Migrationsklasse erstellt. Dies ist erforderlich, um Feed-Informationen in der Datenbank hinzuzufügen und zu verwalten. Feeds befüllen Feed Befüllen Sie die Hauptklasse des Feeds. Beispiel: Feed-Element Befüllen Sie die Klasse des Feed-Elements. Beispiel: Optionale Werte Geben Sie eine Instanz von DragonCode\\LaravelFeed\\Data\\OptionalData als Wert zurück, um ein Feld auszulassen, wenn sein Wert nicht verfügbar ist: Optionale Felder werden aus JSON- und JSON-Lines-Objekten sowie aus XML- und RSS-Elementen entfernt. Dies gilt auch für regulär verschachtelte Felder. CSV behält die Spaltenposition bei und schreibt ein leeres Feld. Wenn Ihre Anwendung Spatie Laravel Data verwendet, können Sie stattdessen Spatie\\LaravelData\\Optional zurückgeben. Beide Klassen für optionale Werte werden automatisch verarbeitet. Separate Ausgabedateien Eine separate Datei für jeden Partner, Shop oder jedes Gebietsschema zu erzeugen, ist ein fortgeschrittenes Ausgabeszenario. Lesen Sie den Leitfaden zu separaten Ausgabedateien und verwenden Sie anschließend das Rezept für mehrere zielbezogene Feed-Dateien als vollständiges Beispiel. Dateiformat Die verfügbaren Formate finden Sie auf der Seite Unterstützte Formate. Sie können Feeds in verschiedenen Formaten erzeugen. Eine Feed-Klasse kann nur korrekt in das Format exportiert werden, für das sie vorgesehen ist. Der Grund dafür sind Direktiven und weitere formatspezifische Besonderheiten. Überschreiben Sie einfach die Eigenschaft $format in der Feed-Klasse, um das gewünschte Format festzulegen: Siehe auch - Generierung und Zeitplanung - Separate Ausgabedateien - Unterstützte Formate"
+        "content": "import ThemedImage from '@theme/ThemedImage'; ← Zurück · Zurück zur README · Weiter → Feeds erstellen Am bequemsten lassen sich die benötigten Klassen mit dem Plugin Laravel Idea für PhpStorm erstellen. Verwenden Sie den Konsolenbefehl make:feed , um eine Feed-Klasse zu erstellen: Dadurch wird eine Feed-Datei erstellt, beispielsweise app/Feeds/UserFeed.php . Dieser Konsolenbefehl kann zusammen mit der Feed-Klasse auch die Klassen für Elemente und Informationen erstellen. Verwenden Sie dazu die Optionen --item und --info . Außerdem stehen Kurzformen zur Verfügung: Beim Erstellen eines Feeds wird zusätzlich eine Operation oder eine Migration erzeugt, um ihn zur Datenbank hinzuzufügen. Wenn das Projekt Laravel Deploy Operations verwendet, wird eine Operationsklasse erstellt. Andernfalls wird eine Migrationsklasse erstellt. Dies ist erforderlich, um Feed-Informationen in der Datenbank hinzuzufügen und zu verwalten. Feeds befüllen Feed Befüllen Sie die Hauptklasse des Feeds. Beispiel: Feed-Element Befüllen Sie die Klasse des Feed-Elements. Beispiel: Optionale Werte Geben Sie eine Instanz von DragonCode\\LaravelFeed\\Data\\OptionalData als Wert zurück, um ein Feld auszulassen, wenn sein Wert nicht verfügbar ist: Optionale Felder werden aus JSON- und JSON-Lines-Objekten sowie aus XML- und RSS-Elementen entfernt. Dies gilt auch für regulär verschachtelte Felder. CSV behält die Spaltenposition bei und schreibt ein leeres Feld. Wenn Ihre Anwendung Spatie Laravel Data verwendet, können Sie stattdessen Spatie\\LaravelData\\Optional zurückgeben. Beide Klassen für optionale Werte werden automatisch verarbeitet. Separate Ausgabedateien Separate Dateien für unterschiedliche fachliche Bedingungen zu erzeugen, ist ein fortgeschrittenes Ausgabeszenario. Lesen Sie den Leitfaden zu separaten Ausgabedateien und verwenden Sie anschließend das Rezept für mehrere zielbezogene Feed-Dateien als vollständiges Beispiel. Dateiformat Die verfügbaren Formate finden Sie auf der Seite Unterstützte Formate. Sie können Feeds in verschiedenen Formaten erzeugen. Eine Feed-Klasse kann nur korrekt in das Format exportiert werden, für das sie vorgesehen ist. Der Grund dafür sind Direktiven und weitere formatspezifische Besonderheiten. Überschreiben Sie einfach die Eigenschaft $format in der Feed-Klasse, um das gewünschte Format festzulegen: Siehe auch - Generierung und Zeitplanung - Separate Ausgabedateien - Unterstützte Formate"
     },
     {
         "route": "/de/directives/",
@@ -495,31 +495,6 @@
         "content": "← Zurück · Zurück zur README · Weiter → Instagram Dateien erstellen Feed befüllen Ersetzen Sie in der erzeugten Klasse extends Feed durch extends InstagramFeedPreset : Aktivieren Prüfen Sie die erzeugte Datei für die Operation oder Migration und führen Sie anschließend den passenden Konsolenbefehl aus: Feed erzeugen Erzeugen Sie den Feed mit folgendem Konsolenbefehl: Ergebnis Siehe auch - Voreinstellungen - Yandex-Rezept - RSS-Atom-Rezept"
     },
     {
-        "route": "/de/receipt-partner-feeds/",
-        "title": "Mehrere zielbezogene Feed-Dateien",
-        "description": "Rezept zum Erzeugen mehrerer Feed-Dateien mit individuellen Abfragebedingungen aus einem registrierten Feed",
-        "keywords": [
-            "targeted feeds",
-            "conditional files",
-            "multiple files",
-            "FeedTarget",
-            "HasFeedTargets",
-            "recipe"
-        ],
-        "headings": [
-            "Mehrere zielbezogene Feed-Dateien",
-            "Feed-Ziele im Vergleich zu perFile()",
-            "Feed erstellen",
-            "Partnerausgaben konfigurieren",
-            "Aktivieren",
-            "Alle Partnerdateien erzeugen",
-            "Dateien ausgewählter Partner erzeugen",
-            "Jede Partnerausgabe nach Datensatzanzahl aufteilen",
-            "Siehe auch"
-        ],
-        "content": "← Zurück · Zurück zur README · Weiter → Mehrere zielbezogene Feed-Dateien Dieses Rezept registriert einen PartnerFeed und erzeugt mithilfe von Feed-Zielen mehrere XML-Dateien. Jedes Ziel stellt Parameter bereit, die builder() für eigene Abfragebedingungen und filename() für einen eigenen Ausgabepfad verwendet. Partner sind nur das Beispiel; ein Ziel kann einen Shop, ein Gebietsschema, eine Region oder eine andere fachliche Bedingung darstellen. Feed-Ziele im Vergleich zu perFile() perFile() teilt ein Abfrageergebnis nach einer festen Anzahl von Datensätzen in fortlaufende Dateien auf. Die Abfrage und die Auswahlbedingungen bleiben für diese Dateien gleich. FeedTarget führt den Feed für jedes Ziel separat aus. Die Anwendung kann daher mit target() die Abfragebedingungen und den Dateinamen für jede Ausgabe ändern. Beide Mechanismen lassen sich kombinieren: Zuerst wird ein zielspezifischer Datensatzbestand ausgewählt und anschließend nach Datensatzanzahl aufgeteilt. Dieses Beispiel erzeugt die folgenden Zieldateien: Feed erstellen Partnerausgaben konfigurieren Ersetzen Sie die erzeugte Feed-Klasse durch: targets() zählt Partner für vollständige Läufe verzögert auf. findTarget() löst explizit angeforderte Schlüssel auf, ohne alle Partner zu laden. builder() filtert Produkte für den aktiven Partner, und filename() gibt jedem Partner einen eindeutigen Pfad. Aktivieren Prüfen Sie die erzeugte Datei für die Operation oder Migration und führen Sie anschließend den passenden Befehl aus: Alle Partnerdateien erzeugen Übergeben Sie die Feed-Registrierungs-ID. Der Befehl erzeugt Dateien für alle von targets() zurückgegebenen Partner: Für die Partner 42 und 81 werden folgende Pfade erzeugt: Dateien ausgewählter Partner erzeugen Verwenden Sie die wiederholbare Option --target , wenn nur die Dateien bestimmter Partner aktualisiert werden sollen: Jede Partnerausgabe nach Datensatzanzahl aufteilen Fügen Sie perFile() hinzu, wenn die Ausgabe eines Partners ebenfalls zu groß werden kann: Partner 42 kann dann partners/42-1.xml , partners/42-2.xml und weitere Teile erzeugen. Diese Aufteilung nach Datensatzanzahl wird unabhängig auf jeden Partner angewendet. Siehe auch - Leitfaden zu separaten Ausgabedateien - Generierung und Zeitplanung - API für Feeds und Daten"
-    },
-    {
         "route": "/de/receipt-rss-atom/",
         "title": "RSS Atom",
         "description": "Rezept zur Feed-Generierung für RSS Atom",
@@ -562,6 +537,31 @@
             "Siehe auch"
         ],
         "content": "← Zurück · Zurück zur README · Weiter → Sitemap Dieses Rezept führt Sie durch das Erstellen eines Produkt-Sitemap-Feeds mit Laravel Feeds. Sie werden: - die erforderlichen Klassen erzeugen; - die Feed-Logik implementieren; - die Dateien über das Dateisystem bereitstellen; - die erzeugte Sitemap optional aus einer Stammdatei sitemap.xml referenzieren. Dateien erstellen Erzeugen Sie den Feed und seine Elementklasse mit folgendem Konsolenbefehl: Feed befüllen Ersetzen Sie in der erzeugten Klasse extends Feed durch extends SitemapFeedPreset : Verfügbare Methoden der Klasse FeedItem : - url – muss angegeben werden - modifiedAt – standardmäßig $model- updated_at - priority – standardmäßig 0.9 Aktivieren Prüfen Sie die erzeugte Datei für die Operation oder Migration und führen Sie anschließend den passenden Konsolenbefehl aus: Verknüpfungen Fügen Sie in der Konfigurationsdatei config/filesystems.php einen Dateisystem-Datenträger hinzu, der auf das Verzeichnis mit Ihren Sitemaps verweist: Erstellen Sie anschließend den öffentlichen symbolischen Link, damit die Dateien im Browser erreichbar sind: Feed erzeugen Erzeugen Sie den Feed mit folgendem Konsolenbefehl: Verweis zur Stammdatei sitemap.xml hinzufügen Wenn Sie eine Stammdatei sitemap.xml pflegen, die auf andere Sitemaps verweist, fügen Sie einen Eintrag wie diesen hinzu: Ergebnis Die erzeugte sitemap.xml für Ihre Produkte sieht folgendermaßen aus: Siehe auch - Voreinstellungen - Yandex-Rezept - RSS-Atom-Rezept"
+    },
+    {
+        "route": "/de/receipt-target-feeds/",
+        "title": "Mehrere zielbezogene Feed-Dateien",
+        "description": "Rezept zum Erzeugen mehrerer Feed-Dateien mit individuellen Abfragebedingungen aus einem registrierten Feed",
+        "keywords": [
+            "targeted feeds",
+            "conditional files",
+            "multiple files",
+            "FeedTarget",
+            "HasFeedTargets",
+            "recipe"
+        ],
+        "headings": [
+            "Mehrere zielbezogene Feed-Dateien",
+            "Feed-Ziele im Vergleich zu perFile()",
+            "Feed erstellen",
+            "Ausgabe konfigurieren",
+            "Aktivieren",
+            "Dateien erzeugen",
+            "Dateien gefiltert erzeugen",
+            "Dateien nach Datensatzanzahl aufteilen",
+            "Siehe auch"
+        ],
+        "content": "← Zurück · Zurück zur README · Weiter → Mehrere zielbezogene Feed-Dateien Dieses Rezept registriert einen ProductFeed und erzeugt mithilfe von Feed-Zielen mehrere XML-Dateien. Jedes Ziel stellt Parameter bereit, die builder() für eigene Abfragebedingungen und filename() für einen eigenen Ausgabepfad verwendet. Die Ziele available und unavailable sind nur Beispiele; ein Ziel kann eine beliebige fachliche Bedingung darstellen. Feed-Ziele im Vergleich zu perFile() perFile() teilt ein Abfrageergebnis nach einer festen Anzahl von Datensätzen in fortlaufende Dateien auf. Die Abfrage und die Auswahlbedingungen bleiben für diese Dateien gleich. FeedTarget führt den Feed für jedes Ziel separat aus. Die Anwendung kann daher mit target() die Abfragebedingungen und den Dateinamen für jede Ausgabe ändern. Beide Mechanismen lassen sich kombinieren: Zuerst wird ein zielspezifischer Datensatzbestand ausgewählt und anschließend nach Datensatzanzahl aufgeteilt. Dieses Beispiel erzeugt die folgenden Zieldateien: Feed erstellen Ausgabe konfigurieren Ersetzen Sie die erzeugte Feed-Klasse durch: targets() zählt die konfigurierten Zielschlüssel für vollständige Läufe auf. findTarget() löst explizit angeforderte Schlüssel auf, ohne alle Ziele aufzuzählen. builder() filtert Produkte für das aktive Ziel, und filename() weist jedem Ziel einen eindeutigen Pfad zu. Aktivieren Prüfen Sie die erzeugte Datei für die Operation oder Migration und führen Sie anschließend den passenden Befehl aus: Dateien erzeugen Übergeben Sie die Feed-Registrierungs-ID. Der Befehl erzeugt für jedes von targets() zurückgegebene Ziel eine Datei: Für die Ziele available und unavailable werden folgende Pfade erzeugt: Dateien gefiltert erzeugen Verwenden Sie die wiederholbare Option --target , wenn nur die Dateien ausgewählter Ziele aktualisiert werden sollen: Dateien nach Datensatzanzahl aufteilen Fügen Sie perFile() hinzu, wenn auch die Ausgabe eines Ziels zu groß werden kann: Das Ziel available kann dann products/available-1.xml , products/available-2.xml und weitere Teile erzeugen. Diese Aufteilung nach Datensatzanzahl wird für jedes Ziel unabhängig angewendet. Siehe auch - Leitfaden zu separaten Ausgabedateien - Generierung und Zeitplanung - API für Feeds und Daten"
     },
     {
         "route": "/de/receipt-yandex/",

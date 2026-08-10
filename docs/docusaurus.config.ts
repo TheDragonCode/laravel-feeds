@@ -31,6 +31,7 @@ const legacyRedirects = [
     { from: "/receipt-instagram.html", to: "/receipt-instagram/" },
     { from: "/receipt-yandex.html", to: "/receipt-yandex/" },
     { from: "/receipt-rss-atom.html", to: "/receipt-rss-atom/" },
+    { from: "/receipt-partner-feeds/", to: "/receipt-target-feeds/" },
 ];
 
 const structuredData = {

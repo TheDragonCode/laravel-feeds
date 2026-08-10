@@ -1149,71 +1149,6 @@
             ]
         },
         {
-            "route": "/receipt-partner-feeds/",
-            "source": "receipt-partner-feeds.mdx",
-            "aliases": [],
-            "title": "Multiple targeted feed files",
-            "description": "Recipe for generating multiple feed files with individual query conditions from one registered feed",
-            "type": "recipe",
-            "status": "stable",
-            "since": "1.0",
-            "keywords": [
-                "targeted feeds",
-                "conditional files",
-                "multiple files",
-                "FeedTarget",
-                "HasFeedTargets",
-                "recipe"
-            ],
-            "headings": [
-                {
-                    "level": 1,
-                    "id": "multiple-targeted-feed-files",
-                    "text": "Multiple targeted feed files"
-                },
-                {
-                    "level": 2,
-                    "id": "targets-vs-per-file",
-                    "text": "Feed targets versus perFile()"
-                },
-                {
-                    "level": 2,
-                    "id": "create-feed",
-                    "text": "Create the feed"
-                },
-                {
-                    "level": 2,
-                    "id": "configure-partner-outputs",
-                    "text": "Configure partner outputs"
-                },
-                {
-                    "level": 2,
-                    "id": "activate",
-                    "text": "Activate"
-                },
-                {
-                    "level": 2,
-                    "id": "generate-all",
-                    "text": "Generate all partner files"
-                },
-                {
-                    "level": 2,
-                    "id": "generate-selected",
-                    "text": "Generate selected partner files"
-                },
-                {
-                    "level": 2,
-                    "id": "split-each-output",
-                    "text": "Split each partner output by record count"
-                },
-                {
-                    "level": 2,
-                    "id": "see-also",
-                    "text": "See Also"
-                }
-            ]
-        },
-        {
             "route": "/receipt-rss-atom/",
             "source": "receipt-rss-atom.mdx",
             "aliases": [
@@ -1325,6 +1260,73 @@
                     "level": 2,
                     "id": "result",
                     "text": "Result"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/receipt-target-feeds/",
+            "source": "receipt-target-feeds.mdx",
+            "aliases": [
+                "/receipt-partner-feeds/"
+            ],
+            "title": "Multiple targeted feed files",
+            "description": "Recipe for generating multiple feed files with individual query conditions from one registered feed",
+            "type": "recipe",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "targeted feeds",
+                "conditional files",
+                "multiple files",
+                "FeedTarget",
+                "HasFeedTargets",
+                "recipe"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "multiple-targeted-feed-files",
+                    "text": "Multiple targeted feed files"
+                },
+                {
+                    "level": 2,
+                    "id": "targets-vs-per-file",
+                    "text": "Feed targets versus perFile()"
+                },
+                {
+                    "level": 2,
+                    "id": "create-feed",
+                    "text": "Create the feed"
+                },
+                {
+                    "level": 2,
+                    "id": "configure-output",
+                    "text": "Configure output"
+                },
+                {
+                    "level": 2,
+                    "id": "activate",
+                    "text": "Activate"
+                },
+                {
+                    "level": 2,
+                    "id": "generate-all",
+                    "text": "Generate files"
+                },
+                {
+                    "level": 2,
+                    "id": "generate-selected",
+                    "text": "Generate files with filtering"
+                },
+                {
+                    "level": 2,
+                    "id": "split-each-output",
+                    "text": "Split files by record count"
                 },
                 {
                     "level": 2,

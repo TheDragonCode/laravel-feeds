@@ -179,7 +179,7 @@
             "Format de fichier",
             "Voir aussi"
         ],
-        "content": "import ThemedImage from '@theme/ThemedImage'; ← Précédent · Retour au README · Suivant → Créer des flux Le moyen le plus pratique de créer les classes nécessaires consiste à utiliser le plugin Laravel Idea pour PhpStorm. Pour créer une classe de flux, utilisez la commande make:feed : Cette commande crée un fichier de flux, par exemple app/Feeds/UserFeed.php . Cette commande peut également créer les classes d’élément et d’informations avec la classe du flux. Utilisez pour cela les options --item et --info . Des options courtes sont également disponibles : Lors de la création d’un flux, une opération ou une migration est également créée afin de l’ajouter à la base de données. Si le projet utilise Laravel Deploy Operations , une classe d’opération est créée. Dans le cas contraire, une classe de migration est créée. Cette étape est nécessaire pour ajouter et gérer les informations du flux dans la base de données. Remplir les flux Feed Remplissez la classe principale du flux. Exemple : Élément du flux Remplissez la classe de l’élément du flux. Exemple : Valeurs facultatives Pour omettre un champ lorsque sa valeur n’est pas disponible, renvoyez une instance de DragonCode\\LaravelFeed\\Data\\OptionalData comme valeur : Les champs facultatifs sont supprimés des objets JSON et JSON Lines ainsi que des éléments XML et RSS, y compris les champs imbriqués ordinaires. Le format CSV conserve la position de la colonne et écrit un champ vide. Si votre application utilise Spatie Laravel Data, vous pouvez renvoyer Spatie\\LaravelData\\Optional à la place. Les deux classes de valeur facultative sont prises en charge automatiquement. Fichiers de sortie séparés Générer un fichier distinct pour chaque partenaire, boutique ou paramètre régional est un scénario de sortie avancé. Consultez le guide des fichiers de sortie séparés, puis utilisez la recette « Plusieurs fichiers de flux ciblés » comme exemple complet. Format de fichier La liste des formats disponibles figure sur la page Formats pris en charge. Vous pouvez générer des flux dans différents formats. Une classe de flux ne peut être exportée correctement que dans le format auquel elle est destinée, en raison des directives et des autres particularités propres à chaque format. Pour appliquer le format requis, remplacez simplement la propriété $format dans la classe du flux : Voir aussi - Génération et planification - Fichiers de sortie séparés - Formats pris en charge"
+        "content": "import ThemedImage from '@theme/ThemedImage'; ← Précédent · Retour au README · Suivant → Créer des flux Le moyen le plus pratique de créer les classes nécessaires consiste à utiliser le plugin Laravel Idea pour PhpStorm. Pour créer une classe de flux, utilisez la commande make:feed : Cette commande crée un fichier de flux, par exemple app/Feeds/UserFeed.php . Cette commande peut également créer les classes d’élément et d’informations avec la classe du flux. Utilisez pour cela les options --item et --info . Des options courtes sont également disponibles : Lors de la création d’un flux, une opération ou une migration est également créée afin de l’ajouter à la base de données. Si le projet utilise Laravel Deploy Operations , une classe d’opération est créée. Dans le cas contraire, une classe de migration est créée. Cette étape est nécessaire pour ajouter et gérer les informations du flux dans la base de données. Remplir les flux Feed Remplissez la classe principale du flux. Exemple : Élément du flux Remplissez la classe de l’élément du flux. Exemple : Valeurs facultatives Pour omettre un champ lorsque sa valeur n’est pas disponible, renvoyez une instance de DragonCode\\LaravelFeed\\Data\\OptionalData comme valeur : Les champs facultatifs sont supprimés des objets JSON et JSON Lines ainsi que des éléments XML et RSS, y compris les champs imbriqués ordinaires. Le format CSV conserve la position de la colonne et écrit un champ vide. Si votre application utilise Spatie Laravel Data, vous pouvez renvoyer Spatie\\LaravelData\\Optional à la place. Les deux classes de valeur facultative sont prises en charge automatiquement. Fichiers de sortie séparés Générer des fichiers distincts pour différentes conditions métier est un scénario de sortie avancé. Consultez le guide des fichiers de sortie séparés, puis utilisez la recette « Plusieurs fichiers de flux ciblés » comme exemple complet. Format de fichier La liste des formats disponibles figure sur la page Formats pris en charge. Vous pouvez générer des flux dans différents formats. Une classe de flux ne peut être exportée correctement que dans le format auquel elle est destinée, en raison des directives et des autres particularités propres à chaque format. Pour appliquer le format requis, remplacez simplement la propriété $format dans la classe du flux : Voir aussi - Génération et planification - Fichiers de sortie séparés - Formats pris en charge"
     },
     {
         "route": "/fr/directives/",
@@ -495,31 +495,6 @@
         "content": "← Précédent · Retour au README · Suivant → Instagram Créer les fichiers Remplir le flux Dans la classe générée, remplacez extends Feed par extends InstagramFeedPreset : Activer Vérifiez le fichier d’opération ou de migration généré, puis exécutez la commande appropriée : Générer le flux Générez le flux avec la commande suivante : Résultat Voir aussi - Préréglages - Recette Yandex - Recette RSS Atom"
     },
     {
-        "route": "/fr/receipt-partner-feeds/",
-        "title": "Plusieurs fichiers de flux ciblés",
-        "description": "Recette pour générer plusieurs fichiers de flux avec des conditions de requête propres à chacun à partir d’un seul flux enregistré",
-        "keywords": [
-            "targeted feeds",
-            "conditional files",
-            "multiple files",
-            "FeedTarget",
-            "HasFeedTargets",
-            "recipe"
-        ],
-        "headings": [
-            "Plusieurs fichiers de flux ciblés",
-            "Cibles de flux et perFile()",
-            "Créer le flux",
-            "Configurer les sorties des partenaires",
-            "Activer",
-            "Générer les fichiers de tous les partenaires",
-            "Générer les fichiers de partenaires sélectionnés",
-            "Fractionner chaque sortie de partenaire par nombre d’enregistrements",
-            "Voir aussi"
-        ],
-        "content": "← Précédent · Retour au README · Suivant → Plusieurs fichiers de flux ciblés Cette recette enregistre un seul PartnerFeed et utilise des cibles de flux pour générer plusieurs fichiers XML. Chaque cible fournit des paramètres que builder() utilise pour ses propres conditions de requête et que filename() utilise pour son propre chemin de sortie. Les partenaires ne sont qu’un exemple : une cible peut représenter une boutique, un paramètre régional, une région ou toute autre condition métier. Cibles de flux et perFile() perFile() fractionne le résultat d’une seule requête en fichiers séquentiels après un nombre fixe d’enregistrements. La requête et les conditions de sélection restent identiques pour tous ces fichiers. FeedTarget exécute le flux séparément pour chaque cible. L’application peut donc utiliser target() pour modifier les conditions de requête et le nom de fichier de chaque sortie. Les deux mécanismes peuvent être combinés : sélectionnez d’abord un jeu de données propre à la cible, puis fractionnez-le selon le nombre d’enregistrements. Cet exemple crée les fichiers ciblés suivants : Créer le flux Configurer les sorties des partenaires Remplacez la classe de flux générée par : targets() énumère les partenaires de manière différée pour les exécutions complètes. findTarget() résout les clés explicitement demandées sans charger tous les partenaires. builder() filtre les produits pour le partenaire actif et filename() attribue un chemin unique à chaque partenaire. Activer Vérifiez le fichier d’opération ou de migration généré, puis exécutez la commande appropriée : Générer les fichiers de tous les partenaires Transmettez l’identifiant d’enregistrement du flux. La commande génère les fichiers de tous les partenaires renvoyés par targets() : Avec les partenaires 42 et 81 , les chemins générés sont : Générer les fichiers de partenaires sélectionnés Utilisez l’option répétable --target lorsque seuls certains partenaires ont besoin de fichiers actualisés : Fractionner chaque sortie de partenaire par nombre d’enregistrements Ajoutez perFile() lorsque la sortie d’un partenaire peut elle aussi devenir trop volumineuse : Le partenaire 42 peut alors produire partners/42-1.xml , partners/42-2.xml et les parties suivantes. Ce fractionnement par nombre d’enregistrements s’applique indépendamment à chaque partenaire. Voir aussi - Guide des fichiers de sortie séparés - Génération et planification - API des flux et des données"
-    },
-    {
         "route": "/fr/receipt-rss-atom/",
         "title": "RSS Atom",
         "description": "Recette de génération d’un flux RSS Atom",
@@ -562,6 +537,31 @@
             "Voir aussi"
         ],
         "content": "← Précédent · Retour au README · Suivant → Sitemap Cette recette vous guide dans la création d’un flux de sitemap de produits avec Laravel Feeds. Vous allez : - générer les classes nécessaires ; - implémenter la logique du flux ; - exposer les fichiers via le système de fichiers ; - référencer éventuellement le sitemap généré depuis un fichier racine sitemap.xml . Créer les fichiers Générez le flux et sa classe d’élément avec la commande suivante : Remplir le flux Dans la classe générée, remplacez extends Feed par extends SitemapFeedPreset : Méthodes disponibles dans la classe FeedItem : - url — doit être indiquée - modifiedAt — vaut $model- updated_at par défaut - priority — vaut 0.9 par défaut Activer Vérifiez le fichier d’opération ou de migration généré, puis exécutez la commande appropriée : Liens Dans le fichier de configuration config/filesystems.php, ajoutez un disque qui pointe vers le répertoire contenant vos sitemaps : Créez ensuite le lien symbolique public afin que les fichiers soient accessibles dans un navigateur : Générer le flux Générez le flux avec la commande suivante : Ajouter un lien au fichier sitemap.xml racine Si vous maintenez un fichier sitemap.xml racine qui référence d’autres sitemaps, ajoutez une entrée comme celle-ci : Résultat Le fichier sitemap.xml généré pour vos produits aura cette forme : Voir aussi - Préréglages - Recette Yandex - Recette RSS Atom"
+    },
+    {
+        "route": "/fr/receipt-target-feeds/",
+        "title": "Plusieurs fichiers de flux ciblés",
+        "description": "Recette pour générer plusieurs fichiers de flux avec des conditions de requête propres à chacun à partir d’un seul flux enregistré",
+        "keywords": [
+            "targeted feeds",
+            "conditional files",
+            "multiple files",
+            "FeedTarget",
+            "HasFeedTargets",
+            "recipe"
+        ],
+        "headings": [
+            "Plusieurs fichiers de flux ciblés",
+            "Cibles de flux et perFile()",
+            "Créer le flux",
+            "Configurer la sortie",
+            "Activer",
+            "Générer les fichiers",
+            "Générer les fichiers avec filtrage",
+            "Fractionner les fichiers par nombre d’enregistrements",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Plusieurs fichiers de flux ciblés Cette recette enregistre un seul ProductFeed et utilise des cibles de flux pour générer plusieurs fichiers XML. Chaque cible fournit des paramètres que builder() utilise pour ses propres conditions de requête et que filename() utilise pour son propre chemin de sortie. Les cibles available et unavailable ne sont que des exemples : une cible peut représenter n’importe quelle condition métier. Cibles de flux et perFile() perFile() fractionne le résultat d’une seule requête en fichiers séquentiels après un nombre fixe d’enregistrements. La requête et les conditions de sélection restent identiques pour tous ces fichiers. FeedTarget exécute le flux séparément pour chaque cible. L’application peut donc utiliser target() pour modifier les conditions de requête et le nom de fichier de chaque sortie. Les deux mécanismes peuvent être combinés : sélectionnez d’abord un jeu de données propre à la cible, puis fractionnez-le selon le nombre d’enregistrements. Cet exemple crée les fichiers ciblés suivants : Créer le flux Configurer la sortie Remplacez la classe de flux générée par : targets() énumère les clés de cible configurées pour les exécutions complètes. findTarget() résout les clés explicitement demandées sans énumérer toutes les cibles. builder() filtre les produits pour la cible active et filename() attribue un chemin unique à chaque cible. Activer Vérifiez le fichier d’opération ou de migration généré, puis exécutez la commande appropriée : Générer les fichiers Transmettez l’identifiant d’enregistrement du flux. La commande génère un fichier pour chaque cible renvoyée par targets() : Pour les cibles available et unavailable , les chemins générés sont : Générer les fichiers avec filtrage Utilisez l’option répétable --target pour actualiser uniquement les fichiers des cibles sélectionnées : Fractionner les fichiers par nombre d’enregistrements Ajoutez perFile() lorsque la sortie d’une cible peut elle aussi devenir trop volumineuse : La cible available peut alors produire products/available-1.xml , products/available-2.xml et les parties suivantes. Ce fractionnement par nombre d’enregistrements s’applique indépendamment à chaque cible. Voir aussi - Guide des fichiers de sortie séparés - Génération et planification - API des flux et des données"
     },
     {
         "route": "/fr/receipt-yandex/",

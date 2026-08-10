@@ -17,7 +17,7 @@ const documentIds = [
     "presets",
     "events",
     "extending-functionality",
-    "receipt-partner-feeds",
+    "receipt-target-feeds",
     "receipt-sitemap",
     "receipt-instagram",
     "receipt-yandex",

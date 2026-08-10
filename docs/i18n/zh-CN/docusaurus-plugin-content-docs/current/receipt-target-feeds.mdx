@@ -11,7 +11,7 @@ keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget"
 
 # 按目标生成多个 Feed 文件
 
-本示例只注册一个 `PartnerFeed`，并使用 Feed 目标生成多个 XML 文件。每个目标都会提供参数，`builder()` 使用这些参数设置该目标的查询条件，`filename()` 使用这些参数设置该目标的输出路径。合作方只是示例；目标也可以代表商店、语言区域、地区或任何其他业务条件。
+本示例只注册一个 `ProductFeed`，并使用 Feed 目标生成多个 XML 文件。每个目标都会提供参数，`builder()` 使用这些参数设置该目标的查询条件，`filename()` 使用这些参数设置该目标的输出路径。`available` 和 `unavailable` 仅为示例；目标可以代表任何业务条件。
 
 ## Feed 目标与 perFile() 的区别 {/* #targets-vs-per-file */}
 
@@ -22,17 +22,17 @@ keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget"
 本示例会为各目标生成以下文件：
 
 ```text
-storage/app/public/partners/42.xml
-storage/app/public/partners/81.xml
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
 ```
 
 ## 创建 Feed {/* #create-feed */}
 
 ```bash
-php artisan make:feed Partner
+php artisan make:feed Product
 ```
 
-## 配置合作方输出 {/* #configure-partner-outputs */}
+## 配置输出 {/* #configure-output */}
 
 使用以下代码替换生成的 Feed 类：
 
@@ -43,7 +43,6 @@ declare(strict_types=1);
 
 namespace App\Feeds;
 
-use App\Models\Partner;
 use App\Models\Product;
 use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
 use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
@@ -51,52 +50,51 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use Illuminate\Database\Eloquent\Builder;
 
-class PartnerFeed extends Feed implements HasFeedTargets
+class ProductFeed extends Feed implements HasFeedTargets
 {
     use InteractsWithFeedTargets;
 
+    private const TARGETS = [
+        'available' => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
     public function targets(): iterable
     {
-        foreach (Partner::query()->select('id')->lazyById() as $partner) {
-            yield $this->makeTarget($partner);
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
         }
     }
 
     public function findTarget(string $key): ?FeedTarget
     {
-        $partner = Partner::query()->find($key);
-
-        if (! $partner || (string) $partner->getKey() !== $key) {
-            return null;
-        }
-
-        return $this->makeTarget($partner);
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
     }
 
     public function builder(): Builder
     {
         return Product::query()->where(
-            'partner_id',
-            $this->target()->parameters['partner_id'],
+            'in_stock',
+            $this->target()->parameters['in_stock'],
         );
     }
 
     public function filename(): string
     {
-        return "partners/{$this->target()->key}.xml";
+        return "products/{$this->target()->key}.xml";
     }
 
-    private function makeTarget(Partner $partner): FeedTarget
+    private function makeTarget(string $key): FeedTarget
     {
         return new FeedTarget(
-            key       : (string) $partner->getKey(),
-            parameters: ['partner_id' => $partner->getKey()],
+            key       : $key,
+            parameters: self::TARGETS[$key],
         );
     }
 }
 ```
 
-完整运行时，`targets()` 会惰性枚举合作方。`findTarget()` 无需加载所有合作方即可解析显式请求的键。`builder()` 筛选当前合作方的产品，`filename()` 则为每个合作方提供唯一路径。
+完整运行时，`targets()` 会枚举已配置的目标键。`findTarget()` 无需枚举所有目标即可解析显式请求的键。`builder()` 筛选当前目标的产品，`filename()` 则为每个目标分配唯一路径。
 
 ## 启用 {/* #activate */}
 
@@ -110,33 +108,33 @@ php artisan operations
 php artisan migrate
 ```
 
-## 生成所有合作方文件 {/* #generate-all */}
+## 生成文件 {/* #generate-all */}
 
-传入 Feed 注册 ID。命令会为 `targets()` 返回的每个合作方生成文件：
+传入 Feed 注册 ID。命令会为 `targets()` 返回的每个目标生成文件：
 
 ```bash
 php artisan feed:generate 123
 ```
 
-如果合作方 ID 为 `42` 和 `81`，生成的路径如下：
+目标为 `available` 和 `unavailable` 时，文件会生成到以下路径：
 
 ```text
-storage/app/public/partners/42.xml
-storage/app/public/partners/81.xml
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
 ```
 
-## 生成所选合作方文件 {/* #generate-selected */}
+## 筛选后生成文件 {/* #generate-selected */}
 
-只需刷新特定合作方的文件时，请重复传入 `--target` 选项：
+只需为选定目标生成文件时，请重复传入 `--target` 选项：
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate 123 --target=available
+php artisan feed:generate 123 --target=available --target=unavailable
 ```
 
-## 按记录数拆分每个合作方的输出 {/* #split-each-output */}
+## 按记录数拆分文件 {/* #split-each-output */}
 
-如果某个合作方的输出也可能过大，请添加 `perFile()`：
+如果某个目标的文件可能过大，请添加 `perFile()`：
 
 ```php
 public function perFile(): int
@@ -145,7 +143,7 @@ public function perFile(): int
 }
 ```
 
-此时合作方 `42` 可以生成 `partners/42-1.xml`、`partners/42-2.xml` 以及后续分片。按记录数拆分会独立应用于每个合作方。
+此时，目标 `available` 的输出可以拆分为 `products/available-1.xml`、`products/available-2.xml` 以及后续分片。按记录数拆分会独立应用于每个目标。
 
 ## 另请参阅
 
