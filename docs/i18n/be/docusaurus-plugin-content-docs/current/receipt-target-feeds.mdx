@@ -1,0 +1,152 @@
+---
+title: "Некалькі мэтавых файлаў стужкі"
+description: "Рэцэпт генерацыі некалькіх файлаў стужкі з індывідуальнымі ўмовамі выбаркі з адной зарэгістраванай стужкі"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← Папярэдняя](./extending-functionality.mdx) · [Назад да README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступная →](./receipt-sitemap.mdx)
+
+# Некалькі мэтавых файлаў стужкі
+
+Гэты рэцэпт рэгіструе адну стужку `ProductFeed` і з дапамогай мэт стужкі стварае некалькі XML-файлаў. Кожная мэта перадае параметры: `builder()` выкарыстоўвае іх для ўласных умоў выбаркі, а `filename()` — для асобнага шляху вываду. Мэты `available` і `unavailable` — толькі прыклады: мэта можа прадстаўляць любую бізнес-умову.
+
+## Мэты стужкі і perFile() {/* #targets-vs-per-file */}
+
+`perFile()` дзеліць вынік аднаго запыту на паслядоўныя файлы пасля зададзенай колькасці запісаў. Запыт і ўмовы выбаркі для гэтых файлаў не змяняюцца.
+
+`FeedTarget` запускае стужку асобна для кожнай мэты. Прыкладанне можа выкарыстоўваць `target()`, каб змяняць умовы запыту і імя файла для кожнага выніку. Механізмы можна спалучаць: спачатку выбраць мэтавы набор даных, а потым падзяліць яго паводле колькасці запісаў.
+
+У гэтым прыкладзе ствараюцца наступныя мэтавыя файлы:
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## Стварыце стужку {/* #create-feed */}
+
+```bash
+php artisan make:feed Product
+```
+
+## Наладзьце вывад {/* #configure-output */}
+
+Замяніце згенераваны клас стужкі наступным:
+
+```php source="docs/snippets/targeted-feed.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class ProductFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    private const TARGETS = [
+        'available' => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
+    public function targets(): iterable
+    {
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'in_stock',
+            $this->target()->parameters['in_stock'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "products/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(string $key): FeedTarget
+    {
+        return new FeedTarget(
+            key       : $key,
+            parameters: self::TARGETS[$key],
+        );
+    }
+}
+```
+
+`targets()` пералічвае наладжаныя ключы мэт для поўнага запуску. `findTarget()` вызначае яўна запытаныя ключы без пералічэння ўсіх мэт. `builder()` фільтруе тавары для актыўнай мэты, а `filename()` задае кожнай мэце ўнікальны шлях.
+
+## Актывуйце {/* #activate */}
+
+Праверце згенераваны файл [аперацыі або міграцыі](./create-feeds.mdx), а затым выканайце адпаведную каманду:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Згенеруйце файлы {/* #generate-all */}
+
+Перадайце ідэнтыфікатар рэгістрацыі стужкі. Каманда згенеруе файл для кожнай мэты, вернутай `targets()`:
+
+```bash
+php artisan feed:generate 123
+```
+
+Для мэт `available` і `unavailable` будуць створаны наступныя шляхі:
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## Згенеруйце файлы з фільтраваннем {/* #generate-selected */}
+
+Выкарыстоўвайце паўтаральны параметр `--target`, калі трэба абнавіць файлы толькі выбраных мэт:
+
+```bash
+php artisan feed:generate 123 --target=available
+php artisan feed:generate 123 --target=available --target=unavailable
+```
+
+## Падзяліце файлы паводле колькасці запісаў {/* #split-each-output */}
+
+Дадайце `perFile()`, калі файл адной мэты можа стаць занадта вялікім:
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+Мэта `available` можа стварыць `products/available-1.xml`, `products/available-2.xml` і наступныя часткі. Такі падзел паводле колькасці запісаў выконваецца асобна для кожнай мэты.
+
+## Глядзіце таксама
+
+- [Кіраўніцтва па асобных выходных файлах](./feed-targets.mdx)
+- [Генерацыя і расклад](./generation.mdx)
+- [API стужак і даных](./api/feed.mdx#feed-targets)

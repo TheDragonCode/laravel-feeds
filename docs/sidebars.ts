@@ -33,7 +33,7 @@ const sidebars: SidebarsConfig = {
             items: [
                 "supported-formats",
                 "presets",
-                "receipt-partner-feeds",
+                "receipt-target-feeds",
                 "receipt-sitemap",
                 "receipt-instagram",
                 "receipt-yandex",

@@ -179,7 +179,7 @@
             "File format",
             "See Also"
         ],
-        "content": "import ThemedImage from '@theme/ThemedImage'; ← Previous · Back to README · Next → Create feeds The most convenient way to create the necessary classes is to use the Laravel Idea plugin for PhpStorm. To create a feed class, use the make:feed console command: This will create a feed file. For example, app/Feeds/UserFeed.php . This console command can also create the item and info classes along with the feed class. To do this, use the --item and --info options. Shortcuts are also available: When creating a feed, an operation or a migration will also be created to add it to the database. If the project uses Laravel Deploy Operations , then an operation class will be created; otherwise, a migration class will be created. This is required to add and manage feed information in the database. Populating feeds Feed Populate the main feed class. For example: Feed item Populate the feed item class. For example: Optional values To omit a field when its value is unavailable, return an instance of DragonCode\\LaravelFeed\\Data\\OptionalData as its value: Optional fields are removed from JSON and JSON Lines objects and from XML and RSS elements, including regular nested fields. CSV keeps the column position and writes an empty field. If your application uses Spatie Laravel Data, you can return Spatie\\LaravelData\\Optional instead. Both optional value classes are handled automatically. Separate output files Generating a separate file for each partner, store, or locale is an advanced output scenario. Read the separate output files guide, then use the multiple targeted feed files recipe as a complete example. File format You can find the list of available formats on the supported formats page. You can generate feeds in different formats. A feed class can be correctly exported only to the format for which it is intended. This is due to the use of directives and other format specifics. To apply the required format, simply override the $format property in the feed class: See Also - Generation & schedule - Separate output files - Supported formats"
+        "content": "import ThemedImage from '@theme/ThemedImage'; ← Previous · Back to README · Next → Create feeds The most convenient way to create the necessary classes is to use the Laravel Idea plugin for PhpStorm. To create a feed class, use the make:feed console command: This will create a feed file. For example, app/Feeds/UserFeed.php . This console command can also create the item and info classes along with the feed class. To do this, use the --item and --info options. Shortcuts are also available: When creating a feed, an operation or a migration will also be created to add it to the database. If the project uses Laravel Deploy Operations , then an operation class will be created; otherwise, a migration class will be created. This is required to add and manage feed information in the database. Populating feeds Feed Populate the main feed class. For example: Feed item Populate the feed item class. For example: Optional values To omit a field when its value is unavailable, return an instance of DragonCode\\LaravelFeed\\Data\\OptionalData as its value: Optional fields are removed from JSON and JSON Lines objects and from XML and RSS elements, including regular nested fields. CSV keeps the column position and writes an empty field. If your application uses Spatie Laravel Data, you can return Spatie\\LaravelData\\Optional instead. Both optional value classes are handled automatically. Separate output files Generating separate files for different business conditions is an advanced output scenario. Read the separate output files guide, then use the multiple targeted feed files recipe as a complete example. File format You can find the list of available formats on the supported formats page. You can generate feeds in different formats. A feed class can be correctly exported only to the format for which it is intended. This is due to the use of directives and other format specifics. To apply the required format, simply override the $format property in the feed class: See Also - Generation & schedule - Separate output files - Supported formats"
     },
     {
         "route": "/directives/",
@@ -495,31 +495,6 @@
         "content": "← Previous · Back to README · Next → Instagram Create the files Populate the feed Replace extends Feed with extends InstagramFeedPreset in the generated class: Activate Review the generated operation or migration file, then run the appropriate console command: Generate feed Generate the feed by running the following console command: Result See Also - Presets - Yandex recipe - RSS Atom recipe"
     },
     {
-        "route": "/receipt-partner-feeds/",
-        "title": "Multiple targeted feed files",
-        "description": "Recipe for generating multiple feed files with individual query conditions from one registered feed",
-        "keywords": [
-            "targeted feeds",
-            "conditional files",
-            "multiple files",
-            "FeedTarget",
-            "HasFeedTargets",
-            "recipe"
-        ],
-        "headings": [
-            "Multiple targeted feed files",
-            "Feed targets versus perFile()",
-            "Create the feed",
-            "Configure partner outputs",
-            "Activate",
-            "Generate all partner files",
-            "Generate selected partner files",
-            "Split each partner output by record count",
-            "See Also"
-        ],
-        "content": "← Previous · Back to README · Next → Multiple targeted feed files This recipe registers one PartnerFeed and uses feed targets to generate multiple XML files. Each target provides parameters that builder() uses for its own query conditions and filename() uses for its own output path. Partners are only the example; a target could represent a store, locale, region, or any other business condition. Feed targets versus perFile() perFile() splits one query result into sequential files after a fixed number of records. The query and selection conditions stay the same across those files. FeedTarget runs the feed separately for every target. The application can therefore use target() to change the query conditions and filename for each output. Both mechanisms can be combined: select a target-specific dataset first, then split that dataset by record count. This example creates the following target files: Create the feed Configure partner outputs Replace the generated feed class with: targets() enumerates partners lazily for full runs. findTarget() resolves explicitly requested keys without loading every partner. builder() filters products for the active partner, and filename() gives every partner a unique path. Activate Review the generated operation or migration file, then run the appropriate command: Generate all partner files Pass the feed registration ID. The command generates a file for every partner returned by targets() : With partners 42 and 81 , the generated paths are: Generate selected partner files Use the repeatable --target option when only specific partners need fresh files: Split each partner output by record count Add perFile() when one partner output can also become too large: Partner 42 can then produce partners/42-1.xml , partners/42-2.xml , and later parts. This record-count split is applied independently to every partner. See Also - Separate output files guide - Generation & schedule - Feeds and data API"
-    },
-    {
         "route": "/receipt-rss-atom/",
         "title": "RSS Atom",
         "description": "Feed generation recipe for RSS Atom",
@@ -562,6 +537,31 @@
             "See Also"
         ],
         "content": "← Previous · Back to README · Next → Sitemap This recipe walks you through creating a product sitemap feed using Laravel Feeds. You will: - Generate the necessary classes. - Implement the feed logic. - Expose the files via the file system. - Optionally reference the generated sitemap from a root sitemap.xml file. Create the files Generate the feed and its item class using the following console command: Populate the feed Replace extends Feed with extends SitemapFeedPreset in the generated class: Available methods of the FeedItem class: - url - It is required to indicate - modifiedAt - by default, $model- updated_at - priority - by default, 0.9 Activate Review the generated operation or migration file, then run the appropriate console command: Links Add a file system disk that points to the directory containing your sitemaps in the config/filesystems.php configuration file: Then create the public symlink so the files are accessible in a browser: Generate feed Generate the feed by running the following console command: Add a link to the root sitemap.xml If you maintain a root sitemap.xml file that references other sitemaps, add an entry like this: Result The generated sitemap.xml for your products will look like this: See Also - Presets - Yandex recipe - RSS Atom recipe"
+    },
+    {
+        "route": "/receipt-target-feeds/",
+        "title": "Multiple targeted feed files",
+        "description": "Recipe for generating multiple feed files with individual query conditions from one registered feed",
+        "keywords": [
+            "targeted feeds",
+            "conditional files",
+            "multiple files",
+            "FeedTarget",
+            "HasFeedTargets",
+            "recipe"
+        ],
+        "headings": [
+            "Multiple targeted feed files",
+            "Feed targets versus perFile()",
+            "Create the feed",
+            "Configure output",
+            "Activate",
+            "Generate files",
+            "Generate files with filtering",
+            "Split files by record count",
+            "See Also"
+        ],
+        "content": "← Previous · Back to README · Next → Multiple targeted feed files This recipe registers one ProductFeed and uses feed targets to generate multiple XML files. Each target provides parameters that builder() uses for its own query conditions and filename() uses for its own output path. The available and unavailable targets are only examples; a target can represent any business condition. Feed targets versus perFile() perFile() splits one query result into sequential files after a fixed number of records. The query and selection conditions stay the same across those files. FeedTarget runs the feed separately for every target. The application can therefore use target() to change the query conditions and filename for each output. Both mechanisms can be combined: select a target-specific dataset first, then split that dataset by record count. This example creates the following target files: Create the feed Configure output Replace the generated feed class with: targets() enumerates the configured target keys for full runs. findTarget() resolves explicitly requested keys without enumerating every target. builder() filters products for the active target, and filename() gives every target a unique path. Activate Review the generated operation or migration file, then run the appropriate command: Generate files Pass the feed registration ID. The command generates a file for every target returned by targets() : For the available and unavailable targets, the generated paths are: Generate files with filtering Use the repeatable --target option when only selected targets need fresh files: Split files by record count Add perFile() when one target file can become too large: The available target can then produce products/available-1.xml , products/available-2.xml , and later parts. This record-count split is applied independently to every target. See Also - Separate output files guide - Generation & schedule - Feeds and data API"
     },
     {
         "route": "/receipt-yandex/",

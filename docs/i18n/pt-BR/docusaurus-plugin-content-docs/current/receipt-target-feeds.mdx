@@ -11,7 +11,7 @@ keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget"
 
 # Vários arquivos de feed por alvo
 
-Esta receita registra um único `PartnerFeed` e usa alvos de feed para gerar vários arquivos XML. Cada alvo fornece parâmetros que `builder()` usa em suas próprias condições de consulta e que `filename()` usa em seu próprio caminho de saída. Os parceiros são apenas o exemplo: um alvo pode representar uma loja, uma localidade, uma região ou qualquer outra condição de negócio.
+Esta receita registra um único `ProductFeed` e usa alvos de feed para gerar vários arquivos XML. Cada alvo fornece parâmetros que `builder()` usa em suas próprias condições de consulta e que `filename()` usa em seu próprio caminho de saída. Os alvos `available` e `unavailable` são apenas exemplos: um alvo pode representar qualquer condição de negócio.
 
 ## Alvos de feed versus perFile() {/* #targets-vs-per-file */}
 
@@ -22,17 +22,17 @@ Esta receita registra um único `PartnerFeed` e usa alvos de feed para gerar vá
 Este exemplo cria os seguintes arquivos de saída por alvo:
 
 ```text
-storage/app/public/partners/42.xml
-storage/app/public/partners/81.xml
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
 ```
 
 ## Criar o feed {/* #create-feed */}
 
 ```bash
-php artisan make:feed Partner
+php artisan make:feed Product
 ```
 
-## Configurar saídas por parceiro {/* #configure-partner-outputs */}
+## Configurar a saída {/* #configure-output */}
 
 Substitua a classe de feed gerada por:
 
@@ -43,7 +43,6 @@ declare(strict_types=1);
 
 namespace App\Feeds;
 
-use App\Models\Partner;
 use App\Models\Product;
 use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
 use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
@@ -51,52 +50,51 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use Illuminate\Database\Eloquent\Builder;
 
-class PartnerFeed extends Feed implements HasFeedTargets
+class ProductFeed extends Feed implements HasFeedTargets
 {
     use InteractsWithFeedTargets;
 
+    private const TARGETS = [
+        'available' => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
     public function targets(): iterable
     {
-        foreach (Partner::query()->select('id')->lazyById() as $partner) {
-            yield $this->makeTarget($partner);
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
         }
     }
 
     public function findTarget(string $key): ?FeedTarget
     {
-        $partner = Partner::query()->find($key);
-
-        if (! $partner || (string) $partner->getKey() !== $key) {
-            return null;
-        }
-
-        return $this->makeTarget($partner);
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
     }
 
     public function builder(): Builder
     {
         return Product::query()->where(
-            'partner_id',
-            $this->target()->parameters['partner_id'],
+            'in_stock',
+            $this->target()->parameters['in_stock'],
         );
     }
 
     public function filename(): string
     {
-        return "partners/{$this->target()->key}.xml";
+        return "products/{$this->target()->key}.xml";
     }
 
-    private function makeTarget(Partner $partner): FeedTarget
+    private function makeTarget(string $key): FeedTarget
     {
         return new FeedTarget(
-            key       : (string) $partner->getKey(),
-            parameters: ['partner_id' => $partner->getKey()],
+            key       : $key,
+            parameters: self::TARGETS[$key],
         );
     }
 }
 ```
 
-`targets()` enumera os parceiros sob demanda nas execuções completas. `findTarget()` resolve as chaves solicitadas explicitamente sem carregar todos os parceiros. `builder()` filtra os produtos do parceiro ativo, e `filename()` atribui um caminho exclusivo a cada parceiro.
+`targets()` enumera as chaves de alvo configuradas nas execuções completas. `findTarget()` resolve as chaves solicitadas explicitamente sem enumerar todos os alvos. `builder()` filtra os produtos do alvo ativo, e `filename()` atribui um caminho exclusivo a cada alvo.
 
 ## Ativar {/* #activate */}
 
@@ -110,33 +108,33 @@ php artisan operations
 php artisan migrate
 ```
 
-## Gerar todos os arquivos de parceiros {/* #generate-all */}
+## Gerar arquivos {/* #generate-all */}
 
-Passe o ID de registro do feed. O comando gera um arquivo para cada parceiro retornado por `targets()`:
+Passe o ID de registro do feed. O comando gera um arquivo para cada alvo retornado por `targets()`:
 
 ```bash
 php artisan feed:generate 123
 ```
 
-Com os parceiros `42` e `81`, os caminhos gerados são:
+Para os alvos `available` e `unavailable`, os arquivos são gerados nos seguintes caminhos:
 
 ```text
-storage/app/public/partners/42.xml
-storage/app/public/partners/81.xml
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
 ```
 
-## Gerar arquivos de parceiros selecionados {/* #generate-selected */}
+## Gerar arquivos com filtragem {/* #generate-selected */}
 
-Use a opção repetível `--target` quando apenas parceiros específicos precisarem de arquivos atualizados:
+Use a opção repetível `--target` para gerar arquivos somente para os alvos selecionados:
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate 123 --target=available
+php artisan feed:generate 123 --target=available --target=unavailable
 ```
 
-## Dividir cada saída de parceiro por quantidade de registros {/* #split-each-output */}
+## Dividir arquivos por quantidade de registros {/* #split-each-output */}
 
-Adicione `perFile()` quando a saída de um único parceiro também puder ficar grande demais:
+Adicione `perFile()` quando o arquivo de um alvo puder ficar grande demais:
 
 ```php
 public function perFile(): int
@@ -145,7 +143,7 @@ public function perFile(): int
 }
 ```
 
-O parceiro `42` poderá gerar `partners/42-1.xml`, `partners/42-2.xml` e as partes seguintes. Essa divisão por quantidade de registros é aplicada separadamente a cada parceiro.
+Com isso, o alvo `available` pode gerar `products/available-1.xml`, `products/available-2.xml` e os arquivos seguintes. Essa divisão por quantidade de registros é aplicada separadamente a cada alvo.
 
 ## Veja também
 

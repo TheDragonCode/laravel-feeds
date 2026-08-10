@@ -11,7 +11,7 @@ keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget"
 
 # Multiple targeted feed files
 
-This recipe registers one `PartnerFeed` and uses feed targets to generate multiple XML files. Each target provides parameters that `builder()` uses for its own query conditions and `filename()` uses for its own output path. Partners are only the example; a target could represent a store, locale, region, or any other business condition.
+This recipe registers one `ProductFeed` and uses feed targets to generate multiple XML files. Each target provides parameters that `builder()` uses for its own query conditions and `filename()` uses for its own output path. The `available` and `unavailable` targets are only examples; a target can represent any business condition.
 
 ## Feed targets versus perFile() {/* #targets-vs-per-file */}
 
@@ -22,17 +22,17 @@ This recipe registers one `PartnerFeed` and uses feed targets to generate multip
 This example creates the following target files:
 
 ```text
-storage/app/public/partners/42.xml
-storage/app/public/partners/81.xml
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
 ```
 
 ## Create the feed {/* #create-feed */}
 
 ```bash
-php artisan make:feed Partner
+php artisan make:feed Product
 ```
 
-## Configure partner outputs {/* #configure-partner-outputs */}
+## Configure output {/* #configure-output */}
 
 Replace the generated feed class with:
 
@@ -43,7 +43,6 @@ declare(strict_types=1);
 
 namespace App\Feeds;
 
-use App\Models\Partner;
 use App\Models\Product;
 use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
 use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
@@ -51,52 +50,51 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use Illuminate\Database\Eloquent\Builder;
 
-class PartnerFeed extends Feed implements HasFeedTargets
+class ProductFeed extends Feed implements HasFeedTargets
 {
     use InteractsWithFeedTargets;
 
+    private const TARGETS = [
+        'available' => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
     public function targets(): iterable
     {
-        foreach (Partner::query()->select('id')->lazyById() as $partner) {
-            yield $this->makeTarget($partner);
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
         }
     }
 
     public function findTarget(string $key): ?FeedTarget
     {
-        $partner = Partner::query()->find($key);
-
-        if (! $partner || (string) $partner->getKey() !== $key) {
-            return null;
-        }
-
-        return $this->makeTarget($partner);
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
     }
 
     public function builder(): Builder
     {
         return Product::query()->where(
-            'partner_id',
-            $this->target()->parameters['partner_id'],
+            'in_stock',
+            $this->target()->parameters['in_stock'],
         );
     }
 
     public function filename(): string
     {
-        return "partners/{$this->target()->key}.xml";
+        return "products/{$this->target()->key}.xml";
     }
 
-    private function makeTarget(Partner $partner): FeedTarget
+    private function makeTarget(string $key): FeedTarget
     {
         return new FeedTarget(
-            key       : (string) $partner->getKey(),
-            parameters: ['partner_id' => $partner->getKey()],
+            key       : $key,
+            parameters: self::TARGETS[$key],
         );
     }
 }
 ```
 
-`targets()` enumerates partners lazily for full runs. `findTarget()` resolves explicitly requested keys without loading every partner. `builder()` filters products for the active partner, and `filename()` gives every partner a unique path.
+`targets()` enumerates the configured target keys for full runs. `findTarget()` resolves explicitly requested keys without enumerating every target. `builder()` filters products for the active target, and `filename()` gives every target a unique path.
 
 ## Activate {/* #activate */}
 
@@ -110,33 +108,33 @@ php artisan operations
 php artisan migrate
 ```
 
-## Generate all partner files {/* #generate-all */}
+## Generate files {/* #generate-all */}
 
-Pass the feed registration ID. The command generates a file for every partner returned by `targets()`:
+Pass the feed registration ID. The command generates a file for every target returned by `targets()`:
 
 ```bash
 php artisan feed:generate 123
 ```
 
-With partners `42` and `81`, the generated paths are:
+For the `available` and `unavailable` targets, the generated paths are:
 
 ```text
-storage/app/public/partners/42.xml
-storage/app/public/partners/81.xml
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
 ```
 
-## Generate selected partner files {/* #generate-selected */}
+## Generate files with filtering {/* #generate-selected */}
 
-Use the repeatable `--target` option when only specific partners need fresh files:
+Use the repeatable `--target` option when only selected targets need fresh files:
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate 123 --target=available
+php artisan feed:generate 123 --target=available --target=unavailable
 ```
 
-## Split each partner output by record count {/* #split-each-output */}
+## Split files by record count {/* #split-each-output */}
 
-Add `perFile()` when one partner output can also become too large:
+Add `perFile()` when one target file can become too large:
 
 ```php
 public function perFile(): int
@@ -145,7 +143,7 @@ public function perFile(): int
 }
 ```
 
-Partner `42` can then produce `partners/42-1.xml`, `partners/42-2.xml`, and later parts. This record-count split is applied independently to every partner.
+The `available` target can then produce `products/available-1.xml`, `products/available-2.xml`, and later parts. This record-count split is applied independently to every target.
 
 ## See Also
 

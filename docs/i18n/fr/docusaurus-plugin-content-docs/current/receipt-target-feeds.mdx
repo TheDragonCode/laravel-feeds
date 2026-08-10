@@ -11,7 +11,7 @@ keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget"
 
 # Plusieurs fichiers de flux ciblés
 
-Cette recette enregistre un seul `PartnerFeed` et utilise des cibles de flux pour générer plusieurs fichiers XML. Chaque cible fournit des paramètres que `builder()` utilise pour ses propres conditions de requête et que `filename()` utilise pour son propre chemin de sortie. Les partenaires ne sont qu’un exemple : une cible peut représenter une boutique, un paramètre régional, une région ou toute autre condition métier.
+Cette recette enregistre un seul `ProductFeed` et utilise des cibles de flux pour générer plusieurs fichiers XML. Chaque cible fournit des paramètres que `builder()` utilise pour ses propres conditions de requête et que `filename()` utilise pour son propre chemin de sortie. Les cibles `available` et `unavailable` ne sont que des exemples : une cible peut représenter n’importe quelle condition métier.
 
 ## Cibles de flux et perFile() {/* #targets-vs-per-file */}
 
@@ -22,17 +22,17 @@ Cette recette enregistre un seul `PartnerFeed` et utilise des cibles de flux pou
 Cet exemple crée les fichiers ciblés suivants :
 
 ```text
-storage/app/public/partners/42.xml
-storage/app/public/partners/81.xml
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
 ```
 
 ## Créer le flux {/* #create-feed */}
 
 ```bash
-php artisan make:feed Partner
+php artisan make:feed Product
 ```
 
-## Configurer les sorties des partenaires {/* #configure-partner-outputs */}
+## Configurer la sortie {/* #configure-output */}
 
 Remplacez la classe de flux générée par :
 
@@ -43,7 +43,6 @@ declare(strict_types=1);
 
 namespace App\Feeds;
 
-use App\Models\Partner;
 use App\Models\Product;
 use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
 use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
@@ -51,52 +50,51 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use Illuminate\Database\Eloquent\Builder;
 
-class PartnerFeed extends Feed implements HasFeedTargets
+class ProductFeed extends Feed implements HasFeedTargets
 {
     use InteractsWithFeedTargets;
 
+    private const TARGETS = [
+        'available' => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
     public function targets(): iterable
     {
-        foreach (Partner::query()->select('id')->lazyById() as $partner) {
-            yield $this->makeTarget($partner);
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
         }
     }
 
     public function findTarget(string $key): ?FeedTarget
     {
-        $partner = Partner::query()->find($key);
-
-        if (! $partner || (string) $partner->getKey() !== $key) {
-            return null;
-        }
-
-        return $this->makeTarget($partner);
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
     }
 
     public function builder(): Builder
     {
         return Product::query()->where(
-            'partner_id',
-            $this->target()->parameters['partner_id'],
+            'in_stock',
+            $this->target()->parameters['in_stock'],
         );
     }
 
     public function filename(): string
     {
-        return "partners/{$this->target()->key}.xml";
+        return "products/{$this->target()->key}.xml";
     }
 
-    private function makeTarget(Partner $partner): FeedTarget
+    private function makeTarget(string $key): FeedTarget
     {
         return new FeedTarget(
-            key       : (string) $partner->getKey(),
-            parameters: ['partner_id' => $partner->getKey()],
+            key       : $key,
+            parameters: self::TARGETS[$key],
         );
     }
 }
 ```
 
-`targets()` énumère les partenaires de manière différée pour les exécutions complètes. `findTarget()` résout les clés explicitement demandées sans charger tous les partenaires. `builder()` filtre les produits pour le partenaire actif et `filename()` attribue un chemin unique à chaque partenaire.
+`targets()` énumère les clés de cible configurées pour les exécutions complètes. `findTarget()` résout les clés explicitement demandées sans énumérer toutes les cibles. `builder()` filtre les produits pour la cible active et `filename()` attribue un chemin unique à chaque cible.
 
 ## Activer {/* #activate */}
 
@@ -110,33 +108,33 @@ php artisan operations
 php artisan migrate
 ```
 
-## Générer les fichiers de tous les partenaires {/* #generate-all */}
+## Générer les fichiers {/* #generate-all */}
 
-Transmettez l’identifiant d’enregistrement du flux. La commande génère les fichiers de tous les partenaires renvoyés par `targets()` :
+Transmettez l’identifiant d’enregistrement du flux. La commande génère un fichier pour chaque cible renvoyée par `targets()` :
 
 ```bash
 php artisan feed:generate 123
 ```
 
-Avec les partenaires `42` et `81`, les chemins générés sont :
+Pour les cibles `available` et `unavailable`, les chemins générés sont :
 
 ```text
-storage/app/public/partners/42.xml
-storage/app/public/partners/81.xml
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
 ```
 
-## Générer les fichiers de partenaires sélectionnés {/* #generate-selected */}
+## Générer les fichiers avec filtrage {/* #generate-selected */}
 
-Utilisez l’option répétable `--target` lorsque seuls certains partenaires ont besoin de fichiers actualisés :
+Utilisez l’option répétable `--target` pour actualiser uniquement les fichiers des cibles sélectionnées :
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate 123 --target=available
+php artisan feed:generate 123 --target=available --target=unavailable
 ```
 
-## Fractionner chaque sortie de partenaire par nombre d’enregistrements {/* #split-each-output */}
+## Fractionner les fichiers par nombre d’enregistrements {/* #split-each-output */}
 
-Ajoutez `perFile()` lorsque la sortie d’un partenaire peut elle aussi devenir trop volumineuse :
+Ajoutez `perFile()` lorsque la sortie d’une cible peut elle aussi devenir trop volumineuse :
 
 ```php
 public function perFile(): int
@@ -145,7 +143,7 @@ public function perFile(): int
 }
 ```
 
-Le partenaire `42` peut alors produire `partners/42-1.xml`, `partners/42-2.xml` et les parties suivantes. Ce fractionnement par nombre d’enregistrements s’applique indépendamment à chaque partenaire.
+La cible `available` peut alors produire `products/available-1.xml`, `products/available-2.xml` et les parties suivantes. Ce fractionnement par nombre d’enregistrements s’applique indépendamment à chaque cible.
 
 ## Voir aussi
 
