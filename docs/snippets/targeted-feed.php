@@ -16,7 +16,7 @@ class ProductFeed extends Feed implements HasFeedTargets
     use InteractsWithFeedTargets;
 
     private const TARGETS = [
-        'available' => ['in_stock' => true],
+        'available'   => ['in_stock' => true],
         'unavailable' => ['in_stock' => false],
     ];
 
