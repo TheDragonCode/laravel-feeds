@@ -47,6 +47,10 @@ O CSV define suas colunas pelo esquema da saída. Todos os itens devem produzir 
 
 Inspecione a exceção original e as permissões do disco. Em discos remotos, considere consistência eventual e movimentos não atômicos por cópia e exclusão. Vários hosts publicando o mesmo destino exigem bloqueio distribuído externo.
 
+Durante a publicação, o Laravel Feeds cria um diretório temporário `.feeds_staging_*` ao lado do caminho de destino. Ele remove esse diretório após uma publicação bem-sucedida e após falhas comuns de geração. O diretório é preservado quando a reversão falha, para que seus backups continuem disponíveis. Um processo interrompido ou uma falha de limpeza também pode deixar um desses diretórios.
+
+Um número elevado ou crescente de diretórios `.feeds_staging_*` indica falhas repetidas de publicação ou limpeza. Inspecione os logs de geração e a exceção original, corrija a falha subjacente de armazenamento, permissão ou processo e revise todos os backups preservados antes de excluir manualmente os diretórios obsoletos.
+
 ## Veja também
 
 - [Eventos e exceções](./api/events-exceptions.mdx)

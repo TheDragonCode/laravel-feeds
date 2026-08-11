@@ -47,6 +47,10 @@ CSV établit ses colonnes à partir du schéma de sortie. Chaque élément doit 
 
 Examinez l’exception de stockage d’origine et les permissions. Sur un disque distant, tenez compte de la cohérence éventuelle et des déplacements non atomiques par copie et suppression. Plusieurs hôtes publiant la même cible nécessitent un verrou distribué externe.
 
+Lors de la publication, Laravel Feeds crée un répertoire temporaire `.feeds_staging_*` à côté du chemin cible. Il supprime ce répertoire après une publication réussie ainsi qu’après les échecs de génération courants. Le répertoire est conservé lorsque la restauration échoue afin que ses sauvegardes restent disponibles. Un processus interrompu ou un échec du nettoyage peut également laisser un tel répertoire.
+
+Un nombre important ou croissant de répertoires `.feeds_staging_*` indique des échecs répétés de publication ou de nettoyage. Examinez les journaux de génération et l’exception d’origine, résolvez le problème sous-jacent de stockage, de permissions ou de processus, puis passez en revue toutes les sauvegardes conservées avant de supprimer manuellement les répertoires obsolètes.
+
 ## Voir aussi
 
 - [Événements et exceptions](./api/events-exceptions.mdx)

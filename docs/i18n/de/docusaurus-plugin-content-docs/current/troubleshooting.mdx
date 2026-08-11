@@ -47,6 +47,10 @@ CSV legt seine Spalten anhand des Ausgabeschemas fest. Jedes Element muss diesel
 
 Prüfen Sie die ursprüngliche Speicherausnahme und die Berechtigungen des Datenträgers. Berücksichtigen Sie bei entfernten Datenträgern eventuelle Konsistenz und nicht atomare Kopier-und-Lösch-Verschiebungen. Generatoren auf mehreren Hosts benötigen eine externe verteilte Sperre, wenn sie dasselbe Ziel veröffentlichen können.
 
+Während der Veröffentlichung erstellt Laravel Feeds neben dem Zielpfad ein temporäres Verzeichnis `.feeds_staging_*`. Nach einer erfolgreichen Veröffentlichung und nach gewöhnlichen Generierungsfehlern entfernt Laravel Feeds dieses Verzeichnis. Wenn das Rollback fehlschlägt, bleibt das Verzeichnis erhalten, damit seine Sicherungskopien verfügbar bleiben. Auch ein unterbrochener Prozess oder ein Fehler bei der Bereinigung kann ein solches Verzeichnis zurücklassen.
+
+Eine große oder wachsende Anzahl von `.feeds_staging_*`-Verzeichnissen weist auf wiederholte Fehler bei der Veröffentlichung oder Bereinigung hin. Prüfen Sie die Generierungsprotokolle und die ursprüngliche Ausnahme, beheben Sie den zugrunde liegenden Speicher-, Berechtigungs- oder Prozessfehler und prüfen Sie alle aufbewahrten Sicherungskopien, bevor Sie veraltete Verzeichnisse manuell löschen.
+
 ## Siehe auch
 
 - [Ereignisse und Ausnahmen](./api/events-exceptions.mdx)
