@@ -273,6 +273,17 @@ function failureDraft(FilesystemService $service, string $staging, string $targe
     return $service->finishDraft($draft);
 }
 
+function failureLocalService(FailureModeFilesystem $file, TemporaryDirectory $directory): FailureModeFilesystemService
+{
+    $service                    = new FailureModeFilesystemService($file);
+    $service->controlledStaging = (new TemporaryDirectory)
+        ->location($directory->path())
+        ->name('staging')
+        ->create();
+
+    return $service;
+}
+
 function failureOwnershipPath(string $publication): string
 {
     return dirname($publication) . DIRECTORY_SEPARATOR . '.laravel-feeds' . DIRECTORY_SEPARATOR . 'ownership.json';
@@ -584,7 +595,7 @@ test('preserves local staging when rollback cannot remove an installed feed', fu
     $file                           = new FailureModeFilesystem;
     $file->failMoveTargets[$second] = 1;
     $file->failDeletes[$first]      = 1;
-    $service                        = new FilesystemService($file);
+    $service                        = failureLocalService($file, $directory);
 
     try {
         expect(fn () => $service->publish($publication, fn (string $staging) => [
@@ -606,7 +617,7 @@ test('reports a rollback failure when the replaced feed cannot be cleared', func
     $file                              = new FailureModeFilesystem;
     $file->failMoveTargets[$ownership] = 1;
     $file->failDeletes[$publication]   = 2;
-    $service                           = new FilesystemService($file);
+    $service                           = failureLocalService($file, $directory);
 
     file_put_contents($publication, 'old');
 
@@ -629,7 +640,7 @@ test('reports a rollback failure when a backup cannot be restored', function () 
     $file                                     = new FailureModeFilesystem;
     $file->failMoveTargets[$ownership]        = 1;
     $file->failBackupRestoresTo[$publication] = true;
-    $service                                  = new FilesystemService($file);
+    $service                                  = failureLocalService($file, $directory);
 
     file_put_contents($publication, 'old');
 

@@ -525,7 +525,7 @@ class FilesystemService
             $this->file->ensureDirectoryExists(dirname($path));
 
             return $this->createTemporaryDirectory(
-                dirname($path),
+                sys_get_temp_dir(),
                 fn () => '.feeds_staging_' . $this->uniqueIdentifier()
             );
         } catch (Throwable $e) {

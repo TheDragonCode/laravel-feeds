@@ -218,16 +218,18 @@ test('treats empty content as a no-op', function () {
     }
 });
 
-test('creates collision-resistant drafts and cleans the staging directory', function () {
-    $directory = (new TemporaryDirectory)->create();
-    $path      = $directory->path('feed.json');
-    $drafts    = [];
+test('creates collision-resistant drafts in system temp and cleans the staging directory', function () {
+    $directory   = (new TemporaryDirectory)->create();
+    $path        = $directory->path('feed.json');
+    $drafts      = [];
+    $stagingPath = null;
 
     try {
-        (new FilesystemService(new Filesystem))->publish($path, function (string $staging) use (&$drafts, $path) {
-            $service = new FilesystemService(new Filesystem);
-            $first   = $service->createDraft('feed.json', $staging);
-            $second  = $service->createDraft('feed.json', $staging);
+        (new FilesystemService(new Filesystem))->publish($path, function (string $staging) use (&$drafts, &$stagingPath, $path) {
+            $stagingPath = $staging;
+            $service     = new FilesystemService(new Filesystem);
+            $first       = $service->createDraft('feed.json', $staging);
+            $second      = $service->createDraft('feed.json', $staging);
 
             $drafts[] = $service->finishDraft($first);
             $drafts[] = $service->finishDraft($second);
@@ -237,6 +239,10 @@ test('creates collision-resistant drafts and cleans the staging directory', func
 
         expect($drafts[0])
             ->not->toBe($drafts[1])
+            ->and(dirname($stagingPath))
+            ->toBe(rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR))
+            ->and($stagingPath)
+            ->not->toBeDirectory()
             ->and($path)
             ->toBeFile()
             ->and(glob($directory->path() . DIRECTORY_SEPARATOR . '.feeds_staging_*'))
@@ -400,26 +406,27 @@ test('keeps draft paths independent from output filenames', function () {
 test('retries staging creation without removing the colliding directory', function () {
     $directory = (new TemporaryDirectory)->create();
     $path      = $directory->path('feed.json');
-    $collision = $directory->path() . DIRECTORY_SEPARATOR . '.feeds_staging_collision';
+    $prefix    = bin2hex(random_bytes(8));
+    $collision = sys_get_temp_dir() . DIRECTORY_SEPARATOR . ".feeds_staging_{$prefix}_collision";
     $sentinel  = $collision . DIRECTORY_SEPARATOR . 'sentinel.txt';
 
     mkdir($collision);
     file_put_contents($sentinel, 'existing');
 
     ControlledIdentifierFilesystemService::reset(
-        'collision',
-        'staging',
-        'draft_directory',
-        'draft_file',
-        'ownership_directory',
-        'ownership_file'
+        "{$prefix}_collision",
+        "{$prefix}_staging",
+        "{$prefix}_draft_directory",
+        "{$prefix}_draft_file",
+        "{$prefix}_ownership_directory",
+        "{$prefix}_ownership_file"
     );
 
     try {
         $service = new ControlledIdentifierFilesystemService(new Filesystem);
 
-        $service->publish($path, function (string $staging) use ($path, $service) {
-            expect(basename($staging))->toBe('.feeds_staging_staging');
+        $service->publish($path, function (string $staging) use ($path, $prefix, $service) {
+            expect(basename($staging))->toBe(".feeds_staging_{$prefix}_staging");
 
             $draft = $service->createDraft('feed.json', $staging);
             $service->append($draft, 'published', $path);
@@ -431,9 +438,13 @@ test('retries staging creation without removing the colliding directory', functi
             ->toBe('published')
             ->and(file_get_contents($sentinel))
             ->toBe('existing')
+            ->and($collision)
+            ->toBeDirectory()
             ->and(glob($directory->path() . DIRECTORY_SEPARATOR . '.feeds_staging_*'))
-            ->toBe([$collision]);
+            ->toBe([]);
     } finally {
+        (new Filesystem)->deleteDirectory($collision);
+
         $directory->delete();
     }
 });
