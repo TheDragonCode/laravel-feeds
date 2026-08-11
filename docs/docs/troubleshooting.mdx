@@ -47,6 +47,10 @@ CSV establishes its columns from the output schema. Every item must produce the 
 
 Inspect the original storage exception and verify disk permissions. On remote disks, account for eventual consistency and non-atomic copy-and-delete moves. Generators on multiple hosts need an external distributed lock when they can publish the same target.
 
+During publication, Laravel Feeds creates a temporary `.feeds_staging_*` directory next to the target path. It removes this directory after a successful publication and after ordinary generation failures. The directory is preserved when rollback fails so that its backups remain available. An interrupted process or a cleanup failure can also leave one behind.
+
+A large or growing number of `.feeds_staging_*` directories indicates repeated publication or cleanup failures. Inspect the generation logs and the original exception, fix the underlying storage, permission, or process failure, and review any preserved backups before deleting stale directories manually.
+
 ## See Also
 
 - [Events and exceptions](./api/events-exceptions.mdx)
