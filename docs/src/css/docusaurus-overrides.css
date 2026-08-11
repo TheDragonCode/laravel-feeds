@@ -93,6 +93,7 @@
 }
 
 .theme-doc-markdown :not(pre) > code {
+    padding: 2px 6px;
     border: 1px solid var(--color-border);
     background: var(--color-code-bg);
     color: var(--color-text);
