@@ -6,6 +6,7 @@ namespace DragonCode\LaravelFeed\Queries;
 
 use DragonCode\LaravelFeed\Exceptions\FeedNotFoundException;
 use DragonCode\LaravelFeed\Models\Feed;
+use DragonCode\LaravelFeed\Scheduling\Expression;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -21,7 +22,7 @@ class FeedQuery
     public function create(
         string $class,
         string $title,
-        string $expression = '0 * * * *',
+        Expression|string $expression = '0 * * * *',
         bool $isActive = true,
         array $extra = [],
     ): Feed {
