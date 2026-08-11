@@ -490,6 +490,29 @@ The `sync` connection executes each job immediately in the console process. Sele
 
 ## Schedule
 
+### Registration expression
+
+Pass either a raw cron expression string or a fluent `DragonCode\LaravelFeed\Scheduling\Expression` when creating a feed registration.
+
+```php
+use App\Feeds\ProductFeed;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
+use DragonCode\LaravelFeed\Scheduling\Expression;
+
+app(FeedQuery::class)->create(
+    class: ProductFeed::class,
+    title: 'Products',
+    expression: (new Expression)
+        ->weekly()
+        ->mondays()
+        ->at('13:00'),
+);
+```
+
+The fluent example stores `0 13 * * 1`. Raw strings, including aliases supported by `dragonmantank/cron-expression` such as `@daily`, remain supported.
+
+Available fluent methods follow the schedule frequency options provided by the installed Laravel version. See the [Laravel 13 frequency reference](https://laravel.com/docs/13.x/scheduling#schedule-frequency-options) for the current list. Only methods whose result can be stored as a stable five-field cron expression are exposed. Sub-minute intervals, timezones, time-window constraints, and `lastDayOfMonth()` are not available on this value object.
+
 ### Automatic
 
 To automate feed generation, use a [schedule](https://laravel.com/docs/scheduling#running-the-scheduler). To do this, specify the helper call in the `routes/console.php` file (the default path, unless you have changed it):
@@ -3361,7 +3384,7 @@ $result = app(GeneratorService::class)->feed(
 
 | Method | Result |
 | --- | --- |
-| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Creates a registration. |
+| `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Creates a registration. |
 | `find(int $id): Feed` | Returns a registration or throws `FeedNotFoundException`. |
 | `all(): Builder` | Returns all registrations ordered by ID. |
 | `active(): Builder` | Returns active registrations ordered by ID. |
@@ -3369,6 +3392,8 @@ $result = app(GeneratorService::class)->feed(
 | `delete(int $id): void` | Soft-deletes a registration by ID. |
 | `deleteByClass(string $class): void` | Permanently removes registrations for a class, including trashed rows. |
 | `restore(int $id): void` | Restores a soft-deleted registration. |
+
+`$expression` accepts a raw cron expression string, including aliases supported by `dragonmantank/cron-expression` such as `@daily`, or `DragonCode\LaravelFeed\Scheduling\Expression`. Fluent values are converted to their cron string before validation and persistence. Reading the model returns the stored string. See [registration expressions](https://feeds.dragon-code.pro/generation/#registration_expression) for an example.
 
 Use the generated migration or deployment operation for normal registration changes so they remain reproducible across environments.
 

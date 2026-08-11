@@ -128,6 +128,29 @@ FEED_QUEUE_UNIQUE_TTL=3600
 
 ## Расписание {/* #schedule */}
 
+### Выражение расписания {/* #registration_expression */}
+
+При создании записи фида передайте обычную строку cron-выражения или объект `DragonCode\LaravelFeed\Scheduling\Expression` с цепочкой методов.
+
+```php
+use App\Feeds\ProductFeed;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
+use DragonCode\LaravelFeed\Scheduling\Expression;
+
+app(FeedQuery::class)->create(
+    class: ProductFeed::class,
+    title: 'Products',
+    expression: (new Expression)
+        ->weekly()
+        ->mondays()
+        ->at('13:00'),
+);
+```
+
+Пример с цепочкой методов сохраняет `0 13 * * 1`. Обычные строки, включая поддерживаемые `dragonmantank/cron-expression` псевдонимы вроде `@daily`, по-прежнему можно передавать напрямую.
+
+Доступные методы соответствуют вариантам частоты, которые предоставляет установленная версия Laravel. Актуальный список для Laravel 13 приведён в [справочнике по частоте](https://laravel.com/docs/13.x/scheduling#schedule-frequency-options). Доступны только методы, результат которых можно сохранить как стабильное пятичастное выражение cron. Интервалы короче минуты, часовые пояса, ограничения по времени и `lastDayOfMonth()` в этом объекте недоступны.
+
 ### Автоматическое {/* #automatic */}
 
 Чтобы автоматизировать генерацию фидов, используйте [планировщик](https://laravel.com/docs/scheduling#running-the-scheduler). Для этого добавьте вызов вспомогательного класса в файл `routes/console.php`, если стандартный путь не был изменён:

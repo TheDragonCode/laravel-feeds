@@ -56,7 +56,7 @@ $result = app(GeneratorService::class)->feed(
 
 | 方法 | 结果 |
 | --- | --- |
-| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | 创建注册记录。 |
+| `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | 创建注册记录。 |
 | `find(int $id): Feed` | 返回注册记录，找不到时抛出 `FeedNotFoundException`。 |
 | `all(): Builder` | 返回按 ID 排序的所有注册记录。 |
 | `active(): Builder` | 返回按 ID 排序的已启用注册记录。 |
@@ -64,6 +64,8 @@ $result = app(GeneratorService::class)->feed(
 | `delete(int $id): void` | 按 ID 软删除注册记录。 |
 | `deleteByClass(string $class): void` | 永久删除指定类的注册记录，包括已软删除的行。 |
 | `restore(int $id): void` | 恢复软删除的注册记录。 |
+
+`$expression` 可接受原始 cron 表达式字符串，包括 `dragonmantank/cron-expression` 支持的 `@daily` 等别名，也可接受 `DragonCode\LaravelFeed\Scheduling\Expression`。链式构建的值会先转换为 cron 字符串，再进行验证和持久化。读取模型时返回已存储的字符串。示例请参阅[注册表达式](../generation.mdx#registration_expression)。
 
 常规注册变更应使用生成的迁移或部署操作，以便在不同环境中重现。
 

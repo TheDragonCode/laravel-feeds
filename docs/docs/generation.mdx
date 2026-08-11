@@ -128,6 +128,29 @@ The `sync` connection executes each job immediately in the console process. Sele
 
 ## Schedule {/* #schedule */}
 
+### Registration expression {/* #registration_expression */}
+
+Pass either a raw cron expression string or a fluent `DragonCode\LaravelFeed\Scheduling\Expression` when creating a feed registration.
+
+```php
+use App\Feeds\ProductFeed;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
+use DragonCode\LaravelFeed\Scheduling\Expression;
+
+app(FeedQuery::class)->create(
+    class: ProductFeed::class,
+    title: 'Products',
+    expression: (new Expression)
+        ->weekly()
+        ->mondays()
+        ->at('13:00'),
+);
+```
+
+The fluent example stores `0 13 * * 1`. Raw strings, including aliases supported by `dragonmantank/cron-expression` such as `@daily`, remain supported.
+
+Available fluent methods follow the schedule frequency options provided by the installed Laravel version. See the [Laravel 13 frequency reference](https://laravel.com/docs/13.x/scheduling#schedule-frequency-options) for the current list. Only methods whose result can be stored as a stable five-field cron expression are exposed. Sub-minute intervals, timezones, time-window constraints, and `lastDayOfMonth()` are not available on this value object.
+
 ### Automatic {/* #automatic */}
 
 To automate feed generation, use a [schedule](https://laravel.com/docs/scheduling#running-the-scheduler). To do this, specify the helper call in the `routes/console.php` file (the default path, unless you have changed it):

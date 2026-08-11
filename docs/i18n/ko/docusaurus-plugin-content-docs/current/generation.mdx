@@ -128,6 +128,29 @@ FEED_QUEUE_UNIQUE_TTL=3600
 
 ## 스케줄 {/* #schedule */}
 
+### 등록 표현식 {/* #registration_expression */}
+
+피드 등록 정보를 생성할 때 원시 cron 표현식 문자열을 전달하거나, `DragonCode\LaravelFeed\Scheduling\Expression`을 메서드 체인으로 구성해 전달할 수 있습니다.
+
+```php
+use App\Feeds\ProductFeed;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
+use DragonCode\LaravelFeed\Scheduling\Expression;
+
+app(FeedQuery::class)->create(
+    class: ProductFeed::class,
+    title: 'Products',
+    expression: (new Expression)
+        ->weekly()
+        ->mondays()
+        ->at('13:00'),
+);
+```
+
+메서드 체인 예제는 `0 13 * * 1`을 저장합니다. `dragonmantank/cron-expression`이 지원하는 `@daily` 같은 별칭을 포함한 원시 문자열도 계속 지원됩니다.
+
+사용 가능한 메서드 체인은 설치된 Laravel 버전이 제공하는 스케줄 빈도 옵션을 따릅니다. 현재 목록은 [Laravel 13 빈도 참고 문서](https://laravel.com/docs/13.x/scheduling#schedule-frequency-options)를 참조하십시오. 결과를 안정적인 5개 필드 cron 표현식으로 저장할 수 있는 메서드만 제공됩니다. 이 값 객체에서는 1분 미만 간격, 시간대, 시간 구간 제약 조건 및 `lastDayOfMonth()`을 사용할 수 없습니다.
+
 ### 자동 {/* #automatic */}
 
 피드 생성을 자동화하려면 [스케줄](https://laravel.com/docs/scheduling#running-the-scheduler)을 사용하십시오. 변경하지 않았다면 기본 경로인 `routes/console.php` 파일에 헬퍼 호출을 지정합니다.

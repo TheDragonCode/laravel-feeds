@@ -128,6 +128,29 @@ FEED_QUEUE_UNIQUE_TTL=3600
 
 ## 调度 {/* #schedule */}
 
+### 注册表达式 {/* #registration_expression */}
+
+创建 Feed 注册记录时，可以直接传入原始 cron 表达式字符串，也可以传入以链式方式构建的 `DragonCode\LaravelFeed\Scheduling\Expression`。
+
+```php
+use App\Feeds\ProductFeed;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
+use DragonCode\LaravelFeed\Scheduling\Expression;
+
+app(FeedQuery::class)->create(
+    class: ProductFeed::class,
+    title: 'Products',
+    expression: (new Expression)
+        ->weekly()
+        ->mondays()
+        ->at('13:00'),
+);
+```
+
+链式调用示例会保存 `0 13 * * 1`。仍然支持原始字符串，包括 `dragonmantank/cron-expression` 支持的 `@daily` 等别名。
+
+可用的链式方法取决于已安装 Laravel 版本提供的调度频率选项。当前列表请参阅 [Laravel 13 频率参考](https://laravel.com/docs/13.x/scheduling#schedule-frequency-options)。只有结果能保存为稳定五字段 cron 表达式的方法才会公开。此值对象不支持少于一分钟的间隔、时区、时间窗口约束以及 `lastDayOfMonth()`。
+
 ### 自动调度 {/* #automatic */}
 
 要自动生成 Feed，请使用[任务调度](https://laravel.com/docs/scheduling#running-the-scheduler)。在 `routes/console.php` 文件中调用辅助类即可；除非已更改配置，否则这是默认路径：

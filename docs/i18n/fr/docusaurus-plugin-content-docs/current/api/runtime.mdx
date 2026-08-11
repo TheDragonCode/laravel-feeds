@@ -56,7 +56,7 @@ $result = app(GeneratorService::class)->feed(
 
 | Méthode | Résultat |
 | --- | --- |
-| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Crée un enregistrement. |
+| `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Crée un enregistrement. |
 | `find(int $id): Feed` | Renvoie un enregistrement ou lève `FeedNotFoundException`. |
 | `all(): Builder` | Renvoie tous les enregistrements triés par identifiant. |
 | `active(): Builder` | Renvoie les enregistrements actifs triés par identifiant. |
@@ -64,6 +64,8 @@ $result = app(GeneratorService::class)->feed(
 | `delete(int $id): void` | Supprime temporairement un enregistrement par identifiant. |
 | `deleteByClass(string $class): void` | Supprime définitivement les enregistrements d’une classe, y compris ceux déjà supprimés. |
 | `restore(int $id): void` | Restaure un enregistrement supprimé temporairement. |
+
+`$expression` accepte une chaîne d’expression cron brute, y compris les alias pris en charge par `dragonmantank/cron-expression` comme `@daily`, ou `DragonCode\LaravelFeed\Scheduling\Expression`. Les valeurs configurées avec l’API fluide sont converties en chaîne cron avant leur validation et leur persistance. La lecture du modèle renvoie la chaîne enregistrée. Consultez [les expressions d’enregistrement](../generation.mdx#registration_expression) pour voir un exemple.
 
 Utilisez la migration ou l’opération de déploiement générée pour les changements habituels afin de les reproduire dans tous les environnements.
 
