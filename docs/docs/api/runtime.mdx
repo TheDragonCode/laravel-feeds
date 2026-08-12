@@ -56,7 +56,7 @@ $result = app(GeneratorService::class)->feed(
 
 | Method | Result |
 | --- | --- |
-| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Creates a registration. |
+| `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Creates a registration. |
 | `find(int $id): Feed` | Returns a registration or throws `FeedNotFoundException`. |
 | `all(): Builder` | Returns all registrations ordered by ID. |
 | `active(): Builder` | Returns active registrations ordered by ID. |
@@ -64,6 +64,8 @@ $result = app(GeneratorService::class)->feed(
 | `delete(int $id): void` | Soft-deletes a registration by ID. |
 | `deleteByClass(string $class): void` | Permanently removes registrations for a class, including trashed rows. |
 | `restore(int $id): void` | Restores a soft-deleted registration. |
+
+`$expression` accepts a raw cron expression string, including aliases supported by `dragonmantank/cron-expression` such as `@daily`, or `DragonCode\LaravelFeed\Scheduling\Expression`. Fluent values are converted to their cron string before validation and persistence. Reading the model returns the stored string. See [registration expressions](../generation.mdx#registration_expression) for an example.
 
 Use the generated migration or deployment operation for normal registration changes so they remain reproducible across environments.
 

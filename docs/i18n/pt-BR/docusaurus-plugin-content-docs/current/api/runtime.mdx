@@ -56,7 +56,7 @@ $result = app(GeneratorService::class)->feed(
 
 | Método | Resultado |
 | --- | --- |
-| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Cria um registro. |
+| `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Cria um registro. |
 | `find(int $id): Feed` | Retorna um registro ou lança `FeedNotFoundException`. |
 | `all(): Builder` | Retorna todos os registros ordenados por ID. |
 | `active(): Builder` | Retorna registros ativos ordenados por ID. |
@@ -64,6 +64,8 @@ $result = app(GeneratorService::class)->feed(
 | `delete(int $id): void` | Exclui logicamente um registro pelo ID. |
 | `deleteByClass(string $class): void` | Remove definitivamente registros da classe, inclusive os excluídos. |
 | `restore(int $id): void` | Restaura um registro excluído logicamente. |
+
+`$expression` aceita uma string de expressão cron bruta, inclusive aliases compatíveis com `dragonmantank/cron-expression`, como `@daily`, ou `DragonCode\LaravelFeed\Scheduling\Expression`. Valores configurados por chamadas fluentes são convertidos na respectiva string cron antes da validação e da persistência. A leitura do modelo retorna a string armazenada. Veja [expressões de registro](../generation.mdx#registration_expression) para um exemplo.
 
 Use a migration ou a operação de implantação gerada para alterações comuns, mantendo-as reproduzíveis entre ambientes.
 

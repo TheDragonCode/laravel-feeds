@@ -56,7 +56,7 @@ $result = app(GeneratorService::class)->feed(
 
 | Метад | Вынік |
 | --- | --- |
-| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Стварае рэгістрацыю. |
+| `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Стварае рэгістрацыю. |
 | `find(int $id): Feed` | Вяртае рэгістрацыю або кідае `FeedNotFoundException`. |
 | `all(): Builder` | Вяртае ўсе рэгістрацыі, упарадкаваныя па ідэнтыфікатары. |
 | `active(): Builder` | Вяртае актыўныя рэгістрацыі, упарадкаваныя па ідэнтыфікатары. |
@@ -64,6 +64,8 @@ $result = app(GeneratorService::class)->feed(
 | `delete(int $id): void` | Мякка выдаляе рэгістрацыю па ідэнтыфікатары. |
 | `deleteByClass(string $class): void` | Канчаткова выдаляе рэгістрацыі класа, у тым ліку раней выдаленыя. |
 | `restore(int $id): void` | Аднаўляе мякка выдаленую рэгістрацыю. |
+
+`$expression` прымае звычайны радок з выразам cron, у тым ліку псеўданімы накшталт `@daily`, якія падтрымлівае `dragonmantank/cron-expression`, або `DragonCode\LaravelFeed\Scheduling\Expression`. Аб'екты з ланцужковымі выклікамі пераўтвараюцца ў радок cron да праверкі і захавання. Пры чытанні мадэлі вяртаецца захаваны радок. Прыклад прыведзены ў раздзеле [«Выраз пры рэгістрацыі»](../generation.mdx#registration_expression).
 
 Для звычайных змяненняў рэгістрацыі выкарыстоўвайце згенераваную міграцыю або аперацыю разгортвання, каб іх можна было паўтарыць у кожным асяроддзі.
 

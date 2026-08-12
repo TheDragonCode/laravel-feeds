@@ -128,6 +128,29 @@ FEED_QUEUE_UNIQUE_TTL=3600
 
 ## Розклад {/* #schedule */}
 
+### Вираз під час реєстрації {/* #registration_expression */}
+
+Під час створення реєстрації фіду передайте звичайний рядок cron-виразу або об’єкт `DragonCode\LaravelFeed\Scheduling\Expression` із ланцюжковими викликами.
+
+```php
+use App\Feeds\ProductFeed;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
+use DragonCode\LaravelFeed\Scheduling\Expression;
+
+app(FeedQuery::class)->create(
+    class: ProductFeed::class,
+    title: 'Products',
+    expression: (new Expression)
+        ->weekly()
+        ->mondays()
+        ->at('13:00'),
+);
+```
+
+У прикладі з ланцюжковими викликами зберігається `0 13 * * 1`. Звичайні рядки, зокрема підтримувані `dragonmantank/cron-expression` псевдоніми на кшталт `@daily`, і далі можна передавати безпосередньо.
+
+Доступні методи з ланцюжковими викликами відповідають варіантам частоти в установленій версії Laravel. Актуальний список для Laravel 13 наведено в [довіднику з частоти](https://laravel.com/docs/13.x/scheduling#schedule-frequency-options). Доступні лише методи, результат яких можна зберегти як стабільний cron-вираз із п’ятьма полями. Інтервали коротші за хвилину, часові пояси, обмеження часовими вікнами та `lastDayOfMonth()` недоступні для цього об’єкта-значення.
+
 ### Автоматичний {/* #automatic */}
 
 Для автоматичного генерування фідів використовуйте [розклад](https://laravel.com/docs/scheduling#running-the-scheduler). Додайте виклик допоміжного класу до файлу `routes/console.php`, якщо ви не змінили типовий шлях:

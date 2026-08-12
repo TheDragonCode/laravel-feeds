@@ -779,6 +779,11 @@
                 },
                 {
                     "level": 3,
+                    "id": "registration_expression",
+                    "text": "Registration expression"
+                },
+                {
+                    "level": 3,
                     "id": "automatic",
                     "text": "Automatic"
                 },

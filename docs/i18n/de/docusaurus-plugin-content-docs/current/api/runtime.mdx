@@ -56,7 +56,7 @@ $result = app(GeneratorService::class)->feed(
 
 | Methode | Ergebnis |
 | --- | --- |
-| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Erstellt eine Registrierung. |
+| `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Erstellt eine Registrierung. |
 | `find(int $id): Feed` | Gibt eine Registrierung zurück oder löst `FeedNotFoundException` aus. |
 | `all(): Builder` | Gibt alle Registrierungen nach ID sortiert zurück. |
 | `active(): Builder` | Gibt aktive Registrierungen nach ID sortiert zurück. |
@@ -64,6 +64,8 @@ $result = app(GeneratorService::class)->feed(
 | `delete(int $id): void` | Löscht eine Registrierung anhand der ID vorläufig. |
 | `deleteByClass(string $class): void` | Entfernt Registrierungen einer Klasse einschließlich gelöschter Zeilen endgültig. |
 | `restore(int $id): void` | Stellt eine vorläufig gelöschte Registrierung wieder her. |
+
+`$expression` akzeptiert einen direkten Cron-Ausdruck als Zeichenfolge einschließlich von `dragonmantank/cron-expression` unterstützter Aliase wie `@daily` oder `DragonCode\LaravelFeed\Scheduling\Expression`. Mit der Fluent-API konfigurierte Werte werden vor der Validierung und Speicherung in ihre Cron-Zeichenfolge umgewandelt. Beim Lesen des Modells wird die gespeicherte Zeichenfolge zurückgegeben. Ein Beispiel finden Sie unter [Registrierungsausdrücke](../generation.mdx#registration_expression).
 
 Verwenden Sie für normale Registrierungsänderungen die erzeugte Migration oder Deployment-Operation, damit sie in allen Umgebungen reproduzierbar bleiben.
 

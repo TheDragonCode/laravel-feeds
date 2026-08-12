@@ -56,7 +56,7 @@ $result = app(GeneratorService::class)->feed(
 
 | Метод | Результат |
 | --- | --- |
-| `create(string $class, string $title, string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Создаёт запись. |
+| `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Создаёт запись. |
 | `find(int $id): Feed` | Возвращает запись или выбрасывает `FeedNotFoundException`. |
 | `all(): Builder` | Возвращает все записи по идентификатору. |
 | `active(): Builder` | Возвращает активные записи по идентификатору. |
@@ -64,6 +64,8 @@ $result = app(GeneratorService::class)->feed(
 | `delete(int $id): void` | Мягко удаляет запись по идентификатору. |
 | `deleteByClass(string $class): void` | Окончательно удаляет записи класса, включая ранее удалённые. |
 | `restore(int $id): void` | Восстанавливает мягко удалённую запись. |
+
+`$expression` принимает обычную строку cron-выражения, включая поддерживаемые `dragonmantank/cron-expression` псевдонимы вроде `@daily`, или `DragonCode\LaravelFeed\Scheduling\Expression`. Объект с цепочкой методов преобразуется в cron-строку до проверки и сохранения. При чтении модель возвращает сохранённую строку. Пример приведён в разделе [«Выражение расписания»](../generation.mdx#registration_expression).
 
 Для обычных изменений используйте сгенерированную миграцию или операцию развёртывания, чтобы они воспроизводились во всех окружениях.
 
