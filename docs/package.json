@@ -51,7 +51,7 @@
         "@docusaurus/tsconfig": "3.10.2",
         "@docusaurus/types": "3.10.2",
         "@lhci/cli": "^0.15.1",
-        "@playwright/test": "^1.62.1",
+        "@playwright/test": "^1.63.0",
         "@types/react": "^19.2.18",
         "typescript": "~6.0.3"
     },
