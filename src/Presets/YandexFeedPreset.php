@@ -46,7 +46,7 @@ abstract class YandexFeedPreset extends Feed
     {
         return "</shop>\n</yml_catalog>";
     }
-    
+
     protected function time(): string
     {
         return Carbon::now()->toIso8601String();
