@@ -633,7 +633,7 @@ class FilesystemService
             return $this->decodeOwnership(
                 $this->file->get($ownershipPath),
                 fn (string $filename) => $this->pathInDirectory($path, $filename),
-                fn (string $target)   => $this->pathKey($target),
+                fn (string $target) => $this->pathKey($target),
             );
         } catch (Throwable $e) {
             throw new RuntimeException(
@@ -659,7 +659,7 @@ class FilesystemService
             return $this->decodeOwnership(
                 $storage->read($ownershipPath),
                 fn (string $filename) => $this->storagePathInDirectory($path, $filename),
-                fn (string $target)   => $this->storagePathKey($target),
+                fn (string $target) => $this->storagePathKey($target),
             );
         } catch (Throwable $e) {
             throw new RuntimeException(
@@ -729,9 +729,9 @@ class FilesystemService
             $path,
             $targets,
             $ownership,
-            fn (string $target)   => $this->file->exists($target),
+            fn (string $target) => $this->file->exists($target),
             fn (string $filename) => $this->pathInDirectory($path, $filename),
-            fn (string $target)   => $this->pathKey($target),
+            fn (string $target) => $this->pathKey($target),
         );
     }
 
@@ -745,9 +745,9 @@ class FilesystemService
             $path,
             $targets,
             $ownership,
-            fn (string $target)   => $storage->fileExists($target),
+            fn (string $target) => $storage->fileExists($target),
             fn (string $filename) => $this->storagePathInDirectory($path, $filename),
-            fn (string $target)   => $this->storagePathKey($target),
+            fn (string $target) => $this->storagePathKey($target),
         );
     }
 
@@ -800,9 +800,9 @@ class FilesystemService
         return $this->publicationOwnedPaths(
             $path,
             $ownership,
-            fn (string $target)   => $this->file->exists($target),
+            fn (string $target) => $this->file->exists($target),
             fn (string $filename) => $this->pathInDirectory($path, $filename),
-            fn (string $target)   => $this->pathKey($target),
+            fn (string $target) => $this->pathKey($target),
         );
     }
 
@@ -814,9 +814,9 @@ class FilesystemService
         return $this->publicationOwnedPaths(
             $path,
             $ownership,
-            fn (string $target)   => $storage->fileExists($target),
+            fn (string $target) => $storage->fileExists($target),
             fn (string $filename) => $this->storagePathInDirectory($path, $filename),
-            fn (string $target)   => $this->storagePathKey($target),
+            fn (string $target) => $this->storagePathKey($target),
         );
     }
 
@@ -852,7 +852,7 @@ class FilesystemService
             $targets,
             $ownership,
             fn (string $filename) => $this->pathInDirectory($path, $filename),
-            fn (string $target)   => $this->pathKey($target),
+            fn (string $target) => $this->pathKey($target),
         );
     }
 
@@ -863,7 +863,7 @@ class FilesystemService
             $targets,
             $ownership,
             fn (string $filename) => $this->storagePathInDirectory($path, $filename),
-            fn (string $target)   => $this->storagePathKey($target),
+            fn (string $target) => $this->storagePathKey($target),
         );
     }
 
@@ -1124,7 +1124,7 @@ class FilesystemService
             $path,
             $drafts,
             fn (string $target, string $publication) => $this->isPublicationPath($target, $publication),
-            fn (string $target)                      => $this->pathKey($target),
+            fn (string $target) => $this->pathKey($target),
         );
     }
 
@@ -1138,7 +1138,7 @@ class FilesystemService
             $path,
             $drafts,
             fn (string $target, string $publication) => $this->isStoragePublicationPath($target, $publication),
-            fn (string $target)                      => $this->storagePathKey($target),
+            fn (string $target) => $this->storagePathKey($target),
         );
     }
 
