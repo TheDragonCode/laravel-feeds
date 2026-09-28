@@ -33,7 +33,7 @@ abstract class YandexFeedPreset extends Feed
 
     public function header(): string
     {
-        $date = Carbon::now()->toIso8601String();
+        $date = $this->time();
 
         return <<<XML
             <!DOCTYPE yml_catalog SYSTEM "shops.dtd">
@@ -45,5 +45,10 @@ abstract class YandexFeedPreset extends Feed
     public function footer(): string
     {
         return "</shop>\n</yml_catalog>";
+    }
+    
+    protected function time(): string
+    {
+        return Carbon::now()->toIso8601String();
     }
 }
