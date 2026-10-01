@@ -28,4 +28,9 @@ class ReceiptRssFeed extends RssFeedPreset
             ->publishedAt($model->updated_at) // By default, $model->created_at ?? Carbon::now()
             ->additional(['foo' => 'bar']); // By default, []
     }
+
+    public function filename(): string
+    {
+        return 'receipt-rss.xml';
+    }
 }
