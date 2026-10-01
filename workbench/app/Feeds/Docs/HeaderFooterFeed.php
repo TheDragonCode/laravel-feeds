@@ -27,6 +27,6 @@ class HeaderFooterFeed extends Feed
 
     public function filename(): string
     {
-        return '../../../../../../../../../docs/snippets/advanced-element-header-footer.xml';
+        return 'advanced-element-header-footer.xml';
     }
 }

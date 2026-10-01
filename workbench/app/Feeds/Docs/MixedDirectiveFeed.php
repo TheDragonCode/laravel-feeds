@@ -25,6 +25,6 @@ class MixedDirectiveFeed extends Feed
 
     public function filename(): string
     {
-        return '../../../../../../../../../docs/snippets/advanced-directive-mixed.xml';
+        return 'advanced-directive-mixed.xml';
     }
 }

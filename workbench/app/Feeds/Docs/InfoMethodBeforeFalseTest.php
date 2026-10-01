@@ -33,6 +33,6 @@ class InfoMethodBeforeFalseTest extends Feed
 
     public function filename(): string
     {
-        return '../../../../../../../../../docs/snippets/advanced-element-info-before-false.xml';
+        return 'advanced-element-info-before-false.xml';
     }
 }

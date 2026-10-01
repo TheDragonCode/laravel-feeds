@@ -25,6 +25,6 @@ class ValueDirectiveFeed extends Feed
 
     public function filename(): string
     {
-        return '../../../../../../../../../docs/snippets/advanced-directive-value.xml';
+        return 'advanced-directive-value.xml';
     }
 }

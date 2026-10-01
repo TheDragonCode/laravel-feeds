@@ -32,6 +32,6 @@ class AttributesDirectiveFeed extends Feed
 
     public function filename(): string
     {
-        return '../../../../../../../../../docs/snippets/advanced-directive-attributes.xml';
+        return 'advanced-directive-attributes.xml';
     }
 }
