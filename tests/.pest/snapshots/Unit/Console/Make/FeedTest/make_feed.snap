@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
 
-class FooBarFeed extends Feed
+final class FooBarFeed extends Feed
 {
     public function builder(): Builder
     {
