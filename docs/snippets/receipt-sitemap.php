@@ -27,6 +27,6 @@ class ProductFeed extends SitemapFeedPreset
 
     public function filename(): string
     {
-        return 'receipt-sitemap.xml';
+        return 'sitemaps/' . parent::filename();
     }
 }
