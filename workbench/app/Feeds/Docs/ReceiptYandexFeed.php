@@ -59,6 +59,6 @@ class ReceiptYandexFeed extends YandexFeedPreset
 
     public function filename(): string
     {
-        return 'receipt-yandex-feed.xml';
+        return 'receipt-yandex.xml';
     }
 }

@@ -12,14 +12,14 @@ dataset('docs receipts', [
         'feed' => ReceiptSitemapFeed::class,
 
         'files' => [
-            'ReceiptSitemapFeed' => 'receipt-sitemap-feed.php',
+            'ReceiptSitemapFeed' => 'receipt-sitemap.php',
         ],
 
         'replaces' => [
             'ReceiptSitemapFeed'       => 'ProductFeed',
             'Workbench\App\Feeds\Docs' => 'App\Feeds\Sitemaps',
 
-            '\'receipt-sitemap-feed.xml\'' => '\'sitemaps/\' . parent::filename()',
+            '\'receipt-sitemap.xml\'' => '\'sitemaps/\' . parent::filename()',
         ],
     ],
 
@@ -27,14 +27,14 @@ dataset('docs receipts', [
         'feed' => ReceiptInstagramFeed::class,
 
         'files' => [
-            'ReceiptInstagramFeed' => 'receipt-instagram-feed.php',
+            'ReceiptInstagramFeed' => 'receipt-instagram.php',
         ],
 
         'replaces' => [
             'ReceiptInstagramFeed'     => 'InstagramFeed',
             'Workbench\App\Feeds\Docs' => 'App\Feeds',
 
-            'receipt-instagram-feed.xml' => 'instagram.xml',
+            'receipt-instagram.xml' => 'instagram.xml',
         ],
     ],
 
@@ -42,14 +42,14 @@ dataset('docs receipts', [
         'feed' => ReceiptYandexFeed::class,
 
         'files' => [
-            'ReceiptYandexFeed' => 'receipt-yandex-feed.php',
+            'ReceiptYandexFeed' => 'receipt-yandex.php',
         ],
 
         'replaces' => [
             'ReceiptYandexFeed'        => 'YandexFeed',
             'Workbench\App\Feeds\Docs' => 'App\Feeds',
 
-            'receipt-yandex-feed.xml' => 'yandex.xml',
+            'receipt-yandex.xml' => 'yandex.xml',
         ],
     ],
 
@@ -57,14 +57,14 @@ dataset('docs receipts', [
         'feed' => ReceiptRssFeed::class,
 
         'files' => [
-            'ReceiptRssFeed' => 'receipt-rss-feed.php',
+            'ReceiptRssFeed' => 'receipt-rss.php',
         ],
 
         'replaces' => [
             'ReceiptRssFeed'           => 'RssFeed',
             'Workbench\App\Feeds\Docs' => 'App\Feeds',
 
-            'receipt-rss-feed.xml' => 'rss.xml',
+            'receipt-rss.xml' => 'rss.xml',
         ],
     ],
 ]);

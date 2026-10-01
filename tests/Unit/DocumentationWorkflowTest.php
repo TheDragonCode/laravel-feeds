@@ -130,6 +130,13 @@ test('validates Docusaurus for documentation pushes, pull requests, and manual r
     $commands   = array_column($steps, 'run');
     $eventNames = array_keys($workflow['on']);
 
+    $packageLock = json_decode(
+        file_get_contents(dirname(__DIR__, 2) . '/docs/package-lock.json'),
+        true,
+        flags: JSON_THROW_ON_ERROR,
+    );
+    $playwrightVersion = $packageLock['packages']['node_modules/@playwright/test']['version'];
+
     expect($eventNames)->toContain('push', 'pull_request', 'workflow_dispatch')
         ->and($workflow['permissions'])->toBe(['contents' => 'read'])
         ->and($workflow['concurrency']['cancel-in-progress'])->toBeTrue()
@@ -141,7 +148,7 @@ test('validates Docusaurus for documentation pushes, pull requests, and manual r
             '.github/workflows/test-docs.yml'
         )
         ->and($build['container'])->toBe([
-            'image'   => 'mcr.microsoft.com/playwright:v1.62.1-noble',
+            'image'   => 'mcr.microsoft.com/playwright:v' . $playwrightVersion . '-noble',
             'options' => '--ipc=host',
         ])
         ->and($build['defaults']['run']['working-directory'])->toBe('docs')

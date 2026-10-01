@@ -27,6 +27,6 @@ class ReceiptSitemapFeed extends SitemapFeedPreset
 
     public function filename(): string
     {
-        return 'receipt-sitemap-feed.xml';
+        return 'receipt-sitemap.xml';
     }
 }

@@ -40,6 +40,11 @@ jobs:
             -   name: Setup GitHub Pages
                 uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
 
+            -   name: Configure SWC native cache
+                run: |
+                    swc_cache="$(mktemp -d /tmp/swc-native.XXXXXX)"
+                    printf 'SWC_NATIVE_BINDING_CACHE=%s\n' "$swc_cache" >> "$GITHUB_ENV"
+
             -   name: Install dependencies
                 run: npm ci
 

@@ -27,7 +27,7 @@ jobs:
         name: Documentation quality gates
         runs-on: ubuntu-latest
         container:
-            image: mcr.microsoft.com/playwright:v1.62.1-noble
+            image: mcr.microsoft.com/playwright:v1.63.0-noble
             options: --ipc=host
         timeout-minutes: 25
         defaults:
@@ -46,6 +46,11 @@ jobs:
                     node-version-file: docs/.node-version
                     cache: npm
                     cache-dependency-path: docs/package-lock.json
+
+            -   name: Configure SWC native cache
+                run: |
+                    swc_cache="$(mktemp -d /tmp/swc-native.XXXXXX)"
+                    printf 'SWC_NATIVE_BINDING_CACHE=%s\n' "$swc_cache" >> "$GITHUB_ENV"
 
             -   name: Install dependencies
                 run: npm ci
