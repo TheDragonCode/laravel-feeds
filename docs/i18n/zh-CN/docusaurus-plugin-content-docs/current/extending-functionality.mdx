@@ -94,7 +94,7 @@ class ProductFeed extends Feed
 
 例如，以下代码为 `Feed` 类添加 `customFilename` 方法：
 
-```php source="docs/snippets/advanced-extends-macro-feed.php" lines="5-"
+```php source="docs/snippets/advanced-extends-macro.php" lines="5-"
 use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Support\ServiceProvider;
 
@@ -241,7 +241,7 @@ class FeedDateTimeTransformer extends DateTimeTransformer
 
 然后从 Feed 中返回该转换器：
 
-```php source="docs/snippets/advanced-extends-transformer-feed.php" lines="5-"
+```php source="docs/snippets/advanced-extends-transformer.php" lines="5-"
 namespace App\Feeds;
 
 use App\Feeds\Transformers\FeedDateTimeTransformer;
