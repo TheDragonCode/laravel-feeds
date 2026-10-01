@@ -56,9 +56,4 @@ class ReceiptYandexFeed extends YandexFeedPreset
                 'foo' => 'bar',
             ]);
     }
-
-    public function filename(): string
-    {
-        return 'receipt-yandex-feed.xml';
-    }
 }

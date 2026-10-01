@@ -24,9 +24,4 @@ class ReceiptSitemapFeed extends SitemapFeedPreset
             ->modifiedAt($model->updated_at) // By default, $model->updated_at
             ->priority(0.9); // By default, 0.9
     }
-
-    public function filename(): string
-    {
-        return 'receipt-sitemap-feed.xml';
-    }
 }
