@@ -31,6 +31,6 @@ class RssFeed extends RssFeedPreset
 
     public function filename(): string
     {
-        return 'rss.xml';
+        return '../../../../../../../../../docs/snippets/receipt-rss-feed.xml';
     }
 }

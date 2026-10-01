@@ -98,6 +98,7 @@ abstract class Feed
     {
         return $this->filename ??= Str::of(static::class)
             ->after($this->laravel->getNamespace() . 'Feeds\\')
+            ->beforeLast('Feed')
             ->ltrim('\\')
             ->replace('\\', ' ')
             ->kebab()
