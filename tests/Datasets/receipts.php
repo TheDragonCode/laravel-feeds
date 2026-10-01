@@ -19,7 +19,7 @@ dataset('docs receipts', [
             'ReceiptSitemapFeed'       => 'ProductFeed',
             'Workbench\App\Feeds\Docs' => 'App\Feeds\Sitemaps',
 
-            '\'../../../../../../../../../docs/snippets/receipt-sitemap.xml\'' => '\'sitemaps/\' . parent::filename()',
+            '\'receipt-sitemap-feed.xml\'' => '\'sitemaps/\' . parent::filename()',
         ],
     ],
 
@@ -34,7 +34,7 @@ dataset('docs receipts', [
             'ReceiptInstagramFeed'     => 'InstagramFeed',
             'Workbench\App\Feeds\Docs' => 'App\Feeds',
 
-            '../../../../../../../../../docs/snippets/receipt-instagram.xml' => 'instagram.xml',
+            'receipt-instagram-feed.xml' => 'instagram.xml',
         ],
     ],
 
@@ -49,7 +49,7 @@ dataset('docs receipts', [
             'ReceiptYandexFeed'        => 'YandexFeed',
             'Workbench\App\Feeds\Docs' => 'App\Feeds',
 
-            '../../../../../../../../../docs/snippets/receipt-yandex.xml' => 'yandex.xml',
+            'receipt-yandex-feed.xml' => 'yandex.xml',
         ],
     ],
 
@@ -64,7 +64,7 @@ dataset('docs receipts', [
             'ReceiptRssFeed'           => 'RssFeed',
             'Workbench\App\Feeds\Docs' => 'App\Feeds',
 
-            '../../../../../../../../../docs/snippets/receipt-rss.xml' => 'rss.xml',
+            'receipt-rss-feed.xml' => 'rss.xml',
         ],
     ],
 ]);

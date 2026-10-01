@@ -3,6 +3,24 @@
 declare(strict_types=1);
 
 use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Workbench\App\Feeds\Docs\RootElementFeed;
+
+test('stores documentation feeds inside the snippets directory', function () {
+    createDocsWorkspace();
+
+    try {
+        configureDocsWorkspace();
+
+        $feed = app(RootElementFeed::class);
+        $path = docsGeneratedPath('advanced-element-root.xml');
+
+        expect($feed->path())->toBe($path);
+        expect($feed->storage()->put($feed->storagePath(), 'example'))->toBeTrue();
+        expect(readDocsSnippet($path))->toBe('example');
+    } finally {
+        deleteDocsWorkspace();
+    }
+});
 
 test('compares generated snippets with normalized line endings without rewriting tracked files', function () {
     $directory = (new TemporaryDirectory)->create();

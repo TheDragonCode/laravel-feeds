@@ -32,6 +32,6 @@ class RootElementFeed extends Feed
 
     public function filename(): string
     {
-        return '../../../../../../../../../docs/snippets/advanced-element-root.xml';
+        return 'advanced-element-root.xml';
     }
 }

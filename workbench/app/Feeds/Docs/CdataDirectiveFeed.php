@@ -25,6 +25,6 @@ class CdataDirectiveFeed extends Feed
 
     public function filename(): string
     {
-        return '../../../../../../../../../docs/snippets/advanced-directive-cdata.xml';
+        return 'advanced-directive-cdata.xml';
     }
 }

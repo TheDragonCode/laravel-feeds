@@ -52,6 +52,6 @@ class InstagramFeed extends InstagramFeedPreset
 
     public function filename(): string
     {
-        return '../../../../../../../../../docs/snippets/receipt-instagram-feed.xml';
+        return 'instagram.xml';
     }
 }

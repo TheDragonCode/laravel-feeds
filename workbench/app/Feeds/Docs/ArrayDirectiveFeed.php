@@ -25,6 +25,6 @@ class ArrayDirectiveFeed extends Feed
 
     public function filename(): string
     {
-        return '../../../../../../../../../docs/snippets/advanced-directive-array.xml';
+        return 'advanced-directive-array.xml';
     }
 }

@@ -25,6 +25,6 @@ class AttributeFeed extends Feed
 
     public function filename(): string
     {
-        return '../../../../../../../../../docs/snippets/advanced-element-attribute.xml';
+        return 'advanced-element-attribute.xml';
     }
 }

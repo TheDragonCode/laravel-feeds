@@ -54,9 +54,7 @@ function createDocsWorkspace(): void
 
 function configureDocsWorkspace(): void
 {
-    $root = docsWorkspace()->path(
-        implode(DIRECTORY_SEPARATOR, array_fill(0, 9, 'storage'))
-    );
+    $root = docsGeneratedDirectory();
 
     Storage::set('public', Storage::build([
         'driver' => 'local',
