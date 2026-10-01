@@ -6,7 +6,7 @@ namespace DummyNamespace;
 
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 
-class DummyClass extends FeedInfo
+final class DummyClass extends FeedInfo
 {
     public function toArray(): array
     {

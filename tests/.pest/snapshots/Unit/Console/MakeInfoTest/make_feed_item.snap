@@ -6,7 +6,7 @@ namespace App\Feeds\Info;
 
 use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
 
-class FooBarFeedInfo extends FeedInfo
+final class FooBarFeedInfo extends FeedInfo
 {
     public function toArray(): array
     {

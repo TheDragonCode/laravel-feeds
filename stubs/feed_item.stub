@@ -7,7 +7,7 @@ namespace DummyNamespace;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 
 /** @property-read NamespacedDummyUserModel $model */
-class DummyClass extends FeedItem
+final class DummyClass extends FeedItem
 {
     public function toArray(): array
     {
