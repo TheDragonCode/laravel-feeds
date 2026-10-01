@@ -11,7 +11,7 @@ use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use function implode;
 use function is_array;
 
-class DummyClass extends Converter
+final class DummyClass extends Converter
 {
     public function header(Feed $feed): string
     {

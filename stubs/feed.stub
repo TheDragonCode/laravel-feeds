@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use NamespacedDummyUserModel;
 
-class DummyClass extends Feed
+final class DummyClass extends Feed
 {
     public function builder(): Builder
     {
