@@ -28,7 +28,7 @@ class YandexFeed extends YandexFeedPreset
             ->platform('My Platform')     // By default, config('app.name')
             ->url(config('app.url')) // By default, config('app.url')
             ->email(config('app.email', 'feeds@example.com'))
-            ->currencies(['RUR' => 1])   // By default, ['RUR' => 1]
+            ->currencies(['RUB' => 1])   // By default, ['RUB' => 1]
             ->categories([
                 1 => 'Foo',
                 2 => 'Bar',
@@ -49,7 +49,7 @@ class YandexFeed extends YandexFeedPreset
             ->title($model->title)
             ->description($model->description)
             ->price($model->price)
-            ->currencyId('RUR')     // By default, 'RUR'
+            ->currencyId('RUB')     // By default, 'RUB'
             ->vendor($model->brand) // By default, null
             ->images($model->images)
             ->additional([

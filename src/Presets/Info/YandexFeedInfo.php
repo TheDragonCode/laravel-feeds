@@ -27,7 +27,7 @@ class YandexFeedInfo extends FeedInfo
     public array $currencies = [
         [
             '@attributes' => [
-                'id'   => 'RUR',
+                'id'   => 'RUB',
                 'rate' => '1',
             ],
         ],

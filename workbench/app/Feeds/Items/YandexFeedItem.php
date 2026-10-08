@@ -37,7 +37,7 @@ class YandexFeedItem extends FeedItem
             'delivery' => 'true',
             'price'    => $this->model->price,
 
-            'currencyId' => 'RUR',
+            'currencyId' => 'RUB',
             'vendor'     => $this->model->brand,
 
             '@picture' => $this->model->images,

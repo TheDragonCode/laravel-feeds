@@ -1805,7 +1805,7 @@ class YandexFeedItem extends FeedItem
 
     protected string $price;
 
-    protected string $currencyId = 'RUR';
+    protected string $currencyId = 'RUB';
 
     protected ?string $vendor = null;
 
@@ -2902,7 +2902,7 @@ class YandexFeed extends YandexFeedPreset
             ->platform('My Platform')     // By default, config('app.name')
             ->url(config('app.url')) // By default, config('app.url')
             ->email(config('app.email', 'feeds@example.com'))
-            ->currencies(['RUR' => 1])   // By default, ['RUR' => 1]
+            ->currencies(['RUB' => 1])   // By default, ['RUB' => 1]
             ->categories([
                 1 => 'Foo',
                 2 => 'Bar',
@@ -2923,7 +2923,7 @@ class YandexFeed extends YandexFeedPreset
             ->title($model->title)
             ->description($model->description)
             ->price($model->price)
-            ->currencyId('RUR')     // By default, 'RUR'
+            ->currencyId('RUB')     // By default, 'RUB'
             ->vendor($model->brand) // By default, null
             ->images($model->images)
             ->additional([
@@ -2994,7 +2994,7 @@ php artisan feed:generate
 <url>https://example.com</url>
 <email>feeds@example.com</email>
 <currencies>
-  <currency id="RUR" rate="1"/>
+  <currency id="RUB" rate="1"/>
 </currencies>
 <categories>
   <category id="1">Foo</category>
@@ -3010,7 +3010,7 @@ php artisan feed:generate
   <name>Some 1</name>
   <description>Some description 1</description>
   <price>100</price>
-  <currencyId>RUR</currencyId>
+  <currencyId>RUB</currencyId>
   <vendor>The Best</vendor>
   <picture>https://via.placeholder.com/640x480.png/008877?text=repudiandae</picture>
   <foo>bar</foo>
@@ -3021,7 +3021,7 @@ php artisan feed:generate
   <name>Some 2</name>
   <description>Some description 2</description>
   <price>250</price>
-  <currencyId>RUR</currencyId>
+  <currencyId>RUB</currencyId>
   <vendor>The Best</vendor>
   <picture>https://via.placeholder.com/640x480.png/009966?text=beatae</picture>
   <picture>https://via.placeholder.com/640x480.png/000011?text=deleniti</picture>
