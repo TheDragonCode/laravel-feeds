@@ -24,7 +24,7 @@ class YandexFeedInfo extends FeedInfo
                 '@currency' => [
                     [
                         '@attributes' => [
-                            'id'   => 'RUR',
+                            'id'   => 'RUB',
                             'rate' => '1',
                         ],
                     ],
