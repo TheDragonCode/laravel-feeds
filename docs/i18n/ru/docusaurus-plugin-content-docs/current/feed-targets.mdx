@@ -53,14 +53,14 @@ keywords: ["separate files", "multiple files", "split feed", "FeedTarget", "HasF
 Сгенерируйте все цели, возвращённые `targets()`:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 Сгенерируйте одну или несколько выбранных целей:
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
 ```
 
 Явно заданные ключи используют `findTarget()` вместо перечисления `targets()`. Повторяющиеся ключи обрабатываются один раз в порядке первого появления. Все запрошенные ключи разрешаются до начала генерации.

@@ -26,13 +26,14 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "ta
 
 | Выключэнне | Значэнне |
 | --- | --- |
-| `InvalidFeedArgumentException` | Ідэнтыфікатар стужкі ў кансолі няправільны. |
-| `FeedNotFoundException` | Рэгістрацыя з запытаным ідэнтыфікатарам не існуе. |
+| `InvalidFeedArgumentException` | Slug стужкі ў кансолі няправільны. |
+| `FeedNotFoundException` | Рэгістрацыя з запытаным ідэнтыфікатарам або slug не існуе. |
+| `Illuminate\Database\MultipleRecordsFoundException` | Некалькі невыдаленых рэгістрацый маюць запытаны slug. |
 | `InvalidExpressionException` | Выраз раскладу няправільны. |
 | `UnknownFeedClassException` | Наладжаны клас стужкі немагчыма атрымаць. |
 | `UnexpectedClassException` | Атрыманы клас не адпавядае чаканаму кантракту. |
 
-Выбар мэты выкарыстоўвае выключэнні SPL. Калі перададзены `--target`, `feed:generate` кідае `InvalidArgumentException`, калі не перададзены ідэнтыфікатар рэгістрацыі стужкі, ключ мэты пусты або выбраная стужка не рэалізуе `HasFeedTargets`. Метад кідае `UnexpectedValueException`, калі `findTarget()` вяртае `null`.
+Выбар мэты выкарыстоўвае выключэнні SPL. Калі перададзены `--target`, `feed:generate` кідае `InvalidArgumentException`, калі не перададзены slug рэгістрацыі стужкі, ключ мэты пусты або выбраная стужка не рэалізуе `HasFeedTargets`. Метад кідае `UnexpectedValueException`, калі `findTarget()` вяртае `null`.
 
 ## Памылкі серыялізацыі і сховішча {/* #serialization-and-storage-failures */}
 

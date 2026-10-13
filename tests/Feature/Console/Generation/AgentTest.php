@@ -26,7 +26,7 @@ test('returns generated files and record counts to an AI agent', function () {
     $feed   = app($record->class);
 
     $status = Artisan::call(FeedGenerateCommand::class, [
-        'feed' => $record->id,
+        'feed' => $record->slug,
     ]);
 
     $raw      = Artisan::output();
@@ -115,7 +115,7 @@ test('does not emit a success response when generation fails', function () {
     ]);
 
     try {
-        Artisan::call(FeedGenerateCommand::class, ['feed' => $feed->id]);
+        Artisan::call(FeedGenerateCommand::class, ['feed' => $feed->slug]);
     } catch (FeedGenerationException $exception) {
         expect(Artisan::output())->not->toContain('"result":"success"');
 

@@ -26,13 +26,14 @@ Use eventos do ciclo de vida para integrar a aplicação e os tipos de exceção
 
 | Exceção | Significado |
 | --- | --- |
-| `InvalidFeedArgumentException` | O ID do feed no console é inválido. |
-| `FeedNotFoundException` | Não existe registro para o ID solicitado. |
+| `InvalidFeedArgumentException` | O slug do feed no console é inválido. |
+| `FeedNotFoundException` | Não existe registro para o ID ou slug do feed solicitado. |
+| `Illuminate\Database\MultipleRecordsFoundException` | Mais de um registro não excluído tem o slug solicitado. |
 | `InvalidExpressionException` | A expressão de agendamento é inválida. |
 | `UnknownFeedClassException` | A classe configurada não pode ser resolvida. |
 | `UnexpectedClassException` | A classe resolvida não atende ao contrato esperado. |
 
-A seleção de alvos usa exceções SPL. Quando `--target` é fornecido, `feed:generate` lança `InvalidArgumentException` se nenhum ID de registro do feed for informado, se uma chave de alvo estiver vazia ou se o feed selecionado não implementar `HasFeedTargets`. O comando lança `UnexpectedValueException` quando `findTarget()` retorna `null`.
+A seleção de alvos usa exceções SPL. Quando `--target` é fornecido, `feed:generate` lança `InvalidArgumentException` se nenhum slug de registro do feed for informado, se uma chave de alvo estiver vazia ou se o feed selecionado não implementar `HasFeedTargets`. O comando lança `UnexpectedValueException` quando `findTarget()` retorna `null`.
 
 ## Falhas de serialização e armazenamento {/* #serialization-and-storage-failures */}
 

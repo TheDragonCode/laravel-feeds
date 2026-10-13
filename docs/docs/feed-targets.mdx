@@ -53,14 +53,14 @@ Every target must resolve to a different output filename. Otherwise, a later tar
 Generate every target returned by `targets()`:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 Generate one or more selected targets:
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
 ```
 
 Explicit keys use `findTarget()` instead of enumerating `targets()`. Duplicate keys are processed once, in first-seen order. All requested keys are resolved before generation starts.

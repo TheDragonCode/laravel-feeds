@@ -52,7 +52,7 @@ test('streams all targets in synchronous mode', function () {
     });
 
     artisan(FeedGenerateCommand::class, [
-        'feed' => (string) $registration->id,
+        'feed' => $registration->slug,
     ])->assertSuccessful()->run();
 
     expect($processed)
@@ -74,7 +74,7 @@ test('uses direct lookup for an explicit target', function () {
     });
 
     artisan(FeedGenerateCommand::class, [
-        'feed'     => (string) $registration->id,
+        'feed'     => $registration->slug,
         '--target' => ['42'],
     ])->assertSuccessful()->run();
 
@@ -99,7 +99,7 @@ test('deduplicates multiple explicit targets', function () {
     });
 
     artisan(FeedGenerateCommand::class, [
-        'feed'     => (string) $registration->id,
+        'feed'     => $registration->slug,
         '--target' => ['42', '42', '81', '42'],
     ])->assertSuccessful()->run();
 
@@ -120,7 +120,7 @@ test('rejects invalid target requests before generation', function () {
     app()->instance(GeneratorService::class, $generator);
 
     expect(fn () => artisan(FeedGenerateCommand::class, [
-        'feed'     => (string) $registration->id,
+        'feed'     => $registration->slug,
         '--target' => ['404'],
     ])->run())->toThrow(
         UnexpectedValueException::class,
@@ -130,7 +130,7 @@ test('rejects invalid target requests before generation', function () {
     config()->set('feeds.queue.enabled', true);
 
     expect(fn () => artisan(FeedGenerateCommand::class, [
-        'feed'     => (string) $ordinary->id,
+        'feed'     => $ordinary->slug,
         '--target' => ['42'],
     ])->run())->toThrow(
         InvalidArgumentException::class,
@@ -138,18 +138,18 @@ test('rejects invalid target requests before generation', function () {
     );
 
     expect(fn () => artisan(FeedGenerateCommand::class, [
-        'feed'     => (string) $registration->id,
+        'feed'     => $registration->slug,
         '--target' => [''],
     ])->run())->toThrow(
         InvalidArgumentException::class,
-        'Feed registration [' . $registration->id . '] target key [] cannot be empty.',
+        'Feed registration [' . $registration->slug . '] target key [] cannot be empty.',
     );
 
     expect(fn () => artisan(FeedGenerateCommand::class, [
         '--target' => ['42'],
     ])->run())->toThrow(
         InvalidArgumentException::class,
-        'Feed target [42] requires one feed registration ID; none was provided.',
+        'Feed target [42] requires one feed registration slug; none was provided.',
     );
 });
 
@@ -165,7 +165,7 @@ test('queues one job per target', function () {
     Queue::fake()->serializeAndRestore();
 
     artisan(FeedGenerateCommand::class, [
-        'feed' => (string) $registration->id,
+        'feed' => $registration->slug,
     ])->assertSuccessful()->run();
 
     Queue::assertPushed(FeedJob::class, 2);
@@ -200,7 +200,7 @@ test('returns one generated agent result per target', function () {
     });
 
     $status = Artisan::call(FeedGenerateCommand::class, [
-        'feed' => (string) $registration->id,
+        'feed' => $registration->slug,
     ]);
     $output = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
 
@@ -243,7 +243,7 @@ test('dispatches one synchronous agent job per target', function () {
     Bus::fake()->serializeAndRestore();
 
     $status = Artisan::call(FeedGenerateCommand::class, [
-        'feed' => (string) $registration->id,
+        'feed' => $registration->slug,
     ]);
     $output = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
 

@@ -53,14 +53,14 @@ Cada alvo deve resultar em um nome de arquivo de saída diferente. Caso contrár
 Gere todos os alvos retornados por `targets()`:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 Gere um ou mais alvos selecionados:
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
 ```
 
 As chaves explícitas usam `findTarget()` em vez de enumerar `targets()`. Chaves duplicadas são processadas uma única vez, na ordem em que aparecem pela primeira vez. Todas as chaves solicitadas são resolvidas antes do início da geração.

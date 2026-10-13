@@ -53,14 +53,14 @@ Jedes Ziel muss einen eigenen Ausgabedateinamen ergeben. Andernfalls überschrei
 Erzeugen Sie alle von `targets()` zurückgegebenen Ziele:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 Erzeugen Sie ein oder mehrere ausgewählte Ziele:
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
 ```
 
 Explizite Schlüssel verwenden `findTarget()`, statt `targets()` aufzuzählen. Doppelte Schlüssel werden in der Reihenfolge ihres ersten Auftretens einmal verarbeitet. Alle angeforderten Schlüssel werden vor Beginn der Generierung aufgelöst.

@@ -8,7 +8,7 @@ use UnexpectedValueException;
 
 class FeedNotFoundException extends UnexpectedValueException
 {
-    public function __construct(int $feedId)
+    public function __construct(int|string $feedId)
     {
         parent::__construct("Feed [$feedId] not found.");
     }

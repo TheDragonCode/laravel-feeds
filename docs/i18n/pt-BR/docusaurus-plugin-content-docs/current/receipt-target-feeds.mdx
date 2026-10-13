@@ -110,10 +110,10 @@ php artisan migrate
 
 ## Gerar arquivos {/* #generate-all */}
 
-Passe o ID de registro do feed. O comando gera um arquivo para cada alvo retornado por `targets()`:
+Passe o slug de registro do feed. O comando gera um arquivo para cada alvo retornado por `targets()`:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate product
 ```
 
 Para os alvos `available` e `unavailable`, os arquivos são gerados nos seguintes caminhos:
@@ -128,8 +128,8 @@ storage/app/public/products/unavailable.xml
 Use a opção repetível `--target` para gerar arquivos somente para os alvos selecionados:
 
 ```bash
-php artisan feed:generate 123 --target=available
-php artisan feed:generate 123 --target=available --target=unavailable
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
 ```
 
 ## Dividir arquivos por quantidade de registros {/* #split-each-output */}

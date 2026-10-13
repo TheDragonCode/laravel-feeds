@@ -110,10 +110,10 @@ php artisan migrate
 
 ## Dateien erzeugen {/* #generate-all */}
 
-Übergeben Sie die Feed-Registrierungs-ID. Der Befehl erzeugt für jedes von `targets()` zurückgegebene Ziel eine Datei:
+Übergeben Sie den Feed-Registrierungs-Slug. Der Befehl erzeugt für jedes von `targets()` zurückgegebene Ziel eine Datei:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate product
 ```
 
 Für die Ziele `available` und `unavailable` werden folgende Pfade erzeugt:
@@ -128,8 +128,8 @@ storage/app/public/products/unavailable.xml
 Verwenden Sie die wiederholbare Option `--target`, wenn nur die Dateien ausgewählter Ziele aktualisiert werden sollen:
 
 ```bash
-php artisan feed:generate 123 --target=available
-php artisan feed:generate 123 --target=available --target=unavailable
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
 ```
 
 ## Dateien nach Datensatzanzahl aufteilen {/* #split-each-output */}

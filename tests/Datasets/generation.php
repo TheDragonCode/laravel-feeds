@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Models\Feed;
 
-dataset('generation ids', [
-    'latest id' => fn () => Feed::query()->latest()->first()->id,
-    'oldest id' => fn () => Feed::query()->oldest()->first()->id,
+dataset('generation slugs', [
+    'latest slug' => fn () => Feed::query()->latest()->first()->slug,
+    'oldest slug' => fn () => Feed::query()->oldest()->first()->slug,
 ]);
 
 dataset('generation invalid', [
@@ -16,4 +16,13 @@ dataset('generation invalid', [
     '/',
     '\\',
     '_',
+    '',
+    'Uppercase',
+    'feed_slug',
+    '-feed',
+    'feed-',
+    'feed--title',
+    '1.9',
+    '+1',
+    ' 1 ',
 ]);

@@ -110,10 +110,10 @@ php artisan migrate
 
 ## Генерування файлів {/* #generate-all */}
 
-Передайте ідентифікатор реєстрації фіду. Команда згенерує файл для кожної цілі, повернутої `targets()`:
+Передайте slug реєстрації фіду. Команда згенерує файл для кожної цілі, повернутої `targets()`:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate product
 ```
 
 Для цілей `available` і `unavailable` файли буде створено за такими шляхами:
@@ -128,8 +128,8 @@ storage/app/public/products/unavailable.xml
 Використовуйте повторюваний параметр `--target`, щоб згенерувати файли лише для вибраних цілей:
 
 ```bash
-php artisan feed:generate 123 --target=available
-php artisan feed:generate 123 --target=available --target=unavailable
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
 ```
 
 ## Розділення файлів за кількістю записів {/* #split-each-output */}

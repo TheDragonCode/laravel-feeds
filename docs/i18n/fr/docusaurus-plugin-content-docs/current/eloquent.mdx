@@ -11,6 +11,10 @@ keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
 
 # Eloquent
 
+L’assignation de `title` enregistre automatiquement `Str::slug(title)` dans `slug` lors de la création ou de la mise à jour d’un modèle. Renommer le titre modifie le slug. Par exemple, `Products` devient `products`. Les mises à jour et insertions en masse via le constructeur de requêtes contournent le mutateur du titre ; utilisez plutôt les méthodes `create()`, `update()` ou `save()` du modèle, y compris `saveQuietly()`.
+
+Choisissez des titres produisant des slugs distincts et non vides pour les flux sélectionnés et planifiés. Un titre dont la normalisation produit un slug vide ne peut pas être sélectionné. Plusieurs enregistrements non supprimés ayant le même slug provoquent une `Illuminate\Database\MultipleRecordsFoundException` lors de la recherche ; aucun suffixe n’est ajouté automatiquement.
+
 ## Modèle d’enregistrement de flux personnalisé {/* #custom_feed_model */}
 
 Définissez `feeds.model` sur un modèle de l’application lorsque les enregistrements de flux nécessitent des colonnes, casts, relations ou méthodes supplémentaires. Le modèle personnalisé doit étendre `DragonCode\LaravelFeed\Models\Feed`.

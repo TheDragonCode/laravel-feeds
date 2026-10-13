@@ -18,7 +18,7 @@ it('generates documentation stubs for feed examples', function (string $feed, ar
         'title' => $feed,
     ]);
 
-    artisan(FeedGenerateCommand::class, ['feed' => $model->id])
+    artisan(FeedGenerateCommand::class, ['feed' => $model->slug])
         ->assertSuccessful()
         ->run();
 

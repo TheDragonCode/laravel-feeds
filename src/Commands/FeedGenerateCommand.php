@@ -16,6 +16,7 @@ use DragonCode\LaravelFeed\Services\AgentDetectorService;
 use DragonCode\LaravelFeed\Services\GeneratorService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use RuntimeException;
 use SplFileObject;
@@ -30,13 +31,10 @@ use function app;
 use function array_unique;
 use function array_values;
 use function config;
-use function filter_var;
 use function get_class;
-use function is_int;
 use function is_string;
 use function is_subclass_of;
 use function json_encode;
-use function preg_match;
 use function sprintf;
 use function trim;
 
@@ -49,10 +47,10 @@ final class FeedGenerateCommand extends Command
 
     public function handle(GeneratorService $generator, FeedQuery $query, AgentDetectorService $agentDetector): int
     {
-        $feedId          = $this->feedId();
-        $targetKeys      = $this->targetKeys($feedId);
-        $feeds           = $this->selectedFeeds($query, $feedId);
-        $isSpecifiedFeed = $feedId !== null;
+        $feedSlug        = $this->feedSlug();
+        $targetKeys      = $this->targetKeys($feedSlug);
+        $feeds           = $this->selectedFeeds($query, $feedSlug);
+        $isSpecifiedFeed = $feedSlug !== null;
         $usesQueue       = $this->usesQueue();
 
         $agentDetector->isAgent()
@@ -72,7 +70,7 @@ final class FeedGenerateCommand extends Command
     protected function getArguments(): array
     {
         return [
-            ['feed', InputArgument::OPTIONAL, 'The Feed ID for generation (from the database)'],
+            ['feed', InputArgument::OPTIONAL, 'The feed slug for generation (from the database)'],
         ];
     }
 
@@ -348,17 +346,17 @@ final class FeedGenerateCommand extends Command
             : sprintf('%s [target: %s]', $feed, $target->key);
     }
 
-    protected function selectedFeeds(FeedQuery $query, ?int $feedId): Collection
+    protected function selectedFeeds(FeedQuery $query, ?string $feedSlug): Collection
     {
-        if ($feedId === null) {
+        if ($feedSlug === null) {
             return $query->all()->get();
         }
 
-        return new Collection([$query->find($feedId)]);
+        return new Collection([$query->findBySlug($feedSlug)]);
     }
 
     /** @return list<string> */
-    protected function targetKeys(?int $feedId): array
+    protected function targetKeys(?string $feedSlug): array
     {
         /** @var array<int, string|null> $values */
         $values = $this->option('target');
@@ -368,8 +366,8 @@ final class FeedGenerateCommand extends Command
             if ($key === null || trim($key) === '') {
                 throw new InvalidArgumentException(sprintf(
                     'Feed registration [%s] target key [%s] cannot be empty.',
-                    $feedId ?? 'unspecified',
-                    $key    ?? '',
+                    $feedSlug ?? 'unspecified',
+                    $key      ?? '',
                 ));
             }
 
@@ -378,9 +376,9 @@ final class FeedGenerateCommand extends Command
 
         $keys = array_values(array_unique($keys, SORT_STRING));
 
-        if ($keys !== [] && $feedId === null) {
+        if ($keys !== [] && $feedSlug === null) {
             throw new InvalidArgumentException(sprintf(
-                'Feed target [%s] requires one feed registration ID; none was provided.',
+                'Feed target [%s] requires one feed registration slug; none was provided.',
                 $keys[0],
             ));
         }
@@ -388,7 +386,7 @@ final class FeedGenerateCommand extends Command
         return $keys;
     }
 
-    protected function feedId(): ?int
+    protected function feedSlug(): ?string
     {
         $value = $this->argument('feed');
 
@@ -396,27 +394,11 @@ final class FeedGenerateCommand extends Command
             return null;
         }
 
-        if (is_int($value)) {
-            if ($value < 1) {
-                throw new InvalidFeedArgumentException($value);
-            }
-
-            return $value;
-        }
-
-        if (! is_string($value) || preg_match('/^[1-9][0-9]*$/D', $value) !== 1) {
+        if (! is_string($value) || $value === '' || Str::slug($value) !== $value) {
             throw new InvalidFeedArgumentException($value);
         }
 
-        $id = filter_var($value, FILTER_VALIDATE_INT, [
-            'options' => ['min_range' => 1],
-        ]);
-
-        if ($id === false) {
-            throw new InvalidFeedArgumentException($value);
-        }
-
-        return $id;
+        return $value;
     }
 
     protected function usesProgressBar(): bool

@@ -31,32 +31,32 @@ Solche Feeds werden jedoch nicht ausgeführt, sondern mit dem Status `SKIP` geke
 Der angegebene Feed **wird ausgeführt**, selbst wenn er in der Datenbanktabelle `feeds` deaktiviert ist.
 :::
 
-Rufen Sie den Konsolenbefehl `feed:generate` mit der Feed-ID aus der Tabelle `feeds` als Parameter auf, um einen bestimmten Feed zu erzeugen:
+Rufen Sie den Konsolenbefehl `feed:generate` mit dem Feed-Slug aus der Tabelle `feeds` als Parameter auf, um einen bestimmten Feed zu erzeugen:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 ## Ausgewählte Ausgabedateien erzeugen {/* #target_selection */}
 
-Bei einem Feed mit [separaten Ausgabedateien](./feed-targets.mdx) wählt die Registrierungs-ID die Feed-Klasse und der Zielschlüssel einen Partner, Shop, ein Gebietsschema oder eine andere Ausgabe aus.
+Bei einem Feed mit [separaten Ausgabedateien](./feed-targets.mdx) wählt der Registrierungs-Slug die Feed-Klasse und der Zielschlüssel einen Partner, Shop, ein Gebietsschema oder eine andere Ausgabe aus.
 
 Wird der Feed ohne `--target` ausgeführt, verarbeitet er `targets()` verzögert und erzeugt alle Ziele:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 Übergeben Sie die wiederholbare Option `--target`, um nur ausgewählte Ziele zu erzeugen:
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
 ```
 
 Explizite Schlüssel verwenden `findTarget()`, statt `targets()` aufzuzählen. Doppelte Schlüssel werden in der Reihenfolge ihres ersten Auftretens einmal verarbeitet. Alle angeforderten Schlüssel werden vor Beginn der Generierung aufgelöst.
 
-`--target` erfordert genau eine Feed-Registrierungs-ID. Der Befehl weist leere oder unbekannte Schlüssel sowie die Zielauswahl für einen Feed zurück, der `HasFeedTargets` nicht implementiert.
+`--target` erfordert genau einen Feed-Registrierungs-Slug. Der Befehl weist leere oder unbekannte Schlüssel sowie die Zielauswahl für einen Feed zurück, der `HasFeedTargets` nicht implementiert.
 
 Die vollständige Zielaufzählung wird fortlaufend verarbeitet und ist nicht atomar. Wenn `targets()` nach einigen zurückgegebenen Werten fehlschlägt, wurden frühere Ziele möglicherweise bereits erzeugt oder in die Queue gestellt. Eine leere Aufzählung erzeugt nichts und legt kein implizites Standardziel an.
 
@@ -95,7 +95,7 @@ Der Befehl gibt kompaktes JSON in einer einzigen Zeile aus. Das Beispiel ist nur
 | --- | --- | --- |
 | `generated` | Die Feed-Dateien wurden direkt erzeugt. | `files` mit `path` und `records` für jede Datei |
 | `queued` | Der Queue-Modus ist aktiviert und der Feed-Job wurde für den Agenten synchron ausgeführt. | Keine |
-| `skipped` | Der Feed ist inaktiv und der Befehl wurde ohne Feed-ID ausgeführt. | Keine |
+| `skipped` | Der Feed ist inaktiv und der Befehl wurde ohne Feed-Slug ausgeführt. | Keine |
 
 Jeder zielbezogene Eintrag mit `generated` oder `queued` enthält außerdem ein Feld `target` mit dem ausgewählten Schlüssel.
 
@@ -176,12 +176,12 @@ Sie können den Zeitplan auch direkt nach Ihren eigenen Regeln festlegen. In die
 use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command(FeedGenerateCommand::class, [111])
+Schedule::command(FeedGenerateCommand::class, ['products'])
     ->withoutOverlapping()
     ->runInBackground()
     ->daily();
 
-Schedule::command(FeedGenerateCommand::class, [222])
+Schedule::command(FeedGenerateCommand::class, ['sitemap'])
     ->withoutOverlapping()
     ->runInBackground()
     ->hourly();

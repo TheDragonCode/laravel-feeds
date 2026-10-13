@@ -24,6 +24,11 @@ keywords: ["upgrade", "Composer", "migration", "rollback", "compatibility"]
 
 ```bash
 composer update dragon-code/laravel-feeds --with-all-dependencies
+```
+
+При обновлении существующей установки скопируйте из пакета только `database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` в каталог миграций приложения. Задайте timestamp имени файла сразу после фактической миграции `create_feeds_table` приложения и перед всеми миграциями регистрации фидов; сохраните суффикс `add_slug_to_feeds_table`. Затем выполните `php artisan migrate`. Миграция использует настроенные подключение и таблицу и заполняет slug из существующих названий, включая мягко удалённые записи. Не публикуйте повторно и не запускайте исходную миграцию создания таблицы. Замените числовые идентификаторы фидов в командах и ручных расписаниях на сохранённые slug.
+
+```bash
 php artisan migrate
 ```
 

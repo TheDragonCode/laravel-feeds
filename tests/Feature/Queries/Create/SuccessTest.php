@@ -19,6 +19,7 @@ test('creating', function () {
     expect($feed)
         ->class->toBe(EmptyFeed::class)
         ->title->toBe('Some')
+        ->slug->toBe('some')
         ->expression->toBe('*/15 */2 * 1 *')
         ->is_active->toBeTrue()
         ->last_activity->toBeNull();

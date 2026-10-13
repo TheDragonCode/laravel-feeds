@@ -110,10 +110,10 @@ php artisan migrate
 
 ## Générer les fichiers {/* #generate-all */}
 
-Transmettez l’identifiant d’enregistrement du flux. La commande génère un fichier pour chaque cible renvoyée par `targets()` :
+Transmettez le slug d’enregistrement du flux. La commande génère un fichier pour chaque cible renvoyée par `targets()` :
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate product
 ```
 
 Pour les cibles `available` et `unavailable`, les chemins générés sont :
@@ -128,8 +128,8 @@ storage/app/public/products/unavailable.xml
 Utilisez l’option répétable `--target` pour actualiser uniquement les fichiers des cibles sélectionnées :
 
 ```bash
-php artisan feed:generate 123 --target=available
-php artisan feed:generate 123 --target=available --target=unavailable
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
 ```
 
 ## Fractionner les fichiers par nombre d’enregistrements {/* #split-each-output */}

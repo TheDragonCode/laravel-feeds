@@ -26,13 +26,14 @@ Verwenden Sie Lebenszyklusereignisse für die Anwendungsintegration und Ausnahme
 
 | Ausnahme | Bedeutung |
 | --- | --- |
-| `InvalidFeedArgumentException` | Eine Feed-ID in der Konsole ist ungültig. |
-| `FeedNotFoundException` | Für die angeforderte Feed-ID existiert keine Registrierung. |
+| `InvalidFeedArgumentException` | Ein Feed-Slug in der Konsole ist ungültig. |
+| `FeedNotFoundException` | Für die angeforderte Feed-ID oder den angeforderten Slug existiert keine Registrierung. |
+| `Illuminate\Database\MultipleRecordsFoundException` | Mehr als eine nicht gelöschte Registrierung hat den angeforderten Slug. |
 | `InvalidExpressionException` | Ein Zeitplanausdruck ist ungültig. |
 | `UnknownFeedClassException` | Eine konfigurierte Feed-Klasse kann nicht aufgelöst werden. |
 | `UnexpectedClassException` | Eine aufgelöste Klasse erfüllt den erwarteten Vertrag nicht. |
 
-Die Zielauswahl verwendet SPL-Ausnahmen. Wenn `--target` angegeben wird, löst `feed:generate` eine `InvalidArgumentException` aus, wenn keine Feed-Registrierungs-ID angegeben wurde, ein Zielschlüssel leer ist oder der ausgewählte Feed `HasFeedTargets` nicht implementiert. Der Befehl löst eine `UnexpectedValueException` aus, wenn `findTarget()` `null` zurückgibt.
+Die Zielauswahl verwendet SPL-Ausnahmen. Wenn `--target` angegeben wird, löst `feed:generate` eine `InvalidArgumentException` aus, wenn kein Feed-Registrierungs-Slug angegeben wurde, ein Zielschlüssel leer ist oder der ausgewählte Feed `HasFeedTargets` nicht implementiert. Der Befehl löst eine `UnexpectedValueException` aus, wenn `findTarget()` `null` zurückgibt.
 
 ## Serialisierungs- und Speicherfehler {/* #serialization-and-storage-failures */}
 

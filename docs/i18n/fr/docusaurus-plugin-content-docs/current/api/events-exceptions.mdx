@@ -26,13 +26,14 @@ Utilisez les événements du cycle de vie pour intégrer l’application et les 
 
 | Exception | Signification |
 | --- | --- |
-| `InvalidFeedArgumentException` | L’identifiant de flux transmis en console est invalide. |
-| `FeedNotFoundException` | Aucun enregistrement n’existe pour l’identifiant demandé. |
+| `InvalidFeedArgumentException` | Le slug du flux transmis en console est invalide. |
+| `FeedNotFoundException` | Aucun enregistrement n’existe pour l’identifiant ou le slug du flux demandé. |
+| `Illuminate\Database\MultipleRecordsFoundException` | Plusieurs enregistrements non supprimés ont le slug demandé. |
 | `InvalidExpressionException` | Une expression de planification est invalide. |
 | `UnknownFeedClassException` | Une classe de flux configurée ne peut pas être résolue. |
 | `UnexpectedClassException` | Une classe résolue ne respecte pas le contrat attendu. |
 
-La sélection de cible utilise des exceptions SPL. Lorsque `--target` est fourni, `feed:generate` lève une `InvalidArgumentException` si aucun identifiant d’enregistrement de flux n’est fourni, si une clé de cible est vide ou si le flux sélectionné n’implémente pas `HasFeedTargets`. La commande lève une `UnexpectedValueException` lorsque `findTarget()` renvoie `null`.
+La sélection de cible utilise des exceptions SPL. Lorsque `--target` est fourni, `feed:generate` lève une `InvalidArgumentException` si aucun slug d’enregistrement de flux n’est fourni, si une clé de cible est vide ou si le flux sélectionné n’implémente pas `HasFeedTargets`. La commande lève une `UnexpectedValueException` lorsque `findTarget()` renvoie `null`.
 
 ## Échecs de sérialisation et de stockage {/* #serialization-and-storage-failures */}
 

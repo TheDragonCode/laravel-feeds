@@ -55,7 +55,7 @@ class ScheduleFeedHelper
 
     protected function event(Feed $feed): Event
     {
-        return Schedule::command(FeedGenerateCommand::class, [$feed->id])
+        return Schedule::command(FeedGenerateCommand::class, [$feed->slug])
             ->withoutOverlapping($this->ttl)
             ->cron($feed->expression);
     }

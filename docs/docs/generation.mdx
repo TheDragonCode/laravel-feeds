@@ -31,32 +31,32 @@ However, instead of being executed, such feeds will be marked with the `SKIP` st
 Please note that the specified feed **will be executed** even if it is disabled in the `feeds` table in the database.
 :::
 
-To generate a specific feed, call the `feed:generate` console command, passing the feed ID from the `feeds` table as its parameter:
+To generate a specific feed, call the `feed:generate` console command, passing the feed slug from the `feeds` table as its parameter:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 ## Generate selected output files {/* #target_selection */}
 
-For a feed configured with [separate output files](./feed-targets.mdx), the registration ID selects the feed class and the target key selects one partner, store, locale, or other output.
+For a feed configured with [separate output files](./feed-targets.mdx), the registration slug selects the feed class and the target key selects one partner, store, locale, or other output.
 
 Running the feed without `--target` consumes `targets()` lazily and generates every target:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 Pass the repeatable `--target` option to generate only selected targets:
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
 ```
 
 Explicit keys use `findTarget()` instead of enumerating `targets()`. Duplicate keys are processed once, in first-seen order. All requested keys are resolved before generation starts.
 
-`--target` requires one feed registration ID. The command rejects empty or unknown keys and rejects target selection for a feed that does not implement `HasFeedTargets`.
+`--target` requires one feed registration slug. The command rejects empty or unknown keys and rejects target selection for a feed that does not implement `HasFeedTargets`.
 
 Full target enumeration is streamed rather than atomic. If `targets()` fails after yielding some values, earlier targets may already be generated or queued. An empty iterable generates nothing and does not create an implicit default target.
 
@@ -95,7 +95,7 @@ The command emits compact JSON on one line. The example is formatted only for re
 | --- | --- | --- |
 | `generated` | The feed files were generated directly. | `files`, containing `path` and `records` for each file |
 | `queued` | Queue mode is enabled and the feed job was dispatched synchronously for the agent. | None |
-| `skipped` | The feed is inactive and the command was run without a feed ID. | None |
+| `skipped` | The feed is inactive and the command was run without a feed slug. | None |
 
 Each targeted `generated` or `queued` entry also contains a `target` field with the selected key.
 
@@ -176,12 +176,12 @@ You can also specify the schedule directly according to your own rules. In this 
 use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command(FeedGenerateCommand::class, [111])
+Schedule::command(FeedGenerateCommand::class, ['products'])
     ->withoutOverlapping()
     ->runInBackground()
     ->daily();
 
-Schedule::command(FeedGenerateCommand::class, [222])
+Schedule::command(FeedGenerateCommand::class, ['sitemap'])
     ->withoutOverlapping()
     ->runInBackground()
     ->hourly();

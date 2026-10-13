@@ -53,14 +53,14 @@ Chaque cible doit produire un nom de fichier de sortie distinct. Sinon, une cibl
 Générez toutes les cibles renvoyées par `targets()` :
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 Générez une ou plusieurs cibles sélectionnées :
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
 ```
 
 Les clés explicites utilisent `findTarget()` au lieu d’énumérer `targets()`. Les clés en double sont traitées une seule fois, dans l’ordre de leur première apparition. Toutes les clés demandées sont résolues avant le début de la génération.

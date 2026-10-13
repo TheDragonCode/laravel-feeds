@@ -10,10 +10,10 @@ use function gettype;
 
 class InvalidFeedArgumentException extends Exception
 {
-    public function __construct(mixed $id)
+    public function __construct(mixed $slug)
     {
-        $type = gettype($id);
+        $type = gettype($slug);
 
-        parent::__construct("Feed ID must be of type integer, [$type] given.");
+        parent::__construct("Feed slug must be a non-empty normalized string, [$type] given.");
     }
 }

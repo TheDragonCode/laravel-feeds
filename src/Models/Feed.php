@@ -6,8 +6,10 @@ namespace DragonCode\LaravelFeed\Models;
 
 use DragonCode\LaravelFeed\Casts\ClassCast;
 use DragonCode\LaravelFeed\Casts\ExpressionCast;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 use function config;
 
@@ -40,6 +42,14 @@ class Feed extends Model
     public function getTable(): ?string
     {
         return config('feeds.table.table') ?? parent::getTable();
+    }
+
+    protected function title(): Attribute
+    {
+        return Attribute::make(set: static fn (string $value): array => [
+            'title' => $value,
+            'slug'  => Str::slug($value),
+        ]);
     }
 
     protected function casts(): array

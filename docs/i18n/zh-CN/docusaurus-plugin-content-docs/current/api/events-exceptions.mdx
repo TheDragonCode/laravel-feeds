@@ -26,13 +26,14 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "ta
 
 | 异常 | 含义 |
 | --- | --- |
-| `InvalidFeedArgumentException` | 控制台 Feed ID 无效。 |
-| `FeedNotFoundException` | 请求的 Feed ID 没有对应注册记录。 |
+| `InvalidFeedArgumentException` | 控制台 Feed slug 无效。 |
+| `FeedNotFoundException` | 请求的 Feed ID 或 slug 没有对应注册记录。 |
+| `Illuminate\Database\MultipleRecordsFoundException` | 多条未删除的注册记录具有请求的 slug。 |
 | `InvalidExpressionException` | 调度表达式无效。 |
 | `UnknownFeedClassException` | 无法解析配置的 Feed 类。 |
 | `UnexpectedClassException` | 解析出的类不符合预期契约。 |
 
-目标选择使用 SPL 异常。提供 `--target` 时，如果未提供 Feed 注册 ID、目标键为空，或者所选 Feed 未实现 `HasFeedTargets`，`feed:generate` 会抛出 `InvalidArgumentException`。当 `findTarget()` 返回 `null` 时，会抛出 `UnexpectedValueException`。
+目标选择使用 SPL 异常。提供 `--target` 时，如果未提供 Feed 注册 slug、目标键为空，或者所选 Feed 未实现 `HasFeedTargets`，`feed:generate` 会抛出 `InvalidArgumentException`。当 `findTarget()` 返回 `null` 时，会抛出 `UnexpectedValueException`。
 
 ## 序列化与存储失败 {/* #serialization-and-storage-failures */}
 

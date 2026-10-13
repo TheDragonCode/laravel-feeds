@@ -58,6 +58,7 @@ $result = app(GeneratorService::class)->feed(
 | --- | --- |
 | `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | 등록 정보를 생성합니다. |
 | `find(int $id): Feed` | 등록 정보를 반환하거나 `FeedNotFoundException`을 발생시킵니다. |
+| `findBySlug(string $slug): Feed` | 등록 정보 하나를 반환합니다. 일치하는 등록 정보가 없으면 `FeedNotFoundException`을, 여러 개이면 `MultipleRecordsFoundException`을 발생시킵니다. |
 | `all(): Builder` | 모든 등록 정보를 ID순으로 반환합니다. |
 | `active(): Builder` | 활성 등록 정보를 ID순으로 반환합니다. |
 | `setLastActivity(string $class): void` | 피드 클래스의 `last_activity`를 갱신합니다. |

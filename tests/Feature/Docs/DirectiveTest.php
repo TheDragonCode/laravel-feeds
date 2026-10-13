@@ -18,7 +18,7 @@ it('generate stub', function (string $feed, array $files) {
         'title' => $feed,
     ]);
 
-    artisan(FeedGenerateCommand::class, ['feed' => $model->id])
+    artisan(FeedGenerateCommand::class, ['feed' => $model->slug])
         ->assertSuccessful()
         ->run();
 

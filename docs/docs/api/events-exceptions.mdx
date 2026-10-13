@@ -26,13 +26,14 @@ Use lifecycle events for application integration and exception types for recover
 
 | Exception | Meaning |
 | --- | --- |
-| `InvalidFeedArgumentException` | A console feed ID is invalid. |
-| `FeedNotFoundException` | No registration exists for the requested feed ID. |
+| `InvalidFeedArgumentException` | A console feed slug is invalid. |
+| `FeedNotFoundException` | No registration exists for the requested feed ID or slug. |
+| `Illuminate\Database\MultipleRecordsFoundException` | More than one non-deleted registration has the requested slug. |
 | `InvalidExpressionException` | A schedule expression is invalid. |
 | `UnknownFeedClassException` | A configured feed class cannot be resolved. |
 | `UnexpectedClassException` | A resolved class does not satisfy the expected contract. |
 
-Target selection uses SPL exceptions. When `--target` is provided, `feed:generate` throws `InvalidArgumentException` if no feed registration ID is supplied, a target key is empty, or the selected feed does not implement `HasFeedTargets`. It throws `UnexpectedValueException` when `findTarget()` returns `null`.
+Target selection uses SPL exceptions. When `--target` is provided, `feed:generate` throws `InvalidArgumentException` if no feed registration slug is supplied, a target key is empty, or the selected feed does not implement `HasFeedTargets`. It throws `UnexpectedValueException` when `findTarget()` returns `null`.
 
 ## Serialization and storage failures {/* #serialization-and-storage-failures */}
 

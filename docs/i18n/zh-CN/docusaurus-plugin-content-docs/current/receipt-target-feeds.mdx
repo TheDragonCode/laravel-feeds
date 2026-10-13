@@ -110,10 +110,10 @@ php artisan migrate
 
 ## 生成文件 {/* #generate-all */}
 
-传入 Feed 注册 ID。命令会为 `targets()` 返回的每个目标生成文件：
+传入 Feed 注册 slug。命令会为 `targets()` 返回的每个目标生成文件：
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate product
 ```
 
 目标为 `available` 和 `unavailable` 时，文件会生成到以下路径：
@@ -128,8 +128,8 @@ storage/app/public/products/unavailable.xml
 只需为选定目标生成文件时，请重复传入 `--target` 选项：
 
 ```bash
-php artisan feed:generate 123 --target=available
-php artisan feed:generate 123 --target=available --target=unavailable
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
 ```
 
 ## 按记录数拆分文件 {/* #split-each-output */}

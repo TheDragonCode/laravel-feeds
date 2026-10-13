@@ -11,13 +11,15 @@ use Illuminate\Support\Str;
 test('cron', function () {
     expect(Schedule::events())->toHaveCount(0);
 
+    Feed::firstOrFail()->update(['title' => 'Renamed scheduled feed']);
+
     ScheduleFeedHelper::register();
 
     $feeds = Feed::get();
 
     $events = collect(Schedule::events())
         ->mapWithKeys(function (Event $event) {
-            $key   = Str::of($event->command)->afterLast(' ')->toInteger();
+            $key   = Str::of($event->command)->afterLast(' ')->trim("'\"")->toString();
             $value = $event->expression;
 
             return [$key => $value];
@@ -29,6 +31,6 @@ test('cron', function () {
     );
 
     $feeds->each(
-        fn (Feed $feed) => expect($events[$feed->id])->toBe($feed->expression)
+        fn (Feed $feed) => expect($events[$feed->slug])->toBe($feed->expression)
     );
 });
