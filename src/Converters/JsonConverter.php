@@ -52,11 +52,13 @@ class JsonConverter extends Converter implements FileAwareInfoConverter
 
     public function item(FeedItem $item, bool $isLast): string
     {
-        $data = $this->performValue($item->toArray());
+        return $this->withItem($item, function () use ($item, $isLast) {
+            $data = $this->performValue($item->toArray());
 
-        $suffix = $isLast ? '' : ',';
+            $suffix = $isLast ? '' : ',';
 
-        return $this->encodeValue($data) . $suffix;
+            return $this->encodeValue($data) . $suffix;
+        });
     }
 
     public function info(array $info, bool $afterRoot): string

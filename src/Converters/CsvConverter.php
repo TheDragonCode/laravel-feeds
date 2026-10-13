@@ -58,9 +58,11 @@ class CsvConverter extends Converter
 
     public function item(FeedItem $item, bool $isLast): string
     {
-        $data = $this->performItem($item->toArray());
+        return $this->withItem($item, function () use ($item) {
+            $data = $this->performItem($item->toArray());
 
-        return $this->encode($data);
+            return $this->encode($data);
+        });
     }
 
     public function info(array $info, bool $afterRoot): string

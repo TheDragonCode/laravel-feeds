@@ -67,6 +67,38 @@ keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "Elem
 
 `FeedInfo::toArray()` повертає порожній масив. Обидва класи використовують `Conditionable` і `Macroable`; успадковуйте їх, коли виведення потребує явної схеми.
 
+### Формат дат елемента {/* #date-format */}
+
+Додайте `#[DateFormat('Y-m-d H:i')]` з `DragonCode\LaravelFeed\Attributes\DateFormat` до класу `FeedItem`, щоб перевизначити його формат дат.
+
+Повертайте початкові значення `DateTimeInterface` з `toArray()` і налаштуйте перетворення дат у моделі. Уже відформатовані рядки повторно не форматуються:
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Attributes\DateFormat;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+#[DateFormat('Y-m-d H:i')]
+class ProductFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'finishedAt' => $this->model->finished_at,
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at,
+        ];
+    }
+}
+```
+
+Атрибут діє в усіх форматах виведення, зокрема для дат у вкладених структурах JSON/XML і дат, які повертає `attributes()` для атрибутів елементів XML/RSS.
+
+Найближчий батьківський клас з атрибутом задає успадкований формат; атрибут у дочірньому класі перевизначає його. Атрибут має пріоритет над форматами дат фіду та глобальними форматами, зберігаючи `feeds.date.timezone`.
+
+`FeedInfo`, атрибути кореня та інші елементи без цього атрибута використовують звичайний налаштований ланцюжок перетворень.
+
 ## ElementData {/* #element-data */}
 
 `ElementData` — об'єкт лише для читання з трьома властивостями конструктора:

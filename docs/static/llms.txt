@@ -3341,6 +3341,38 @@ The constructor rejects empty and whitespace-only keys but does not normalize or
 
 `FeedInfo::toArray()` returns an empty array. Both classes use `Conditionable` and `Macroable`; extend them when the output needs an explicit schema.
 
+### Item date format
+
+Apply `#[DateFormat('Y-m-d H:i')]` from `DragonCode\LaravelFeed\Attributes\DateFormat` to a `FeedItem` class to override its date format.
+
+Return raw `DateTimeInterface` values from `toArray()`, with date casts on the model. Preformatted strings are not reformatted:
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Attributes\DateFormat;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+#[DateFormat('Y-m-d H:i')]
+class ProductFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'finishedAt' => $this->model->finished_at,
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at,
+        ];
+    }
+}
+```
+
+The attribute applies in every output format, including dates nested in JSON/XML and dates returned by `attributes()` for XML/RSS item attributes.
+
+The nearest annotated parent class supplies the inherited format; an attribute on the child class overrides it. The attribute takes precedence over feed-specific and global date formats while retaining `feeds.date.timezone`.
+
+`FeedInfo`, root attributes, and other items without the attribute keep the normal configured transformation pipeline.
+
 ## ElementData
 
 `ElementData` is a readonly object with three constructor properties:
