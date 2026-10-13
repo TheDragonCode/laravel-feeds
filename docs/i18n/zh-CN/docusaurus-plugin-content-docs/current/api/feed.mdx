@@ -66,6 +66,38 @@ keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "Elem
 
 `FeedInfo::toArray()` 返回空数组。这两个类都使用 `Conditionable` 和 `Macroable`；输出需要显式结构时，请继承它们。
 
+### 项目的日期格式 {/* #date-format */}
+
+将 `DragonCode\LaravelFeed\Attributes\DateFormat` 中的 `#[DateFormat('Y-m-d H:i')]` 应用于 `FeedItem` 类，以覆盖其日期格式。
+
+在模型中配置日期类型转换，并从 `toArray()` 返回原始 `DateTimeInterface` 值。已格式化的字符串不会重新格式化：
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Attributes\DateFormat;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+#[DateFormat('Y-m-d H:i')]
+class ProductFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'finishedAt' => $this->model->finished_at,
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at,
+        ];
+    }
+}
+```
+
+该属性适用于所有输出格式，包括嵌套 JSON/XML 结构中的日期，以及 `attributes()` 为 XML/RSS 项目属性返回的日期。
+
+格式从带有该属性的最近父类继承；子类上的属性会覆盖继承的格式。该属性优先于 Feed 专用和全局日期格式，同时保留 `feeds.date.timezone` 设置。
+
+`FeedInfo`、根元素属性以及未使用该属性的其他项目继续使用正常配置的转换流程。
+
 ## ElementData {/* #element-data */}
 
 `ElementData` 是一个只读对象，具有三个构造函数属性：

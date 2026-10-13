@@ -44,9 +44,11 @@ class JsonLinesConverter extends Converter
 
     public function item(FeedItem $item, bool $isLast): string
     {
-        $data = $this->performValue($item->toArray());
+        return $this->withItem($item, function () use ($item) {
+            $data = $this->performValue($item->toArray());
 
-        return $this->encodeValue($data);
+            return $this->encodeValue($data);
+        });
     }
 
     public function info(array $info, bool $afterRoot): string
