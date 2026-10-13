@@ -36,6 +36,7 @@ The core API separates the data source, item mapping, feed-level metadata, outpu
 | `storagePath($suffix): string` | Disk-relative filename | Returns the path used for storage operations. |
 | `storage(): FilesystemAdapter` | `public` disk | Resolves and validates the Laravel filesystem disk. |
 | `format(): FeedFormatEnum` | `Xml` | Returns the configured output format. |
+| `converterOptions(): array` | `[]` | Returns inherited `Config` attribute values for this feed; child keys override parent keys. |
 
 `Feed` uses Laravel `Conditionable` and `Macroable`.
 

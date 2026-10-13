@@ -36,6 +36,7 @@ Die Kern-API trennt Datenquelle, Elementabbildung, Metadaten des Feeds, Ausgabes
 | `storagePath($suffix): string` | Datenträgerrelativer Dateiname | Gibt den Pfad für Speichervorgänge zurück. |
 | `storage(): FilesystemAdapter` | Datenträger `public` | Löst den Laravel-Datenträger auf und prüft ihn. |
 | `format(): FeedFormatEnum` | `Xml` | Gibt das konfigurierte Ausgabeformat zurück. |
+| `converterOptions(): array` | `[]` | Gibt die vererbten `Config`-Attributwerte für diesen Feed zurück; untergeordnete Schlüssel überschreiben übergeordnete Schlüssel. |
 
 `Feed` verwendet Laravel `Conditionable` und `Macroable`.
 

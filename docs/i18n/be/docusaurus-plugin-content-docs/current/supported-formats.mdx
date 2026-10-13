@@ -19,6 +19,46 @@ keywords: ["XML", "JSON", "JSONL", "CSV", "RSS"]
 
 Стандартна выкарыстоўваецца фармат `xml`.
 
+## Параметры канвертара для асобнай стужкі {/* #converter-options */}
+
+Ужывіце `DragonCode\LaravelFeed\Attributes\Config` да класа стужкі, каб перавызначыць налады яе канвертара:
+
+```php
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+#[Config('delimiter', ',')]
+#[Config('enclosure', "'")]
+#[Config('lineEnding', "\r\n")]
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+}
+```
+
+Паўтарыце атрыбут для кожнай налады. Калі імя паўтараецца ў адным класе, выкарыстоўваецца апошні абвешчаны атрыбут.
+
+Назвы налад адпавядаюць імёнам параметраў канструктара канвертара. Толькі перададзеныя значэнні перавызначаюць канфігурацыю праграмы; астатнія налады захоўваюць свае наладжаныя значэнні. `lineEnding` адпавядае `feeds.converters.csv.line_ending`.
+
+| Фармат | Падтрыманыя ключы |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+Параметры бацькоўскай стужкі ўспадкоўваюцца, а ключы даччынай стужкі перавызначаюць бацькоўскія. Выкарыстоўвайце толькі ключы, якія падтрымлівае выбраны фармат; непадтрыманыя ключы выклікаюць `InvalidArgumentException`. Атрыбут не змяняе канфігурацыю праграмы ці іншых стужак.
+
+JSON Lines заўсёды запісвае адзін элемент у радку, а `JSON_PRETTY_PRINT` выдаляецца з `options`. Уласныя прывязкі кантэйнера павінны ўлічваць перададзеныя параметры канструктара.
+
 ## Глядзіце таксама
 
 - [Элементы](./elements.mdx)

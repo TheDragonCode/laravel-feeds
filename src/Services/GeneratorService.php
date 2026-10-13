@@ -252,10 +252,7 @@ class GeneratorService
 
     protected function converter(Feed $feed): Converter
     {
-        return $this->converter->get(
-            $feed->format(),
-            $feed->transformers()
-        );
+        return $this->converter->forFeed($feed);
     }
 
     protected function started(Feed $feed): void

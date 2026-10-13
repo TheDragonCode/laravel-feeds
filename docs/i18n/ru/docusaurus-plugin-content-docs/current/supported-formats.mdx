@@ -19,6 +19,46 @@ keywords: ["XML", "JSON", "JSONL", "CSV", "RSS"]
 
 По умолчанию используется формат `xml`.
 
+## Параметры конвертера для отдельного фида {/* #converter-options */}
+
+Добавьте `DragonCode\LaravelFeed\Attributes\Config` к классу фида, чтобы переопределить настройки его конвертера:
+
+```php
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+#[Config('delimiter', ',')]
+#[Config('enclosure', "'")]
+#[Config('lineEnding', "\r\n")]
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+}
+```
+
+Повторяйте атрибут для каждой настройки. Если имя повторяется в одном классе, используется последний объявленный атрибут.
+
+Имена настроек соответствуют именам параметров конструктора конвертера. Только переданные значения переопределяют конфигурацию приложения; остальные настройки сохраняют настроенные значения. `lineEnding` соответствует `feeds.converters.csv.line_ending`.
+
+| Формат | Поддерживаемые ключи |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+Параметры родительского фида наследуются, а дочерние ключи переопределяют родительские. Используйте только ключи, которые поддерживает выбранный формат; неподдерживаемые ключи вызывают `InvalidArgumentException`. Атрибут не меняет конфигурацию приложения или другие фиды.
+
+JSON Lines всегда записывает один элемент на строку, а `JSON_PRETTY_PRINT` удаляется из `options`. Пользовательские привязки контейнера должны учитывать переданные параметры конструктора.
+
 ## Смотрите также
 
 - [Элементы](./elements.mdx)

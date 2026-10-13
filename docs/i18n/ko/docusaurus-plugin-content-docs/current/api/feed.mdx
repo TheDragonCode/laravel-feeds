@@ -36,6 +36,7 @@ keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "Elem
 | `storagePath($suffix): string` | 디스크 기준 파일 이름 | 저장소 작업에 사용할 경로를 반환합니다. |
 | `storage(): FilesystemAdapter` | `public` 디스크 | Laravel 파일시스템 디스크를 해석하고 검증합니다. |
 | `format(): FeedFormatEnum` | `Xml` | 구성된 출력 형식을 반환합니다. |
+| `converterOptions(): array` | `[]` | 이 피드가 상속한 `Config` 속성 값을 반환합니다. 자식 키는 부모 키를 재정의합니다. |
 
 `Feed`는 Laravel의 `Conditionable`과 `Macroable`을 사용합니다.
 

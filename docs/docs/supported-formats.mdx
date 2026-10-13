@@ -19,6 +19,46 @@ keywords: ["XML", "JSON", "JSONL", "CSV", "RSS"]
 
 By default, the `xml` format is used.
 
+## Per-feed converter options {/* #converter-options */}
+
+Apply `DragonCode\LaravelFeed\Attributes\Config` to a feed class to override its converter settings:
+
+```php
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+#[Config('delimiter', ',')]
+#[Config('enclosure', "'")]
+#[Config('lineEnding', "\r\n")]
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+}
+```
+
+Repeat the attribute for each setting. If a name is repeated on the same class, the last declared attribute wins.
+
+Setting names are converter constructor parameter names. Only supplied values override the application configuration; other settings keep their configured values. `lineEnding` corresponds to `feeds.converters.csv.line_ending`.
+
+| Format | Supported keys |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+Parent feed options are inherited, and child keys override parent keys. Use only keys supported by the selected format; unsupported keys throw `InvalidArgumentException`. The attribute does not change the application configuration or other feeds.
+
+JSON Lines always writes one item per line, and `JSON_PRETTY_PRINT` is removed from `options`. Custom container bindings must honor the supplied constructor parameters.
+
 ## See Also
 
 - [Elements](./elements.mdx)

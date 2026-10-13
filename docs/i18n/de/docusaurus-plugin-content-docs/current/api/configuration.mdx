@@ -55,6 +55,8 @@ Implementieren Sie `DragonCode\LaravelFeed\Contracts\Transformer` und fügen Sie
 | `converters.csv.escape` | Leere Zeichenfolge |
 | `converters.csv.line_ending` | `PHP_EOL` |
 
+Diese Werte sind anwendungsweite Standardwerte. Überschreiben Sie sie für einen Feed mit [Konverteroptionen pro Feed](../supported-formats.mdx#converter-options). Verwenden Sie dabei Konstruktorparameternamen wie `lineEnding` statt Konfigurationsschlüsseln wie `line_ending`.
+
 ## Siehe auch
 
 - [Installation](../installation.mdx)
