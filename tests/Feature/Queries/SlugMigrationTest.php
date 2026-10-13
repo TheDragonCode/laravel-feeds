@@ -3,12 +3,11 @@
 declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Models\Feed;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Workbench\App\Feeds\EmptyFeed;
 
-test('supports registrations before running the slug upgrade migration on a fresh installation', function () {
+test('supports registrations after adding slug on a fresh installation', function () {
     config()->set('feeds.table.table', 'fresh_feeds');
 
     $migrations = dirname(__DIR__, 3) . '/database/migrations/';
@@ -16,13 +15,12 @@ test('supports registrations before running the slug upgrade migration on a fres
     $migration  = require $migrations . '2026_10_14_000000_add_slug_to_feeds_table.php';
 
     $original->up();
+    $migration->up();
 
     $feed = Feed::create([
         'class' => EmptyFeed::class,
         'title' => 'Product Catalog',
     ]);
-
-    $migration->up();
 
     expect($feed->fresh()->slug)->toBe('product-catalog');
 });
@@ -47,8 +45,6 @@ test('backfills legacy registrations and rolls back on the configured table and 
     $table      = $schema->getConnection()->table('legacy_feeds');
 
     $original->up();
-
-    $schema->table('legacy_feeds', fn (Blueprint $table) => $table->dropColumn('slug'));
 
     $table->insert(array_map(static fn (int $id): array => [
         'class'         => 'LegacyFeed' . $id,

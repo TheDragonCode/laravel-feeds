@@ -15,7 +15,6 @@ return new class extends Migration {
 
             $table->string('class')->unique();
             $table->string('title');
-            $table->text('slug')->nullable();
 
             $table->string('expression');
 
