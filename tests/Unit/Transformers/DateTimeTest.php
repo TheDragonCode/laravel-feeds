@@ -39,3 +39,16 @@ test('allows only DateTimeInterface values', function (mixed $value, bool $expec
         $transformer->allow($value)
     )->toBe($expected);
 })->with('datetime allow');
+
+test('supports subclasses whose constructor does not call the parent', function () {
+    $transformer = new class extends DateTimeTransformer {
+        public function __construct() {}
+    };
+    $date = new DateTimeImmutable('2026-07-28T12:30:00+00:00');
+
+    expect($transformer->transform($date))->toBe('2026-07-28T12:30:00+00:00');
+
+    config()->set('feeds.date.format', 'Y-m-d');
+
+    expect($transformer->transform($date))->toBe('2026-07-28');
+});

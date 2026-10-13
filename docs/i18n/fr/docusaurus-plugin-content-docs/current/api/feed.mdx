@@ -66,6 +66,38 @@ Le constructeur rejette les clés vides ou composées uniquement de caractères 
 
 `FeedInfo::toArray()` renvoie un tableau vide. Les deux classes utilisent `Conditionable` et `Macroable` ; étendez-les si la sortie exige un schéma explicite.
 
+### Format des dates d’un élément {/* #date-format */}
+
+Ajoutez `#[DateFormat('Y-m-d H:i')]` de `DragonCode\LaravelFeed\Attributes\DateFormat` à une classe `FeedItem` pour remplacer son format de date.
+
+Renvoyez des valeurs brutes `DateTimeInterface` depuis `toArray()` et configurez les casts de date sur le modèle. Les chaînes déjà formatées ne sont pas reformatées :
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Attributes\DateFormat;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+#[DateFormat('Y-m-d H:i')]
+class ProductFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'finishedAt' => $this->model->finished_at,
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at,
+        ];
+    }
+}
+```
+
+L’attribut s’applique à tous les formats de sortie, y compris aux dates dans les structures JSON/XML imbriquées et aux dates renvoyées par `attributes()` pour les attributs d’élément XML/RSS.
+
+La classe parente la plus proche portant l’attribut fournit le format hérité ; un attribut sur la classe enfant le remplace. L’attribut est prioritaire sur les formats de date propres au flux et globaux, tout en conservant `feeds.date.timezone`.
+
+`FeedInfo`, les attributs racine et les autres éléments sans cet attribut conservent la chaîne de transformation configurée habituelle.
+
 ## ElementData {/* #element-data */}
 
 `ElementData` est un objet en lecture seule avec trois propriétés de constructeur :

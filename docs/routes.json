@@ -196,6 +196,11 @@
                     "text": "FeedItem and FeedInfo"
                 },
                 {
+                    "level": 3,
+                    "id": "date-format",
+                    "text": "Item date format"
+                },
+                {
                     "level": 2,
                     "id": "element-data",
                     "text": "ElementData"

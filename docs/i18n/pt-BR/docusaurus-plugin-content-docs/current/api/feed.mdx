@@ -66,6 +66,38 @@ O construtor rejeita chaves vazias ou formadas apenas por espaços, mas não nor
 
 `FeedInfo::toArray()` retorna um array vazio. As duas classes usam `Conditionable` e `Macroable`; estenda-as quando a saída exigir um esquema explícito.
 
+### Formato de data de um item {/* #date-format */}
+
+Aplique `#[DateFormat('Y-m-d H:i')]` de `DragonCode\LaravelFeed\Attributes\DateFormat` a uma classe `FeedItem` para sobrescrever seu formato de data.
+
+Retorne valores brutos de `DateTimeInterface` em `toArray()` e configure casts de data no modelo. Strings já formatadas não são reformatadas:
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Attributes\DateFormat;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+#[DateFormat('Y-m-d H:i')]
+class ProductFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'finishedAt' => $this->model->finished_at,
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at,
+        ];
+    }
+}
+```
+
+O atributo se aplica a todos os formatos de saída, incluindo datas em estruturas JSON/XML aninhadas e datas retornadas por `attributes()` para atributos de itens XML/RSS.
+
+A classe ancestral mais próxima com o atributo fornece o formato herdado; um atributo na classe filha o sobrescreve. O atributo tem precedência sobre os formatos de data específicos do feed e globais, mantendo `feeds.date.timezone`.
+
+`FeedInfo`, os atributos da raiz e outros itens sem esse atributo continuam usando a sequência de transformações configurada normalmente.
+
 ## ElementData {/* #element-data */}
 
 `ElementData` é um objeto somente leitura com três propriedades de construtor:

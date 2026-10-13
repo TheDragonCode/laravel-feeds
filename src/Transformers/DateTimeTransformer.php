@@ -12,6 +12,13 @@ use function config;
 
 class DateTimeTransformer implements Transformer
 {
+    protected ?string $dateFormat = null;
+
+    public function __construct(?string $dateFormat = null)
+    {
+        $this->dateFormat = $dateFormat;
+    }
+
     public function allow(mixed $value): bool
     {
         return $value instanceof DateTimeInterface;
@@ -32,7 +39,7 @@ class DateTimeTransformer implements Transformer
 
     protected function format(): string
     {
-        return config('feeds.date.format');
+        return $this->dateFormat ?? config('feeds.date.format');
     }
 
     protected function timezone(): string

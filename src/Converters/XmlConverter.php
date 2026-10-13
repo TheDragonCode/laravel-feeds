@@ -86,11 +86,13 @@ class XmlConverter extends Converter
 
     public function item(FeedItem $item, bool $isLast): string
     {
-        $box = $this->performBox($item);
+        return $this->withItem($item, function () use ($item) {
+            $box = $this->performBox($item);
 
-        $this->performItem($box, $item->toArray());
+            $this->performItem($box, $item->toArray());
 
-        return $this->encode($box);
+            return $this->encode($box);
+        });
     }
 
     public function info(array $info, bool $afterRoot): string
