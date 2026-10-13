@@ -11,7 +11,7 @@ keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
 
 # Eloquent
 
-L’assignation de `title` enregistre automatiquement `Str::slug(title)` dans `slug` lors de la création ou de la mise à jour d’un modèle. Renommer le titre modifie le slug. Par exemple, `Products` devient `products`. Les mises à jour et insertions en masse via le constructeur de requêtes contournent le mutateur du titre ; utilisez plutôt les méthodes `create()`, `update()` ou `save()` du modèle, y compris `saveQuietly()`.
+L’enregistrement du modèle stocke automatiquement `Str::slug(title)` dans `slug` via `SlugCast`, en utilisant la valeur finale de `title` après les setters personnalisés du titre. Les mutateurs de titre personnalisés et `saveQuietly()` sont pris en charge. Renommer le titre modifie le slug. Par exemple, `Products` devient `products`. Les mises à jour et insertions en masse via le constructeur de requêtes contournent l’enregistrement du modèle ; utilisez plutôt les méthodes `create()`, `update()` ou `save()` du modèle.
 
 Choisissez des titres produisant des slugs distincts et non vides pour les flux sélectionnés et planifiés. Un titre dont la normalisation produit un slug vide ne peut pas être sélectionné. Plusieurs enregistrements non supprimés ayant le même slug provoquent une `Illuminate\Database\MultipleRecordsFoundException` lors de la recherche ; aucun suffixe n’est ajouté automatiquement.
 

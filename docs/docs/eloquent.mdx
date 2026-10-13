@@ -11,7 +11,7 @@ keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
 
 # Eloquent
 
-Assigning `title` automatically stores `Str::slug(title)` in `slug` when creating or updating a model. Renaming the title changes the slug. For example, `Products` becomes `products`. Query builder bulk updates and inserts bypass the title mutator; use model `create()`, `update()`, or `save()` instead, including `saveQuietly()`.
+Model saves automatically store `Str::slug(title)` in `slug` through `SlugCast`, using the final stored `title` after custom title setters. Custom title mutators and `saveQuietly()` are supported. Renaming the title changes the slug. For example, `Products` becomes `products`. Query Builder bulk updates and inserts bypass model saving; use model `create()`, `update()`, or `save()` instead.
 
 Choose titles that produce distinct, non-empty slugs for selected and scheduled feeds. A title that normalizes to an empty slug cannot be selected. Multiple non-deleted registrations with the same slug cause `Illuminate\Database\MultipleRecordsFoundException` on lookup; no suffix is added automatically.
 

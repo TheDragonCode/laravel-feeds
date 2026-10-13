@@ -11,7 +11,7 @@ keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
 
 # Eloquent
 
-赋值 `title` 时，创建或更新模型会自动将 `Str::slug(title)` 存储到 `slug`。修改标题会改变 slug。例如，`Products` 会变为 `products`。查询构造器的批量更新和插入会绕过标题修改器；请改用模型的 `create()`、`update()` 或 `save()`，包括 `saveQuietly()`。
+保存模型时，会使用自定义标题设置器处理后的最终 `title` 值，通过 `SlugCast` 自动将 `Str::slug(title)` 存储到 `slug`。支持自定义标题修改器和 `saveQuietly()`。修改标题会改变 slug。例如，`Products` 会变为 `products`。查询构造器的批量更新和插入会绕过模型保存；请改用模型的 `create()`、`update()` 或 `save()`。
 
 对于指定或按计划运行的 Feed，请选择能生成不同且非空 slug 的标题。规范化后 slug 为空的标题无法被选择。多条未删除的注册记录具有相同 slug 时，查找会抛出 `Illuminate\Database\MultipleRecordsFoundException`；系统不会自动添加后缀。
 

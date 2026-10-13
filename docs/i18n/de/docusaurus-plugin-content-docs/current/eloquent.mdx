@@ -11,7 +11,7 @@ keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
 
 # Eloquent
 
-Beim Zuweisen von `title` wird beim Erstellen oder Aktualisieren eines Modells automatisch `Str::slug(title)` in `slug` gespeichert. Eine Änderung des Titels ändert den Slug. Beispielsweise wird `Products` zu `products`. Massenaktualisierungen und Einfügungen über den Query Builder umgehen den Titel-Mutator; verwenden Sie stattdessen `create()`, `update()` oder `save()` am Modell, einschließlich `saveQuietly()`.
+Beim Speichern eines Modells wird `Str::slug(title)` automatisch über `SlugCast` in `slug` gespeichert. Dafür wird der endgültige Wert von `title` nach benutzerdefinierten Titel-Settern verwendet. Benutzerdefinierte Titel-Mutatoren und `saveQuietly()` werden unterstützt. Eine Änderung des Titels ändert den Slug. Beispielsweise wird `Products` zu `products`. Massenaktualisierungen und Einfügungen über den Query Builder umgehen das Speichern des Modells; verwenden Sie stattdessen `create()`, `update()` oder `save()` am Modell.
 
 Wählen Sie für einzeln ausgewählte und geplante Feeds Titel, die unterschiedliche, nicht leere Slugs ergeben. Ein Titel, dessen normalisierter Slug leer ist, kann nicht ausgewählt werden. Mehrere nicht gelöschte Registrierungen mit demselben Slug lösen bei der Suche `Illuminate\Database\MultipleRecordsFoundException` aus; ein Suffix wird nicht automatisch hinzugefügt.
 
