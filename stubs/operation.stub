@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DummyClass;
 use DragonCode\LaravelDeployOperations\Operation;
+use DragonCode\LaravelFeed\Scheduling\Expression;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 
 return new class extends Operation {
@@ -12,7 +13,7 @@ return new class extends Operation {
         $query->create(
             class     : DummyBaseClass::class,
             title     : 'DummyTitle',
-            expression: '* * * * *'
+            expression: (new Expression())->hourly(),
         );
     }
 

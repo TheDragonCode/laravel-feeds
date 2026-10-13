@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use DummyClass;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
+use DragonCode\LaravelFeed\Scheduling\Expression;
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
@@ -14,7 +15,7 @@ return new class extends Migration {
         app(FeedQuery::class)->create(
             class     : DummyBaseClass::class,
             title     : 'DummyTitle',
-            expression: '* * * * *'
+            expression: (new Expression())->hourly(),
         );
     }
 
