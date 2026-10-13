@@ -59,6 +59,8 @@ Optionen des übergeordneten Feeds werden vererbt, und Schlüssel des untergeord
 
 JSON Lines schreibt immer ein Element pro Zeile, und `JSON_PRETTY_PRINT` wird aus `options` entfernt. Benutzerdefinierte Container-Bindings müssen die angegebenen Konstruktorparameter berücksichtigen.
 
+Ein benutzerdefinierter `DragonCode\LaravelFeed\Helpers\ConverterHelper`, der `get()` oder `resolve()` überschreibt, muss auch den geschützten Hook `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter` überschreiben, um Optionen pro Feed zu verwenden. Übergeben Sie `$options` an `Container::make()`, damit die Einstellungen vor der Initialisierung des Konverters angewendet werden. Andernfalls löst die Auflösung eines Feeds mit Optionen `LogicException` aus; Feeds ohne Optionen behalten das bisherige Helper-Verhalten.
+
 ## Siehe auch
 
 - [Elemente](./elements.mdx)

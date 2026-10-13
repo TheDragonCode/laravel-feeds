@@ -59,6 +59,8 @@ Les options du flux parent sont héritées et les clés du flux enfant remplacen
 
 JSON Lines écrit toujours un élément par ligne et `JSON_PRETTY_PRINT` est retiré de `options`. Les liaisons personnalisées du conteneur doivent respecter les paramètres de constructeur fournis.
 
+Un `DragonCode\LaravelFeed\Helpers\ConverterHelper` personnalisé qui redéfinit `get()` ou `resolve()` doit aussi redéfinir le point d’extension protégé `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter` pour utiliser les options par flux. Transmettez `$options` à `Container::make()` afin que les paramètres soient appliqués avant l’initialisation du convertisseur. Sinon, la résolution d’un flux avec des options déclenche `LogicException` ; les flux sans options conservent le comportement antérieur de la classe utilitaire.
+
 ## Voir aussi
 
 - [Éléments](./elements.mdx)

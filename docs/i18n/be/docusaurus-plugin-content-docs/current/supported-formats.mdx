@@ -59,6 +59,8 @@ class UserFeed extends Feed
 
 JSON Lines заўсёды запісвае адзін элемент у радку, а `JSON_PRETTY_PRINT` выдаляецца з `options`. Уласныя прывязкі кантэйнера павінны ўлічваць перададзеныя параметры канструктара.
 
+Уласны `DragonCode\LaravelFeed\Helpers\ConverterHelper`, які перавызначае `get()` або `resolve()`, павінен таксама перавызначыць абаронены хук `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter`, каб выкарыстоўваць параметры асобнай стужкі. Перадайце `$options` у `Container::make()`, каб налады прымяняліся да ініцыялізацыі канвертара. Інакш вырашэнне канвертара для стужкі з параметрамі выклікае `LogicException`; стужкі без параметраў захоўваюць ранейшыя паводзіны дапаможнага класа.
+
 ## Глядзіце таксама
 
 - [Элементы](./elements.mdx)

@@ -15,6 +15,7 @@ use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Container\Container;
 use InvalidArgumentException;
+use LogicException;
 use ReflectionClass;
 
 use function array_diff_key;
@@ -37,6 +38,20 @@ class ConverterHelper
     {
         if (! $options = $feed->converterOptions()) {
             return $this->get($feed->format(), $feed->transformers());
+        }
+
+        $helper = new ReflectionClass($this);
+
+        if ($helper->getMethod('resolveWithOptions')->getDeclaringClass()->getName() === self::class) {
+            foreach (['get', 'resolve'] as $method) {
+                if ($helper->getMethod($method)->getDeclaringClass()->getName() !== self::class) {
+                    throw new LogicException(sprintf(
+                        'Converter helper [%s] overrides [%s]. Override resolveWithOptions() to support per-feed options.',
+                        static::class,
+                        $method,
+                    ));
+                }
+            }
         }
 
         return $this->resolveWithOptions($feed->format(), $options)->prependTransformers($feed->transformers());

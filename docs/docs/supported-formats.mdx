@@ -59,6 +59,8 @@ Parent feed options are inherited, and child keys override parent keys. Use only
 
 JSON Lines always writes one item per line, and `JSON_PRETTY_PRINT` is removed from `options`. Custom container bindings must honor the supplied constructor parameters.
 
+A custom `DragonCode\LaravelFeed\Helpers\ConverterHelper` that overrides `get()` or `resolve()` must also override the protected `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter` hook to use per-feed options. Pass `$options` to `Container::make()` so settings apply before the converter is initialized. Otherwise, resolving a feed with options throws `LogicException`; feeds without options retain the legacy helper behavior.
+
 ## See Also
 
 - [Elements](./elements.mdx)

@@ -59,6 +59,8 @@ As opções do feed pai são herdadas, e as chaves do feed filho sobrescrevem as
 
 JSON Lines sempre escreve um item por linha, e `JSON_PRETTY_PRINT` é removido de `options`. As vinculações personalizadas do contêiner devem respeitar os parâmetros de construtor fornecidos.
 
+Um `DragonCode\LaravelFeed\Helpers\ConverterHelper` personalizado que sobrescreve `get()` ou `resolve()` também deve sobrescrever o método protegido `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter` para usar opções por feed. Passe `$options` para `Container::make()` para que as configurações sejam aplicadas antes da inicialização do conversor. Caso contrário, a resolução de um feed com opções lança `LogicException`; feeds sem opções mantêm o comportamento anterior da classe auxiliar.
+
 ## Veja também
 
 - [Elementos](./elements.mdx)

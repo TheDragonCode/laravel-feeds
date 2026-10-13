@@ -59,6 +59,8 @@ class UserFeed extends Feed
 
 JSON Lines는 항상 한 줄에 하나의 항목을 기록하며, `options`에서 `JSON_PRETTY_PRINT`를 제거합니다. 사용자 정의 컨테이너 바인딩은 제공된 생성자 매개변수를 반영해야 합니다.
 
+`get()` 또는 `resolve()`를 재정의하는 사용자 정의 `DragonCode\LaravelFeed\Helpers\ConverterHelper`는 피드별 옵션을 사용하려면 보호된 훅 `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter`도 재정의해야 합니다. 변환기를 초기화하기 전에 설정이 적용되도록 `$options`를 `Container::make()`에 전달하세요. 그렇지 않으면 옵션이 있는 피드를 해석할 때 `LogicException`이 발생합니다. 옵션이 없는 피드는 기존 헬퍼 동작을 유지합니다.
+
 ## 관련 문서
 
 - [요소](./elements.mdx)

@@ -59,6 +59,8 @@ class UserFeed extends Feed
 
 JSON Lines 始终每行写入一个项，并从 `options` 中移除 `JSON_PRETTY_PRINT`。自定义容器绑定必须遵循提供的构造函数参数。
 
+如果自定义的 `DragonCode\LaravelFeed\Helpers\ConverterHelper` 重写了 `get()` 或 `resolve()`，则还必须重写受保护的扩展方法 `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter`，才能使用单个 Feed 的选项。将 `$options` 传递给 `Container::make()`，以便在转换程序初始化之前应用设置。否则，解析带有选项的 Feed 时会抛出 `LogicException`；不带选项的 Feed 保留辅助类的原有行为。
+
 ## 另请参阅
 
 - [元素](./elements.mdx)

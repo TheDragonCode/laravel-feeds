@@ -9,6 +9,7 @@ use DragonCode\LaravelFeed\Converters\JsonLinesConverter;
 use DragonCode\LaravelFeed\Converters\XmlConverter;
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Exceptions\FeedGenerationException;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
 use DragonCode\LaravelFeed\Helpers\ConverterHelper;
@@ -121,6 +122,32 @@ final class LegacyOptionsConverterHelper extends ConverterHelper
         return parent::resolve($format);
     }
 }
+
+final class LegacyGetOptionsConverterHelper extends ConverterHelper
+{
+    public function get(FeedFormatEnum $format, array $transformers = []): Converter
+    {
+        return $this->container->make(BoundOptionsCsvConverter::class)->prependTransformers($transformers);
+    }
+}
+
+class LegacyResolveOptionsConverterHelper extends ConverterHelper
+{
+    protected function resolve(FeedFormatEnum $format): Converter
+    {
+        return $this->container->make(BoundOptionsCsvConverter::class);
+    }
+}
+
+class AwareOptionsConverterHelper extends LegacyResolveOptionsConverterHelper
+{
+    protected function resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter
+    {
+        return $this->container->make(BoundOptionsCsvConverter::class, $options);
+    }
+}
+
+final class InheritedAwareOptionsConverterHelper extends AwareOptionsConverterHelper {}
 
 beforeEach(function () {
     Storage::fake('converter-options');
@@ -282,6 +309,54 @@ test('preserves existing converter helper overrides for feeds without options', 
         ->and($feed->storage()->get($feed->storagePath()))
         ->toBe('Title;Body');
 });
+
+test('preserves custom converters from legacy helper hooks for feeds without options', function (string $class) {
+    $converter = app($class)->forFeed(app(ConverterOptionsFeed::class));
+    $item      = new ConverterOptionsItem(new News(['title' => 'Title', 'content' => 'Body']));
+
+    expect($converter)
+        ->toBeInstanceOf(BoundOptionsCsvConverter::class)
+        ->and($converter->item($item, true))
+        ->toBe('Title;Body');
+})->with([
+    'get override'     => [LegacyGetOptionsConverterHelper::class],
+    'resolve override' => [LegacyResolveOptionsConverterHelper::class],
+]);
+
+test('rejects per-feed options when a legacy helper would be bypassed', function (string $class, string $method) {
+    $helper = app($class);
+    $feed   = app(PartialCsvOptionsFeed::class);
+
+    expect(fn () => $helper->forFeed($feed))
+        ->toThrow(LogicException::class, "Converter helper [$class] overrides [$method]. Override resolveWithOptions() to support per-feed options.");
+
+    $feed->storage()->put($feed->storagePath(), 'previous feed');
+
+    app()->instance(ConverterHelper::class, $helper);
+
+    expect(fn () => app(GeneratorService::class)->feed($feed))
+        ->toThrow(function (FeedGenerationException $exception) {
+            expect($exception->getPrevious())->toBeInstanceOf(LogicException::class);
+        });
+
+    expect($feed->storage()->get($feed->storagePath()))->toBe('previous feed');
+})->with([
+    'get override'     => [LegacyGetOptionsConverterHelper::class, 'get'],
+    'resolve override' => [LegacyResolveOptionsConverterHelper::class, 'resolve'],
+]);
+
+test('uses an explicit option-aware custom helper hook including inherited hooks', function (string $class) {
+    $converter = app($class)->forFeed(app(PartialCsvOptionsFeed::class));
+    $item      = new ConverterOptionsItem(new News(['title' => 'Title', 'content' => 'Body']));
+
+    expect($converter)
+        ->toBeInstanceOf(BoundOptionsCsvConverter::class)
+        ->and($converter->item($item, true))
+        ->toBe('Title|Body');
+})->with([
+    'explicit hook'  => [AwareOptionsConverterHelper::class],
+    'inherited hook' => [InheritedAwareOptionsConverterHelper::class],
+]);
 
 test('uses one configured converter for all split feed parts', function () {
     $resolutions = 0;
