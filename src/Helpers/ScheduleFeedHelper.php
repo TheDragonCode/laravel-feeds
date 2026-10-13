@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\Facades\Schema;
 
 use function app;
+use function sprintf;
 
 class ScheduleFeedHelper
 {
@@ -56,6 +57,12 @@ class ScheduleFeedHelper
     protected function event(Feed $feed): Event
     {
         return Schedule::command(FeedGenerateCommand::class, [$feed->slug])
+            ->createMutexNameUsing(sprintf(
+                'laravel-feeds:generate:%s:%s:%s',
+                $feed->getConnection()->getName(),
+                $feed->getTable(),
+                $feed->getKey(),
+            ))
             ->withoutOverlapping($this->ttl)
             ->cron($feed->expression);
     }

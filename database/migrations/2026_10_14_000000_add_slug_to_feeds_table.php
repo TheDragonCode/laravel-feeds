@@ -12,11 +12,9 @@ use Illuminate\Support\Str;
 return new class extends Migration {
     public function up(): void
     {
-        if (! $this->schema()->hasColumn($this->table(), 'slug')) {
-            $this->schema()->table($this->table(), function (Blueprint $table) {
-                $table->text('slug')->nullable();
-            });
-        }
+        $this->schema()->table($this->table(), function (Blueprint $table) {
+            $table->text('slug')->nullable();
+        });
 
         $this->schema()->getConnection()->table($this->table())
             ->select(['id', 'title'])

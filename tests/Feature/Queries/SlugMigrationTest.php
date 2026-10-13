@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Models\Feed;
+use Illuminate\Database\QueryException;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Workbench\App\Feeds\EmptyFeed;
@@ -78,3 +80,34 @@ test('backfills legacy registrations and rolls back on the configured table and 
     expect($schema->hasColumn('legacy_feeds', 'slug'))->toBeFalse()
         ->and($table->orderBy('id')->get())->toEqual($before);
 })->with([null, 'feed_migration']);
+
+test('preserves an application-owned slug column and its values when migration fails', function () {
+    config()->set('feeds.table.table', 'application_feeds');
+
+    $migrations = dirname(__DIR__, 3) . '/database/migrations/';
+    $original   = require $migrations . '2025_09_01_231655_create_feeds_table.php';
+    $migration  = require $migrations . '2026_10_14_000000_add_slug_to_feeds_table.php';
+    $schema     = Schema::connection(config('feeds.table.connection'));
+    $table      = $schema->getConnection()->table('application_feeds');
+
+    $original->up();
+
+    $schema->table('application_feeds', function (Blueprint $table) {
+        $table->string('slug');
+    });
+
+    $table->insert([
+        'class'      => EmptyFeed::class,
+        'title'      => 'Product Catalog',
+        'slug'       => 'application-owned-value',
+        'expression' => '0 * * * *',
+        'is_active'  => true,
+    ]);
+
+    $columns = $schema->getColumns('application_feeds');
+    $before  = $table->get();
+
+    expect(fn () => $migration->up())->toThrow(QueryException::class)
+        ->and($schema->getColumns('application_feeds'))->toBe($columns)
+        ->and($table->get())->toEqual($before);
+});
