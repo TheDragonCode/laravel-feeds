@@ -34,14 +34,14 @@ class LaravelFeedServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/../config/feeds.php' => $this->app->configPath('feeds.php'),
-        ], ['config', 'feeds']);
+        ], ['config', 'feeds', 'feeds-config']);
     }
 
     protected function migrations(): void
     {
         $this->publishesMigrations([
             __DIR__ . '/../database/migrations' => $this->app->databasePath('migrations'),
-        ], 'feeds');
+        ], ['feeds', 'feeds-migrations']);
     }
 
     protected function registerCommands(): void
