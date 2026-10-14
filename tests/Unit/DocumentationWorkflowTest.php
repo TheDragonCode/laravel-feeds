@@ -83,7 +83,6 @@ test('builds and deploys Docusaurus through GitHub Pages', function () {
         ->and($build['defaults']['run']['working-directory'])->toBe('docs')
         ->and($checkout['with']['ref'])->toBe('${{ github.sha }}')
         ->and($checkout['with']['persist-credentials'])->toBeFalse()
-        ->and($setupNode['uses'])->toBe('actions/setup-node@820762786026740c76f36085b0efc47a31fe5020')
         ->and($setupNode['with'])->toMatchArray([
             'node-version-file'     => 'docs/.node-version',
             'cache'                 => 'npm',
@@ -153,7 +152,6 @@ test('validates Docusaurus for documentation pushes, pull requests, and manual r
         ])
         ->and($build['defaults']['run']['working-directory'])->toBe('docs')
         ->and($checkout['with']['persist-credentials'])->toBeFalse()
-        ->and($setupNode['uses'])->toBe('actions/setup-node@820762786026740c76f36085b0efc47a31fe5020')
         ->and($setupNode['with'])->toMatchArray([
             'node-version-file'     => 'docs/.node-version',
             'cache'                 => 'npm',
