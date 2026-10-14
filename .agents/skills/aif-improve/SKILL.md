@@ -1,7 +1,7 @@
 ---
 name: aif-improve
 description: Refine an existing implementation plan with a second iteration. Re-analyzes the codebase for gaps, missing tasks, and wrong dependencies. Use after $aif-plan or to improve an $aif-fix plan. Optional +check flag validates refinements via a fresh-context subagent.
-argument-hint: "[--list] [+check] [@plan-file] [improvement prompt or empty for auto-review]"
+argument-hint: "[--list] [+check] [@plan-file-or-directory] [improvement prompt or empty for auto-review]"
 allowed-tools: Read Write Edit Glob Grep Bash(git *) Bash(shasum -a 256 *) Bash(sha256sum *) Task Agent TaskCreate TaskUpdate TaskList TaskGet AskUserQuestion Questions
 disable-model-invocation: false
 ---
@@ -25,13 +25,16 @@ enhanced plan with better tasks, correct dependencies, more detail
 ### Step 0: Load Config & Parse Arguments
 
 **FIRST:** Read `.ai-factory/config.yaml` if it exists to resolve:
-- **Paths:** `paths.plan`, `paths.plans`, `paths.fix_plan`, `paths.research`, `paths.description`, `paths.patches`, and `paths.archive`
+- **Paths:** `paths.plan`, `paths.plans`, `paths.fix_plan`, `paths.research`, `paths.description`, `paths.architecture`, `paths.roadmap`, `paths.rules_file`, `paths.rules`, `paths.patches`, and `paths.archive`; derive `research_bundles_dir = <parent directory of paths.research>/research/`
 - **Language:** `language.ui` for prompts and summaries, `language.artifacts` for plan artifact updates, and `language.technical_terms` for human-readable technical terminology in plan artifacts
 - **Git:** `git.enabled`, `git.base_branch`, `git.create_branches`
 - **Workflow:** `workflow.plan_id_format` (default: `slug`) — used by branch-based plan discovery.
-  Active values: `slug` and `sequential`. When `sequential`, the resolver globs
-  `<paths.plans>/[0-9]{4}_<branch-slug>.md` first and falls back to
-  `<paths.plans>/<branch-slug>.md` only if no numbered match is found.
+  Active values: `slug` and `sequential`. A root `*.md` is a named full plan
+  unless it is the resolved fast/fix path; a direct child `*/index.md` is an
+  ultra bundle entrypoint only when it contains exactly one
+  `<!-- aif:plan-mode:ultra -->`. When `sequential`,
+  search both `[0-9]{4}_<branch-slug>.md` and
+  `[0-9]{4}_<branch-slug>/index.md`, then choose the highest prefix.
   `timestamp` and `uuid` are **reserved values** and currently behave like `slug`.
   Treat any unknown value as `slug`.
 
@@ -42,6 +45,10 @@ If config.yaml doesn't exist, use defaults:
 - research: `.ai-factory/RESEARCH.md`
 - patches/: `.ai-factory/patches/`
 - DESCRIPTION.md: `.ai-factory/DESCRIPTION.md`
+- architecture: `.ai-factory/ARCHITECTURE.md`
+- roadmap: `.ai-factory/ROADMAP.md`
+- rules file: `.ai-factory/RULES.md`
+- rules directory: `.ai-factory/rules/`
 - `ui_language`: `en`
 - `artifact_language`: `en`
 - `technical_terms_policy`: `keep`
@@ -60,14 +67,14 @@ Any generated or updated plan artifact content under `paths.plan`, `paths.plans`
 
 Exception: an existing `## Original Request` section is raw source input, not generated artifact prose. Preserve its heading and body exactly as read from the plan file on every edit or regeneration, even when `artifact_language` differs. Do not translate, summarize, normalize, trim, or rewrite it.
 
-Templates and examples define structure, not fixed English output. If `artifact_language` is not `en`, translate human-readable headings, labels, task prose, roadmap rationale, research summaries, improvement notes, and dependency notes before saving. Preserve markdown structure, checkbox syntax, task IDs, numeric prefixes, branch names, commit messages, commands, file paths, config keys, package names, API names, `WARN`/`INFO` labels, and raw errors unchanged. Apply `technical_terms_policy` to other human-readable terminology.
+Templates and examples define structure, not fixed English output. If `artifact_language` is not `en`, translate human-readable headings, labels, task prose, roadmap rationale, research summaries, improvement notes, and dependency notes before saving. Preserve markdown structure, checkbox syntax, task IDs, numeric prefixes, branch names, commit messages, commands, file paths, config keys, package names, API names, `WARN`/`INFO` labels, and raw errors unchanged. Keep `## Research Context`, `Source:`, `Active Summary`, `Updated:`, and `SHA256:` exact because downstream research drift checks parse them as compatibility tokens. Keep `## Requirements Reconciliation` exact because downstream workflow checks parse it as a compatibility token. Apply `technical_terms_policy` to other human-readable terminology.
 
 **First parse arguments:**
 
 ```
 - --list    → list available plans only (read-only, then STOP)
 - +check    → after refinement, validate findings via a fresh-context subagent
-- @<path>   → explicit plan file override (highest priority)
+- @<path>   → explicit plan file, ultra directory, or ultra `index.md` override (highest priority)
 - remaining argument text → optional improvement prompt
 ```
 
@@ -81,37 +88,50 @@ If `$ARGUMENTS` contains `--list`, execute the procedure in `references/LIST-MOD
 
 ### Step 1: Resolve Active Plan
 
-This step runs in the default (non-`--list`) mode and picks **one** plan file for refinement using the priority chain below. The discovery-list logic for `--list` lives in `references/LIST-MODE.md` and is independent of this step.
+This step runs in the default (non-`--list`) mode and picks **one** plan artifact for refinement using the priority chain below. The discovery-list logic for `--list` lives in `references/LIST-MODE.md` and is independent of this step.
 
-**Locate the active plan file using this priority:**
+**Locate the active plan artifact using this priority:**
 
 ```
 1. If `$ARGUMENTS` contains `@<path>`:
    - Resolve the path (relative to project root; absolute paths allowed)
-   - If file exists → use it
-   - If missing → show "Plan file not found: <path>" and STOP
+   - Accept a markdown file, an ultra directory containing `index.md`, or that `index.md`
+   - If missing → show "Plan artifact not found: <path>" and STOP
+   - Before normalizing a directory or treating an explicit `index.md` as ultra,
+     Read `index.md` and require exactly one
+     `<!-- aif:plan-mode:ultra -->`; otherwise STOP with a plan-integrity error
 2. No explicit `@<path>` override → Check current git branch:
    git branch --show-current
    → Convert branch name to filename: replace "/" with "-" (this is <branch-slug>)
-   → When `workflow.plan_id_format = sequential`, glob first
-     `<configured plans dir>/[0-9][0-9][0-9][0-9]_<branch-slug>.md`:
-     - 0 matches → fall through to the un-prefixed lookup below
-     - 1 match → use it
-     - >1 matches → use the **highest-numbered** match and emit
-       `WARN [aif-improve] multiple sequential plans for <branch>: <list>; using <chosen>`
-   → Otherwise look for `<configured plans dir>/<branch-slug>.md` (from $aif-plan full)
+   → When `workflow.plan_id_format = sequential`, glob both:
+     `<configured plans dir>/[0-9][0-9][0-9][0-9]_<branch-slug>.md`
+     `<configured plans dir>/[0-9][0-9][0-9][0-9]_<branch-slug>/index.md`
+     Read every directory candidate and retain it only when `index.md` contains
+     exactly one `<!-- aif:plan-mode:ultra -->`. Choose the highest-numbered
+     valid artifact and emit `WARN [aif-improve]` when multiple valid candidates
+     exist; if both shapes share the highest prefix, prefer ultra.
+   → If no valid sequential match exists, or sequential mode is inactive, check
+     `<configured plans dir>/<branch-slug>/index.md` and
+     `<configured plans dir>/<branch-slug>.md`. Read the directory entrypoint
+     before selection and ignore it unless it contains exactly one ultra marker;
+     if both valid shapes exist, warn and prefer ultra.
    Example (slug):       feature/user-auth → .ai-factory/plans/feature-user-auth.md
    Example (sequential): feature/user-auth → .ai-factory/plans/0042_feature-user-auth.md
 3. If the branch-based plan is missing or git mode is off:
-   → Check whether the configured plans dir contains exactly one `*.md` full-mode plan
-     (a leading 4-digit prefix counts as a match)
-   → If exactly one exists, use it
+   → Count root `*.md` full plans plus declared-ultra direct child `*/index.md`
+     entrypoints; exclude resolved `paths.plan` and `paths.fix_plan`
+   → If exactly one artifact exists, use it
+   → Do not count ultra phase files as plans
    → If multiple exist, ask the user to choose or require `@<path>`
-4. No full-mode plan → Check the resolved fast plan path (from $aif-plan fast)
-5. No full-mode plan and no resolved fast plan → Check the resolved fix plan path (from $aif-fix plan mode)
+4. No named full/ultra plan → Check the resolved fast plan path (from $aif-plan fast)
+5. No regular plan and no resolved fast plan → Check the resolved fix plan path (from $aif-fix plan mode)
 ```
 
 **Note:** Plan discovery scans `paths.plans/` only. Plans archived to `paths.archive/plans/` by `$aif-archive` are excluded from discovery.
+Any automatically discovered `*/index.md` candidate must be read before
+selection and ignored unless it contains exactly one
+`<!-- aif:plan-mode:ultra -->`. A marked ultra bundle with broken links is a
+blocking integrity error, not a fallback opportunity.
 
 **If NO plan file found at any location:**
 
@@ -119,26 +139,31 @@ This step runs in the default (non-`--list`) mode and picks **one** plan file fo
 No active plan found.
 
 To create a plan first, use:
-- $aif-plan full <description>  — for a new feature (rich full plan; may also create a branch when git settings allow it)
+- $aif-plan full <description>  — for a rich single-file feature plan
+- $aif-plan ultra <description> — for an exhaustive multi-file plan bundle
 - $aif-plan fast <description>  — for a quick task plan
 - $aif-fix <bug description>    - for a bugfix plan (use the resolved fix plan path)
 ```
 
-→ **STOP here.** Do not proceed without a plan file.
+→ **STOP here.** Do not proceed without a plan artifact.
 
-**If plan file found → proceed to Step 2 (Load Context).**
+**If a plan artifact is found → proceed to Step 2 (Load Context).**
 
 ### Step 2: Load Context
 
-**2.1: Read the plan file**
+**2.1: Read the plan artifact**
 
-Read the found plan file completely. Understand:
+Read the selected entrypoint completely. If it is an ultra `index.md`, validate
+its Phase Index links and read every linked phase file in order before analyzing
+or regenerating the bundle. Treat the bundle as one atomic plan. Understand:
 - Feature scope and goals
 - `## Original Request`, when present: the original user intent and immutable scope anchor for the plan. Treat this section as raw source input and preserve it exactly on any plan edit or regeneration.
 - Current tasks (subjects, descriptions, dependencies)
 - Settings (testing, logging preferences)
 - Commit checkpoints
 - Which tasks are already completed (checkboxes `- [x]`)
+- For ultra: the exact paths/symbols, implementation steps, contracts, risks,
+  acceptance criteria, and verification in every task's phase file
 
 **2.2: Read project context**
 
@@ -148,11 +173,21 @@ Read `.ai-factory/DESCRIPTION.md` (use path from config) if it exists:
 - Conventions
 - Non-functional requirements
 
-If the plan contains `## Research Context`, a `Source:` / `Reference:` line pointing to `RESEARCH.md`, or any path/link to the resolved `paths.research` artifact, treat the Research Context embedded in the plan as the committed requirements snapshot. Read the resolved research artifact before proposing refinements only to verify the committed revision marker (`Updated:` and/or `SHA256:` in the plan source line) and to consult `## Sessions` for rationale when needed. If the source line lacks a revision marker or the current `Active Summary` revision differs, emit `WARN [research-drift]` and refine against the plan's embedded Research Context; do not apply requirements from the newer Active Summary unless the user explicitly asks to rebase the plan.
+Read the resolved architecture and roadmap artifacts when present. Read the
+resolved rules hierarchy in order: `paths.rules_file`, `rules.base`, then named
+`rules.<area>` entries relevant to the plan. More-specific rules override
+general ones. Treat roadmap text as scope unless the project explicitly declares
+it authoritative for detailed behavior.
 
-When adding `## Research Context` to an unlinked plan, normalize the copied Active Summary before hashing: include exactly the text that will be pasted under `## Research Context` after the `Source:` line, exclude markdown comments and the `Source:` line itself, preserve line order, trim trailing spaces, use LF line endings, and end with exactly one final newline. Calculate the digest without writing any temporary file or repository artifact: feed the normalized text through stdin / inline shell input to `shasum -a 256`; if `shasum` is unavailable, feed the same normalized text to `sha256sum`. Use the first output field as the `SHA256:` value.
+If the plan contains `## Research Context`, treat its embedded copy as the committed requirements snapshot. Parse the first `Source:` / `Reference:` line with canonical `^(?:Source|Reference):\s+\x60([^\x60]+)\x60\s+\(` syntax; for older bare-path lines, fall back to `^(?:Source|Reference):\s+(.+?)\s+\(`. Fall back to configured `paths.research` only when neither form identifies a usable path.
 
-Otherwise, read `.ai-factory/RESEARCH.md` (use path from config) if it exists and is relevant to the plan being refined.
+If the parsed source is inside `research_bundles_dir`, require its sibling `INDEX.md` to contain `<!-- aif:research-mode:ultra -->` exactly once and link that `RESEARCH.md` from `## Artifact Index`; otherwise emit `WARN [research-drift]`. Valid sibling C4/ADR/dependency artifacts are rationale only and must not expand plan scope.
+
+When `SHA256:` is present, extract the current source text strictly between `<!-- aif:active-summary:start -->` and `<!-- aif:active-summary:end -->`, remove HTML comment blocks, preserve line order and leading whitespace, trim trailing spaces from every line, use LF endings, and end with one newline. Hash through stdin with `shasum -a 256` or `sha256sum`; the digest is authoritative. Use `Updated:` only as a legacy fallback when `SHA256:` is absent. A missing/invalid source or revision mismatch emits `WARN [research-drift]`; refine against the embedded Research Context unless the user explicitly requests a rebase.
+
+When adding `## Research Context` to an unlinked plan, use the same normalization algorithm and first output field as the `SHA256:` value. Calculate it through stdin / inline shell input without a temporary repository artifact.
+
+Otherwise, select at most one relevant research source using the same conservative order as `$aif-plan`: an explicit source, one clearly matching direct child bundle whose `INDEX.md` contains `<!-- aif:research-mode:ultra -->` exactly once, declares `Status: active`, and links its `RESEARCH.md` from `## Artifact Index`, then the configured legacy file. Do not merge multiple sources or choose by recency alone.
 
 **2.3: Read patches (limited fallback)**
 
@@ -231,6 +266,26 @@ Based on the tech stack and codebase:
 - Rate limiting, caching considerations
 - Data validation at boundaries
 
+**3.4: Reconcile requirements and behavior combinations**
+
+- Read any `## Requirements Reconciliation` section in the plan. Resolve
+  research-backed citations against the embedded `## Research Context`; the
+  live research source is only a drift signal unless the user explicitly asks
+  to rebase. Verify other cited passages against the current authoritative
+  context.
+- Follow a source-priority hierarchy only when the user or project declares it.
+  If conflicting sources have no declared authority, report the ambiguity
+  instead of choosing silently.
+- Treat roadmap items as scope indicators rather than detailed behavioral
+  contracts unless the project explicitly says otherwise.
+- When behavior depends on independent selectors, states, modes, or input
+  shapes, check the supported combinations across input validation, persistence,
+  output/transition, and side effects. Look for combinations that were described
+  separately but never verified together.
+- When real repository data, configuration, fixtures, schemas, or content define
+  the contract, check that the plan exercises a representative existing artifact
+  through the primary integration path.
+
 ### Step 4: Identify Improvements
 
 Compare the plan against what you found. Use `## Original Request` as the original intent / scope anchor when it exists, together with the current task list and any committed `## Research Context`. A proposed refinement is in scope only when it supports that original request or an explicitly approved user refinement prompt; otherwise route it to 4.6 (`out_of_scope`) instead of adding it to the active plan. Categorize issues:
@@ -244,6 +299,11 @@ Compare the plan against what you found. Use `## Original Request` as the origin
 - Missing logging requirements
 - Missing error handling details
 - Incorrect file paths
+- Missing or incorrect requirement citations, unresolved source conflicts, or a
+  missing `## Requirements Reconciliation` section when Step 3.4 requires one
+- Missing verification of a supported behavior combination or representative
+  real artifact. Respect the plan's testing setting: add a test only when testing
+  is enabled; otherwise add a runnable/manual verification step.
 
 **4.3: Dependency issues**
 - Wrong task order (task A depends on B but B comes after A)
@@ -275,7 +335,7 @@ This is a dispatcher step, not a separate finding category. Each finding it prod
 
 ### Optional: `+check` validation between Step 4 and Step 5
 
-When the `+check` flag is set (and `--list` is not), run the validation procedure from `references/CHECK-MODE.md` here, between Step 4 and Step 5. It re-reads cited files via a fresh-context subagent, then drops invented items, rewrites partially-correct ones, and recomputes dependencies on the filtered list. Without `+check`, skip this entirely — the output has no validator-related lines and the Summary block stays in its default shape without the two `+check` counter rows.
+When the `+check` flag is set (and `--list` is not), run the validation procedure from `references/CHECK-MODE.md` here, between Step 4 and Step 5. It re-reads cited files via a fresh-context subagent, then drops invented items, rewrites partially-correct ones, and recomputes dependencies on the filtered list. For ultra, the validator must receive the entrypoint plus all linked phase files as the plan artifact; validating `index.md` alone is incomplete. Without `+check`, skip this entirely — the output has no validator-related lines and the Summary block stays in its default shape without the two `+check` counter rows.
 
 ### Step 5: Present Improvements
 
@@ -293,7 +353,7 @@ The Step 5 report template below defines structure only. Render all human-readab
 ```
 ## Plan Refinement Report
 
-Plan: [plan file path]
+Plan: [plan artifact path]
 Tasks analyzed: N
 
 ### Findings
@@ -344,7 +404,7 @@ The completion templates below define structure only. Render all human-readable 
 
 The plan looks solid! No significant gaps or issues found.
 
-Plan: [plan file path]
+Plan: [plan artifact path]
 Tasks: N
 
 Ready to implement:
@@ -387,9 +447,9 @@ TaskUpdate(taskId, status: "deleted")
 
 The difference between the two is the report only. `removals` are dead-weight duplicates: mentioned once and forgotten. `out_of_scope` items appear in the "💡 Out of scope" section so the user sees the idea was noticed and consciously dropped from this plan, not removed without a trace. The skill does not persist out-of-scope tasks anywhere — capturing the idea elsewhere (issue tracker, backlog) is the user's call.
 
-**6.5: Update the plan file**
+**6.5: Update the plan artifact**
 
-**CRITICAL:** After all changes, update the plan file to reflect the new state:
+**CRITICAL:** After all changes, update the selected plan artifact to reflect the new state:
 
 - Add new tasks to the correct phase with `- [ ]` checkboxes
 - Update task descriptions if they changed
@@ -399,19 +459,35 @@ The difference between the two is the report only. `removals` are dead-weight du
 - Preserve any `- [x]` checkboxes for already completed tasks
 - Preserve existing `## Original Request` exactly, including heading, body text, whitespace, and line breaks. Do not translate, summarize, normalize, trim, or rewrite it; this section is raw source input and is exempt from `artifact_language` rewriting.
 - Preserve existing `## Research Context` and its `Source:` / revision marker exactly on any rewrite, unless the user explicitly asks to rebase the plan to current research
-- If an unlinked plan is refined using current research, add `## Research Context` by copying the relevant Active Summary and write `Source: <resolved research path> (Active Summary, Updated: <research Updated timestamp>, SHA256: <sha256 of copied Active Summary>)`
-- Compute that hash from the normalized copied Active Summary: exclude the `Source:` line and comments, preserve line order, trim trailing spaces, use LF line endings, and end with exactly one final newline. Feed the normalized text to `shasum -a 256` or `sha256sum` through stdin / inline shell input, never through a temp file, and copy the first output field.
+- Preserve or update `## Requirements Reconciliation` from the plan's committed
+  evidence; keep the exact heading, declared authority, citations, applicable
+  combination table, and verification scenarios synchronized with the refined
+  tasks. When linked research has drifted, preserve its research-backed
+  decisions until the user explicitly requests a rebase; only that rebase may
+  update them from the live research source
+- If an unlinked plan is refined using current research, add `## Research Context` by copying the relevant Active Summary and write ``Source: `<selected research path>` (Active Summary, Updated: <research Updated timestamp>, SHA256: <sha256 of copied Active Summary>)``
+- Compute that hash with the canonical drift normalization: remove HTML comment blocks, preserve line order and leading whitespace, trim trailing spaces from every line, use LF line endings, and end with exactly one final newline. Feed the normalized text to `shasum -a 256` or `sha256sum` through stdin / inline shell input, never through a temp file, and copy the first output field.
 - If a linked plan has research drift, keep the committed Research Context and source revision in the plan and include `WARN [research-drift]` in the refinement report
+- For ultra, update `index.md` and the affected phase files atomically:
+  - task checkboxes remain only in `index.md`
+  - every task ID maps to exactly one phase section
+  - add/remove/rename phase files only together with Phase Index and task-link updates
+  - preserve completed task status while improving its detail
+  - rerun link, orphan, dependency, and task-mapping integrity checks
+  - maintain the ultra detail gate: exact paths/symbols, ordered edits, contracts,
+    error/logging behavior, test policy, acceptance criteria, and verification
 
-Use `Edit` to make surgical changes to the plan file, or `Write` to regenerate it if changes are extensive.
+Use `Edit` to make surgical changes to a file, or `Write` to regenerate affected
+files when changes are extensive. Never regenerate only `index.md` when phase
+details have changed.
 
-When editing or regenerating the plan file, keep all human-readable artifact content in `artifact_language`; the examples above are structural only. Preserve completed `- [x]` checkboxes exactly. The `## Original Request` section is the explicit language-policy exception: keep it verbatim because it is the user's raw request, not generated artifact prose.
+When editing or regenerating the plan artifact, keep all human-readable artifact content in `artifact_language`; the examples above are structural only. Preserve completed `- [x]` checkboxes exactly. The `## Original Request` section is the explicit language-policy exception: keep it verbatim because it is the user's raw request, not generated artifact prose.
 
-**Filename invariant:** when the existing plan filename matches the sequential
-pattern `^[0-9]{4}_.*\.md$` (e.g. `0042_feature-user-auth.md`), preserve the
+**Identifier invariant:** when the existing full-plan filename or ultra
+directory name matches `^[0-9]{4}_.*(\.md)?$`, preserve the
 exact numeric prefix on rewrite. Never renumber a plan during an improve pass —
 the prefix is permanent and must survive any regeneration. Write back to the
-same absolute path you read from.
+same file or bundle directory you read from.
 
 **6.6: Confirm completion**
 
@@ -426,7 +502,7 @@ Changes applied:
 - Fixed N dependencies
 - Removed N redundant tasks
 
-Updated plan: [plan file path]
+Updated plan: [plan artifact path]
 Total tasks: N
 
 Ready to implement:
@@ -440,7 +516,7 @@ Suggest the user to free up context space if needed: `/clear` (full reset) or `/
 ## Artifact Ownership
 
 - Primary ownership: the plan artifact being refined (resolved branch-plan path, named full-plan path, resolved fast plan path, or resolved fix plan path when explicitly targeted).
-- Config use: resolve full-plan directory via `paths.plans`, fast/fix plans via `paths.plan` and `paths.fix_plan`, git behavior via `git.enabled` and `git.create_branches`, optional research context via `paths.research`, and patch fallback via `paths.patches`.
+- Config use: resolve full-plan directory via `paths.plans`, fast/fix plans via `paths.plan` and `paths.fix_plan`, git behavior via `git.enabled` and `git.create_branches`, optional legacy/bundled research context from `paths.research` and its derived sibling `research/` directory, and patch fallback via `paths.patches`.
 - Read-only context: description, architecture, roadmap, rules, and research artifacts except where the active plan file itself is being updated.
 
 ## Important Rules
@@ -454,6 +530,9 @@ Suggest the user to free up context space if needed: `/clear` (full reset) or `/
 7. **User approves first** — never apply changes without user confirmation
 8. **Keep plan file in sync** — the plan file MUST match the task list after improvements
 9. **Original Request is immutable** — when present, use `## Original Request` to judge scope and preserve it verbatim on every plan edit or regeneration
+10. **Requirements remain external evidence** — never rewrite requirement,
+    research, roadmap, rules, or architecture artifacts to make the plan look
+    consistent; refine the plan or report the conflict.
 
 ## Examples
 

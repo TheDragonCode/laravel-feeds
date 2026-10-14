@@ -188,7 +188,8 @@ Options:
    - Prefer `origin/HEAD`
    - Fallback to remote metadata (`git remote show origin`)
    - Fallback to `main`
-3. If git is enabled, ask whether `$aif-plan full` should create a new branch:
+3. If git is enabled, preserve the existing setup question about whether
+   `$aif-plan full` should create a new branch:
 
 ```
 AskUserQuestion: How should full plans behave in git?
@@ -197,6 +198,10 @@ Options:
 1. Create a new branch (Recommended) - $aif-plan full creates a branch and saves the full plan as a branch-scoped file
 2. Stay on the current branch - $aif-plan full still creates a rich full plan, but without creating a new branch
 ```
+
+The stored `git.create_branches` value also governs explicitly requested
+`$aif-plan ultra` runs. Do not add an ultra-specific setup question: existing
+users who never invoke ultra must see the same setup flow as before.
 
 **Persist resolved settings in `.ai-factory/config.yaml`:**
 
@@ -232,6 +237,9 @@ node ~/.agents/skills/aif/references/update-config.mjs \
   - `git.branch_prefix`
   - `git.skip_push_after_commit`
   - `rules.base`
+- `warmup.paths` is user-owned optional configuration: the template includes
+  `warmup.paths: []` on initial create, but reruns must not set or backfill it.
+  Preserve any existing list unchanged; absence is equivalent to an empty list.
 - Never normalize or overwrite `rules.<area>` entries. Those belong to `$aif-rules`.
 - The helper must preserve comments, blank lines, section order, inline comments, unknown sections, custom user values outside targeted keys, and the commented `rules.*` examples from the template.
 - If the helper reports an unsafe structure or invalid payload, STOP. Do **not** fall back to free-form YAML generation.

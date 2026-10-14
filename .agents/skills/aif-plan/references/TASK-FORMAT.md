@@ -2,18 +2,23 @@
 
 ## Plan File Naming
 
-`workflow.plan_id_format` (config) controls the full-mode plan filename shape:
+`workflow.plan_id_format` (config) controls the full/ultra plan identifier shape:
 
-| Value        | Filename shape                                              | Notes                                                                 |
+| Value        | Full shape / Ultra shape                                    | Notes                                                                 |
 |--------------|-------------------------------------------------------------|-----------------------------------------------------------------------|
-| `slug`       | `paths.plans/<branch-or-slug>.md`                           | Default. Derived from branch name (or description slug in no-git mode).|
+| `slug`       | `paths.plans/<stem>.md` / `paths.plans/<stem>/index.md`     | Default. Derived from branch name (or description slug in no-git mode).|
 | `timestamp`  | (reserved; behaves like `slug`)                             | Reserved value. Currently falls back to `slug` with an `INFO` log.    |
 | `uuid`       | (reserved; behaves like `slug`)                             | Reserved value. Currently falls back to `slug` with an `INFO` log.    |
-| `sequential` | `paths.plans/<NNNN>_<branch-or-slug>.md` (4-digit, zero-padded) | `NNNN = max(existing 4-digit prefix) + 1`; empty dir starts at `0001`; capped at `9999`. Numbers are derived from existing files — deleting the highest-numbered plan can free that number for reuse on the next run. Force-disabled under `HANDOFF_BRANCH_PREPARED=1`. |
+| `sequential` | `paths.plans/<NNNN>_<stem>.md` / `paths.plans/<NNNN>_<stem>/index.md` | `NNNN = max(existing 4-digit prefix across full files and directories whose `index.md` has the exact ultra marker) + 1`; other numbered directories are ignored; empty plans start at `0001`; capped at `9999`. Deleting the highest-numbered plan can free that number for reuse. Force-disabled under `HANDOFF_BRANCH_PREPARED=1`. |
 
 Branch names always remain `<branch_prefix><slug>` regardless of the format —
-the prefix lives only on the plan file. Fast plans (`paths.plan`) and fix plans
-(`paths.fix_plan`) are single files and ignore `plan_id_format`.
+the prefix lives only on the full-plan filename or ultra directory. Fast plans
+(`paths.plan`) and fix plans (`paths.fix_plan`) are single files and ignore
+`plan_id_format`.
+
+This file defines the fast/full single-file format. For the ultra bundle,
+including `index.md`, phase files, detail gates, and consumer rules, read
+`ULTRA-FORMAT.md`.
 
 ## Plan File Template
 
@@ -41,14 +46,22 @@ Milestone: "[milestone name from ROADMAP.md]"  # or "none"
 Rationale: [1 short sentence]
 
 ## Research Context (optional)
-<!-- Only when .ai-factory/RESEARCH.md content influenced this plan, copy/paste the relevant Active Summary here -->
-Source: .ai-factory/RESEARCH.md (Active Summary, Updated: YYYY-MM-DD HH:MM, SHA256: <active-summary-sha256>)
-<!-- Required when any RESEARCH.md content influenced this plan. Use the resolved paths.research value if it is configured differently. The copied context is the committed requirements snapshot; downstream skills use the live research file only to warn about revision drift. -->
+<!-- Only when a selected legacy or ultra-bundle RESEARCH.md influenced this plan, copy/paste the relevant Active Summary here -->
+Source: `.ai-factory/RESEARCH.md` (Active Summary, Updated: YYYY-MM-DD HH:MM, SHA256: <active-summary-sha256>)
+<!-- Required when any RESEARCH.md content influenced this plan. Replace the example source with the exact selected file, including research/<slug>/RESEARCH.md for ultra research. The copied context is the committed requirements snapshot; downstream skills use the live source file only to warn about revision drift. -->
 
 Goal:
 Constraints:
 Decisions:
 Open questions:
+
+## Requirements Reconciliation
+<!-- Include when multiple authoritative sources constrain behavior, a conflict was resolved, independent behavior dimensions exist, or a representative repository artifact is required. Keep this exact heading. -->
+Authority: [declared source priority, or "none declared"]
+
+| Decision / supported combination | Source path and section | Verification evidence |
+|----------------------------------|-------------------------|-----------------------|
+| [material rule or combination] | `[path]` — [section] | [test, command, or manual check] |
 
 ## Commit Plan
 <!-- For plans with 5+ tasks, define commit checkpoints -->
@@ -92,6 +105,11 @@ TaskCreate:
     - Use log levels (DEBUG/INFO/WARN/ERROR)
 
     Files: src/api/auth/login.ts, src/services/auth.ts
+
+    REQUIREMENT EVIDENCE (when the Requirements Reconciliation Gate applies):
+    - Source: `docs/auth.md` — Login contract
+    - Supported combinations: valid/invalid credentials × active/disabled user
+    - Verification: exercise each supported combination through POST /api/auth/login
   activeForm: "Implementing login endpoint"
 ```
 
