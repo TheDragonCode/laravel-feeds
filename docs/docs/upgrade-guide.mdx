@@ -1,55 +1,158 @@
 ---
-title: "Upgrade guide"
-description: "Safe process for upgrading Laravel Feeds within the supported 2.x release line"
+title: "Upgrade from 1.x to 2.x"
+description: "Migrate Laravel Feeds from 1.x to 2.x: runtime requirements, feed slugs, generated titles, and deployment checks"
 type: project
 status: stable
-since: "1.0"
-keywords: ["upgrade", "Composer", "migration", "rollback", "compatibility"]
+since: "2.0"
+keywords: ["upgrade", "Composer", "migration", "rollback", "compatibility", "slug", "2.x"]
 ---
 
-# Upgrade guide
+# Upgrade from 1.x to 2.x
 
 <PageLead>
-The documentation currently covers the `2.x` release line. Review the package release notes and your dependency lock before each update.
+Follow these steps when moving an existing application from Laravel Feeds `1.x` to `2.x`. If your installed `1.x` version already includes feed slugs or the updated generated titles, keep those changes and skip the completed steps.
 </PageLead>
 
-Version `2.x` requires Laravel `13.x` and PHP `8.4` or a later supported `8.x` version. Upgrade web, CLI, scheduler, and queue-worker runtimes before changing Composer constraints. Applications running Laravel `11.x` or `12.x`, or PHP `8.2` or `8.3`, must remain on `1.x`.
+## Runtime requirements {/* #runtime-requirements */}
+
+| Component | `1.x` | `2.x` |
+| --- | --- | --- |
+| PHP | `^8.2` | `^8.4` |
+| Laravel components | `^11.0 \|\| ^12.0 \|\| ^13.0` | `^13.0` |
+
+Upgrade the application's Laravel dependencies and the PHP runtimes used by the web application, CLI, scheduler, and queue workers before installing `2.x`. Applications on PHP `8.2` or `8.3`, or Laravel `11.x` or `12.x`, must remain on `1.x`. See [compatibility](./compatibility.mdx) for the supported environment.
 
 ## Before upgrading {/* #before-upgrading */}
 
-1. Confirm that the target version supports the application's PHP and Laravel versions.
-2. Commit `composer.lock` and the current published `config/feeds.php`.
-3. Record active feed registrations and generated-file destinations.
-4. Run the application's feed generation tests or generate representative feeds in a non-production environment.
+1. Save the current application code, `composer.json`, `composer.lock`, and published `config/feeds.php`. Back up the feed registration table and generated files needed for rollback.
+2. Record registration IDs, titles, existing slugs, schedules, and output destinations.
+3. Find calls to `feed:generate` in deployment scripts, cron jobs, manual schedules, tests, and application code.
+4. Generate representative feeds and retain their output for comparison.
+5. During deployment, pause feed schedules and finish running or queued feed jobs before replacing the package and changing the schema.
 
 ## Apply the update {/* #apply-update */}
 
 ```bash
 composer require dragon-code/laravel-feeds:^2.0 --with-all-dependencies
+composer check-platform-reqs
 ```
 
-For an existing installation, copy only `database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` from the package into your application's migrations directory. Choose a filename timestamp immediately after the application's actual `create_feeds_table` migration and before any feed-registration migrations; keep the `add_slug_to_feeds_table` suffix. Then run `php artisan migrate`. The migration uses the configured connection and table and fills slugs from existing titles, including soft-deleted records. Do not republish or rerun the original create-table migration. Replace numeric feed IDs in commands and manual schedules with the stored slugs.
+Compare the installed package's `config/feeds.php` with the application's published copy and retain application-specific settings. Do not republish with `--force`: it overwrites that copy.
+
+## Add feed slugs {/* #feed-slugs */}
+
+[PR #287](https://github.com/TheDragonCode/laravel-feeds/pull/287) changes single-feed selection from a database ID to a slug derived with `Str::slug(title)`.
+
+If the package's slug migration has already run, do not copy or run it again. Otherwise:
+
+1. Copy only `vendor/dragon-code/laravel-feeds/database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` into the application's `database/migrations` directory.
+2. Set its filename timestamp immediately after the application's actual `create_feeds_table` migration and before any feed-registration migrations. Keep the `add_slug_to_feeds_table` suffix. This order also lets a fresh database create registrations after the slug column exists.
+3. Confirm that `feeds.table.connection` and `feeds.table.table` point to the existing registration table, then run migrations:
 
 ```bash
 php artisan migrate
 ```
 
-Compare the installed package's `config/feeds.php` with the application's published copy and merge new keys manually. Do not republish with `--force`: it overwrites application-specific values.
+The migration adds a nullable `slug` column and fills it from existing titles, including soft-deleted records. Existing titles and IDs are preserved. Do not republish or rerun the original create-table migration.
+
+:::warning
+If the application already owns a `slug` column and the package migration has not run, the migration fails before backfilling any data. Resolve that schema conflict before deployment; do not drop an application-owned column without preserving its data and updating its callers.
+:::
+
+Inspect stored values in `php artisan tinker`:
+
+```php
+app(\DragonCode\LaravelFeed\Queries\FeedQuery::class)
+    ->all()
+    ->get(['id', 'title', 'slug']);
+```
+
+Slugs used for selection must be non-empty and distinct among non-deleted registrations, including inactive ones. Different titles can normalize to the same slug. Ambiguous lookups throw `MultipleRecordsFoundException`; unknown slugs throw `FeedNotFoundException`. Resolve collisions or empty slugs by updating titles through the feed model.
+
+Saving a feed model recalculates its slug from the stored title. Query Builder bulk inserts and updates bypass this behavior. Review such writes and custom feed models that override casts or model events.
+
+## Replace IDs in generation calls {/* #generation-calls */}
+
+For registration ID `42` with stored title `Products Feed`, the migrated slug is `products-feed`.
+
+Before:
+
+```bash
+php artisan feed:generate 42
+```
+
+After:
+
+```bash
+php artisan feed:generate products-feed
+```
+
+The argument is always a slug in `2.x`; a numeric string no longer selects a database ID. Calling `php artisan feed:generate` without an argument still processes all active registrations. With `--target`, replace only the registration argument; target keys stay the same:
+
+```bash
+php artisan feed:generate products-feed --target=42
+```
+
+Update manual schedules and programmatic command calls in the same way. Before:
+
+```php
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command(FeedGenerateCommand::class, [42])->daily();
+```
+
+After:
+
+```php
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command(FeedGenerateCommand::class, ['products-feed'])->daily();
+```
+
+Keep the manual schedule's existing overlap, background, and frequency settings. Update hardcoded slugs when renaming registrations. `ScheduleFeedHelper::register()` uses stored slugs automatically and keeps overlap locks tied to the registration when its title or cron expression changes.
+
+`FeedQuery::find(int $id)`, `delete(int $id)`, and `restore(int $id)` still use IDs. Use `FeedQuery::findBySlug(string $slug)` when selecting by slug. See [generation and scheduling](./generation.mdx).
+
+## Check generated titles {/* #generated-titles */}
+
+[PR #293](https://github.com/TheDragonCode/laravel-feeds/pull/293) removes the `Feed` suffix from titles written into new registration migrations or deploy operations by `make:feed`.
+
+For `php artisan make:feed ProductsFeed`:
+
+| Value | Before | After |
+| --- | --- | --- |
+| Generated registration title | `Products Feed` | `Products` |
+| Slug derived from that title | `products-feed` | `products` |
+
+Existing database titles and previously generated registration files are not rewritten. Keep using each registration's actual stored slug. The feed class name and output filename are not changed by this title update.
+
+## Documentation and package development {/* #documentation-and-development */}
+
+[PR #294](https://github.com/TheDragonCode/laravel-feeds/pull/294) renames the documentation page from Machine Learning to [AI Agents](./machine-learning.mdx). Its filename and URL stay the same, so existing links continue to work.
+
+[PR #297](https://github.com/TheDragonCode/laravel-feeds/pull/297) establishes the new runtime requirements and preserves the `1.x` documentation. Select the documentation version that matches the installed package; search results and LLM context are scoped to that version.
+
+The package's own development environment moves to Pest `^5.0` and Testbench `^11.0`. Its Pest commands use `--tia`, with `--fresh` for full reruns in CI, benchmarks, and snapshot updates. These are package development dependencies, not requirements for an application's test suite.
 
 ## Verify {/* #verify */}
 
-- Generate one feed for every used format.
-- Verify split-file counts and filenames.
-- Confirm scheduled and queued generation.
-- Confirm custom feed models, transformers, macros, and preset subclasses.
-- Compare representative output with the previous version.
+- Rebuild the application's configuration cache if used and restart queue workers and long-running scheduler processes with the new code.
+- Confirm that every selected registration has a non-empty, distinct slug and that commands and manual schedules use it.
+- Generate one feed for every used format; verify split-file counts, filenames, and representative output against the saved `1.x` output.
+- Check target selection, automatic and manual schedules, and queued generation where used.
+- Run application tests covering custom feed models, transformers, macros, and preset subclasses.
+- Resume feed schedules and queue processing after the schema and generation checks pass.
 
 ## Rollback {/* #rollback */}
 
-Restore the previous `composer.lock` and configuration, run `composer install`, and apply the application's migration rollback policy. Generated files are deployment artifacts; restore or regenerate them according to the storage recovery plan.
+Pause feed generation again and finish in-flight jobs. Restore the previous application code, `composer.json`, `composer.lock`, configuration, and generation commands, then run `composer install` on a compatible runtime.
+
+Apply the application's migration rollback policy only after confirming whether the restored `1.x` package already uses slugs. The slug migration's `down()` method drops only that column; it does not restore renamed titles or generated files. Restore changed registration data and output files from the backups when needed. Rebuild configuration caches and restart workers and scheduler processes before resuming generation.
 
 ## See Also
 
 - [Compatibility](./compatibility.mdx)
+- [Generation and scheduling](./generation.mdx)
 - [Configuration reference](./api/configuration.mdx)
-- [Contribution guide](./contributions.mdx)

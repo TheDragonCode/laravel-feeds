@@ -1509,23 +1509,30 @@
             "route": "/upgrade-guide/",
             "source": "upgrade-guide.mdx",
             "aliases": [],
-            "title": "Upgrade guide",
-            "description": "Safe process for upgrading Laravel Feeds within the supported 2.x release line",
+            "title": "Upgrade from 1.x to 2.x",
+            "description": "Migrate Laravel Feeds from 1.x to 2.x: runtime requirements, feed slugs, generated titles, and deployment checks",
             "type": "project",
             "status": "stable",
-            "since": "1.0",
+            "since": "2.0",
             "keywords": [
                 "upgrade",
                 "Composer",
                 "migration",
                 "rollback",
-                "compatibility"
+                "compatibility",
+                "slug",
+                "2.x"
             ],
             "headings": [
                 {
                     "level": 1,
-                    "id": "upgrade-guide",
-                    "text": "Upgrade guide"
+                    "id": "upgrade-from-1x-to-2x",
+                    "text": "Upgrade from 1.x to 2.x"
+                },
+                {
+                    "level": 2,
+                    "id": "runtime-requirements",
+                    "text": "Runtime requirements"
                 },
                 {
                     "level": 2,
@@ -1536,6 +1543,26 @@
                     "level": 2,
                     "id": "apply-update",
                     "text": "Apply the update"
+                },
+                {
+                    "level": 2,
+                    "id": "feed-slugs",
+                    "text": "Add feed slugs"
+                },
+                {
+                    "level": 2,
+                    "id": "generation-calls",
+                    "text": "Replace IDs in generation calls"
+                },
+                {
+                    "level": 2,
+                    "id": "generated-titles",
+                    "text": "Check generated titles"
+                },
+                {
+                    "level": 2,
+                    "id": "documentation-and-development",
+                    "text": "Documentation and package development"
                 },
                 {
                     "level": 2,
