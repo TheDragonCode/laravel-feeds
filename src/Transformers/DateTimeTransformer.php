@@ -15,9 +15,9 @@ class DateTimeTransformer implements Transformer
 {
     protected ?string $dateFormat = null;
 
-    protected ?Repository $configuration = null;
+    private ?Repository $configuration = null;
 
-    protected bool $transforming = false;
+    private bool $transforming = false;
 
     public function __construct(?string $dateFormat = null)
     {
@@ -63,7 +63,7 @@ class DateTimeTransformer implements Transformer
         return ($this->configuration ?? $this->configuration())->get('feeds.date.timezone');
     }
 
-    protected function configuration(): Repository
+    private function configuration(): Repository
     {
         if (! $this->transforming) {
             return config();

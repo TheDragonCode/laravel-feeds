@@ -56,6 +56,39 @@ test('supports subclasses whose constructor does not call the parent', function 
     expect($transformer->transform($date))->toBe('2026-07-28');
 });
 
+test('supports subclass configuration methods with unrelated return types', function () {
+    $transformer = new class extends DateTimeTransformer {
+        public function configuration(): array
+        {
+            return ['mode' => 'consumer'];
+        }
+    };
+
+    expect($transformer->transform(new DateTimeImmutable('2026-07-28T12:30:00+03:00')))
+        ->toBe('2026-07-28T09:30:00+00:00')
+        ->and($transformer->configuration())->toBe(['mode' => 'consumer']);
+});
+
+test('supports subclass configuration properties with unrelated types', function () {
+    $transformer = new class extends DateTimeTransformer {
+        public array $configuration = ['mode' => 'consumer'];
+    };
+
+    expect($transformer->transform(new DateTimeImmutable('2026-07-28T12:30:00+03:00')))
+        ->toBe('2026-07-28T09:30:00+00:00')
+        ->and($transformer->configuration)->toBe(['mode' => 'consumer']);
+});
+
+test('supports subclass transformation state with unrelated types', function () {
+    $transformer = new class extends DateTimeTransformer {
+        public string $transforming = 'consumer';
+    };
+
+    expect($transformer->transform(new DateTimeImmutable('2026-07-28T12:30:00+03:00')))
+        ->toBe('2026-07-28T09:30:00+00:00')
+        ->and($transformer->transforming)->toBe('consumer');
+});
+
 test('resolves configuration once per transformation', function () {
     $resolutions = 0;
 
