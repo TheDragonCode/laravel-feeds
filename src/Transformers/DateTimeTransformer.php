@@ -6,6 +6,7 @@ namespace DragonCode\LaravelFeed\Transformers;
 
 use DateTimeInterface;
 use DragonCode\LaravelFeed\Contracts\Transformer;
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\Carbon;
 
 use function config;
@@ -13,6 +14,10 @@ use function config;
 class DateTimeTransformer implements Transformer
 {
     protected ?string $dateFormat = null;
+
+    private ?Repository $configuration = null;
+
+    private bool $transforming = false;
 
     public function __construct(?string $dateFormat = null)
     {
@@ -27,9 +32,20 @@ class DateTimeTransformer implements Transformer
     /** @param  DateTimeInterface  $value */
     public function transform(mixed $value): string
     {
-        return $this->resolve($value)
-            ->when($this->timezone(), fn (Carbon $date, string $zone) => $date->setTimezone($zone))
-            ->format($this->format());
+        $previousConfiguration = $this->configuration;
+        $previousTransforming  = $this->transforming;
+
+        $this->configuration = null;
+        $this->transforming  = true;
+
+        try {
+            return $this->resolve($value)
+                ->when($this->timezone(), fn (Carbon $date, string $zone) => $date->setTimezone($zone))
+                ->format($this->format());
+        } finally {
+            $this->configuration = $previousConfiguration;
+            $this->transforming  = $previousTransforming;
+        }
     }
 
     protected function resolve(mixed $date): Carbon
@@ -39,11 +55,20 @@ class DateTimeTransformer implements Transformer
 
     protected function format(): string
     {
-        return $this->dateFormat ?? config('feeds.date.format');
+        return $this->dateFormat ?? ($this->configuration ?? $this->configuration())->get('feeds.date.format');
     }
 
     protected function timezone(): string
     {
-        return config('feeds.date.timezone');
+        return ($this->configuration ?? $this->configuration())->get('feeds.date.timezone');
+    }
+
+    private function configuration(): Repository
+    {
+        if (! $this->transforming) {
+            return config();
+        }
+
+        return $this->configuration ??= config();
     }
 }
