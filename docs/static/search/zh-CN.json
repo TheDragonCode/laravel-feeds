@@ -47,7 +47,27 @@
             "扩展点",
             "另请参阅"
         ],
-        "content": "API 参考 当你已了解工作流程，需要查找准确的类、方法、配置键、事件或失败契约时，请使用本节。 领域 主要入口 参考资料 --- --- --- 配置 config/feeds.php 配置 Feed 类 Feed 、 FeedItem 、 FeedInfo Feed 与数据 输出结构 ElementData 、XML 指令 元素、指令 格式 FeedFormatEnum 、转换程序 支持的格式 运行时 GeneratorService 、 FeedQuery 、 ScheduleFeedHelper 运行时服务与契约 生命周期 开始和完成事件 事件与异常 预设 Sitemap、RSS、Instagram、Yandex 预设 扩展点 - 继承 Feed 或预设，以定义数据源和输出契约。 - 继承 FeedItem 和 FeedInfo ，以控制序列化数据。 - 实现 DragonCode\\LaravelFeed\\Contracts\\Transformer ，以自定义标量转换。 - 需要省略字段时，返回 DragonCode\\LaravelFeed\\Data\\OptionalData 。 - 在 Feed 、 FeedItem 或 FeedInfo 上注册宏，以添加应用级辅助方法。 另请参阅 - 创建 Feed - 扩展功能 - 故障排除"
+        "content": "API 参考 当你已了解工作流程，需要查找准确的类、方法、配置键、事件或失败契约时，请使用本节。 领域 主要入口 参考资料 --- --- --- 配置 config/feeds.php 配置 PHP 属性 Config , DateFormat 配置属性 Feed 类 Feed 、 FeedItem 、 FeedInfo Feed 与数据 输出结构 ElementData 、XML 指令 元素、指令 格式 FeedFormatEnum 、转换程序 支持的格式 运行时 GeneratorService 、 FeedQuery 、 ScheduleFeedHelper 运行时服务与契约 生命周期 开始和完成事件 事件与异常 预设 Sitemap、RSS、Instagram、Yandex 预设 扩展点 - 继承 Feed 或预设，以定义数据源和输出契约。 - 继承 FeedItem 和 FeedInfo ，以控制序列化数据。 - 实现 DragonCode\\LaravelFeed\\Contracts\\Transformer ，以自定义标量转换。 - 需要省略字段时，返回 DragonCode\\LaravelFeed\\Data\\OptionalData 。 - 在 Feed 、 FeedItem 或 FeedInfo 上注册宏，以添加应用级辅助方法。 另请参阅 - 创建 Feed - 扩展功能 - 故障排除"
+    },
+    {
+        "route": "/zh-CN/api/config-attributes/",
+        "title": "配置属性",
+        "description": "用于 Laravel Feeds 单个 Feed 转换程序设置和项目日期格式的 PHP 属性",
+        "keywords": [
+            "PHP",
+            "attributes",
+            "Config",
+            "DateFormat",
+            "converter options",
+            "date format"
+        ],
+        "headings": [
+            "配置属性",
+            "Config 属性",
+            "DateFormat 属性",
+            "另请参阅"
+        ],
+        "content": "配置属性 使用 DragonCode\\LaravelFeed\\Attributes 中的 PHP 属性，可以配置单个 Feed 的转换程序和项目日期格式，无需更改应用范围内的设置。 属性 应用对象 可重复使用 --- --- --- Config(string $name, mixed $value) Feed 类 是 DateFormat(string $format) FeedItem 类 否 这两个属性都应用于类。请从包的命名空间导入； Illuminate\\Container\\Attributes\\Config 是另一个 Laravel 属性，由转换程序的构造函数在内部使用。 Config 属性 为每个转换程序设置添加一个 [Config] 。以下 CSV Feed 使用逗号分隔符和 Windows 换行符： 设置名称是转换程序的构造函数参数名，而不是配置路径。请使用 lineEnding ，不要使用 line_ending 或 feeds.converters.csv.line_ending 。 格式 支持的名称 --- --- csv delimiter , enclosure , escape , lineEnding json options , pretty jsonl options xml , rss pretty 只有提供的值才会覆盖应用默认值。 Feed::converterOptions() 会收集继承的属性：子类的键覆盖父类的键；在同一个类中多次声明相同名称时，最后一次声明生效。其他 Feed 保留各自的设置。 所选格式不支持的名称会抛出 InvalidArgumentException 。JSON Lines 会从 options 中移除 JSON_PRETTY_PRINT ，以确保每行只有一个项目。 自定义转换程序绑定必须遵循提供的构造函数参数。覆盖 get() 或 resolve() 的自定义 ConverterHelper 还必须支持 resolveWithOptions() ；请参阅转换程序扩展契约。 DateFormat 属性 将 [DateFormat] 应用于项目类。上面的 item() 方法会为每个导出的用户选择此类： 使用 PHP 日期格式标记。从 toArray() 返回原始 DateTimeInterface 值，例如经过日期类型转换的 Eloquent 属性。已由 $model- toArray() 序列化的字符串不会重新格式化。 格式从带有该属性的最近父类继承；子类上的属性会覆盖它。项目日期会在正常的转换器管道之前格式化，优先于 Feed 专用和全局日期格式，同时保留 feeds.date.timezone 。随后执行的字符串转换器仍可更改已格式化的值。 该属性适用于所有输出格式，包括嵌套 JSON/XML 中的日期，以及 attributes() 返回的 XML/RSS 项目属性。它不影响 FeedInfo 、根元素属性或其他项目类。没有此属性时，正常的日期管道会使用配置的格式，默认值为 DATE_ATOM 。 另请参阅 - 配置参考 - Feed 与数据 - 支持的格式"
     },
     {
         "route": "/zh-CN/api/configuration/",

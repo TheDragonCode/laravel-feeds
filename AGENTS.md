@@ -123,6 +123,8 @@ Site: `https://feeds.dragon-code.pro`
 
 Source: `docs/docs/`
 
+Config attributes reference: `docs/docs/api/config-attributes.mdx`
+
 Feed targets guide: `docs/docs/feed-targets.mdx`
 
 Targeted feed recipe: `docs/docs/receipt-target-feeds.mdx`

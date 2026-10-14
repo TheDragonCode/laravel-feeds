@@ -3208,6 +3208,7 @@ Use this section when you already know the workflow and need an exact class, met
 | Area | Main entry points | Reference |
 | --- | --- | --- |
 | Configuration | `config/feeds.php` | [Configuration](https://feeds.dragon-code.pro/api/configuration/) |
+| PHP attributes | `Config`, `DateFormat` | [Config Attributes](https://feeds.dragon-code.pro/api/config-attributes/) |
 | Feed classes | `Feed`, `FeedItem`, `FeedInfo` | [Feeds and data](https://feeds.dragon-code.pro/api/feed/) |
 | Output structure | `ElementData`, XML directives | [Elements](https://feeds.dragon-code.pro/elements/), [Directives](https://feeds.dragon-code.pro/directives/) |
 | Formats | `FeedFormatEnum`, converters | [Supported formats](https://feeds.dragon-code.pro/supported-formats/) |
@@ -3286,6 +3287,105 @@ These values are application-wide defaults. Override them for one feed with [per
 - [Installation](https://feeds.dragon-code.pro/installation/)
 - [Generation and schedule](https://feeds.dragon-code.pro/generation/)
 - [Eloquent model configuration](https://feeds.dragon-code.pro/eloquent/)
+
+---
+
+# Config Attributes
+
+<PageLead>
+Use the PHP attributes in `DragonCode\LaravelFeed\Attributes` to configure a feed's converter and its item date format without changing application-wide settings.
+</PageLead>
+
+| Attribute | Apply to | Repeatable |
+| --- | --- | --- |
+| `Config(string $name, mixed $value)` | A `Feed` class | Yes |
+| `DateFormat(string $format)` | A `FeedItem` class | No |
+
+Both attributes target classes. Import them from the package namespace; `Illuminate\Container\Attributes\Config` is a separate Laravel attribute used internally by converter constructors.
+
+## Config
+
+Add one `#[Config]` per converter setting. This CSV feed uses a comma delimiter and Windows line endings:
+
+```php
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+#[Config('delimiter', ',')]
+#[Config('lineEnding', "\r\n")]
+class UserCsvFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+Setting names are converter constructor parameter names, not configuration paths. Use `lineEnding`, not `line_ending` or `feeds.converters.csv.line_ending`.
+
+| Format | Supported names |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+Only supplied values override [application defaults](https://feeds.dragon-code.pro/api/configuration/#converter-settings). `Feed::converterOptions()` collects inherited attributes: child keys override parent keys, and the last declaration of the same name on one class wins. Other feeds keep their own settings.
+
+Unsupported names for the selected format throw `InvalidArgumentException`. JSON Lines removes `JSON_PRETTY_PRINT` from `options` to keep one item per line.
+
+Custom converter bindings must honor the supplied constructor parameters. A custom `ConverterHelper` that overrides `get()` or `resolve()` must also support `resolveWithOptions()`; see [the converter extension contract](https://feeds.dragon-code.pro/supported-formats/#converter-options).
+
+## DateFormat
+
+Apply `#[DateFormat]` to an item class. The `item()` method above selects this class for each exported user:
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Attributes\DateFormat;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+#[DateFormat('Y-m-d H:i')]
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->model->id,
+            'createdAt' => $this->model->created_at,
+        ];
+    }
+}
+```
+
+Use PHP date format tokens. Return raw `DateTimeInterface` values, such as Eloquent date-cast properties, from `toArray()`. Strings already serialized by `$model->toArray()` are not reformatted.
+
+The nearest annotated parent supplies the inherited format; a child attribute overrides it. Item dates are formatted before the normal transformer pipeline, taking precedence over feed-specific and global date formats while retaining `feeds.date.timezone`. Later string transformers can still change the formatted value.
+
+The attribute works in every output format, including nested JSON/XML dates and XML/RSS item attributes returned by `attributes()`. It does not affect `FeedInfo`, root attributes, or other item classes. Without it, the normal date pipeline uses the configured format, which defaults to `DATE_ATOM`.
+
+## See Also
+
+- [Configuration reference](https://feeds.dragon-code.pro/api/configuration/)
+- [Feeds and data](https://feeds.dragon-code.pro/api/feed/)
+- [Supported formats](https://feeds.dragon-code.pro/supported-formats/)
 
 ---
 

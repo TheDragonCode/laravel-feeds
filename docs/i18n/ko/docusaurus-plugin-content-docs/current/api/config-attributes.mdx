@@ -1,0 +1,105 @@
+---
+title: "구성 속성"
+description: "Laravel Feeds의 피드별 변환기 설정과 항목 날짜 형식을 위한 PHP 속성"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["PHP", "attributes", "Config", "DateFormat", "converter options", "date format"]
+---
+
+# 구성 속성
+
+<PageLead>
+`DragonCode\LaravelFeed\Attributes`의 PHP 속성을 사용하여 애플리케이션 전체 설정을 변경하지 않고 피드의 변환기와 항목 날짜 형식을 구성하십시오.
+</PageLead>
+
+| 속성 | 적용 대상 | 반복 사용 가능 |
+| --- | --- | --- |
+| `Config(string $name, mixed $value)` | `Feed` 클래스 | 예 |
+| `DateFormat(string $format)` | `FeedItem` 클래스 | 아니요 |
+
+두 속성 모두 클래스에 적용됩니다. 패키지 네임스페이스에서 가져오십시오. `Illuminate\Container\Attributes\Config`는 변환기 생성자가 내부적으로 사용하는 별도의 Laravel 속성입니다.
+
+## Config 속성 {/* #config */}
+
+변환기 설정마다 `#[Config]`를 하나씩 추가하십시오. 이 CSV 피드는 쉼표 구분자와 Windows 줄 끝을 사용합니다.
+
+```php
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+#[Config('delimiter', ',')]
+#[Config('lineEnding', "\r\n")]
+class UserCsvFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+설정 이름은 구성 경로가 아니라 변환기 생성자의 매개변수 이름입니다. `line_ending` 또는 `feeds.converters.csv.line_ending`이 아닌 `lineEnding`을 사용하십시오.
+
+| 형식 | 지원하는 이름 |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+제공된 값만 [애플리케이션 기본값](./configuration.mdx#converter-settings)을 재정의합니다. `Feed::converterOptions()`는 상속된 속성을 수집합니다. 자식의 키는 부모의 키를 재정의하며, 한 클래스에서 같은 이름을 여러 번 선언하면 마지막 선언이 적용됩니다. 다른 피드는 자신의 설정을 유지합니다.
+
+선택한 형식에서 지원하지 않는 이름은 `InvalidArgumentException`을 발생시킵니다. JSON Lines는 한 줄에 항목 하나를 유지하기 위해 `options`에서 `JSON_PRETTY_PRINT`를 제거합니다.
+
+사용자 지정 변환기 바인딩은 제공된 생성자 매개변수를 반영해야 합니다. `get()` 또는 `resolve()`를 재정의하는 사용자 지정 `ConverterHelper`는 `resolveWithOptions()`도 지원해야 합니다. [변환기 확장 계약](../supported-formats.mdx#converter-options)을 참조하십시오.
+
+## DateFormat 속성 {/* #date-format */}
+
+항목 클래스에 `#[DateFormat]`을 적용하십시오. 위의 `item()` 메서드는 내보내는 각 사용자에 대해 이 클래스를 선택합니다.
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Attributes\DateFormat;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+#[DateFormat('Y-m-d H:i')]
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->model->id,
+            'createdAt' => $this->model->created_at,
+        ];
+    }
+}
+```
+
+PHP 날짜 형식 토큰을 사용하십시오. `toArray()`에서는 Eloquent의 날짜 캐스트 속성처럼 원래 `DateTimeInterface` 값을 반환하십시오. `$model->toArray()`로 이미 직렬화된 문자열은 다시 형식을 지정하지 않습니다.
+
+이 속성이 적용된 가장 가까운 부모 클래스의 형식을 상속하며, 자식 클래스의 속성은 이를 재정의합니다. 항목 날짜는 일반 트랜스포머 파이프라인보다 먼저 형식이 지정됩니다. 피드별 날짜 형식과 전역 날짜 형식보다 우선하며 `feeds.date.timezone`은 유지합니다. 이후에 실행되는 문자열 트랜스포머는 형식이 지정된 값을 다시 변경할 수 있습니다.
+
+이 속성은 모든 출력 형식에 적용됩니다. 중첩된 JSON/XML 날짜와 `attributes()`가 반환하는 XML/RSS 항목 속성도 포함됩니다. `FeedInfo`, 루트 속성 또는 다른 항목 클래스에는 영향을 주지 않습니다. 이 속성이 없으면 일반 날짜 파이프라인이 구성된 형식을 사용하며, 기본값은 `DATE_ATOM`입니다.
+
+## 관련 문서
+
+- [구성 참조](./configuration.mdx)
+- [피드 및 데이터](./feed.mdx)
+- [지원 형식](../supported-formats.mdx)
