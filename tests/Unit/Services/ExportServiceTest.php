@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DragonCode\LaravelFeed\Exceptions\WriteFeedException;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use DragonCode\LaravelFeed\Services\ExportService;
 use DragonCode\LaravelFeed\Services\FilesystemService;
@@ -53,7 +54,7 @@ test('writes each serialized item immediately', function (string $lineEnding) {
     $feed->shouldReceive('perFile')->once()->andReturn(0);
     $feed->shouldReceive('maxFiles')->once()->andReturn(0);
     $feed->shouldReceive('builder')->once()->andReturn($builder);
-    $feed->shouldReceive('path')->times(3)->andReturn('feed.xml');
+    $feed->shouldReceive('path')->once()->andReturn('feed.xml');
 
     $writes = [];
 
@@ -109,9 +110,10 @@ test('passes item presence to each file creation', function (
     $filesystem = mock(FilesystemService::class);
 
     if ($modelCount === 0) {
+        $feed->shouldNotReceive('path');
         $filesystem->shouldNotReceive('append');
     } else {
-        $feed->shouldReceive('path')->times($modelCount)->andReturn('feed.json');
+        $feed->shouldReceive('path')->times(count($expected))->andReturn('feed.json');
         $filesystem->shouldReceive('append')->times($modelCount);
     }
 
@@ -159,7 +161,7 @@ test('respects split capacity', function (
     $feed->shouldReceive('perFile')->once()->andReturn(2);
     $feed->shouldReceive('maxFiles')->once()->andReturn(3);
     $feed->shouldReceive('builder')->once()->andReturn($builder);
-    $feed->shouldReceive('path')->times(count($expectedItems))->andReturn('feed.json');
+    $feed->shouldReceive('path')->times(count($expectedFiles))->andReturn('feed.json');
 
     $filesystem = mock(FilesystemService::class);
     $filesystem->shouldReceive('append')->times(count($expectedItems));
@@ -288,6 +290,7 @@ test('creates an empty feed without counting models', function () {
     $feed->shouldReceive('perFile')->once()->andReturn(0);
     $feed->shouldReceive('maxFiles')->once()->andReturn(0);
     $feed->shouldReceive('builder')->once()->andReturn($builder);
+    $feed->shouldNotReceive('path');
 
     $filesystem = mock(FilesystemService::class);
     $filesystem->shouldNotReceive('append');
@@ -315,6 +318,68 @@ test('creates an empty feed without counting models', function () {
         ->toBe([0]);
 });
 
+test('preserves the write failure when refreshing its diagnostic path fails', function () {
+    $builder = mockUnboundedExportBuilder(LazyCollection::make([mock(Model::class)]), 1);
+    $feed    = mock(Feed::class);
+
+    $feed->shouldReceive('perFile')->once()->andReturn(0);
+    $feed->shouldReceive('maxFiles')->once()->andReturn(0);
+    $feed->shouldReceive('builder')->once()->andReturn($builder);
+    $feed->shouldReceive('path')->once()->andReturn('feed.json')->ordered();
+    $feed->shouldReceive('path')->once()->andThrow(new RuntimeException('Path failed.'))->ordered();
+
+    $resource   = fopen('php://memory', 'wb');
+    $exception  = new WriteFeedException('feed.json', 2, 4);
+    $trace      = $exception->getTrace();
+    $filesystem = mock(FilesystemService::class);
+
+    $filesystem->shouldReceive('append')->once()->with($resource, 'item', 'feed.json')->andThrow($exception);
+    $filesystem->shouldReceive('close')->once()->with($resource)->andReturnUsing(fclose(...));
+
+    $service = new ExportService($feed, $filesystem, null)
+        ->file(create: fn () => $resource, close: fn () => null)
+        ->item(fn () => 'item')
+        ->chunk(1);
+
+    try {
+        $service->export();
+
+        $this->fail('A feed write failure was expected.');
+    } catch (WriteFeedException $caught) {
+        expect($caught)->toBe($exception)
+            ->and($caught->getMessage())->toBe('Failed to write to the feed: [feed.json]. Written [2] of [4] bytes.')
+            ->and($caught->getTrace())->toBe($trace);
+    }
+
+    expect(is_resource($resource))->toBeFalse();
+});
+
+test('closes the created resource when diagnostic path resolution fails', function () {
+    $builder = mockUnboundedExportBuilder(LazyCollection::make([mock(Model::class)]), 1);
+    $feed    = mock(Feed::class);
+
+    $feed->shouldReceive('perFile')->once()->andReturn(0);
+    $feed->shouldReceive('maxFiles')->once()->andReturn(0);
+    $feed->shouldReceive('builder')->once()->andReturn($builder);
+    $feed->shouldReceive('path')->once()->andThrow(new RuntimeException('Path failed.'));
+
+    $resource   = fopen('php://memory', 'wb');
+    $filesystem = mock(FilesystemService::class);
+
+    $filesystem->shouldNotReceive('append');
+    $filesystem->shouldReceive('close')->once()->with($resource)->andReturnUsing(fclose(...));
+
+    $service = new ExportService($feed, $filesystem, null)
+        ->file(create: fn () => $resource, close: fn () => null)
+        ->item(fn () => 'item')
+        ->chunk(1);
+
+    expect(fn () => $service->export())
+        ->toThrow(RuntimeException::class, 'Path failed.')
+        ->and(is_resource($resource))
+        ->toBeFalse();
+});
+
 test('counts models once when progress reporting needs an exact total', function () {
     $models = LazyCollection::make(function () {
         foreach (range(1, 3) as $id) {
@@ -332,7 +397,7 @@ test('counts models once when progress reporting needs an exact total', function
     $feed->shouldReceive('perFile')->once()->andReturn(0);
     $feed->shouldReceive('maxFiles')->once()->andReturn(0);
     $feed->shouldReceive('builder')->twice()->andReturn($builder);
-    $feed->shouldReceive('path')->times(3)->andReturn('feed.jsonl');
+    $feed->shouldReceive('path')->once()->andReturn('feed.jsonl');
 
     $output = new OutputStyle(new ArrayInput([]), new BufferedOutput);
 
@@ -499,7 +564,7 @@ test('uses an unqualified key for bounded union queries', function () {
     $feed->shouldReceive('perFile')->once()->andReturn(0);
     $feed->shouldReceive('maxFiles')->once()->andReturn(0);
     $feed->shouldReceive('builder')->once()->andReturn($builder);
-    $feed->shouldReceive('path')->twice()->andReturn('feed.json');
+    $feed->shouldReceive('path')->once()->andReturn('feed.json');
 
     $filesystem = mock(FilesystemService::class);
     $filesystem->shouldReceive('append')->twice();

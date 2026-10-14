@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Services;
 
 use Closure;
+use DragonCode\LaravelFeed\Exceptions\WriteFeedException;
 use DragonCode\LaravelFeed\Feeds\Feed;
 use Illuminate\Console\OutputStyle;
 use Illuminate\Database\Eloquent\Builder;
@@ -54,6 +55,8 @@ class ExportService
 
     protected ?int $modelCount = null;
 
+    private ?string $diagnosticPath = null;
+
     public function __construct(
         protected Feed $feed,
         protected FilesystemService $filesystem,
@@ -102,6 +105,8 @@ class ExportService
 
     public function export(): void
     {
+        $this->diagnosticPath = null;
+
         try {
             $pending = null;
             $models  = $this->models();
@@ -130,7 +135,8 @@ class ExportService
                 $this->filesystem->close($this->resource);
             }
 
-            $this->resource = null;
+            $this->resource       = null;
+            $this->diagnosticPath = null;
         }
     }
 
@@ -188,7 +194,8 @@ class ExportService
 
         value($this->closeFile, $this->resource, $this->fileIndex, $this->records);
 
-        $this->resource = null;
+        $this->resource       = null;
+        $this->diagnosticPath = null;
 
         $this->writtenFiles++;
 
@@ -201,7 +208,18 @@ class ExportService
             $content = $this->lineEnding . $content;
         }
 
-        $this->filesystem->append($this->getFile(), $content, $this->feed->path());
+        $resource = $this->getFile();
+        $path     = $this->diagnosticPath ??= $this->feed->path();
+
+        try {
+            $this->filesystem->append($resource, $content, $path);
+        } catch (WriteFeedException $e) {
+            try {
+                $e->withPath($this->feed->path());
+            } finally {
+                throw $e;
+            }
+        }
     }
 
     protected function perFile(Feed $feed): int
