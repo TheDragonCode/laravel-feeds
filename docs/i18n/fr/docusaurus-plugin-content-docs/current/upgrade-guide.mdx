@@ -43,17 +43,21 @@ Comparez le fichier `config/feeds.php` du paquet installé à la copie publiée 
 
 La [PR #287](https://github.com/TheDragonCode/laravel-feeds/pull/287) remplace la sélection d’un flux par son identifiant en base de données par une sélection par slug, dérivé avec `Str::slug(title)`.
 
-Si la migration des slugs du paquet a déjà été exécutée, ne la copiez pas et ne l’exécutez pas à nouveau. Sinon :
+Si la migration des slugs du paquet n’a pas encore été exécutée, publiez les migrations :
 
-1. Copiez uniquement `vendor/dragon-code/laravel-feeds/database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` dans le répertoire `database/migrations` de l’application.
-2. Placez l’horodatage de son nom de fichier immédiatement après celui de la migration `create_feeds_table` réellement présente dans l’application et avant toute migration d’enregistrement de flux. Conservez le suffixe `add_slug_to_feeds_table`. Cet ordre permet aussi à une nouvelle base de données de créer les enregistrements une fois la colonne slug ajoutée.
-3. Vérifiez que `feeds.table.connection` et `feeds.table.table` désignent la table d’enregistrement existante, puis exécutez les migrations :
+```bash
+php artisan vendor:publish --tag=feeds-migrations
+```
+
+La commande publie tous les fichiers de migration. Validez les fichiers publiés et supprimez ceux qui sont inutiles.
+
+Définissez l’horodatage du nom de fichier de la nouvelle migration `add_slug_to_feeds_table` après celui de la migration `create_feeds_table` réellement présente dans l’application et avant toute migration d’enregistrement de flux. Cet ordre garantit que `migrate:fresh` ajoute la colonne slug avant que les enregistrements y écrivent. Exécutez ensuite les migrations :
 
 ```bash
 php artisan migrate
 ```
 
-La migration ajoute une colonne `slug` qui accepte les valeurs NULL et la remplit à partir des titres existants, y compris ceux des enregistrements supprimés temporairement. Les titres et identifiants existants sont conservés. Ne republiez pas et ne réexécutez pas la migration d’origine qui crée la table.
+La migration ajoute une colonne `slug` qui accepte les valeurs NULL et la remplit à partir des titres existants, y compris ceux des enregistrements supprimés temporairement. Les titres et identifiants existants sont conservés.
 
 :::warning
 Si l’application possède déjà sa propre colonne `slug` et que la migration du paquet n’a pas été exécutée, la migration échoue avant de remplir les données. Résolvez ce conflit de schéma avant le déploiement ; ne supprimez pas une colonne propre à l’application sans conserver ses données et mettre à jour le code qui l’utilise.
@@ -73,7 +77,7 @@ L’enregistrement d’un modèle de flux recalcule son slug à partir du titre 
 
 ## Remplacer les identifiants dans les appels de génération {/* #generation-calls */}
 
-Pour l’enregistrement d’identifiant `42` dont le titre stocké est `Products Feed`, le slug après migration est `products-feed`.
+Pour l’enregistrement d’identifiant `42` dont le titre stocké est `Products`, le slug après migration est `products`.
 
 Avant :
 
@@ -84,13 +88,13 @@ php artisan feed:generate 42
 Après :
 
 ```bash
-php artisan feed:generate products-feed
+php artisan feed:generate products
 ```
 
 Dans `2.x`, l’argument est toujours un slug ; une chaîne numérique ne sélectionne plus un identifiant en base de données. L’appel à `php artisan feed:generate` sans argument traite toujours tous les enregistrements actifs. Avec `--target`, remplacez uniquement l’argument d’enregistrement ; les clés des cibles restent identiques :
 
 ```bash
-php artisan feed:generate products-feed --target=42
+php artisan feed:generate products --target=42
 ```
 
 Mettez à jour les planifications manuelles et les appels de commandes dans le code de la même manière. Avant :
@@ -108,7 +112,7 @@ Après :
 use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command(FeedGenerateCommand::class, ['products-feed'])->daily();
+Schedule::command(FeedGenerateCommand::class, ['products'])->daily();
 ```
 
 Conservez les paramètres existants des planifications manuelles pour les chevauchements, l’exécution en arrière-plan et la fréquence. Mettez à jour les slugs écrits en dur lorsque vous renommez des enregistrements. `ScheduleFeedHelper::register()` utilise automatiquement les slugs stockés et maintient les verrous de chevauchement liés à l’enregistrement lorsque son titre ou son expression cron change.
