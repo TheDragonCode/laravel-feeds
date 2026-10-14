@@ -95,6 +95,46 @@
             ]
         },
         {
+            "route": "/api/config-attributes/",
+            "source": "api/config-attributes.mdx",
+            "aliases": [],
+            "title": "Config Attributes",
+            "description": "PHP attributes for per-feed converter settings and item date formats in Laravel Feeds",
+            "type": "reference",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "PHP",
+                "attributes",
+                "Config",
+                "DateFormat",
+                "converter options",
+                "date format"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "config-attributes",
+                    "text": "Config Attributes"
+                },
+                {
+                    "level": 2,
+                    "id": "config",
+                    "text": "Config"
+                },
+                {
+                    "level": 2,
+                    "id": "date-format",
+                    "text": "DateFormat"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
             "route": "/api/configuration/",
             "source": "api/configuration.mdx",
             "aliases": [],
