@@ -30,6 +30,37 @@
             ]
         },
         {
+            "route": "/ai-agents/",
+            "source": "ai-agents.mdx",
+            "aliases": [
+                "/machine-learning.html",
+                "/machine-learning/"
+            ],
+            "title": "AI Agents",
+            "description": "Guidance for using the project with LLMs and a consolidated knowledge base",
+            "type": "project",
+            "status": "stable",
+            "since": "1.0",
+            "keywords": [
+                "LLM",
+                "llms.txt",
+                "AI agents",
+                "knowledge base"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "ai-agents",
+                    "text": "AI Agents"
+                },
+                {
+                    "level": 2,
+                    "id": "see-also",
+                    "text": "See Also"
+                }
+            ]
+        },
+        {
             "route": "/api/",
             "source": "api/index.mdx",
             "aliases": [],
@@ -955,36 +986,6 @@
                     "level": 2,
                     "id": "publication_guarantees",
                     "text": "Publication guarantees"
-                },
-                {
-                    "level": 2,
-                    "id": "see-also",
-                    "text": "See Also"
-                }
-            ]
-        },
-        {
-            "route": "/machine-learning/",
-            "source": "machine-learning.mdx",
-            "aliases": [
-                "/machine-learning.html"
-            ],
-            "title": "AI Agents",
-            "description": "Guidance for using the project with LLMs and a consolidated knowledge base",
-            "type": "project",
-            "status": "stable",
-            "since": "1.0",
-            "keywords": [
-                "LLM",
-                "llms.txt",
-                "AI agents",
-                "knowledge base"
-            ],
-            "headings": [
-                {
-                    "level": 1,
-                    "id": "ai-agents",
-                    "text": "AI Agents"
                 },
                 {
                     "level": 2,

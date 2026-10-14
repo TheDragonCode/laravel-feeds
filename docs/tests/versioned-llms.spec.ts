@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("archived documentation links to its frozen knowledge base", async ({ page }) => {
-    await page.goto("/1.x/machine-learning/");
+    await page.goto("/1.x/ai-agents/");
 
     await expect(page.getByRole("link", { name: "llms.txt", exact: true }))
         .toHaveAttribute("href", "https://feeds.dragon-code.pro/1.x/llms.txt");

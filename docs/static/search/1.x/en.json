@@ -1,5 +1,21 @@
 [
     {
+        "route": "/1.x/ai-agents/",
+        "title": "Machine Learning",
+        "description": "Guidance for using the project with LLMs and a consolidated knowledge base",
+        "keywords": [
+            "LLM",
+            "llms.txt",
+            "machine learning",
+            "knowledge base"
+        ],
+        "headings": [
+            "Machine Learning",
+            "See Also"
+        ],
+        "content": "← Previous · Back to README · Next → Machine Learning You can help your LLM understand the structure and conventions of this project much better. To do that, import the guidance from the following file: llms.txt . This file is a single, consolidated Markdown document containing the compiled documentation for this project. It is designed to be used as a knowledge base for LLMs (for example, as a system prompt attachment, a retrieval corpus, or a custom knowledge file). Save the URL and re-import it periodically to pick up updates as the project evolves. See Also - Getting started - Contribution guide - MIT License"
+    },
+    {
         "route": "/1.x/api/",
         "title": "API reference",
         "description": "Reference map for Laravel Feeds public classes, contracts, data objects, events, and exceptions",
@@ -398,22 +414,6 @@
             "See Also"
         ],
         "content": "← Previous · Back to README · Next → Location By default, feeds are stored in public storage, and the file name will be automatically generated from the feed class name after App\\Feeds\\ in kebab-case format. For example: You can change these values by overriding the $storage property and the filename method: Supported disks Feed generation supports Laravel disks that resolve to Illuminate\\Filesystem\\FilesystemAdapter . This includes the local , s3 , sftp , and ftp drivers when their Flysystem adapters are installed and configured. Custom adapters are supported when they provide writable streams, file moves, directory management and listings, and deletion through Flysystem. Read-only disks and custom disks that implement only Illuminate\\Contracts\\Filesystem\\Filesystem are not supported. A custom disk that does not resolve to Illuminate\\Filesystem\\FilesystemAdapter fails before the feed database query starts with UnsupportedStorageDiskException . A Laravel read-only disk still resolves to FilesystemAdapter , so the feed query and local staging finish before the publication write fails. GeneratorService wraps that storage failure in FeedGenerationException . Path contract - storage() returns the configured FilesystemAdapter . - storagePath() returns the disk-relative path used for storage operations, including an optional split-file suffix. - path() returns the path resolved by Laravel's adapter. It is an absolute filesystem path for a local disk and an adapter-resolved path for a remote disk. Publication guarantees Every feed part is completed before publication starts. Local disks publish staged files with filesystem moves under an exclusive application lock. If a move fails, Laravel Feeds attempts to restore every previous file from its staging backup. Remote disks receive complete staged files through Flysystem streams before published objects are changed. Publication then moves each staged object into place and attempts the same rollback on failure. Remote moves can be implemented as copy-and-delete operations and may be eventually consistent. Atomic replacement of one object or an entire split feed is therefore not guaranteed. The publication lock is local to the application host, so generators running on different hosts require an external distributed lock if they can publish the same feed concurrently. See Also - Generation & schedule - Elements - Events"
-    },
-    {
-        "route": "/1.x/machine-learning/",
-        "title": "Machine Learning",
-        "description": "Guidance for using the project with LLMs and a consolidated knowledge base",
-        "keywords": [
-            "LLM",
-            "llms.txt",
-            "machine learning",
-            "knowledge base"
-        ],
-        "headings": [
-            "Machine Learning",
-            "See Also"
-        ],
-        "content": "← Previous · Back to README · Next → Machine Learning You can help your LLM understand the structure and conventions of this project much better. To do that, import the guidance from the following file: llms.txt . This file is a single, consolidated Markdown document containing the compiled documentation for this project. It is designed to be used as a knowledge base for LLMs (for example, as a system prompt attachment, a retrieval corpus, or a custom knowledge file). Save the URL and re-import it periodically to pick up updates as the project evolves. See Also - Getting started - Contribution guide - MIT License"
     },
     {
         "route": "/1.x/performance/",

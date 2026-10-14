@@ -32,7 +32,7 @@ const documentIds = [
     "upgrade-guide",
     "compatibility",
     "contributions",
-    "machine-learning",
+    "ai-agents",
     "license",
 ];
 const siteDirectory = path.resolve(
