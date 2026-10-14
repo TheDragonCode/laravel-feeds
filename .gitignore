@@ -3,6 +3,7 @@
 .junie/
 .vscode/
 .ai/mcp
+.codex/environments
 
 _site/
 build/
