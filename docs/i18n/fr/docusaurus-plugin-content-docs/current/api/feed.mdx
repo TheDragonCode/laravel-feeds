@@ -36,6 +36,7 @@ L’API principale sépare la source de données, le mappage des éléments, les
 | `storagePath($suffix): string` | Nom relatif au disque | Renvoie le chemin utilisé pour les opérations de stockage. |
 | `storage(): FilesystemAdapter` | Disque `public` | Résout et valide le disque Laravel. |
 | `format(): FeedFormatEnum` | `Xml` | Renvoie le format de sortie configuré. |
+| `converterOptions(): array` | `[]` | Renvoie les valeurs héritées de l’attribut `Config` pour ce flux ; les clés de l’enfant remplacent celles du parent. |
 
 `Feed` utilise `Conditionable` et `Macroable` de Laravel.
 

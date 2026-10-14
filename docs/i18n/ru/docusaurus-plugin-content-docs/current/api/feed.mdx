@@ -36,6 +36,7 @@ keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "Elem
 | `storagePath($suffix): string` | Имя файла относительно диска | Возвращает путь для операций с хранилищем. |
 | `storage(): FilesystemAdapter` | Диск `public` | Получает и проверяет диск файловой системы Laravel. |
 | `format(): FeedFormatEnum` | `Xml` | Возвращает настроенный формат вывода. |
+| `converterOptions(): array` | `[]` | Возвращает унаследованные значения атрибута `Config` для этого фида; дочерние ключи переопределяют родительские. |
 
 `Feed` использует Laravel `Conditionable` и `Macroable`.
 

@@ -36,6 +36,7 @@ keywords: ["Feed", "FeedTarget", "HasFeedTargets", "FeedItem", "FeedInfo", "Elem
 | `storagePath($suffix): string` | 相对于磁盘的文件名 | 返回存储操作使用的路径。 |
 | `storage(): FilesystemAdapter` | `public` 磁盘 | 解析并验证 Laravel 文件系统磁盘。 |
 | `format(): FeedFormatEnum` | `Xml` | 返回配置的输出格式。 |
+| `converterOptions(): array` | `[]` | 返回此 Feed 继承的 `Config` 属性值；子 Feed 的键会覆盖父 Feed 的键。 |
 
 `Feed` 使用 Laravel 的 `Conditionable` 和 `Macroable`。
 

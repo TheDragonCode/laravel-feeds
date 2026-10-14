@@ -55,6 +55,8 @@ keywords: ["configuration", "environment", "queue", "schedule", "converters"]
 | `converters.csv.escape` | 빈 문자열 |
 | `converters.csv.line_ending` | `PHP_EOL` |
 
+이 값은 애플리케이션 전체의 기본값입니다. [피드별 변환기 옵션](../supported-formats.mdx#converter-options)을 사용하여 한 피드에 대해서만 재정의하세요. `line_ending` 같은 구성 키 대신 `lineEnding` 같은 생성자 매개변수 이름을 사용합니다.
+
 ## 관련 문서
 
 - [설치](../installation.mdx)

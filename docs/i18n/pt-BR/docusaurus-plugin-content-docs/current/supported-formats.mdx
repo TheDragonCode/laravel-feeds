@@ -19,6 +19,48 @@ keywords: ["XML", "JSON", "JSONL", "CSV", "RSS"]
 
 Por padrão, o formato `xml` é usado.
 
+## Opções do conversor por feed {/* #converter-options */}
+
+Aplique `DragonCode\LaravelFeed\Attributes\Config` a uma classe de feed para sobrescrever as configurações do conversor:
+
+```php
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+#[Config('delimiter', ',')]
+#[Config('enclosure', "'")]
+#[Config('lineEnding', "\r\n")]
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+}
+```
+
+Repita o atributo para cada configuração. Se um nome for repetido na mesma classe, o último atributo declarado prevalece.
+
+Os nomes das configurações são os nomes dos parâmetros do construtor do conversor. Somente os valores fornecidos sobrescrevem a configuração da aplicação; as demais configurações mantêm seus valores configurados. `lineEnding` corresponde a `feeds.converters.csv.line_ending`.
+
+| Formato | Chaves compatíveis |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+As opções do feed pai são herdadas, e as chaves do feed filho sobrescrevem as do pai. Use apenas chaves compatíveis com o formato selecionado; chaves incompatíveis lançam `InvalidArgumentException`. O atributo não altera a configuração da aplicação nem outros feeds.
+
+JSON Lines sempre escreve um item por linha, e `JSON_PRETTY_PRINT` é removido de `options`. As vinculações personalizadas do contêiner devem respeitar os parâmetros de construtor fornecidos.
+
+Um `DragonCode\LaravelFeed\Helpers\ConverterHelper` personalizado que sobrescreve `get()` ou `resolve()` também deve sobrescrever o método protegido `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter` para usar opções por feed. Passe `$options` para `Container::make()` para que as configurações sejam aplicadas antes da inicialização do conversor. Caso contrário, a resolução de um feed com opções lança `LogicException`; feeds sem opções mantêm o comportamento anterior da classe auxiliar.
+
 ## Veja também
 
 - [Elementos](./elements.mdx)

@@ -644,6 +644,48 @@ Follow the [multiple targeted feed files recipe](https://feeds.dragon-code.pro/r
 
 By default, the `xml` format is used.
 
+## Per-feed converter options
+
+Apply `DragonCode\LaravelFeed\Attributes\Config` to a feed class to override its converter settings:
+
+```php
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+#[Config('delimiter', ',')]
+#[Config('enclosure', "'")]
+#[Config('lineEnding', "\r\n")]
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+}
+```
+
+Repeat the attribute for each setting. If a name is repeated on the same class, the last declared attribute wins.
+
+Setting names are converter constructor parameter names. Only supplied values override the application configuration; other settings keep their configured values. `lineEnding` corresponds to `feeds.converters.csv.line_ending`.
+
+| Format | Supported keys |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+Parent feed options are inherited, and child keys override parent keys. Use only keys supported by the selected format; unsupported keys throw `InvalidArgumentException`. The attribute does not change the application configuration or other feeds.
+
+JSON Lines always writes one item per line, and `JSON_PRETTY_PRINT` is removed from `options`. Custom container bindings must honor the supplied constructor parameters.
+
+A custom `DragonCode\LaravelFeed\Helpers\ConverterHelper` that overrides `get()` or `resolve()` must also override the protected `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter` hook to use per-feed options. Pass `$options` to `Container::make()` so settings apply before the converter is initialized. Otherwise, resolving a feed with options throws `LogicException`; feeds without options retain the legacy helper behavior.
+
 ## See Also
 
 - [Elements](https://feeds.dragon-code.pro/elements/)
@@ -3231,6 +3273,8 @@ Add a custom class to `transformers` after implementing `DragonCode\LaravelFeed\
 | `converters.csv.escape` | Empty string |
 | `converters.csv.line_ending` | `PHP_EOL` |
 
+These values are application-wide defaults. Override them for one feed with [per-feed converter options](https://feeds.dragon-code.pro/supported-formats/#converter-options), using constructor parameter names such as `lineEnding` instead of configuration keys such as `line_ending`.
+
 ## See Also
 
 - [Installation](https://feeds.dragon-code.pro/installation/)
@@ -3268,6 +3312,7 @@ The core API separates the data source, item mapping, feed-level metadata, outpu
 | `storagePath($suffix): string` | Disk-relative filename | Returns the path used for storage operations. |
 | `storage(): FilesystemAdapter` | `public` disk | Resolves and validates the Laravel filesystem disk. |
 | `format(): FeedFormatEnum` | `Xml` | Returns the configured output format. |
+| `converterOptions(): array` | `[]` | Returns inherited `Config` attribute values for this feed; child keys override parent keys. |
 
 `Feed` uses Laravel `Conditionable` and `Macroable`.
 

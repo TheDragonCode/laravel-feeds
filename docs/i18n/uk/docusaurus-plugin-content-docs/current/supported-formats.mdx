@@ -19,6 +19,48 @@ keywords: ["XML", "JSON", "JSONL", "CSV", "RSS"]
 
 Типово використовується формат `xml`.
 
+## Параметри конвертера для окремого фіду {/* #converter-options */}
+
+Додайте `DragonCode\LaravelFeed\Attributes\Config` до класу фіду, щоб перевизначити налаштування його конвертера:
+
+```php
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+#[Config('delimiter', ',')]
+#[Config('enclosure', "'")]
+#[Config('lineEnding', "\r\n")]
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+}
+```
+
+Повторюйте атрибут для кожного налаштування. Якщо ім’я повторюється в одному класі, використовується останній оголошений атрибут.
+
+Імена налаштувань відповідають іменам параметрів конструктора конвертера. Лише передані значення перевизначають конфігурацію застосунку; інші налаштування зберігають свої налаштовані значення. `lineEnding` відповідає `feeds.converters.csv.line_ending`.
+
+| Формат | Підтримувані ключі |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+Параметри батьківського фіду успадковуються, а дочірні ключі перевизначають батьківські. Використовуйте лише ключі, які підтримує обраний формат; непідтримувані ключі викликають `InvalidArgumentException`. Атрибут не змінює конфігурацію застосунку чи інші фіди.
+
+JSON Lines завжди записує один елемент на рядок, а `JSON_PRETTY_PRINT` видаляється з `options`. Користувацькі прив’язки контейнера мають враховувати передані параметри конструктора.
+
+Користувацький `DragonCode\LaravelFeed\Helpers\ConverterHelper`, який перевизначає `get()` або `resolve()`, має також перевизначити захищений метод `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter`, щоб використовувати параметри окремого фіду. Передайте `$options` у `Container::make()`, щоб налаштування застосовувалися до ініціалізації конвертера. Інакше розв’язання конвертера для фіду з параметрами викликає `LogicException`; фіди без параметрів зберігають попередню поведінку допоміжного класу.
+
 ## Дивіться також
 
 - [Елементи](./elements.mdx)

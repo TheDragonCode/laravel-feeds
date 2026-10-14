@@ -55,6 +55,8 @@ Add a custom class to `transformers` after implementing `DragonCode\LaravelFeed\
 | `converters.csv.escape` | Empty string |
 | `converters.csv.line_ending` | `PHP_EOL` |
 
+These values are application-wide defaults. Override them for one feed with [per-feed converter options](../supported-formats.mdx#converter-options), using constructor parameter names such as `lineEnding` instead of configuration keys such as `line_ending`.
+
 ## See Also
 
 - [Installation](../installation.mdx)

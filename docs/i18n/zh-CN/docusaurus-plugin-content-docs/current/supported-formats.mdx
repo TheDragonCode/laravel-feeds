@@ -19,6 +19,48 @@ keywords: ["XML", "JSON", "JSONL", "CSV", "RSS"]
 
 默认使用 `xml` 格式。
 
+## 单个 Feed 的转换程序选项 {/* #converter-options */}
+
+将 `DragonCode\LaravelFeed\Attributes\Config` 应用于 Feed 类，以覆盖其转换程序设置：
+
+```php
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+#[Config('delimiter', ',')]
+#[Config('enclosure', "'")]
+#[Config('lineEnding', "\r\n")]
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+}
+```
+
+为每个设置重复使用该属性。如果同一个类中重复声明某个名称，则以最后声明的属性为准。
+
+设置名称是转换程序构造函数的参数名。仅提供的值会覆盖应用配置，其他设置保留其配置值。`lineEnding` 对应 `feeds.converters.csv.line_ending`。
+
+| 格式 | 支持的键 |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+父 Feed 的选项会被继承，子 Feed 的键会覆盖父 Feed 的键。仅使用所选格式支持的键；不支持的键会抛出 `InvalidArgumentException`。该属性不会更改应用配置或其他 Feed。
+
+JSON Lines 始终每行写入一个项，并从 `options` 中移除 `JSON_PRETTY_PRINT`。自定义容器绑定必须遵循提供的构造函数参数。
+
+如果自定义的 `DragonCode\LaravelFeed\Helpers\ConverterHelper` 重写了 `get()` 或 `resolve()`，则还必须重写受保护的扩展方法 `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter`，才能使用单个 Feed 的选项。将 `$options` 传递给 `Container::make()`，以便在转换程序初始化之前应用设置。否则，解析带有选项的 Feed 时会抛出 `LogicException`；不带选项的 Feed 保留辅助类的原有行为。
+
 ## 另请参阅
 
 - [元素](./elements.mdx)

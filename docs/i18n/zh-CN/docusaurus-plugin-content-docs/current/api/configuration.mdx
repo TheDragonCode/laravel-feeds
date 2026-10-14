@@ -55,6 +55,8 @@ keywords: ["configuration", "environment", "queue", "schedule", "converters"]
 | `converters.csv.escape` | 空字符串 |
 | `converters.csv.line_ending` | `PHP_EOL` |
 
+这些值是应用范围内的默认值。通过[单个 Feed 的转换程序选项](../supported-formats.mdx#converter-options)为一个 Feed 覆盖这些值，使用 `lineEnding` 等构造函数参数名，而不是 `line_ending` 等配置键。
+
 ## 另请参阅
 
 - [安装](../installation.mdx)

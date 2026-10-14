@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Feeds;
 
+use DragonCode\LaravelFeed\Attributes\Config;
 use DragonCode\LaravelFeed\Data\ElementData;
 use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
 use DragonCode\LaravelFeed\Exceptions\UnsupportedStorageDiskException;
@@ -17,7 +18,9 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Conditionable;
 use Illuminate\Support\Traits\Macroable;
+use ReflectionClass;
 
+use function array_replace;
 use function class_basename;
 use function get_debug_type;
 use function pathinfo;
@@ -47,6 +50,26 @@ abstract class Feed
     public function transformers(): array
     {
         return [];
+    }
+
+    public function converterOptions(): array
+    {
+        $options = [];
+        $class   = new ReflectionClass($this);
+
+        do {
+            $classOptions = [];
+
+            foreach ($class->getAttributes(Config::class) as $attribute) {
+                $option = $attribute->newInstance();
+
+                $classOptions[$option->name] = $option->value;
+            }
+
+            $options = array_replace($classOptions, $options);
+        } while ($class = $class->getParentClass());
+
+        return $options;
     }
 
     public function chunkSize(): int

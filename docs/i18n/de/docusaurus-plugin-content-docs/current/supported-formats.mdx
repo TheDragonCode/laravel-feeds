@@ -19,6 +19,48 @@ keywords: ["XML", "JSON", "JSONL", "CSV", "RSS"]
 
 Standardmäßig wird das Format `xml` verwendet.
 
+## Konverteroptionen pro Feed {/* #converter-options */}
+
+Wenden Sie `DragonCode\LaravelFeed\Attributes\Config` auf eine Feed-Klasse an, um deren Konvertereinstellungen zu überschreiben:
+
+```php
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+#[Config('delimiter', ',')]
+#[Config('enclosure', "'")]
+#[Config('lineEnding', "\r\n")]
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+}
+```
+
+Wiederholen Sie das Attribut für jede Einstellung. Wird ein Name innerhalb derselben Klasse mehrfach angegeben, gilt das zuletzt deklarierte Attribut.
+
+Die Einstellungsnamen sind Parameternamen des Konverterkonstruktors. Nur angegebene Werte überschreiben die Anwendungskonfiguration; andere Einstellungen behalten ihre konfigurierten Werte. `lineEnding` entspricht `feeds.converters.csv.line_ending`.
+
+| Format | Unterstützte Schlüssel |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+Optionen des übergeordneten Feeds werden vererbt, und Schlüssel des untergeordneten Feeds überschreiben übergeordnete Schlüssel. Verwenden Sie nur Schlüssel, die das gewählte Format unterstützt; nicht unterstützte Schlüssel lösen `InvalidArgumentException` aus. Das Attribut ändert weder die Anwendungskonfiguration noch andere Feeds.
+
+JSON Lines schreibt immer ein Element pro Zeile, und `JSON_PRETTY_PRINT` wird aus `options` entfernt. Benutzerdefinierte Container-Bindings müssen die angegebenen Konstruktorparameter berücksichtigen.
+
+Ein benutzerdefinierter `DragonCode\LaravelFeed\Helpers\ConverterHelper`, der `get()` oder `resolve()` überschreibt, muss auch den geschützten Hook `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter` überschreiben, um Optionen pro Feed zu verwenden. Übergeben Sie `$options` an `Container::make()`, damit die Einstellungen vor der Initialisierung des Konverters angewendet werden. Andernfalls löst die Auflösung eines Feeds mit Optionen `LogicException` aus; Feeds ohne Optionen behalten das bisherige Helper-Verhalten.
+
 ## Siehe auch
 
 - [Elemente](./elements.mdx)

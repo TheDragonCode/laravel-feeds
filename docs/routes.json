@@ -1431,6 +1431,11 @@
                 },
                 {
                     "level": 2,
+                    "id": "converter-options",
+                    "text": "Per-feed converter options"
+                },
+                {
+                    "level": 2,
                     "id": "see-also",
                     "text": "See Also"
                 }
