@@ -1,0 +1,105 @@
+---
+title: "配置属性"
+description: "用于 Laravel Feeds 单个 Feed 转换程序设置和项目日期格式的 PHP 属性"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["PHP", "attributes", "Config", "DateFormat", "converter options", "date format"]
+---
+
+# 配置属性
+
+<PageLead>
+使用 `DragonCode\LaravelFeed\Attributes` 中的 PHP 属性，可以配置单个 Feed 的转换程序和项目日期格式，无需更改应用范围内的设置。
+</PageLead>
+
+| 属性 | 应用对象 | 可重复使用 |
+| --- | --- | --- |
+| `Config(string $name, mixed $value)` | `Feed` 类 | 是 |
+| `DateFormat(string $format)` | `FeedItem` 类 | 否 |
+
+这两个属性都应用于类。请从包的命名空间导入；`Illuminate\Container\Attributes\Config` 是另一个 Laravel 属性，由转换程序的构造函数在内部使用。
+
+## Config 属性 {/* #config */}
+
+为每个转换程序设置添加一个 `#[Config]`。以下 CSV Feed 使用逗号分隔符和 Windows 换行符：
+
+```php
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+#[Config('delimiter', ',')]
+#[Config('lineEnding', "\r\n")]
+class UserCsvFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+设置名称是转换程序的构造函数参数名，而不是配置路径。请使用 `lineEnding`，不要使用 `line_ending` 或 `feeds.converters.csv.line_ending`。
+
+| 格式 | 支持的名称 |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+只有提供的值才会覆盖[应用默认值](./configuration.mdx#converter-settings)。`Feed::converterOptions()` 会收集继承的属性：子类的键覆盖父类的键；在同一个类中多次声明相同名称时，最后一次声明生效。其他 Feed 保留各自的设置。
+
+所选格式不支持的名称会抛出 `InvalidArgumentException`。JSON Lines 会从 `options` 中移除 `JSON_PRETTY_PRINT`，以确保每行只有一个项目。
+
+自定义转换程序绑定必须遵循提供的构造函数参数。覆盖 `get()` 或 `resolve()` 的自定义 `ConverterHelper` 还必须支持 `resolveWithOptions()`；请参阅[转换程序扩展契约](../supported-formats.mdx#converter-options)。
+
+## DateFormat 属性 {/* #date-format */}
+
+将 `#[DateFormat]` 应用于项目类。上面的 `item()` 方法会为每个导出的用户选择此类：
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Attributes\DateFormat;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+#[DateFormat('Y-m-d H:i')]
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->model->id,
+            'createdAt' => $this->model->created_at,
+        ];
+    }
+}
+```
+
+使用 PHP 日期格式标记。从 `toArray()` 返回原始 `DateTimeInterface` 值，例如经过日期类型转换的 Eloquent 属性。已由 `$model->toArray()` 序列化的字符串不会重新格式化。
+
+格式从带有该属性的最近父类继承；子类上的属性会覆盖它。项目日期会在正常的转换器管道之前格式化，优先于 Feed 专用和全局日期格式，同时保留 `feeds.date.timezone`。随后执行的字符串转换器仍可更改已格式化的值。
+
+该属性适用于所有输出格式，包括嵌套 JSON/XML 中的日期，以及 `attributes()` 返回的 XML/RSS 项目属性。它不影响 `FeedInfo`、根元素属性或其他项目类。没有此属性时，正常的日期管道会使用配置的格式，默认值为 `DATE_ATOM`。
+
+## 另请参阅
+
+- [配置参考](./configuration.mdx)
+- [Feed 与数据](./feed.mdx)
+- [支持的格式](../supported-formats.mdx)

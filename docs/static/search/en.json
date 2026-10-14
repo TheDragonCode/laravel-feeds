@@ -47,7 +47,27 @@
             "Extension points",
             "See Also"
         ],
-        "content": "API reference Use this section when you already know the workflow and need an exact class, method, configuration key, event, or failure contract. Area Main entry points Reference --- --- --- Configuration config/feeds.php Configuration Feed classes Feed , FeedItem , FeedInfo Feeds and data Output structure ElementData , XML directives Elements, Directives Formats FeedFormatEnum , converters Supported formats Runtime GeneratorService , FeedQuery , ScheduleFeedHelper Runtime services and contracts Lifecycle Starting and finished events Events and exceptions Presets Sitemap, RSS, Instagram, Yandex Presets Extension points - Extend Feed or a preset to define a data source and output contract. - Extend FeedItem and FeedInfo to control serialized data. - Implement DragonCode\\LaravelFeed\\Contracts\\Transformer for custom scalar conversion. - Return DragonCode\\LaravelFeed\\Data\\OptionalData when a field should be omitted. - Register macros on Feed , FeedItem , or FeedInfo for application-level helpers. See Also - Create feeds - Extending functionality - Troubleshooting"
+        "content": "API reference Use this section when you already know the workflow and need an exact class, method, configuration key, event, or failure contract. Area Main entry points Reference --- --- --- Configuration config/feeds.php Configuration PHP attributes Config , DateFormat Config Attributes Feed classes Feed , FeedItem , FeedInfo Feeds and data Output structure ElementData , XML directives Elements, Directives Formats FeedFormatEnum , converters Supported formats Runtime GeneratorService , FeedQuery , ScheduleFeedHelper Runtime services and contracts Lifecycle Starting and finished events Events and exceptions Presets Sitemap, RSS, Instagram, Yandex Presets Extension points - Extend Feed or a preset to define a data source and output contract. - Extend FeedItem and FeedInfo to control serialized data. - Implement DragonCode\\LaravelFeed\\Contracts\\Transformer for custom scalar conversion. - Return DragonCode\\LaravelFeed\\Data\\OptionalData when a field should be omitted. - Register macros on Feed , FeedItem , or FeedInfo for application-level helpers. See Also - Create feeds - Extending functionality - Troubleshooting"
+    },
+    {
+        "route": "/api/config-attributes/",
+        "title": "Config Attributes",
+        "description": "PHP attributes for per-feed converter settings and item date formats in Laravel Feeds",
+        "keywords": [
+            "PHP",
+            "attributes",
+            "Config",
+            "DateFormat",
+            "converter options",
+            "date format"
+        ],
+        "headings": [
+            "Config Attributes",
+            "Config",
+            "DateFormat",
+            "See Also"
+        ],
+        "content": "Config Attributes Use the PHP attributes in DragonCode\\LaravelFeed\\Attributes to configure a feed's converter and its item date format without changing application-wide settings. Attribute Apply to Repeatable --- --- --- Config(string $name, mixed $value) A Feed class Yes DateFormat(string $format) A FeedItem class No Both attributes target classes. Import them from the package namespace; Illuminate\\Container\\Attributes\\Config is a separate Laravel attribute used internally by converter constructors. Config Add one [Config] per converter setting. This CSV feed uses a comma delimiter and Windows line endings: Setting names are converter constructor parameter names, not configuration paths. Use lineEnding , not line_ending or feeds.converters.csv.line_ending . Format Supported names --- --- csv delimiter , enclosure , escape , lineEnding json options , pretty jsonl options xml , rss pretty Only supplied values override application defaults. Feed::converterOptions() collects inherited attributes: child keys override parent keys, and the last declaration of the same name on one class wins. Other feeds keep their own settings. Unsupported names for the selected format throw InvalidArgumentException . JSON Lines removes JSON_PRETTY_PRINT from options to keep one item per line. Custom converter bindings must honor the supplied constructor parameters. A custom ConverterHelper that overrides get() or resolve() must also support resolveWithOptions() ; see the converter extension contract. DateFormat Apply [DateFormat] to an item class. The item() method above selects this class for each exported user: Use PHP date format tokens. Return raw DateTimeInterface values, such as Eloquent date-cast properties, from toArray() . Strings already serialized by $model- toArray() are not reformatted. The nearest annotated parent supplies the inherited format; a child attribute overrides it. Item dates are formatted before the normal transformer pipeline, taking precedence over feed-specific and global date formats while retaining feeds.date.timezone . Later string transformers can still change the formatted value. The attribute works in every output format, including nested JSON/XML dates and XML/RSS item attributes returned by attributes() . It does not affect FeedInfo , root attributes, or other item classes. Without it, the normal date pipeline uses the configured format, which defaults to DATE_ATOM . See Also - Configuration reference - Feeds and data - Supported formats"
     },
     {
         "route": "/api/configuration/",

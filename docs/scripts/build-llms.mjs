@@ -24,6 +24,7 @@ const documentIds = [
     "receipt-rss-atom",
     "api/index",
     "api/configuration",
+    "api/config-attributes",
     "api/feed",
     "api/runtime",
     "api/events-exceptions",

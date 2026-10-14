@@ -1,0 +1,105 @@
+---
+title: "Attributs de configuration"
+description: "Attributs PHP pour les paramètres du convertisseur par flux et les formats de date des éléments dans Laravel Feeds"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["PHP", "attributes", "Config", "DateFormat", "converter options", "date format"]
+---
+
+# Attributs de configuration
+
+<PageLead>
+Utilisez les attributs PHP de `DragonCode\LaravelFeed\Attributes` pour configurer le convertisseur d’un flux et le format de date de ses éléments sans modifier les paramètres de toute l’application.
+</PageLead>
+
+| Attribut | S’applique à | Répétable |
+| --- | --- | --- |
+| `Config(string $name, mixed $value)` | Une classe `Feed` | Oui |
+| `DateFormat(string $format)` | Une classe `FeedItem` | Non |
+
+Les deux attributs ciblent les classes. Importez-les depuis l’espace de noms du paquet ; `Illuminate\Container\Attributes\Config` est un autre attribut Laravel, utilisé en interne par les constructeurs des convertisseurs.
+
+## Attribut Config {/* #config */}
+
+Ajoutez un `#[Config]` par paramètre du convertisseur. Ce flux CSV utilise une virgule comme délimiteur et des fins de ligne Windows :
+
+```php
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+#[Config('delimiter', ',')]
+#[Config('lineEnding', "\r\n")]
+class UserCsvFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+Les noms des paramètres correspondent aux paramètres du constructeur du convertisseur, pas aux chemins de configuration. Utilisez `lineEnding`, pas `line_ending` ni `feeds.converters.csv.line_ending`.
+
+| Format | Noms pris en charge |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+Seules les valeurs fournies remplacent les [valeurs par défaut de l’application](./configuration.mdx#converter-settings). `Feed::converterOptions()` collecte les attributs hérités : les clés de l’enfant remplacent celles du parent, et la dernière déclaration d’un même nom sur une classe l’emporte. Les autres flux conservent leurs propres paramètres.
+
+Les noms non pris en charge par le format sélectionné déclenchent une `InvalidArgumentException`. JSON Lines retire `JSON_PRETTY_PRINT` de `options` pour conserver un élément par ligne.
+
+Les liaisons de convertisseur personnalisées doivent respecter les paramètres de constructeur fournis. Un `ConverterHelper` personnalisé qui redéfinit `get()` ou `resolve()` doit aussi prendre en charge `resolveWithOptions()` ; consultez [le contrat d’extension des convertisseurs](../supported-formats.mdx#converter-options).
+
+## Attribut DateFormat {/* #date-format */}
+
+Appliquez `#[DateFormat]` à une classe d’élément. La méthode `item()` ci-dessus sélectionne cette classe pour chaque utilisateur exporté :
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Attributes\DateFormat;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+#[DateFormat('Y-m-d H:i')]
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->model->id,
+            'createdAt' => $this->model->created_at,
+        ];
+    }
+}
+```
+
+Utilisez les caractères de format de date PHP. Renvoyez des valeurs brutes `DateTimeInterface`, comme les propriétés Eloquent avec un cast de date, depuis `toArray()`. Les chaînes déjà sérialisées par `$model->toArray()` ne sont pas reformatées.
+
+La classe parente annotée la plus proche fournit le format hérité ; un attribut sur la classe enfant le remplace. Les dates des éléments sont formatées avant la chaîne de transformation habituelle, avec priorité sur les formats de date propres au flux et globaux, tout en conservant `feeds.date.timezone`. Les transformateurs de chaînes exécutés ensuite peuvent encore modifier la valeur formatée.
+
+L’attribut fonctionne dans tous les formats de sortie, y compris pour les dates dans les structures JSON/XML imbriquées et les attributs d’élément XML/RSS renvoyés par `attributes()`. Il n’affecte pas `FeedInfo`, les attributs racine ni les autres classes d’élément. Sans cet attribut, la chaîne de transformation habituelle des dates utilise le format configuré, qui est `DATE_ATOM` par défaut.
+
+## Voir aussi
+
+- [Référence de configuration](./configuration.mdx)
+- [Flux et données](./feed.mdx)
+- [Formats pris en charge](../supported-formats.mdx)

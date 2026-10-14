@@ -49,6 +49,7 @@ const sidebars: SidebarsConfig = {
             },
             items: [
                 "api/configuration",
+                "api/config-attributes",
                 "api/feed",
                 "api/runtime",
                 "elements",
