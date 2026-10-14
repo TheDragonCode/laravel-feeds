@@ -1,11 +1,11 @@
 ---
 name: aif-verify
 description: >-
-  Verify completed implementation against the plan. Checks that all tasks were fully implemented,
+  Verify completed implementation against the plan. Checks that all tasks were implemented,
   nothing was forgotten, code compiles, tests pass, and quality standards are met.
   Use after "$aif-implement" completes, or when user says "verify", "check work", "did we miss anything".
 argument-hint: "[--strict]"
-allowed-tools: Read Edit Glob Grep Bash(git *) Bash(npm *) Bash(npx *) Bash(yarn *) Bash(pnpm *) Bash(bun *) Bash(go *) Bash(python *) Bash(php *) Bash(composer *) Bash(cargo *) Bash(make *) Bash(task *) Bash(just *) Bash(mage *) TaskList TaskGet AskUserQuestion Questions
+allowed-tools: Read Edit Glob Grep Bash(git *) Bash(npm *) Bash(npx *) Bash(yarn *) Bash(pnpm *) Bash(bun *) Bash(go *) Bash(python *) Bash(php *) Bash(composer *) Bash(cargo *) Bash(make *) Bash(task *) Bash(just *) Bash(mage *) Bash(shasum -a 256 *) Bash(sha256sum *) TaskList TaskGet AskUserQuestion Questions
 disable-model-invocation: false
 metadata:
   author: AI Factory
@@ -26,15 +26,17 @@ Verify that the completed implementation matches the plan, nothing was missed, a
 ### 0.0 Load config.yaml
 
 **FIRST:** Read `.ai-factory/config.yaml` if it exists to resolve:
-- **Paths:** `paths.description`, `paths.architecture`, `paths.rules_file`, `paths.roadmap`, `paths.research`, `paths.plan`, `paths.plans`, `paths.fix_plan`, `paths.specs`, `paths.rules`, and `paths.archive`
+- **Paths:** `paths.description`, `paths.architecture`, `paths.rules_file`, `paths.roadmap`, `paths.research`, `paths.plan`, `paths.plans`, `paths.fix_plan`, `paths.specs`, `paths.rules`, and `paths.archive`; derive `research_bundles_dir = <parent directory of paths.research>/research/`
 - **verify_mode:** default verification strictness (`strict` | `normal` | `lenient`)
 - **Git:** `git.enabled`, `git.base_branch`, `git.create_branches`
 - **Rules hierarchy:** the resolved RULES.md path + `rules.base` + named `rules.<area>` entries
 - **Language:** `language.ui` for prompts, user-visible explanations, verification reports, context-gate summaries, issue remediation prompts, and next-step guidance
 - **Workflow:** `workflow.plan_id_format` (default: `slug`) — used by branch-based plan discovery in Step 0.2.
-  Active values: `slug` and `sequential`. When `sequential`, the resolver globs
-  `<paths.plans>/[0-9]{4}_<branch_stem>.md` first and falls back to
-  `<paths.plans>/<branch_stem>.md` only if no numbered match is found.
+  Active values: `slug` and `sequential`. Discovery treats root `*.md` files as
+  full plans except the resolved fast/fix paths, and direct child `*/index.md`
+  files as ultra entrypoints only when they contain exactly one
+  `<!-- aif:plan-mode:ultra -->`. When
+  `sequential`, search both numbered shapes and choose the highest prefix.
   `timestamp` and `uuid` are **reserved values** and currently behave like `slug`.
   Treat any unknown value as `slug`.
 
@@ -68,7 +70,7 @@ Preserve machine-readable `aif-gate-result` JSON schema fields and enum values (
   - normal vs strict context-gate thresholds.
 - If this contract conflicts with older examples in this file, follow the contract.
 
-### 0.2 Find Plan File
+### 0.2 Find Plan Artifact
 
 Same logic as `$aif-implement` — produce the **canonical branch stem** before any plans-dir glob so producer and consumers agree by construction.
 
@@ -78,29 +80,35 @@ Same logic as `$aif-implement` — produce the **canonical branch stem** before 
 2. Convert branch to filename stem (git mode only):
    branch_stem = current branch with every "/" replaced by "-"
    Example: feature/user-auth → feature-user-auth
-3. Resolve the plan file using <branch_stem>:
-   → When `workflow.plan_id_format = sequential`, glob first
+3. Resolve the plan artifact using <branch_stem>:
+   → When `workflow.plan_id_format = sequential`, glob both
        <configured plans dir>/[0-9][0-9][0-9][0-9]_<branch_stem>.md
-       - 0 matches → fall through to the un-prefixed lookup below
-       - 1 match  → use it
-       - >1 matches → use the **highest-numbered** match and emit
-           WARN [aif-verify] multiple sequential plans for <branch>: <list>; using <chosen>
-   → Otherwise (default `plan_id_format`, or sequential with no numbered match):
+       <configured plans dir>/[0-9][0-9][0-9][0-9]_<branch_stem>/index.md
+     Read every directory candidate and retain it only when `index.md` contains
+     exactly one <!-- aif:plan-mode:ultra -->. Choose the highest prefix across
+     valid artifacts and warn when multiple valid candidates exist; prefer ultra
+     if both shapes share the highest prefix.
+   → Otherwise/fallback check the ultra entrypoint and full file:
+       <configured plans dir>/<branch_stem>/index.md
        <configured plans dir>/<branch_stem>.md
+     Read the directory entrypoint before selection and ignore it unless it
+     contains exactly one <!-- aif:plan-mode:ultra -->. If both valid shapes
+     exist, warn and prefer ultra.
 4. If the branch-based plan is missing or git mode is off:
-   → Check whether the configured plans dir contains exactly one `*.md` full-mode
-     plan (a leading 4-digit prefix counts as a match)
+   → Count root `*.md` full plans and declared-ultra direct child `*/index.md`
+     entrypoints as artifacts; exclude resolved fast/fix paths and do not count
+     phase files
    → If exactly one exists, use it
    → If multiple exist, ask the user to choose or use `@<path>` via `$aif-implement`
-5. No full-mode plan → Check the resolved fast plan path
-6. No full-mode plan and no resolved fast plan → fall back to standalone verification choices
+5. No named full/ultra plan → Check the resolved fast plan path
+6. No regular plan and no resolved fast plan → fall back to standalone verification choices
 ```
 
 **Note:** Plan discovery scans `paths.plans/` only. Plans archived to `paths.archive/plans/` by `$aif-archive` are excluded from discovery. If a plan is found only in the archive, emit `WARN [aif-verify] plan <name> is archived; verifying archived plan`.
 
-**If no plan file found:**
+**If no plan artifact is found:**
 ```
-AskUserQuestion: No plan file found. What should I verify?
+AskUserQuestion: No plan artifact found. What should I verify?
 
 Options:
 1. Verify last commit — Check the most recent commit for completeness
@@ -108,9 +116,19 @@ Options:
 3. Cancel
 ```
 
-### 0.2 Read Plan & Tasks
+### 0.3 Read Plan & Tasks
 
-- Read the plan file to understand what was supposed to be implemented
+- Read the selected plan entrypoint to understand what was supposed to be implemented
+- An automatically discovered directory entrypoint is a plan only when it
+  contains `<!-- aif:plan-mode:ultra -->`; ignore unrelated `*/index.md` files.
+- For ultra, validate all Phase Index links and read every linked phase file
+  before verification. Verify implementation against the detailed per-task
+  interfaces, edge cases, logging, acceptance criteria, and commands—not only
+  the short checkbox text in `index.md`. A missing/broken/escaping phase link is
+  a blocking plan-integrity failure because the committed specification is incomplete.
+- Cross-check every `Task N` in `index.md` against exactly one matching
+  `## Task N` section in its linked phase file. Unmapped tasks, duplicate task
+  sections, and unlinked `phase-*.md` files are blocking plan-integrity failures.
 - `TaskList` → get all tasks and their statuses
 - Read `.ai-factory/DESCRIPTION.md` (use path from config) for project context (tech stack, conventions)
 - Read `.ai-factory/ARCHITECTURE.md` (use path from config) for dependency and boundary rules (if present)
@@ -119,8 +137,12 @@ Options:
   2. **rules/base.md** — project-specific base conventions
   3. **rules.<area>** — area-specific rule entries resolved from config (for example `rules.api`, `rules.frontend`)
 - Read `.ai-factory/ROADMAP.md` (use path from config) for milestone alignment checks (if present)
-- If the plan contains `## Original Request`, treat it as useful original scope context. Use it to understand the user's starting intent, while the task list and committed `## Research Context` remain the executable verification inputs.
-- If the plan contains `## Research Context`, a `Source:` / `Reference:` line pointing to `RESEARCH.md`, or any path/link to the resolved `paths.research` artifact, treat the Research Context embedded in the plan as the committed requirements snapshot. Read the resolved research artifact before judging completeness only to verify the committed revision marker (`Updated:` and/or `SHA256:` in the plan source line) and to consult `## Sessions` for rationale when needed. If the source line lacks a revision marker or the current `Active Summary` revision differs, emit `WARN [research-drift]` and verify against the plan's embedded Research Context; do not fail or expand scope based on the newer Active Summary unless the user explicitly asks to rebase/refine the plan. Skipping this drift check is a verification bug.
+- If the plan entrypoint contains `## Original Request`, treat it as useful original scope context. Use it to understand the user's starting intent, while the task list, committed `## Research Context`, and ultra phase specifications remain the executable verification inputs.
+- If the plan entrypoint contains `## Research Context`, treat its embedded copy as the committed requirements snapshot. Parse the first `Source:` / `Reference:` line with canonical `^(?:Source|Reference):\s+\x60([^\x60]+)\x60\s+\(` syntax; for older bare-path lines, fall back to `^(?:Source|Reference):\s+(.+?)\s+\(`. Fall back to configured `paths.research` only when neither form identifies a usable path.
+- If the parsed source is inside `research_bundles_dir`, require its sibling `INDEX.md` to contain `<!-- aif:research-mode:ultra -->` exactly once and link that `RESEARCH.md` from `## Artifact Index`; otherwise emit `WARN [research-drift]`. Sibling C4/ADR/dependency files remain rationale only.
+- When `SHA256:` is present, extract the current source text strictly between `<!-- aif:active-summary:start -->` and `<!-- aif:active-summary:end -->`, remove HTML comment blocks, preserve line order and leading whitespace, trim trailing spaces from every line, use LF endings, and end with one newline. Hash through stdin with `shasum -a 256` or `sha256sum`; the digest is authoritative. Use `Updated:` only as a legacy fallback when `SHA256:` is absent. A missing/invalid source or revision mismatch emits `WARN [research-drift]`; verify against the embedded Research Context and do not expand scope unless the user explicitly requests a rebase/refinement. Skipping this drift check is a verification bug.
+- Compatibility wording for the same rule: emit `WARN [research-drift]` and
+  verify against the plan's embedded Research Context.
 
 **Read `.ai-factory/skill-context/aif-verify/SKILL.md`** — MANDATORY if the file exists.
 
@@ -262,6 +284,37 @@ Only lint the changed files to keep output focused.
 
 ## Step 3: Consistency Checks
 
+### 3.0 Requirements Provenance and Semantic Consistency
+
+Verify the full chain `authoritative requirements → plan → implementation →
+verification evidence`, not only plan-to-code agreement.
+
+1. If the plan contains `## Requirements Reconciliation`, resolve citations to
+   the selected research source against the embedded `## Research Context`; the
+   live research file remains drift-only unless the user explicitly rebases the
+   plan. Re-read other cited source passages. Otherwise use the Original Request,
+   committed Research Context, project rules, and authoritative sources they
+   explicitly reference.
+2. Follow a source-priority hierarchy only when declared by the user or project.
+   Treat roadmap text as scope rather than a detailed behavioral contract unless
+   explicitly declared otherwise. If sources conflict without declared
+   authority, do not guess: emit `WARN [requirement-ambiguity]` in normal or
+   lenient mode, and `ERROR [requirement-ambiguity]` in strict mode.
+3. A clear contradiction between the implementation and a higher-priority
+   requirement is `ERROR [requirement-conflict]` and blocks verification even
+   when the plan, code, and tests agree with one another.
+4. When behavior depends on independent selectors, states, modes, or input
+   shapes, enumerate only the supported combinations and verify each material
+   combination across validation, persistence, output/transition, and side
+   effects. Separate tests for each dimension do not prove their interaction.
+5. When repository data, configuration, fixtures, schemas, or content define the
+   contract, verify at least one representative existing artifact through the
+   primary integration path when such an artifact is available and relevant.
+
+Respect the plan's testing setting. If tests were intentionally skipped, use
+static inspection plus the plan's runnable/manual verification evidence; report
+missing evidence as a warning in normal mode and a failure in strict mode.
+
 ### 3.1 Plan vs Code Drift
 
 Check for discrepancies between what the plan says and what was built:
@@ -399,6 +452,11 @@ Write the human-readable verification report in `ui_language`. The template belo
 - Tests: ✅ 42 passed, 0 failed
 - Lint: ⚠️ 2 warnings in src/api/auth/reset.ts
 
+### Requirements Consistency
+- Source reconciliation: ✅ Passes
+- Supported combinations: ✅ Covered
+- Representative artifact path: ✅ Verified / ⏭️ Not applicable
+
 ### Issues Found
 1. **Task #3 incomplete** — Password reset endpoint created but email sending not implemented (SendGrid integration missing)
 2. **Task #8 not done** — API documentation not updated despite plan requirement
@@ -465,7 +523,7 @@ Options:
 - After fixing, re-run the relevant verification checks to confirm
 
 **If "Accept as-is":**
-- Note the accepted issues in the plan file as a comment
+- Note the accepted issues in the plan entrypoint as a comment
 - Continue to Step 5
 
 ---
@@ -530,6 +588,9 @@ $aif-verify --strict
 - **Architecture gate must pass** — fail on clear boundary/dependency violations
 - **Rules gate must pass** — fail on clear rule violations
 - **Roadmap gate must pass** — fail on clear roadmap mismatch
+- **Requirements consistency gate must pass** — fail on clear requirement
+  conflicts, unresolved source ambiguity, or missing evidence for material
+  supported combinations
 - Missing milestone linkage for `feat`/`fix`/`perf` is a warning even in strict mode
 - Do not fail strict verification solely because milestone linkage is missing
 
