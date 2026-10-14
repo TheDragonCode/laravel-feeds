@@ -345,7 +345,7 @@
     "message": "Exportez de grands jeux de données Laravel vers XML, JSON, JSON Lines, CSV, RSS et des flux de places de marché."
   },
   "homepage.eyebrow": {
-    "message": "Paquet Laravel · Documentation 1.x"
+    "message": "Paquet Laravel · Documentation 2.x"
   },
   "homepage.title": {
     "message": "Exportez de grands jeux de données sans les charger entièrement en mémoire"

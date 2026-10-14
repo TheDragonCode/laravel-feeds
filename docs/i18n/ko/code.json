@@ -345,7 +345,7 @@
     "message": "대규모 Laravel 데이터셋을 XML, JSON, JSON Lines, CSV, RSS 및 마켓플레이스 피드로 내보냅니다."
   },
   "homepage.eyebrow": {
-    "message": "Laravel 패키지 · 문서 1.x"
+    "message": "Laravel 패키지 · 문서 2.x"
   },
   "homepage.title": {
     "message": "전체 데이터를 메모리에 올리지 않고 대규모 데이터셋 내보내기"

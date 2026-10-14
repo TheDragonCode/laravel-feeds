@@ -18,6 +18,7 @@ use RuntimeException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Throwable;
 
+use function array_any;
 use function array_keys;
 use function array_reverse;
 use function basename;
@@ -497,26 +498,14 @@ class FilesystemService
     {
         $key = $this->pathKey($expected);
 
-        foreach ($paths as $path) {
-            if ($this->pathKey($path) === $key) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($paths, fn (string $path): bool => $this->pathKey($path) === $key);
     }
 
     protected function containsStoragePath(array $paths, string $expected): bool
     {
         $key = $this->storagePathKey($expected);
 
-        foreach ($paths as $path) {
-            if ($this->storagePathKey($path) === $key) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($paths, fn (string $path): bool => $this->storagePathKey($path) === $key);
     }
 
     protected function createStagingDirectory(string $path): TemporaryDirectory

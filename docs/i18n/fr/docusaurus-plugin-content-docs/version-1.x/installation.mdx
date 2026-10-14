@@ -1,0 +1,42 @@
+---
+title: "Installation et configuration"
+description: "Informations sur l’installation et la configuration de Laravel Feeds"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["installation", "Composer", "configuration", "migration"]
+---
+
+[← Précédent](./introduction.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./create-feeds.mdx)
+
+# Installation et configuration
+
+Vous pouvez installer le paquet avec [Composer](https://getcomposer.org) :
+
+```bash
+composer require dragon-code/laravel-feeds
+```
+
+Publiez la [migration](https://github.com/TheDragonCode/laravel-feeds/blob/main/database/migrations/2025_09_01_231655_create_feeds_table.php) et le fichier de configuration [config/feeds.php](https://github.com/TheDragonCode/laravel-feeds/blob/main/config/feeds.php) avec :
+
+```bash
+php artisan vendor:publish --tag="feeds"
+```
+
+:::warning
+**Avant d’exécuter les migrations**, vérifiez les paramètres de connexion à la base de données dans le fichier `config/feeds.php`.
+:::
+
+Vous pouvez maintenant exécuter les migrations, puis [créer des flux](./create-feeds.mdx).
+
+```bash
+php artisan migrate
+```
+
+Pour une installation existante, copiez uniquement `database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` du paquet dans le répertoire des migrations de votre application. Choisissez un horodatage de nom de fichier immédiatement après la migration `create_feeds_table` réellement présente dans l’application et avant toute migration d’enregistrement de flux ; conservez le suffixe `add_slug_to_feeds_table`. Exécutez ensuite `php artisan migrate`. La migration utilise la connexion et la table configurées et remplit les slugs à partir des titres existants, y compris les enregistrements supprimés temporairement. Ne republiez pas et ne réexécutez pas la migration d’origine qui crée la table. Remplacez les identifiants numériques des flux dans les commandes et les planifications manuelles par les slugs enregistrés.
+
+## Voir aussi
+
+- [Créer des flux](./create-feeds.mdx)
+- [Génération et planification](./generation.mdx)
+- [Formats pris en charge](./supported-formats.mdx)

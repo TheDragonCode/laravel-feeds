@@ -1,6 +1,6 @@
 ---
 title: "Guide de mise à niveau"
-description: "Procédure sûre de mise à niveau de Laravel Feeds dans la série 1.x prise en charge"
+description: "Procédure sûre de mise à niveau de Laravel Feeds dans la série 2.x prise en charge"
 type: project
 status: stable
 since: "1.0"
@@ -10,8 +10,10 @@ keywords: ["upgrade", "Composer", "migration", "rollback", "compatibility"]
 # Guide de mise à niveau
 
 <PageLead>
-Cette documentation couvre actuellement la série `1.x`. Consultez les notes de version et le verrou des dépendances avant chaque mise à jour.
+Cette documentation couvre actuellement la série `2.x`. Consultez les notes de version et le verrou des dépendances avant chaque mise à jour.
 </PageLead>
+
+La version `2.x` nécessite Laravel `13.x` et PHP `8.4` ou une version `8.x` ultérieure prise en charge. Mettez à jour les environnements web, CLI, du planificateur et des workers de file d’attente avant de modifier les contraintes Composer. Les applications utilisant Laravel `11.x` ou `12.x`, ou PHP `8.2` ou `8.3`, doivent rester sur `1.x`.
 
 ## Avant la mise à niveau {/* #before-upgrading */}
 
@@ -23,7 +25,7 @@ Cette documentation couvre actuellement la série `1.x`. Consultez les notes de 
 ## Appliquer la mise à jour {/* #apply-update */}
 
 ```bash
-composer update dragon-code/laravel-feeds --with-all-dependencies
+composer require dragon-code/laravel-feeds:^2.0 --with-all-dependencies
 ```
 
 Pour une installation existante, copiez uniquement `database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` du paquet dans le répertoire des migrations de votre application. Choisissez un horodatage de nom de fichier immédiatement après la migration `create_feeds_table` réellement présente dans l’application et avant toute migration d’enregistrement de flux ; conservez le suffixe `add_slug_to_feeds_table`. Exécutez ensuite `php artisan migrate`. La migration utilise la connexion et la table configurées et remplit les slugs à partir des titres existants, y compris les enregistrements supprimés temporairement. Ne republiez pas et ne réexécutez pas la migration d’origine qui crée la table. Remplacez les identifiants numériques des flux dans les commandes et les planifications manuelles par les slugs enregistrés.

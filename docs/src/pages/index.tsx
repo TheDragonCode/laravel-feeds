@@ -97,7 +97,7 @@ export default function HomePage() {
                         <div className={styles.heroCopy}>
                             <p className={styles.eyebrow}>
                                 <Translate id="homepage.eyebrow">
-                                    Laravel package · Documentation 1.x
+                                    Laravel package · Documentation 2.x
                                 </Translate>
                             </p>
                             <h1>
@@ -212,8 +212,8 @@ export default function HomePage() {
                 </section>
 
                 <section aria-label={translate({ id: "homepage.support.label", message: "Compatibility" })} className={styles.support}>
-                    <span>PHP 8.2+</span>
-                    <span>Laravel 11–13</span>
+                    <span>PHP 8.4+</span>
+                    <span>Laravel 13</span>
                     <span>XML · JSON · JSONL · CSV · RSS</span>
                     <Link to="/compatibility/">
                         <Translate id="homepage.support.details">Compatibility details</Translate>

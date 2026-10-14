@@ -1,0 +1,111 @@
+---
+title: "Eloquent"
+description: "配置 Feed 注册模型和 Feed 查询分块大小"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
+---
+
+[← 上一页](./directives.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./location.mdx)
+
+# Eloquent
+
+保存模型时，会使用自定义标题设置器处理后的最终 `title` 值，通过 `SlugCast` 自动将 `Str::slug(title)` 存储到 `slug`。支持自定义标题修改器和 `saveQuietly()`。修改标题会改变 slug。例如，`Products` 会变为 `products`。查询构造器的批量更新和插入会绕过模型保存；请改用模型的 `create()`、`update()` 或 `save()`。
+
+对于指定或按计划运行的 Feed，请选择能生成不同且非空 slug 的标题。规范化后 slug 为空的标题无法被选择。多条未删除的注册记录具有相同 slug 时，查找会抛出 `Illuminate\Database\MultipleRecordsFoundException`；系统不会自动添加后缀。
+
+## 自定义 Feed 注册模型 {/* #custom_feed_model */}
+
+当 Feed 注册记录需要额外的列、类型转换、关系或方法时，请将 `feeds.model` 设置为应用模型。自定义模型必须继承 `DragonCode\LaravelFeed\Models\Feed`。
+
+```php
+namespace App\Models;
+
+use DragonCode\LaravelFeed\Models\Feed as BaseFeed;
+
+class Feed extends BaseFeed
+{
+    protected $fillable = [
+        'class',
+        'title',
+        'expression',
+        'is_active',
+        'last_activity',
+        'is_foo',
+        'is_bar',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            ...parent::casts(),
+            'is_foo' => 'boolean',
+            'is_bar' => 'boolean',
+        ];
+    }
+}
+```
+
+在 `config/feeds.php` 中注册模型：
+
+```php
+'model' => App\Models\Feed::class,
+```
+
+通过应用迁移向 Feed 表添加自定义列。所有允许批量赋值的属性都必须保留在 `$fillable` 中。
+
+`FeedQuery` 使用配置的模型执行创建、查找、列表、更新、删除和恢复操作。创建记录时，通过 `extra` 传入应用专用值。这些值最后应用，因此可以覆盖方法参数：
+
+```php
+$feed = app(FeedQuery::class)->create(
+    class: SomeFeed::class,
+    title: 'Some',
+    expression: '0 */12 * * *',
+    extra: [
+        'is_foo' => true,
+        'is_bar' => true,
+    ]
+);
+```
+
+应用模型也可以使用常规 Eloquent API：
+
+```php
+use App\Models\Feed;
+
+$feed = Feed::create([
+    'class' => SomeFeed::class,
+    'title' => 'Some',
+    'expression' => '0 */12 * * *',
+    'is_active' => true,
+    'is_foo' => true,
+    'is_bar' => true,
+]);
+```
+
+:::note
+配置的模型在运行时解析。静态分析会将 `FeedQuery::create()` 的结果视为包的基础模型。需要自动补全应用专用属性时，请使用 `App\Models\Feed::create()` 或显式的局部类型。
+:::
+
+## 分块大小 {/* #chunk_size */}
+
+数据库查询采用分块处理，默认每块包含 `1000` 项。可以通过覆盖 `chunkSize` 方法进行更改：
+
+```php source="docs/snippets/advanced-feed-chunk.php" lines="5-"
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    public function chunkSize(): int
+    {
+        return 500;
+    }
+}
+```
+
+## 另请参阅
+
+- [创建 Feed](./create-feeds.mdx)
+- [生成与调度](./generation.mdx)
+- [扩展功能](./extending-functionality.mdx)

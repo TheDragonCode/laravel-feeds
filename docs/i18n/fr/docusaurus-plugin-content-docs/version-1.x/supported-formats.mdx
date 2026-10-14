@@ -1,0 +1,68 @@
+---
+title: "Formats pris en charge"
+description: "Liste des formats d’exportation de flux pris en charge"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["XML", "JSON", "JSONL", "CSV", "RSS"]
+---
+
+[← Précédent](./feed-targets.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./elements.mdx)
+
+# Formats pris en charge
+
+- **xml** — Génère des flux au format XML.
+- **json** — Génère des flux au format JSON.
+- **jsonl** — Génère des flux au format JSON Lines.
+- **csv** — Génère des flux au format CSV.
+- **rss** — Génère des flux au format RSS Atom.
+
+Le format `xml` est utilisé par défaut.
+
+## Options du convertisseur par flux {/* #converter-options */}
+
+Appliquez `DragonCode\LaravelFeed\Attributes\Config` à une classe de flux pour remplacer les paramètres de son convertisseur :
+
+```php
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+#[Config('delimiter', ',')]
+#[Config('enclosure', "'")]
+#[Config('lineEnding', "\r\n")]
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+}
+```
+
+Répétez l’attribut pour chaque paramètre. Si un nom est répété dans la même classe, le dernier attribut déclaré prévaut.
+
+Les noms des paramètres de configuration correspondent aux noms des paramètres du constructeur du convertisseur. Seules les valeurs fournies remplacent la configuration de l’application ; les autres paramètres conservent leur valeur configurée. `lineEnding` correspond à `feeds.converters.csv.line_ending`.
+
+| Format | Clés prises en charge |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+Les options du flux parent sont héritées et les clés du flux enfant remplacent celles du parent. Utilisez uniquement les clés prises en charge par le format choisi ; les clés non prises en charge déclenchent `InvalidArgumentException`. L’attribut ne modifie pas la configuration de l’application ni les autres flux.
+
+JSON Lines écrit toujours un élément par ligne et `JSON_PRETTY_PRINT` est retiré de `options`. Les liaisons personnalisées du conteneur doivent respecter les paramètres de constructeur fournis.
+
+Un `DragonCode\LaravelFeed\Helpers\ConverterHelper` personnalisé qui redéfinit `get()` ou `resolve()` doit aussi redéfinir le point d’extension protégé `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter` pour utiliser les options par flux. Transmettez `$options` à `Container::make()` afin que les paramètres soient appliqués avant l’initialisation du convertisseur. Sinon, la résolution d’un flux avec des options déclenche `LogicException` ; les flux sans options conservent le comportement antérieur de la classe utilitaire.
+
+## Voir aussi
+
+- [Éléments](./elements.mdx)
+- [Directives](./directives.mdx)
+- [Créer des flux](./create-feeds.mdx)

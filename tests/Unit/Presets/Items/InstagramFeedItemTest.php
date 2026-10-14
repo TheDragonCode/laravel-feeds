@@ -15,10 +15,10 @@ function instagramFeedItem(): InstagramFeedItem
 }
 
 test('aligns required setter arguments with non-nullable properties', function (string $method, string $property) {
-    $parameterType = (new ReflectionMethod(InstagramFeedItem::class, $method))
+    $parameterType = new ReflectionMethod(InstagramFeedItem::class, $method)
         ->getParameters()[0]
         ->getType();
-    $propertyType = (new ReflectionProperty(InstagramFeedItem::class, $property))->getType();
+    $propertyType = new ReflectionProperty(InstagramFeedItem::class, $property)->getType();
 
     expect($parameterType)
         ->not->toBeNull()
@@ -36,10 +36,10 @@ test('aligns required setter arguments with non-nullable properties', function (
 ]);
 
 test('aligns the nullable status argument with its property', function () {
-    $parameterType = (new ReflectionMethod(InstagramFeedItem::class, 'status'))
+    $parameterType = new ReflectionMethod(InstagramFeedItem::class, 'status')
         ->getParameters()[0]
         ->getType();
-    $propertyType = (new ReflectionProperty(InstagramFeedItem::class, 'status'))->getType();
+    $propertyType = new ReflectionProperty(InstagramFeedItem::class, 'status')->getType();
 
     expect($parameterType)
         ->not->toBeNull()

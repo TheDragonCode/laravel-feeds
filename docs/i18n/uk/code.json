@@ -345,7 +345,7 @@
     "message": "Експортуйте великі набори даних Laravel у XML, JSON, JSON Lines, CSV, RSS і фіди маркетплейсів."
   },
   "homepage.eyebrow": {
-    "message": "Пакет Laravel · Документація 1.x"
+    "message": "Пакет Laravel · Документація 2.x"
   },
   "homepage.title": {
     "message": "Експортуйте великі набори даних без повного завантаження в пам'ять"

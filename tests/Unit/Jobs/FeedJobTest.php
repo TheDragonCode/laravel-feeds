@@ -76,7 +76,7 @@ test('generation without target', function () {
         ->with($feed)
         ->andReturn(new GenerationResultData([], []));
 
-    (new FeedJob(FullFeed::class))->handle($generator);
+    new FeedJob(FullFeed::class)->handle($generator);
 });
 
 test('generation with target uses a configured clone', function () {
@@ -97,7 +97,7 @@ test('generation with target uses a configured clone', function () {
         })
         ->andReturn(new GenerationResultData([], []));
 
-    (new FeedJob(TargetedFeed::class, $target))->handle($generator);
+    new FeedJob(TargetedFeed::class, $target)->handle($generator);
 
     expect($generated)->toBeInstanceOf(TargetedFeed::class)
         ->not->toBe($feed)
@@ -111,7 +111,7 @@ test('generation with target requires a targeted feed', function () {
     $generator = mock(GeneratorService::class);
     $generator->shouldNotReceive('feed');
 
-    (new FeedJob(FullFeed::class, new FeedTarget('42')))->handle($generator);
+    new FeedJob(FullFeed::class, new FeedTarget('42'))->handle($generator);
 })->throws(LogicException::class, 'Feed [' . FullFeed::class . '] does not support targets.');
 
 test('unique id preserves the legacy feed id and hashes targeted jobs using xxh128', function () {

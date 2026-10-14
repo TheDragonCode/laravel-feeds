@@ -22,6 +22,8 @@ consumers.
 
 ## Installation
 
+Laravel Feeds `2.x` requires Laravel `13.x` and PHP `8.4` or later in the `8.x` series. The [1.x documentation](https://feeds.dragon-code.pro/1.x/introduction/) remains available for applications on earlier Laravel or PHP versions.
+
 You can install the **Laravel Feeds** package via [Composer](https://getcomposer.org):
 
 ```Bash
@@ -80,7 +82,7 @@ php artisan feed:generate
 | [Supported Formats](https://feeds.dragon-code.pro/supported-formats/) | XML, JSON, JSON Lines, CSV, and RSS |
 | [Recipes](https://feeds.dragon-code.pro/receipt-sitemap/) | Sitemap, Instagram, Yandex, and RSS examples |
 
-The [documentation site](https://feeds.dragon-code.pro) includes version and language selectors.
+The [documentation site](https://feeds.dragon-code.pro) includes version and language selectors for `2.x` and `1.x`.
 
 ## License
 

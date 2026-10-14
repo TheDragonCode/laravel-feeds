@@ -10,7 +10,7 @@ class ProductFeed extends Feed
 {
     public function item(Model $model): FeedItem
     {
-        return (new ProductFeedItem($model))
+        return new ProductFeedItem($model)
             ->when($model->category, function (ProductFeedItem $item) {
                 $item->title .= ' (first)';
             });

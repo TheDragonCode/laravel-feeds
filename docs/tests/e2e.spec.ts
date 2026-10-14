@@ -163,6 +163,31 @@ test("localized routes render translated content", async ({ page }) => {
     ).toBeVisible();
 });
 
+for (const locale of ["", "ru/"]) {
+    test(`version selection preserves the compatibility page for ${locale || "en"}`, async ({ page }) => {
+        await page.goto(`/${locale}compatibility/`);
+
+        const navbar = page.locator(".navbar");
+        const phpVersion = page.getByRole("row")
+            .filter({ has: page.getByRole("cell", { name: "PHP", exact: true }) })
+            .locator("code")
+            .first();
+
+        await expect(phpVersion).toHaveText("8.4");
+        await navbar.getByRole("button", { name: "2.x", exact: true }).click();
+        await navbar.getByRole("link", { name: "1.x", exact: true }).click();
+
+        await expect(page).toHaveURL(`/${locale}1.x/compatibility/`);
+        await expect(phpVersion).toHaveText("8.2");
+
+        await navbar.getByRole("button", { name: "1.x", exact: true }).click();
+        await navbar.getByRole("link", { name: "2.x", exact: true }).click();
+
+        await expect(page).toHaveURL(`/${locale}compatibility/`);
+        await expect(phpVersion).toHaveText("8.4");
+    });
+}
+
 test("localized search uses translated content", async ({ page }) => {
     const searchAssets = new Set<string>();
 

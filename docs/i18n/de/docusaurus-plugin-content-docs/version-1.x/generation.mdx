@@ -1,0 +1,199 @@
+---
+title: "Generierung und Zeitplanung"
+description: "Informationen zum Erzeugen von Feed-Dateien für die spätere Verteilung"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
+---
+
+[← Zurück](./create-feeds.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./feed-targets.mdx)
+
+# Generierung und Zeitplanung
+
+Verwenden Sie den folgenden Konsolenbefehl, um alle aktiven Feeds zu erzeugen:
+
+```bash
+php artisan feed:generate
+```
+
+Daraufhin werden alle aktiven Feeds (`is_active = true`) aus der Tabelle `feeds` oder aus der in `config/feeds.php` angegebenen Tabelle ausgeführt.
+
+:::tip
+Beachten Sie, dass die Konsole beim Aufruf des Befehls ohne Parameter Links zu allen Feeds anzeigt, auch zu solchen, deren Eigenschaft `is_active` auf `false` gesetzt ist.
+
+Solche Feeds werden jedoch nicht ausgeführt, sondern mit dem Status `SKIP` gekennzeichnet.
+:::
+
+## Einzelner Feed {/* #single_feed */}
+
+:::warning
+Der angegebene Feed **wird ausgeführt**, selbst wenn er in der Datenbanktabelle `feeds` deaktiviert ist.
+:::
+
+Rufen Sie den Konsolenbefehl `feed:generate` mit dem Feed-Slug aus der Tabelle `feeds` als Parameter auf, um einen bestimmten Feed zu erzeugen:
+
+```bash
+php artisan feed:generate products
+```
+
+## Ausgewählte Ausgabedateien erzeugen {/* #target_selection */}
+
+Bei einem Feed mit [separaten Ausgabedateien](./feed-targets.mdx) wählt der Registrierungs-Slug die Feed-Klasse und der Zielschlüssel einen Partner, Shop, ein Gebietsschema oder eine andere Ausgabe aus.
+
+Wird der Feed ohne `--target` ausgeführt, verarbeitet er `targets()` verzögert und erzeugt alle Ziele:
+
+```bash
+php artisan feed:generate products
+```
+
+Übergeben Sie die wiederholbare Option `--target`, um nur ausgewählte Ziele zu erzeugen:
+
+```bash
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
+```
+
+Explizite Schlüssel verwenden `findTarget()`, statt `targets()` aufzuzählen. Doppelte Schlüssel werden in der Reihenfolge ihres ersten Auftretens einmal verarbeitet. Alle angeforderten Schlüssel werden vor Beginn der Generierung aufgelöst.
+
+`--target` erfordert genau einen Feed-Registrierungs-Slug. Der Befehl weist leere oder unbekannte Schlüssel sowie die Zielauswahl für einen Feed zurück, der `HasFeedTargets` nicht implementiert.
+
+Die vollständige Zielaufzählung wird fortlaufend verarbeitet und ist nicht atomar. Wenn `targets()` nach einigen zurückgegebenen Werten fehlschlägt, wurden frühere Ziele möglicherweise bereits erzeugt oder in die Queue gestellt. Eine leere Aufzählung erzeugt nichts und legt kein implizites Standardziel an.
+
+## Ausgabe für KI-Agenten {/* #ai_agent_output */}
+
+Wenn `feed:generate` innerhalb eines von [Laravel Agent Detector](https://github.com/laravel/agent-detector) erkannten KI-Coding-Agenten ausgeführt wird, gibt der Befehl automatisch ein einzelnes JSON-Objekt anstelle von Fortschrittsanzeigen und formatierten Statuszeilen aus. Es ist keine Befehlsoption erforderlich. Außerhalb eines erkannten Agenten bleibt die reguläre Konsolenausgabe unverändert.
+
+Bei der direkten Generierung enthält jeder erzeugte Feed alle veröffentlichten Dateien und die jeweilige Anzahl der Datensätze:
+
+```json
+{
+  "tool": "feed:generate",
+  "result": "success",
+  "feeds": [
+    {
+      "class": "App\\Feeds\\SitemapFeed",
+      "status": "generated",
+      "files": [
+        {
+          "path": "/var/www/html/storage/app/public/sitemap.xml",
+          "records": 1250
+        }
+      ]
+    },
+    {
+      "class": "App\\Feeds\\DisabledFeed",
+      "status": "skipped"
+    }
+  ]
+}
+```
+
+Der Befehl gibt kompaktes JSON in einer einzigen Zeile aus. Das Beispiel ist nur zur besseren Lesbarkeit formatiert.
+
+| Status | Bedeutung | Zusätzliche Felder |
+| --- | --- | --- |
+| `generated` | Die Feed-Dateien wurden direkt erzeugt. | `files` mit `path` und `records` für jede Datei |
+| `queued` | Der Queue-Modus ist aktiviert und der Feed-Job wurde für den Agenten synchron ausgeführt. | Keine |
+| `skipped` | Der Feed ist inaktiv und der Befehl wurde ohne Feed-Slug ausgeführt. | Keine |
+
+Jeder zielbezogene Eintrag mit `generated` oder `queued` enthält außerdem ein Feld `target` mit dem ausgewählten Schlüssel.
+
+:::note
+Im Queue-Modus führt der agentenspezifische Pfad jeden aktivierten Job synchron aus, bevor er das JSON-Ergebnis zurückgibt. Der reguläre, für Menschen formatierte Pfad übermittelt Jobs weiterhin über die konfigurierte Queue-Verbindung.
+:::
+
+Diese JSON-Hülle wird nur bei erfolgreichen Ausführungen verwendet. Wenn die Generierung eine Ausnahme auslöst, behandelt Laravel den Befehlsfehler wie gewohnt und gibt keine JSON-Fehlerhülle aus.
+
+## Queue {/* #queue */}
+
+Standardmäßig läuft die Feed-Generierung im Konsolenprozess. Aktivieren Sie für Feeds, die lange dauern oder viel Arbeitsspeicher benötigen, den Laravel-Queue-Modus in Ihrer Umgebung:
+
+```bash
+FEED_QUEUE_ENABLED=true
+FEED_QUEUE_CONNECTION=redis
+FEED_QUEUE_NAME=feeds
+FEED_QUEUE_UNIQUE_TTL=3600
+```
+
+Wenn der Queue-Modus aktiviert ist, stellt `feed:generate` für jeden normalen aktiven Feed einen Job und für jedes ausgewählte Ziel eines zielbasierten Feeds einen Job in die Warteschlange. Bei einer asynchronen Verbindung wird der Befehl beendet, nachdem die Jobs übermittelt wurden. Starten Sie für die ausgewählte Verbindung und Warteschlange einen [Queue-Worker](https://laravel.com/docs/queues#running-the-queue-worker), der diese Jobs verarbeitet.
+
+- `FEED_QUEUE_CONNECTION` wählt die Queue-Verbindung aus. Falls nicht gesetzt, wird zunächst `QUEUE_CONNECTION` und anschließend `database` verwendet.
+- `FEED_QUEUE_NAME` wählt eine Warteschlange dieser Verbindung aus. Lassen Sie die Variable ungesetzt, um die Standardwarteschlange der Verbindung zu verwenden.
+- `FEED_QUEUE_UNIQUE_TTL` legt die maximale Lebensdauer der Eindeutigkeitssperre in Sekunden fest. Normale Jobs sind anhand der Feed-Klasse eindeutig. Zielbezogene Jobs sind anhand der Feed-Klasse und des Zielschlüssels eindeutig; Zielparameter ändern diese Identität nicht.
+
+:::note
+Die Verbindung `sync` führt jeden Job sofort im Konsolenprozess aus. Wählen Sie eine asynchrone Verbindung, um die Generierung an einen Worker zu übergeben. Setzen Sie `FEED_QUEUE_ENABLED=false`, um Feeds direkt und ohne Jobs zu erzeugen.
+:::
+
+## Zeitplan {/* #schedule */}
+
+### Registrierungsausdruck {/* #registration_expression */}
+
+Übergeben Sie beim Erstellen einer Feed-Registrierung entweder einen direkten Cron-Ausdruck als Zeichenfolge oder ein über die Fluent-API konfiguriertes `DragonCode\LaravelFeed\Scheduling\Expression`-Objekt.
+
+```php
+use App\Feeds\ProductFeed;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
+use DragonCode\LaravelFeed\Scheduling\Expression;
+
+app(FeedQuery::class)->create(
+    class: ProductFeed::class,
+    title: 'Products',
+    expression: (new Expression)
+        ->weekly()
+        ->mondays()
+        ->at('13:00'),
+);
+```
+
+Das Fluent-Beispiel speichert `0 13 * * 1`. Direkte Zeichenfolgen einschließlich von `dragonmantank/cron-expression` unterstützter Aliase wie `@daily` können weiterhin übergeben werden.
+
+Die verfügbaren Fluent-Methoden entsprechen den Häufigkeitsoptionen der installierten Laravel-Version. Die aktuelle Liste für Laravel 13 finden Sie in der [Häufigkeitsreferenz](https://laravel.com/docs/13.x/scheduling#schedule-frequency-options). Es werden nur Methoden bereitgestellt, deren Ergebnis als stabiler fünfteiliger Cron-Ausdruck gespeichert werden kann. Intervalle unter einer Minute, Zeitzonen, Zeitfensterbeschränkungen und `lastDayOfMonth()` stehen bei diesem Wertobjekt nicht zur Verfügung.
+
+### Automatisch {/* #automatic */}
+
+Verwenden Sie einen [Zeitplan](https://laravel.com/docs/scheduling#running-the-scheduler), um die Feed-Generierung zu automatisieren. Geben Sie dazu den Helper-Aufruf in der Datei `routes/console.php` an. Dies ist der Standardpfad, sofern Sie ihn nicht geändert haben:
+
+```php source="docs/snippets/schedule-setup.php" lines="5-"
+use DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper;
+use Illuminate\Support\Facades\Schedule;
+
+ScheduleFeedHelper::register();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+Dadurch werden alle aktiven Feeds gemäß dem Zeitplan in der Datenbankspalte `expression` registriert. Ein geplanter zielbasierter Feed erzeugt jeden von `targets()` zurückgegebenen Wert.
+
+### Manuell {/* #manual */}
+
+Sie können den Zeitplan auch direkt nach Ihren eigenen Regeln festlegen. In diesem Fall werden nur die von Ihnen angegebenen Feeds ausgeführt.
+
+```php source="docs/snippets/schedule-setup-manual.php" lines="5-"
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command(FeedGenerateCommand::class, ['products'])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->daily();
+
+Schedule::command(FeedGenerateCommand::class, ['sitemap'])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->hourly();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+## Siehe auch
+
+- [Feeds erstellen](./create-feeds.mdx)
+- [Separate Ausgabedateien](./feed-targets.mdx)
+- [Ereignisse](./events.mdx)
+- [Speicherort](./location.mdx)

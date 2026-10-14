@@ -1,6 +1,6 @@
 {
   "version.label": {
-    "message": "1.x",
+    "message": "2.x",
     "description": "현재 버전의 레이블"
   },
   "sidebar.docs.category.Project": {

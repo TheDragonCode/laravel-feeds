@@ -32,7 +32,7 @@ abstract class SitemapFeedPreset extends Feed
 
     public function item(Model $model): FeedItem
     {
-        return (new SitemapFeedItem($model))
+        return new SitemapFeedItem($model)
             ->modifiedAt($model->updated_at);
     }
 

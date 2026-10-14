@@ -26,11 +26,14 @@ The production build contains every configured locale.
 
 - `docs/` contains the current English source pages.
 - `i18n/<locale>/docusaurus-plugin-content-docs/current/` contains localized pages.
+- `versioned_docs/version-1.x/` and each locale's `version-1.x/` directory preserve the `1.x` release line.
 - `i18n/<locale>/*.json` contains localized UI messages.
 - `snippets/` contains examples generated and checked by the PHP test suite.
 - `static/` contains site-wide assets that do not change between documentation versions.
 
 English is the default locale. The complete locale set is `be`, `de`, `en`, `fr`, `ko`, `pt-BR`, `ru`, `uk`, and `zh-CN`. The `zh-CN` locale uses Simplified Chinese.
+
+The current documentation covers `2.x` at the site root and requires Laravel `13.x` and PHP `8.4` or later in the `8.x` series. The version selector opens the `1.x` documentation under `/1.x/` for older applications.
 
 ## Updating content
 
@@ -45,6 +48,22 @@ npm run translate
 The command generates catalogs. It does not translate documentation pages. Complete the JSON messages and localized MDX files before running `npm run check:i18n`.
 
 Code fences with a `source` field contain a version-frozen copy of a tracked example. Run `npm run check:snippets` after changing either the source file or the embedded block.
+
+## PHP tests
+
+The development tools require PHP `8.4.1` or later in the `8.x` series. Contributor tests use Pest `5`, Testbench `11`, and Laravel `13`. The Composer test scripts use `--tia` for test impact analysis:
+
+```bash
+composer test
+```
+
+Test impact analysis requires enabled PCOV or Xdebug with coverage mode enabled. For Xdebug, run:
+
+```bash
+php -d xdebug.mode=coverage vendor/bin/pest --tia
+```
+
+If `XDEBUG_MODE` is set externally, it must include `coverage`. Add `--fresh` to run every test regardless of the impact cache. CI, snapshot updates, and benchmarks use fresh runs.
 
 ## Creating a documentation version
 

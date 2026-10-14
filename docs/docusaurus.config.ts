@@ -180,7 +180,7 @@ const config: Config = {
                     lastVersion: "current",
                     versions: {
                         current: {
-                            label: "1.x",
+                            label: "2.x",
                             path: "",
                             banner: "none",
                         },

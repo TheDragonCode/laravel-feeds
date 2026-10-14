@@ -35,7 +35,7 @@ test('rejects publication that finishes without producing a generation result', 
     $query = mock(FeedQuery::class);
     $query->shouldNotReceive('setLastActivity');
 
-    expect(fn () => (new GeneratorService($filesystem, $helper, $query))->feed($feed))
+    expect(fn () => new GeneratorService($filesystem, $helper, $query)->feed($feed))
         ->toThrow(FeedGenerationException::class, 'Feed generation did not produce a result.');
 });
 

@@ -1,0 +1,39 @@
+---
+title: "API reference"
+description: "Reference map for Laravel Feeds public classes, contracts, data objects, events, and exceptions"
+slug: /api/
+type: reference
+status: stable
+since: "1.0"
+keywords: ["API", "reference", "Feed", "FeedItem", "FeedInfo"]
+---
+
+# API reference
+
+<PageLead>
+Use this section when you already know the workflow and need an exact class, method, configuration key, event, or failure contract.
+</PageLead>
+
+| Area | Main entry points | Reference |
+| --- | --- | --- |
+| Configuration | `config/feeds.php` | [Configuration](./configuration.mdx) |
+| Feed classes | `Feed`, `FeedItem`, `FeedInfo` | [Feeds and data](./feed.mdx) |
+| Output structure | `ElementData`, XML directives | [Elements](../elements.mdx), [Directives](../directives.mdx) |
+| Formats | `FeedFormatEnum`, converters | [Supported formats](../supported-formats.mdx) |
+| Runtime | `GeneratorService`, `FeedQuery`, `ScheduleFeedHelper` | [Runtime services and contracts](./runtime.mdx) |
+| Lifecycle | Starting and finished events | [Events and exceptions](./events-exceptions.mdx) |
+| Presets | Sitemap, RSS, Instagram, Yandex | [Presets](../presets.mdx) |
+
+## Extension points {/* #extension-points */}
+
+- Extend `Feed` or a preset to define a data source and output contract.
+- Extend `FeedItem` and `FeedInfo` to control serialized data.
+- Implement `DragonCode\LaravelFeed\Contracts\Transformer` for custom scalar conversion.
+- Return `DragonCode\LaravelFeed\Data\OptionalData` when a field should be omitted.
+- Register macros on `Feed`, `FeedItem`, or `FeedInfo` for application-level helpers.
+
+## See Also
+
+- [Create feeds](../create-feeds.mdx)
+- [Extending functionality](../extending-functionality.mdx)
+- [Troubleshooting](../troubleshooting.mdx)

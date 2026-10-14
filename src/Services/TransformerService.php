@@ -35,7 +35,7 @@ class TransformerService
 
     protected function transformers(array $transformers, array $prependTransformers): array
     {
-        return (new Collection($prependTransformers))
+        return new Collection($prependTransformers)
             ->merge($this->configuredTransformers)
             ->merge($transformers)
             ->map(fn (string $transformer): Transformer => $this->container->make($transformer))

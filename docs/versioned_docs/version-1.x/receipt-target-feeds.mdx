@@ -1,0 +1,152 @@
+---
+title: "Multiple targeted feed files"
+description: "Recipe for generating multiple feed files with individual query conditions from one registered feed"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← Previous](./extending-functionality.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./receipt-sitemap.mdx)
+
+# Multiple targeted feed files
+
+This recipe registers one `ProductFeed` and uses feed targets to generate multiple XML files. Each target provides parameters that `builder()` uses for its own query conditions and `filename()` uses for its own output path. The `available` and `unavailable` targets are only examples; a target can represent any business condition.
+
+## Feed targets versus perFile() {/* #targets-vs-per-file */}
+
+`perFile()` splits one query result into sequential files after a fixed number of records. The query and selection conditions stay the same across those files.
+
+`FeedTarget` runs the feed separately for every target. The application can therefore use `target()` to change the query conditions and filename for each output. Both mechanisms can be combined: select a target-specific dataset first, then split that dataset by record count.
+
+This example creates the following target files:
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## Create the feed {/* #create-feed */}
+
+```bash
+php artisan make:feed Product
+```
+
+## Configure output {/* #configure-output */}
+
+Replace the generated feed class with:
+
+```php source="docs/snippets/targeted.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class ProductFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    private const TARGETS = [
+        'available'   => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
+    public function targets(): iterable
+    {
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'in_stock',
+            $this->target()->parameters['in_stock'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "products/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(string $key): FeedTarget
+    {
+        return new FeedTarget(
+            key       : $key,
+            parameters: self::TARGETS[$key],
+        );
+    }
+}
+```
+
+`targets()` enumerates the configured target keys for full runs. `findTarget()` resolves explicitly requested keys without enumerating every target. `builder()` filters products for the active target, and `filename()` gives every target a unique path.
+
+## Activate {/* #activate */}
+
+Review the generated [operation or migration](./create-feeds.mdx) file, then run the appropriate command:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Generate files {/* #generate-all */}
+
+Pass the feed registration slug. The command generates a file for every target returned by `targets()`:
+
+```bash
+php artisan feed:generate product
+```
+
+For the `available` and `unavailable` targets, the generated paths are:
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## Generate files with filtering {/* #generate-selected */}
+
+Use the repeatable `--target` option when only selected targets need fresh files:
+
+```bash
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
+```
+
+## Split files by record count {/* #split-each-output */}
+
+Add `perFile()` when one target file can become too large:
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+The `available` target can then produce `products/available-1.xml`, `products/available-2.xml`, and later parts. This record-count split is applied independently to every target.
+
+## See Also
+
+- [Separate output files guide](./feed-targets.mdx)
+- [Generation & schedule](./generation.mdx)
+- [Feeds and data API](./api/feed.mdx#feed-targets)

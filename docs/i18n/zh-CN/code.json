@@ -345,7 +345,7 @@
     "message": "将大型 Laravel 数据集导出为 XML、JSON、JSON Lines、CSV、RSS 和市场平台 Feed。"
   },
   "homepage.eyebrow": {
-    "message": "Laravel 软件包 · 1.x 文档"
+    "message": "Laravel 软件包 · 2.x 文档"
   },
   "homepage.title": {
     "message": "无需将全部数据加载到内存即可导出大型数据集"
