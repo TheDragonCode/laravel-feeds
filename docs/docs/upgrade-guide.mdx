@@ -49,7 +49,9 @@ If the package's slug migration has not run yet, publish the migrations:
 php artisan vendor:publish --tag=feeds-migrations
 ```
 
-The command publishes all migration files. Validate the published files and delete any unnecessary ones, then run the migrations:
+The command publishes all migration files. Validate the published files and delete any unnecessary ones.
+
+Set the filename timestamp of the new `add_slug_to_feeds_table` migration after the application's actual `create_feeds_table` migration and before every feed-registration migration. This order ensures `migrate:fresh` adds the slug column before registrations write to it. Then run the migrations:
 
 ```bash
 php artisan migrate

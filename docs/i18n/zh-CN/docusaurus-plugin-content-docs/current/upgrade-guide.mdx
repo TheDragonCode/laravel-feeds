@@ -49,7 +49,9 @@ composer check-platform-reqs
 php artisan vendor:publish --tag=feeds-migrations
 ```
 
-该命令会发布所有迁移文件。请验证已发布的文件并删除不需要的文件，然后运行迁移：
+该命令会发布所有迁移文件。请验证已发布的文件并删除不需要的文件。
+
+请设置新 `add_slug_to_feeds_table` 迁移文件名中的时间戳，使其位于应用实际的 `create_feeds_table` 迁移之后，并且位于所有 Feed 注册迁移之前。此顺序可确保 `migrate:fresh` 在写入注册记录之前添加 slug 列。然后运行迁移：
 
 ```bash
 php artisan migrate

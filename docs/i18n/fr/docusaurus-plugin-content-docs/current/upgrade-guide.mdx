@@ -49,7 +49,9 @@ Si la migration des slugs du paquet n’a pas encore été exécutée, publiez l
 php artisan vendor:publish --tag=feeds-migrations
 ```
 
-La commande publie tous les fichiers de migration. Validez les fichiers publiés et supprimez ceux qui sont inutiles, puis exécutez les migrations :
+La commande publie tous les fichiers de migration. Validez les fichiers publiés et supprimez ceux qui sont inutiles.
+
+Définissez l’horodatage du nom de fichier de la nouvelle migration `add_slug_to_feeds_table` après celui de la migration `create_feeds_table` réellement présente dans l’application et avant toute migration d’enregistrement de flux. Cet ordre garantit que `migrate:fresh` ajoute la colonne slug avant que les enregistrements y écrivent. Exécutez ensuite les migrations :
 
 ```bash
 php artisan migrate

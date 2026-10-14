@@ -49,7 +49,9 @@ Wenn die Slug-Migration des Pakets noch nicht ausgeführt wurde, veröffentliche
 php artisan vendor:publish --tag=feeds-migrations
 ```
 
-Der Befehl veröffentlicht alle Migrationsdateien. Prüfen Sie die veröffentlichten Dateien und löschen Sie nicht benötigte Dateien. Führen Sie anschließend die Migrationen aus:
+Der Befehl veröffentlicht alle Migrationsdateien. Prüfen Sie die veröffentlichten Dateien und löschen Sie nicht benötigte Dateien.
+
+Setzen Sie den Zeitstempel im Dateinamen der neuen Migration `add_slug_to_feeds_table` nach der tatsächlichen Migration `create_feeds_table` der Anwendung und vor allen Migrationen zur Feed-Registrierung. Diese Reihenfolge stellt sicher, dass `migrate:fresh` die Slug-Spalte hinzufügt, bevor Registrierungen in sie schreiben. Führen Sie anschließend die Migrationen aus:
 
 ```bash
 php artisan migrate

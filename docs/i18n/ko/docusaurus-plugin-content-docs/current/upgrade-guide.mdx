@@ -49,7 +49,9 @@ composer check-platform-reqs
 php artisan vendor:publish --tag=feeds-migrations
 ```
 
-이 명령은 모든 마이그레이션 파일을 게시합니다. 게시된 파일을 검증하고 불필요한 파일을 삭제한 다음 마이그레이션을 실행하십시오.
+이 명령은 모든 마이그레이션 파일을 게시합니다. 게시된 파일을 검증하고 불필요한 파일을 삭제하십시오.
+
+새 `add_slug_to_feeds_table` 마이그레이션 파일 이름의 타임스탬프를 애플리케이션의 실제 `create_feeds_table` 마이그레이션 이후이면서 모든 피드 등록 마이그레이션 이전이 되도록 설정하십시오. 이 순서에서는 `migrate:fresh`가 등록 정보를 기록하기 전에 slug 열을 추가합니다. 그런 다음 마이그레이션을 실행하십시오.
 
 ```bash
 php artisan migrate
