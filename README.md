@@ -58,10 +58,11 @@ Check the [operation/migration](https://feeds.dragon-code.pro/create-feeds/) fil
 the console command:
 
 ```bash
-# For Laravel Deploy Operations
+# With Laravel Deploy Operations
+php artisan migrate
 php artisan operations
 
-# For Laravel Migrations
+# Without Laravel Deploy Operations
 php artisan migrate
 ```
 
