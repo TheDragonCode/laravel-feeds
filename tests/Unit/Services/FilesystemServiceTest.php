@@ -166,7 +166,7 @@ test('writes all bytes after partial stream writes', function () {
     $resource = fopen('controlled-write://buffer', 'wb');
 
     try {
-        (new FilesystemService(new Filesystem))->append($resource, 'abcdef', 'feed.xml');
+        new FilesystemService(new Filesystem)->append($resource, 'abcdef', 'feed.xml');
 
         expect(ControlledWriteStream::$content)->toBe('abcdef');
     } finally {
@@ -184,7 +184,7 @@ test('throws when a stream stops making progress', function (false|int $failure)
     file_put_contents($path, 'published');
 
     try {
-        expect(fn () => (new FilesystemService(new Filesystem))->append($resource, 'abcdef', $path))
+        expect(fn () => new FilesystemService(new Filesystem)->append($resource, 'abcdef', $path))
             ->toThrow(
                 WriteFeedException::class,
                 "Failed to write to the feed: [$path]. Written [2] of [6] bytes."
@@ -207,7 +207,7 @@ test('treats empty content as a no-op', function () {
     $resource = fopen('controlled-write://buffer', 'wb');
 
     try {
-        (new FilesystemService(new Filesystem))->append($resource, '', 'feed.xml');
+        new FilesystemService(new Filesystem)->append($resource, '', 'feed.xml');
 
         expect(ControlledWriteStream::$calls)
             ->toBe([])
@@ -224,7 +224,7 @@ test('creates collision-resistant drafts and cleans the staging directory', func
     $drafts    = [];
 
     try {
-        (new FilesystemService(new Filesystem))->publish($path, function (string $staging) use (&$drafts, $path) {
+        new FilesystemService(new Filesystem)->publish($path, function (string $staging) use (&$drafts, $path) {
             $service = new FilesystemService(new Filesystem);
             $first   = $service->createDraft('feed.json', $staging);
             $second  = $service->createDraft('feed.json', $staging);

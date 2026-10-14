@@ -27,7 +27,7 @@
         "check:seo": "node scripts/check-built-site.mjs",
         "check:snippets": "node scripts/check-snippets.mjs",
         "build:llms": "node scripts/build-llms.mjs",
-        "test:e2e": "playwright test tests/e2e.spec.ts",
+        "test:e2e": "playwright test tests/e2e.spec.ts tests/versioned-llms.spec.ts",
         "test:a11y": "playwright test tests/accessibility.spec.ts",
         "test:visual": "playwright test tests/visual.spec.ts",
         "test:visual:update": "playwright test tests/visual.spec.ts --update-snapshots",

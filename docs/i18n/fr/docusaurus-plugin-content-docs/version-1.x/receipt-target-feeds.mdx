@@ -1,0 +1,152 @@
+---
+title: "Plusieurs fichiers de flux ciblés"
+description: "Recette pour générer plusieurs fichiers de flux avec des conditions de requête propres à chacun à partir d’un seul flux enregistré"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← Précédent](./extending-functionality.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./receipt-sitemap.mdx)
+
+# Plusieurs fichiers de flux ciblés
+
+Cette recette enregistre un seul `ProductFeed` et utilise des cibles de flux pour générer plusieurs fichiers XML. Chaque cible fournit des paramètres que `builder()` utilise pour ses propres conditions de requête et que `filename()` utilise pour son propre chemin de sortie. Les cibles `available` et `unavailable` ne sont que des exemples : une cible peut représenter n’importe quelle condition métier.
+
+## Cibles de flux et perFile() {/* #targets-vs-per-file */}
+
+`perFile()` fractionne le résultat d’une seule requête en fichiers séquentiels après un nombre fixe d’enregistrements. La requête et les conditions de sélection restent identiques pour tous ces fichiers.
+
+`FeedTarget` exécute le flux séparément pour chaque cible. L’application peut donc utiliser `target()` pour modifier les conditions de requête et le nom de fichier de chaque sortie. Les deux mécanismes peuvent être combinés : sélectionnez d’abord un jeu de données propre à la cible, puis fractionnez-le selon le nombre d’enregistrements.
+
+Cet exemple crée les fichiers ciblés suivants :
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## Créer le flux {/* #create-feed */}
+
+```bash
+php artisan make:feed Product
+```
+
+## Configurer la sortie {/* #configure-output */}
+
+Remplacez la classe de flux générée par :
+
+```php source="docs/snippets/targeted.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class ProductFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    private const TARGETS = [
+        'available'   => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
+    public function targets(): iterable
+    {
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'in_stock',
+            $this->target()->parameters['in_stock'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "products/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(string $key): FeedTarget
+    {
+        return new FeedTarget(
+            key       : $key,
+            parameters: self::TARGETS[$key],
+        );
+    }
+}
+```
+
+`targets()` énumère les clés de cible configurées pour les exécutions complètes. `findTarget()` résout les clés explicitement demandées sans énumérer toutes les cibles. `builder()` filtre les produits pour la cible active et `filename()` attribue un chemin unique à chaque cible.
+
+## Activer {/* #activate */}
+
+Vérifiez le fichier d’[opération ou de migration](./create-feeds.mdx) généré, puis exécutez la commande appropriée :
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Générer les fichiers {/* #generate-all */}
+
+Transmettez le slug d’enregistrement du flux. La commande génère un fichier pour chaque cible renvoyée par `targets()` :
+
+```bash
+php artisan feed:generate product
+```
+
+Pour les cibles `available` et `unavailable`, les chemins générés sont :
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## Générer les fichiers avec filtrage {/* #generate-selected */}
+
+Utilisez l’option répétable `--target` pour actualiser uniquement les fichiers des cibles sélectionnées :
+
+```bash
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
+```
+
+## Fractionner les fichiers par nombre d’enregistrements {/* #split-each-output */}
+
+Ajoutez `perFile()` lorsque la sortie d’une cible peut elle aussi devenir trop volumineuse :
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+La cible `available` peut alors produire `products/available-1.xml`, `products/available-2.xml` et les parties suivantes. Ce fractionnement par nombre d’enregistrements s’applique indépendamment à chaque cible.
+
+## Voir aussi
+
+- [Guide des fichiers de sortie séparés](./feed-targets.mdx)
+- [Génération et planification](./generation.mdx)
+- [API des flux et des données](./api/feed.mdx#feed-targets)

@@ -1,0 +1,98 @@
+---
+title: "Runtime services and contracts"
+description: "Public generation, registration, scheduling, transformation, and optional-value APIs"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["GeneratorService", "FeedTarget", "FeedQuery", "ScheduleFeedHelper", "Transformer", "OptionalData"]
+---
+
+# Runtime services and contracts
+
+<PageLead>
+These entry points support programmatic generation, feed registration, scheduler integration, scalar transformation, and optional fields.
+</PageLead>
+
+## GeneratorService {/* #generator-service */}
+
+`DragonCode\LaravelFeed\Services\GeneratorService` generates and publishes one feed.
+
+<ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
+
+The method publishes all parts as one operation, updates the registration's last activity, dispatches lifecycle events, and returns paths with per-file record counts. Storage resolution and output path lookup happen before generation starts. For an ordinary feed, exceptions raised during this preflight, including `UnsupportedStorageDiskException`, are thrown directly. For a configured feed that implements `HasFeedTargets`, preflight failures are wrapped in `FeedGenerationException` so the target key remains available. After preflight succeeds, generation failures are wrapped for every feed, with the original exception as the previous throwable.
+
+Resolve the service through Laravel's container instead of constructing its internal collaborators.
+
+```php
+use App\Feeds\UserFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+
+$result = app(GeneratorService::class)->feed(app(UserFeed::class));
+
+foreach ($result->records as $path => $count) {
+    processFeedResult($path, $count);
+}
+```
+
+`GeneratorService` generates one configured feed and does not enumerate targets. Resolve a target first when calling it directly:
+
+```php
+use App\Feeds\PartnerFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+use RuntimeException;
+
+$feed = app(PartnerFeed::class);
+$target = $feed->findTarget('42')
+    ?? throw new RuntimeException('Feed target [42] not found.');
+
+$result = app(GeneratorService::class)->feed(
+    $feed->forTarget($target),
+);
+```
+
+## FeedQuery {/* #feed-query */}
+
+`DragonCode\LaravelFeed\Queries\FeedQuery` manages persisted feed registrations.
+
+| Method | Result |
+| --- | --- |
+| `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Creates a registration. |
+| `find(int $id): Feed` | Returns a registration or throws `FeedNotFoundException`. |
+| `findBySlug(string $slug): Feed` | Returns one registration; throws `FeedNotFoundException` when missing or `MultipleRecordsFoundException` when ambiguous. |
+| `all(): Builder` | Returns all registrations ordered by ID. |
+| `active(): Builder` | Returns active registrations ordered by ID. |
+| `setLastActivity(string $class): void` | Updates `last_activity` for a feed class. |
+| `delete(int $id): void` | Soft-deletes a registration by ID. |
+| `deleteByClass(string $class): void` | Permanently removes registrations for a class, including trashed rows. |
+| `restore(int $id): void` | Restores a soft-deleted registration. |
+
+`$expression` accepts a raw cron expression string, including aliases supported by `dragonmantank/cron-expression` such as `@daily`, or `DragonCode\LaravelFeed\Scheduling\Expression`. Fluent values are converted to their cron string before validation and persistence. Reading the model returns the stored string. See [registration expressions](../generation.mdx#registration_expression) for an example.
+
+Use the generated migration or deployment operation for normal registration changes so they remain reproducible across environments.
+
+## ScheduleFeedHelper {/* #schedule-feed-helper */}
+
+`DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper::register()` adds active registrations to Laravel's scheduler. Each registration uses its stored cron expression and an overlap lock. Background execution and lock TTL come from `feeds.schedule` configuration.
+
+Registration is skipped safely when the configured feeds table does not exist.
+
+## Transformer {/* #transformer */}
+
+Implement `DragonCode\LaravelFeed\Contracts\Transformer` to convert supported values before serialization.
+
+<ApiSignature>public function allow(mixed $value): bool</ApiSignature>
+
+<ApiSignature>public function transform(mixed $value): string</ApiSignature>
+
+`allow()` decides whether the transformer accepts a value. `transform()` returns its serialized scalar representation. Add the class through `Feed::transformers()` or `feeds.transformers`.
+
+## OptionalData {/* #optional-data */}
+
+Return a new `DragonCode\LaravelFeed\Data\OptionalData` for a field that should be omitted when no value exists. XML, RSS, JSON, and JSON Lines omit it. CSV preserves the column and writes an empty field.
+
+## See Also
+
+- [Feeds and data](./feed.mdx)
+- [Configuration](./configuration.mdx)
+- [Events and exceptions](./events-exceptions.mdx)
+- [Generation and schedule](../generation.mdx)

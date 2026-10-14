@@ -44,7 +44,7 @@ test('replaces existing categories through category', function () {
 });
 
 test('keeps category compatible with string-only overrides', function () {
-    $parameter = (new ReflectionMethod(YandexFeedInfo::class, 'category'))
+    $parameter = new ReflectionMethod(YandexFeedInfo::class, 'category')
         ->getParameters()[1];
 
     expect((string) $parameter->getType())->toBe('string');

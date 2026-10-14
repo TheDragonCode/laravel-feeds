@@ -1,0 +1,34 @@
+---
+title: "Events"
+description: "Events dispatched during feed generation"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["events", "FeedStartingEvent", "FeedFinishedEvent", "target"]
+---
+
+[← Previous](./presets.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./extending-functionality.mdx)
+
+# Events
+
+Feeds dispatch two events when running the command:
+
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — The `FeedStartingEvent` is dispatched after storage and path preflight, before converter resolution and staging. It does not mean that a draft file exists.
+- **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — The `FeedFinishedEvent` is dispatched after every generated file has been published successfully. A failed generation does not dispatch this event.
+
+Both events expose `$feed` with the generated feed class and nullable `$target` with the target key. `$target` is `null` for an ordinary feed.
+
+## Finished event contract {/* #finished_event_contract */}
+
+The finished event exposes these public properties:
+
+- `$paths` contains every published file path in output order.
+- `$path` remains available for backward compatibility and contains the first published path. Use `$paths` when a feed can be split across files.
+
+`GeneratorService::feed()` returns a `GenerationResultData` object. Its `$paths` property contains the same ordered paths, and its `$records` property maps each path to the number of records written to that file.
+
+## See Also
+
+- [Generation & schedule](./generation.mdx)
+- [Location](./location.mdx)
+- [Extending functionality](./extending-functionality.mdx)

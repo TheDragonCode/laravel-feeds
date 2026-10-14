@@ -21,14 +21,14 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "ext-dom": "*",
         "ext-libxml": "*",
         "dragonmantank/cron-expression": "^3.4",
-        "illuminate/console": "^11.0 || ^12.0 || ^13.0",
-        "illuminate/database": "^11.0 || ^12.0 || ^13.0",
-        "illuminate/filesystem": "^11.0 || ^12.0 || ^13.0",
-        "illuminate/support": "^11.0 || ^12.0 || ^13.0",
+        "illuminate/console": "^13.0",
+        "illuminate/database": "^13.0",
+        "illuminate/filesystem": "^13.0",
+        "illuminate/support": "^13.0",
         "laravel/agent-detector": "^2.0.2",
         "spatie/temporary-directory": "^2.3"
     },
@@ -37,10 +37,10 @@
         "dragon-code/codestyler": "^6.3",
         "dragon-code/laravel-deploy-operations": "^7.1",
         "mockery/mockery": "^1.6",
-        "orchestra/testbench": "^9.17 || ^10.0 || ^11.0",
-        "pestphp/pest": "^3.8.7 || ^4.0",
-        "pestphp/pest-plugin-laravel": "^3.2 || ^4.0",
-        "pestphp/pest-plugin-type-coverage": "^3.6.1 || ^4.0",
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^5.0",
+        "pestphp/pest-plugin-laravel": "^5.0",
+        "pestphp/pest-plugin-type-coverage": "^5.0",
         "spatie/laravel-data": "^4.23",
         "symfony/var-dumper": "^7.3 || ^8.0"
     },
@@ -74,7 +74,7 @@
     },
     "scripts": {
         "post-update-cmd": [
-            "@php vendor/bin/codestyle pint 8.2 --ansi",
+            "@php vendor/bin/codestyle pint 8.4 --ansi",
             "@php vendor/bin/codestyle editorconfig --ansi",
             "composer normalize --ansi"
         ],
@@ -89,13 +89,13 @@
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
         "style": "@php vendor/bin/pint --parallel --ansi",
         "style:snippets": "@php vendor/bin/pint --ansi docs/snippets",
-        "test": "@php vendor/bin/pest --colors=always",
-        "test:benchmark": "@php vendor/bin/pest tests/Benchmark --colors=always --compact",
-        "test:coverage": "@php vendor/bin/pest --colors=always --coverage --compact --parallel --min=95",
-        "test:type": "@php vendor/bin/pest --type-coverage --compact --min=95",
+        "test": "@php vendor/bin/pest --tia --colors=always",
+        "test:benchmark": "@php vendor/bin/pest tests/Benchmark --tia --fresh --colors=always --compact",
+        "test:coverage": "@php vendor/bin/pest --tia --colors=always --coverage --compact --parallel --min=95",
+        "test:type": "@php vendor/bin/pest --tia --type-coverage --compact --min=95",
         "test:update": [
             "@putenv LARAVEL_FEEDS_UPDATE_DOCS=1",
-            "@php vendor/bin/pest --colors=always --update-snapshots"
+            "@php vendor/bin/pest --tia --fresh --colors=always --update-snapshots"
         ]
     }
 }

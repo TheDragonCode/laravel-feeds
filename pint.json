@@ -10,6 +10,8 @@
         "@PHP8x0Migration": true,
         "@PHP8x1Migration": true,
         "@PHP8x2Migration": true,
+        "@PHP8x3Migration": true,
+        "@PHP8x4Migration": true,
         "concat_space": {
             "spacing": "one"
         },

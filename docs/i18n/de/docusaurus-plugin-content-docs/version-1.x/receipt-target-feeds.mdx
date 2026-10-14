@@ -1,0 +1,152 @@
+---
+title: "Mehrere zielbezogene Feed-Dateien"
+description: "Rezept zum Erzeugen mehrerer Feed-Dateien mit individuellen Abfragebedingungen aus einem registrierten Feed"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← Zurück](./extending-functionality.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./receipt-sitemap.mdx)
+
+# Mehrere zielbezogene Feed-Dateien
+
+Dieses Rezept registriert einen `ProductFeed` und erzeugt mithilfe von Feed-Zielen mehrere XML-Dateien. Jedes Ziel stellt Parameter bereit, die `builder()` für eigene Abfragebedingungen und `filename()` für einen eigenen Ausgabepfad verwendet. Die Ziele `available` und `unavailable` sind nur Beispiele; ein Ziel kann eine beliebige fachliche Bedingung darstellen.
+
+## Feed-Ziele im Vergleich zu perFile() {/* #targets-vs-per-file */}
+
+`perFile()` teilt ein Abfrageergebnis nach einer festen Anzahl von Datensätzen in fortlaufende Dateien auf. Die Abfrage und die Auswahlbedingungen bleiben für diese Dateien gleich.
+
+`FeedTarget` führt den Feed für jedes Ziel separat aus. Die Anwendung kann daher mit `target()` die Abfragebedingungen und den Dateinamen für jede Ausgabe ändern. Beide Mechanismen lassen sich kombinieren: Zuerst wird ein zielspezifischer Datensatzbestand ausgewählt und anschließend nach Datensatzanzahl aufgeteilt.
+
+Dieses Beispiel erzeugt die folgenden Zieldateien:
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## Feed erstellen {/* #create-feed */}
+
+```bash
+php artisan make:feed Product
+```
+
+## Ausgabe konfigurieren {/* #configure-output */}
+
+Ersetzen Sie die erzeugte Feed-Klasse durch:
+
+```php source="docs/snippets/targeted.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class ProductFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    private const TARGETS = [
+        'available'   => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
+    public function targets(): iterable
+    {
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'in_stock',
+            $this->target()->parameters['in_stock'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "products/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(string $key): FeedTarget
+    {
+        return new FeedTarget(
+            key       : $key,
+            parameters: self::TARGETS[$key],
+        );
+    }
+}
+```
+
+`targets()` zählt die konfigurierten Zielschlüssel für vollständige Läufe auf. `findTarget()` löst explizit angeforderte Schlüssel auf, ohne alle Ziele aufzuzählen. `builder()` filtert Produkte für das aktive Ziel, und `filename()` weist jedem Ziel einen eindeutigen Pfad zu.
+
+## Aktivieren {/* #activate */}
+
+Prüfen Sie die erzeugte Datei für die [Operation oder Migration](./create-feeds.mdx) und führen Sie anschließend den passenden Befehl aus:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Dateien erzeugen {/* #generate-all */}
+
+Übergeben Sie den Feed-Registrierungs-Slug. Der Befehl erzeugt für jedes von `targets()` zurückgegebene Ziel eine Datei:
+
+```bash
+php artisan feed:generate product
+```
+
+Für die Ziele `available` und `unavailable` werden folgende Pfade erzeugt:
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## Dateien gefiltert erzeugen {/* #generate-selected */}
+
+Verwenden Sie die wiederholbare Option `--target`, wenn nur die Dateien ausgewählter Ziele aktualisiert werden sollen:
+
+```bash
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
+```
+
+## Dateien nach Datensatzanzahl aufteilen {/* #split-each-output */}
+
+Fügen Sie `perFile()` hinzu, wenn auch die Ausgabe eines Ziels zu groß werden kann:
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+Das Ziel `available` kann dann `products/available-1.xml`, `products/available-2.xml` und weitere Teile erzeugen. Diese Aufteilung nach Datensatzanzahl wird für jedes Ziel unabhängig angewendet.
+
+## Siehe auch
+
+- [Leitfaden zu separaten Ausgabedateien](./feed-targets.mdx)
+- [Generierung und Zeitplanung](./generation.mdx)
+- [API für Feeds und Daten](./api/feed.mdx#feed-targets)

@@ -1,0 +1,68 @@
+---
+title: "Падтрыманыя фарматы"
+description: "Спіс падтрыманых фарматаў экспарту стужак"
+type: reference
+status: stable
+since: "1.0"
+keywords: ["XML", "JSON", "JSONL", "CSV", "RSS"]
+---
+
+[← Папярэдняя](./feed-targets.mdx) · [Назад да README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступная →](./elements.mdx)
+
+# Падтрыманыя фарматы
+
+- **xml** — генеруе стужкі ў фармаце XML.
+- **json** — генеруе стужкі ў фармаце JSON.
+- **jsonl** — генеруе стужкі ў фармаце JSON Lines.
+- **csv** — генеруе стужкі ў фармаце CSV.
+- **rss** — генеруе стужкі ў фармаце RSS Atom.
+
+Стандартна выкарыстоўваецца фармат `xml`.
+
+## Параметры канвертара для асобнай стужкі {/* #converter-options */}
+
+Ужывіце `DragonCode\LaravelFeed\Attributes\Config` да класа стужкі, каб перавызначыць налады яе канвертара:
+
+```php
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+#[Config('delimiter', ',')]
+#[Config('enclosure', "'")]
+#[Config('lineEnding', "\r\n")]
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+}
+```
+
+Паўтарыце атрыбут для кожнай налады. Калі імя паўтараецца ў адным класе, выкарыстоўваецца апошні абвешчаны атрыбут.
+
+Назвы налад адпавядаюць імёнам параметраў канструктара канвертара. Толькі перададзеныя значэнні перавызначаюць канфігурацыю праграмы; астатнія налады захоўваюць свае наладжаныя значэнні. `lineEnding` адпавядае `feeds.converters.csv.line_ending`.
+
+| Фармат | Падтрыманыя ключы |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+Параметры бацькоўскай стужкі ўспадкоўваюцца, а ключы даччынай стужкі перавызначаюць бацькоўскія. Выкарыстоўвайце толькі ключы, якія падтрымлівае выбраны фармат; непадтрыманыя ключы выклікаюць `InvalidArgumentException`. Атрыбут не змяняе канфігурацыю праграмы ці іншых стужак.
+
+JSON Lines заўсёды запісвае адзін элемент у радку, а `JSON_PRETTY_PRINT` выдаляецца з `options`. Уласныя прывязкі кантэйнера павінны ўлічваць перададзеныя параметры канструктара.
+
+Уласны `DragonCode\LaravelFeed\Helpers\ConverterHelper`, які перавызначае `get()` або `resolve()`, павінен таксама перавызначыць абаронены хук `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter`, каб выкарыстоўваць параметры асобнай стужкі. Перадайце `$options` у `Container::make()`, каб налады прымяняліся да ініцыялізацыі канвертара. Інакш вырашэнне канвертара для стужкі з параметрамі выклікае `LogicException`; стужкі без параметраў захоўваюць ранейшыя паводзіны дапаможнага класа.
+
+## Глядзіце таксама
+
+- [Элементы](./elements.mdx)
+- [Дырэктывы](./directives.mdx)
+- [Стварэнне стужак](./create-feeds.mdx)

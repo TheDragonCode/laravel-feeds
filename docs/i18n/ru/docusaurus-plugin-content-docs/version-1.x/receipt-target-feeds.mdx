@@ -1,0 +1,152 @@
+---
+title: "Несколько целевых файлов фида"
+description: "Рецепт генерации нескольких файлов фида с индивидуальными условиями выборки из одного зарегистрированного фида"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← Предыдущая](./extending-functionality.mdx) · [Назад к README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Следующая →](./receipt-sitemap.mdx)
+
+# Несколько целевых файлов фида
+
+Этот рецепт регистрирует один `ProductFeed` и с помощью целей фида создаёт несколько XML-файлов. Каждая цель передаёт параметры: `builder()` использует их для индивидуальных условий выборки, а `filename()` — для отдельного пути. Цели `available` и `unavailable` — лишь примеры: целью может быть любое бизнес-условие.
+
+## Цели фида и perFile() {/* #targets-vs-per-file */}
+
+`perFile()` делит результат одного запроса на последовательные файлы после заданного количества записей. Запрос и условия выборки для этих файлов не меняются.
+
+`FeedTarget` запускает фид отдельно для каждой цели. Приложение может использовать `target()`, чтобы менять условия запроса и имя файла для каждого вывода. Механизмы можно сочетать: сначала выбрать целевой набор данных, затем разделить его по количеству записей.
+
+В этом примере создаются следующие целевые файлы:
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## Создание фида {/* #create-feed */}
+
+```bash
+php artisan make:feed Product
+```
+
+## Настройка вывода {/* #configure-output */}
+
+Замените сгенерированный класс фида следующим кодом:
+
+```php source="docs/snippets/targeted.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class ProductFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    private const TARGETS = [
+        'available'   => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
+    public function targets(): iterable
+    {
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'in_stock',
+            $this->target()->parameters['in_stock'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "products/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(string $key): FeedTarget
+    {
+        return new FeedTarget(
+            key       : $key,
+            parameters: self::TARGETS[$key],
+        );
+    }
+}
+```
+
+`targets()` перечисляет настроенные ключи целей для полного запуска. `findTarget()` находит явно запрошенные ключи без перебора всех целей. `builder()` фильтрует товары для активной цели, а `filename()` задаёт каждой цели уникальный путь.
+
+## Активация {/* #activate */}
+
+Проверьте сгенерированный файл [операции или миграции](./create-feeds.mdx), затем выполните подходящую команду:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Генерация файлов {/* #generate-all */}
+
+Передайте slug регистрации фида. Команда сгенерирует файл для каждой цели, возвращённой `targets()`:
+
+```bash
+php artisan feed:generate product
+```
+
+Для целей `available` и `unavailable` файлы будут созданы по следующим путям:
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## Генерация файлов с фильтрацией {/* #generate-selected */}
+
+Используйте повторяемый параметр `--target`, чтобы сгенерировать файлы только для выбранных целей:
+
+```bash
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
+```
+
+## Разделение файлов по количеству записей {/* #split-each-output */}
+
+Добавьте `perFile()`, если файл для одной цели может стать слишком большим:
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+Тогда для цели `available` будут созданы `products/available-1.xml`, `products/available-2.xml` и последующие части. Такое разделение по количеству записей применяется независимо для каждой цели.
+
+## Смотрите также
+
+- [Руководство по отдельным выходным файлам](./feed-targets.mdx)
+- [Генерация и расписание](./generation.mdx)
+- [API фидов и данных](./api/feed.mdx#feed-targets)

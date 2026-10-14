@@ -15,8 +15,8 @@ Install the package, define an Eloquent query and item shape, then generate a fe
 
 ## Prerequisites
 
-- PHP `8.2` or a later `8.x` release accepted by Composer
-- Laravel `11.x`, `12.x`, or `13.x`
+- PHP `8.4` or a later `8.x` release accepted by Composer
+- Laravel `13.x`
 - A configured database and filesystem disk
 
 ## Install and prepare
@@ -2199,7 +2199,7 @@ class ProductFeed extends Feed
 {
     public function item(Model $model): FeedItem
     {
-        return (new ProductFeedItem($model))
+        return new ProductFeedItem($model)
             ->when($model->category, function (ProductFeedItem $item) {
                 $item->title .= ' (first)';
             });
@@ -2220,7 +2220,7 @@ class ProductFeed extends Feed
 {
     public function item(Model $model): FeedItem
     {
-        return (new ProductFeedItem($model))
+        return new ProductFeedItem($model)
             ->when(
                 value   : $model->category,
                 callback: function (ProductFeedItem $item) {
@@ -2245,7 +2245,7 @@ class ProductFeed extends Feed
 {
     public function item(Model $model): FeedItem
     {
-        return (new ProductFeedItem($model))
+        return new ProductFeedItem($model)
             ->unless(
                 value   : $model->category,
                 callback: function (ProductFeedItem $item) {
@@ -2672,7 +2672,7 @@ php artisan migrate
 
 ## Links
 
-Add a file system disk that points to the directory containing your sitemaps in the [config/filesystems.php](https://github.com/laravel/laravel/blob/12.x/config/filesystems.php#L76-L78) configuration file:
+Add a file system disk that points to the directory containing your sitemaps in the [config/filesystems.php](https://github.com/laravel/laravel/blob/13.x/config/filesystems.php) configuration file:
 
 ```php
 return [
@@ -3686,8 +3686,10 @@ A large or growing number of `.feeds_staging_*` directories indicates repeated p
 # Upgrade guide
 
 <PageLead>
-The documentation currently covers the `1.x` release line. Review the package release notes and your dependency lock before each update.
+The documentation currently covers the `2.x` release line. Review the package release notes and your dependency lock before each update.
 </PageLead>
+
+Version `2.x` requires Laravel `13.x` and PHP `8.4` or a later supported `8.x` version. Upgrade web, CLI, scheduler, and queue-worker runtimes before changing Composer constraints. Applications running Laravel `11.x` or `12.x`, or PHP `8.2` or `8.3`, must remain on `1.x`.
 
 ## Before upgrading
 
@@ -3699,7 +3701,7 @@ The documentation currently covers the `1.x` release line. Review the package re
 ## Apply the update
 
 ```bash
-composer update dragon-code/laravel-feeds --with-all-dependencies
+composer require dragon-code/laravel-feeds:^2.0 --with-all-dependencies
 ```
 
 For an existing installation, copy only `database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` from the package into your application's migrations directory. Choose a filename timestamp immediately after the application's actual `create_feeds_table` migration and before any feed-registration migrations; keep the `add_slug_to_feeds_table` suffix. Then run `php artisan migrate`. The migration uses the configured connection and table and fills slugs from existing titles, including soft-deleted records. Do not republish or rerun the original create-table migration. Replace numeric feed IDs in commands and manual schedules with the stored slugs.
@@ -3742,8 +3744,8 @@ Use Composer's resolved dependency graph as the final compatibility check for a 
 
 | Component | Supported versions |
 | --- | --- |
-| PHP | `8.2` and later `8.x` versions allowed by the installed package constraints |
-| Laravel components | `11.x`, `12.x`, `13.x` |
+| PHP | `8.4` and later `8.x` versions allowed by the installed package constraints |
+| Laravel components | `13.x` |
 | Database | Any Laravel connection supported by the configured Eloquent model and migration |
 | Filesystem | Writable Laravel disks resolving to `FilesystemAdapter` |
 

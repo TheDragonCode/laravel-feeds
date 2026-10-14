@@ -92,7 +92,7 @@ test('rejects CDATA creation failures', function () {
         }
     };
 
-    (new ReflectionProperty(XmlConverter::class, 'document'))->setValue($converter, $document);
+    new ReflectionProperty(XmlConverter::class, 'document')->setValue($converter, $document);
 
     $item = mock(FeedItem::class);
     $item->shouldReceive('name')->once()->andReturn('item');
@@ -117,7 +117,7 @@ test('wraps CDATA creation exceptions', function () {
         }
     };
 
-    (new ReflectionProperty(XmlConverter::class, 'document'))->setValue($converter, $document);
+    new ReflectionProperty(XmlConverter::class, 'document')->setValue($converter, $document);
 
     $item = mock(FeedItem::class);
     $item->shouldReceive('name')->once()->andReturn('item');
@@ -156,7 +156,7 @@ test('wraps mixed fragment creation exceptions', function () {
         }
     };
 
-    (new ReflectionProperty(XmlConverter::class, 'document'))->setValue($converter, $document);
+    new ReflectionProperty(XmlConverter::class, 'document')->setValue($converter, $document);
 
     $item = mock(FeedItem::class);
     $item->shouldReceive('name')->once()->andReturn('item');

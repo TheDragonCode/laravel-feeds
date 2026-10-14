@@ -23,7 +23,7 @@ abstract class RssFeedPreset extends Feed
 
     public function item(Model $model): FeedItem
     {
-        return (new RssFeedItem($model))
+        return new RssFeedItem($model)
             ->guid($model->getKey())
             ->publishedAt($model->created_at ?? Carbon::now());
     }

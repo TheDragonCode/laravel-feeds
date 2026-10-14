@@ -27,7 +27,7 @@ abstract class YandexFeedPreset extends Feed
 
     public function item(Model $model): FeedItem
     {
-        return (new YandexFeedItem($model))
+        return new YandexFeedItem($model)
             ->attributeId($model->getKey());
     }
 

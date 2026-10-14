@@ -10,7 +10,7 @@ class ProductFeed extends Feed
 {
     public function item(Model $model): FeedItem
     {
-        return (new ProductFeedItem($model))
+        return new ProductFeedItem($model)
             ->unless(
                 value   : $model->category,
                 callback: function (ProductFeedItem $item) {

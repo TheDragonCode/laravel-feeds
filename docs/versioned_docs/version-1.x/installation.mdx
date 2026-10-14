@@ -1,0 +1,42 @@
+---
+title: "Installation & setup"
+description: "Information on installing and configuring Laravel Feeds"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["installation", "Composer", "configuration", "migration"]
+---
+
+[← Previous](./introduction.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./create-feeds.mdx)
+
+# Installation & setup
+
+You can install the package via [Composer](https://getcomposer.org):
+
+```bash
+composer require dragon-code/laravel-feeds
+```
+
+You should publish the [migration](https://github.com/TheDragonCode/laravel-feeds/blob/main/database/migrations/2025_09_01_231655_create_feeds_table.php) and the [config/feeds.php](https://github.com/TheDragonCode/laravel-feeds/blob/main/config/feeds.php) config file with:
+
+```bash
+php artisan vendor:publish --tag="feeds"
+```
+
+:::warning
+**Before running migrations**, check the database connection settings in the `config/feeds.php` file.
+:::
+
+Now you can run migrations and proceed to [create feeds](./create-feeds.mdx).
+
+```bash
+php artisan migrate
+```
+
+For an existing installation, copy only `database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` from the package into your application's migrations directory. Choose a filename timestamp immediately after the application's actual `create_feeds_table` migration and before any feed-registration migrations; keep the `add_slug_to_feeds_table` suffix. Then run `php artisan migrate`. The migration uses the configured connection and table and fills slugs from existing titles, including soft-deleted records. Do not republish or rerun the original create-table migration. Replace numeric feed IDs in commands and manual schedules with the stored slugs.
+
+## See Also
+
+- [Create feeds](./create-feeds.mdx)
+- [Generation & schedule](./generation.mdx)
+- [Supported formats](./supported-formats.mdx)

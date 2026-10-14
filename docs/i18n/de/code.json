@@ -345,7 +345,7 @@
     "message": "Exportieren Sie große Laravel-Datenmengen in XML, JSON, JSON Lines, CSV, RSS und Marktplatz-Feeds."
   },
   "homepage.eyebrow": {
-    "message": "Laravel-Paket · Dokumentation 1.x"
+    "message": "Laravel-Paket · Dokumentation 2.x"
   },
   "homepage.title": {
     "message": "Große Datenmengen exportieren, ohne sie vollständig in den Arbeitsspeicher zu laden"

@@ -403,7 +403,7 @@ test('wraps staging directory creation failures', function () {
     $file->throwEnsureDirectories = [$directory->path()];
 
     try {
-        expect(fn () => (new FilesystemService($file))->publish($publication, static fn () => []))
+        expect(fn () => new FilesystemService($file)->publish($publication, static fn () => []))
             ->toThrow(OpenFeedException::class, 'Injected directory failure');
     } finally {
         $directory->delete();
@@ -416,7 +416,7 @@ test('wraps non-collision temporary directory failures', function () {
     $file->failAllMakeDirectories = true;
 
     try {
-        expect(fn () => (new FilesystemService($file))->createDraft('feed.json', $directory->path()))
+        expect(fn () => new FilesystemService($file)->createDraft('feed.json', $directory->path()))
             ->toThrow(OpenFeedException::class, 'Unable to create the temporary directory');
     } finally {
         $directory->delete();
@@ -572,7 +572,7 @@ test('rejects ownership entries that resolve to the same path', function () {
 });
 
 test('replaces a colliding ownership entry before assigning the target', function () {
-    expect((new FailureModeFilesystemService(new Filesystem))->replaceCollidingOwnership())
+    expect(new FailureModeFilesystemService(new Filesystem)->replaceCollidingOwnership())
         ->toBe(['alias.json' => 'feed.json']);
 });
 

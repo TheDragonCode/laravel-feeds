@@ -93,11 +93,8 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                php: [ "8.2", "8.3", "8.4", "8.5" ]
-                laravel: [ "11.0", "12.0", "13.0" ]
-                exclude:
-                    - laravel: "13.0"
-                      php: "8.2"
+                php: [ "8.4", "8.5" ]
+                laravel: [ "13.0" ]
 
         name: PHP ${{ matrix.php }}, Laravel ${{ matrix.laravel }}
 
@@ -116,7 +113,7 @@ jobs:
                 run: composer require --no-blocking --dev laravel/framework:^${{ matrix.laravel }}
 
             -   name: Execute tests
-                run: composer test
+                run: composer test -- --fresh
 
     lowest:
         runs-on: ubuntu-latest
@@ -130,15 +127,15 @@ jobs:
             -   name: Setup PHP
                 uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
                 with:
-                    php-version: 8.2
+                    php-version: 8.4
                     extensions: curl, mbstring, zip, pcntl, pdo, pdo_sqlite, iconv
-                    coverage: none
+                    coverage: xdebug
 
             -   name: Install lowest supported dependencies
                 run: composer update --no-blocking --prefer-lowest --prefer-stable
 
             -   name: Execute tests
-                run: composer test
+                run: composer test -- --fresh
 
     type_coverage:
         runs-on: ubuntu-latest
@@ -182,4 +179,4 @@ jobs:
                 run: composer update --no-blocking
 
             -   name: Execute tests
-                run: composer test:coverage
+                run: composer test:coverage -- --fresh

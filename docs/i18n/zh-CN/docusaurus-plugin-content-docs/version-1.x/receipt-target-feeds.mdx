@@ -1,0 +1,152 @@
+---
+title: "按目标生成多个 Feed 文件"
+description: "使用一个已注册的 Feed，按各自的查询条件生成多个 Feed 文件的示例"
+type: recipe
+status: stable
+since: "1.0"
+keywords: ["targeted feeds", "conditional files", "multiple files", "FeedTarget", "HasFeedTargets", "recipe"]
+---
+
+[← 上一页](./extending-functionality.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./receipt-sitemap.mdx)
+
+# 按目标生成多个 Feed 文件
+
+本示例只注册一个 `ProductFeed`，并使用 Feed 目标生成多个 XML 文件。每个目标都会提供参数，`builder()` 使用这些参数设置该目标的查询条件，`filename()` 使用这些参数设置该目标的输出路径。`available` 和 `unavailable` 仅为示例；目标可以代表任何业务条件。
+
+## Feed 目标与 perFile() 的区别 {/* #targets-vs-per-file */}
+
+`perFile()` 按固定记录数将单次查询的结果拆分为连续文件。这些文件使用相同的查询和筛选条件。
+
+`FeedTarget` 会为每个目标分别运行 Feed。因此，应用可以使用 `target()` 为每个输出更改查询条件和文件名。这两种机制也可以结合使用：先选择目标对应的数据集，再按记录数拆分该数据集。
+
+本示例会为各目标生成以下文件：
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## 创建 Feed {/* #create-feed */}
+
+```bash
+php artisan make:feed Product
+```
+
+## 配置输出 {/* #configure-output */}
+
+使用以下代码替换生成的 Feed 类：
+
+```php source="docs/snippets/targeted.php"
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class ProductFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    private const TARGETS = [
+        'available'   => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
+    public function targets(): iterable
+    {
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'in_stock',
+            $this->target()->parameters['in_stock'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "products/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(string $key): FeedTarget
+    {
+        return new FeedTarget(
+            key       : $key,
+            parameters: self::TARGETS[$key],
+        );
+    }
+}
+```
+
+完整运行时，`targets()` 会枚举已配置的目标键。`findTarget()` 无需枚举所有目标即可解析显式请求的键。`builder()` 筛选当前目标的产品，`filename()` 则为每个目标分配唯一路径。
+
+## 启用 {/* #activate */}
+
+检查生成的[操作类或迁移](./create-feeds.mdx)文件，然后运行相应的命令：
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## 生成文件 {/* #generate-all */}
+
+传入 Feed 注册 slug。命令会为 `targets()` 返回的每个目标生成文件：
+
+```bash
+php artisan feed:generate product
+```
+
+目标为 `available` 和 `unavailable` 时，文件会生成到以下路径：
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## 筛选后生成文件 {/* #generate-selected */}
+
+只需为选定目标生成文件时，请重复传入 `--target` 选项：
+
+```bash
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
+```
+
+## 按记录数拆分文件 {/* #split-each-output */}
+
+如果某个目标的文件可能过大，请添加 `perFile()`：
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+此时，目标 `available` 的输出可以拆分为 `products/available-1.xml`、`products/available-2.xml` 以及后续分片。按记录数拆分会独立应用于每个目标。
+
+## 另请参阅
+
+- [独立输出文件指南](./feed-targets.mdx)
+- [生成与调度](./generation.mdx)
+- [Feed 与数据 API](./api/feed.mdx#feed-targets)

@@ -126,7 +126,7 @@ class GeneratorService
     ): GenerationResultData {
         $records = [];
 
-        (new ExportService($feed, $filesystem, $output))
+        new ExportService($feed, $filesystem, $output)
             ->file(
                 create: $this->createFile($feed, $staging, $converter),
                 close : $this->closeFile($feed, $drafts, $records, $converter)

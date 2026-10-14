@@ -1,0 +1,42 @@
+---
+title: "Установка и настройка"
+description: "Сведения об установке и настройке Laravel Feeds"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["installation", "Composer", "configuration", "migration"]
+---
+
+[← Предыдущая](./introduction.mdx) · [Назад к README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Следующая →](./create-feeds.mdx)
+
+# Установка и настройка
+
+Пакет можно установить через [Composer](https://getcomposer.org):
+
+```bash
+composer require dragon-code/laravel-feeds
+```
+
+Опубликуйте [миграцию](https://github.com/TheDragonCode/laravel-feeds/blob/main/database/migrations/2025_09_01_231655_create_feeds_table.php) и файл конфигурации [config/feeds.php](https://github.com/TheDragonCode/laravel-feeds/blob/main/config/feeds.php) следующей командой:
+
+```bash
+php artisan vendor:publish --tag="feeds"
+```
+
+:::warning
+**Перед запуском миграций** проверьте настройки подключения к базе данных в файле `config/feeds.php`.
+:::
+
+Теперь можно запустить миграции и перейти к [созданию фидов](./create-feeds.mdx).
+
+```bash
+php artisan migrate
+```
+
+При обновлении существующей установки скопируйте из пакета только `database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` в каталог миграций приложения. Задайте timestamp имени файла сразу после фактической миграции `create_feeds_table` приложения и перед всеми миграциями регистрации фидов; сохраните суффикс `add_slug_to_feeds_table`. Затем выполните `php artisan migrate`. Миграция использует настроенные подключение и таблицу и заполняет slug из существующих названий, включая мягко удалённые записи. Не публикуйте повторно и не запускайте исходную миграцию создания таблицы. Замените числовые идентификаторы фидов в командах и ручных расписаниях на сохранённые slug.
+
+## Смотрите также
+
+- [Создание фидов](./create-feeds.mdx)
+- [Генерация и расписание](./generation.mdx)
+- [Поддерживаемые форматы](./supported-formats.mdx)

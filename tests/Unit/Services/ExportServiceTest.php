@@ -66,7 +66,7 @@ test('writes each serialized item immediately', function (string $lineEnding) {
 
     $resource = fopen('php://memory', 'wb');
 
-    (new ExportService($feed, $filesystem, null))
+    new ExportService($feed, $filesystem, null)
         ->file(
             create: fn () => $resource,
             close : fn ($file) => fclose($file)
@@ -117,7 +117,7 @@ test('passes item presence to each file creation', function (
 
     $presence = [];
 
-    (new ExportService($feed, $filesystem, null))
+    new ExportService($feed, $filesystem, null)
         ->file(
             create: function (?bool $hasItems = null) use (&$presence) {
                 $presence[] = $hasItems;
@@ -168,7 +168,7 @@ test('respects split capacity', function (
     $files   = [];
     $records = [];
 
-    (new ExportService($feed, $filesystem, null))
+    new ExportService($feed, $filesystem, null)
         ->file(
             create: fn () => fopen('php://memory', 'wb'),
             close : function ($file, int $index, int $count) use (&$files, &$records) {
@@ -266,7 +266,7 @@ test('closes the active resource when export fails', function () {
     $filesystem->shouldReceive('append')->once()->andThrow(new RuntimeException('Write failed.'));
     $filesystem->shouldReceive('close')->once()->with($resource)->andReturnUsing(fclose(...));
 
-    $service = (new ExportService($feed, $filesystem, null))
+    $service = new ExportService($feed, $filesystem, null)
         ->file(
             create: fn () => $resource,
             close : fn () => null
@@ -295,7 +295,7 @@ test('creates an empty feed without counting models', function () {
     $files   = [];
     $records = [];
 
-    (new ExportService($feed, $filesystem, null))
+    new ExportService($feed, $filesystem, null)
         ->file(
             create: fn () => fopen('php://memory', 'wb'),
             close : function ($file, int $index, int $count) use (&$files, &$records) {
@@ -339,7 +339,7 @@ test('counts models once when progress reporting needs an exact total', function
     $filesystem = mock(FilesystemService::class);
     $filesystem->shouldReceive('append')->times(3);
 
-    (new ExportService($feed, $filesystem, $output))
+    new ExportService($feed, $filesystem, $output)
         ->file(
             create: fn () => fopen('php://memory', 'wb'),
             close : fn ($file) => fclose($file)
@@ -375,7 +375,7 @@ test('stops progress exports at the counted total', function () {
 
     $items = [];
 
-    (new ExportService($feed, $filesystem, $output))
+    new ExportService($feed, $filesystem, $output)
         ->file(
             create: fn () => fopen('php://memory', 'wb'),
             close : fn ($file) => fclose($file)
@@ -459,7 +459,7 @@ test('stops a bounded export when the first page is empty', function () {
     $filesystem = mock(FilesystemService::class);
     $filesystem->shouldNotReceive('append');
 
-    (new ExportService($feed, $filesystem, null))
+    new ExportService($feed, $filesystem, null)
         ->file(
             create: fn () => fopen('php://memory', 'wb'),
             close : fn ($file) => fclose($file)
@@ -504,7 +504,7 @@ test('uses an unqualified key for bounded union queries', function () {
     $filesystem = mock(FilesystemService::class);
     $filesystem->shouldReceive('append')->twice();
 
-    (new ExportService($feed, $filesystem, null))
+    new ExportService($feed, $filesystem, null)
         ->file(
             create: fn () => fopen('php://memory', 'wb'),
             close : fn ($file) => fclose($file)
@@ -543,7 +543,7 @@ test('stops a bounded export after a partial final page', function () {
     $filesystem = mock(FilesystemService::class);
     $filesystem->shouldReceive('append')->once();
 
-    (new ExportService($feed, $filesystem, null))
+    new ExportService($feed, $filesystem, null)
         ->file(
             create: fn () => fopen('php://memory', 'wb'),
             close : fn ($file) => fclose($file)

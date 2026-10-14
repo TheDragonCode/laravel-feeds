@@ -1,0 +1,30 @@
+{
+  "version.label": {
+    "message": "1.x",
+    "description": "Пазнака бягучай версіі (1.x)"
+  },
+  "sidebar.docs.category.Project": {
+    "message": "Праект",
+    "description": "Пазнака катэгорыі «Праект» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.Quick Start": {
+    "message": "Хуткі старт",
+    "description": "Пазнака катэгорыі «Хуткі старт» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.Guides": {
+    "message": "Кіраўніцтвы",
+    "description": "Пазнака катэгорыі «Кіраўніцтвы» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.Formats & Recipes": {
+    "message": "Фарматы і рэцэпты",
+    "description": "Пазнака катэгорыі «Фарматы і рэцэпты» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.API Reference": {
+    "message": "Даведнік API",
+    "description": "Пазнака катэгорыі «Даведнік API» на бакавой панэлі «docs»"
+  },
+  "sidebar.docs.category.Troubleshooting": {
+    "message": "Вырашэнне праблем",
+    "description": "Пазнака катэгорыі «Вырашэнне праблем» на бакавой панэлі «docs»"
+  }
+}

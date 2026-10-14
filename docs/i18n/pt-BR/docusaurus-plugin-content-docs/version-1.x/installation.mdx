@@ -1,0 +1,42 @@
+---
+title: "Instalação e configuração"
+description: "Informações sobre a instalação e configuração do Laravel Feeds"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["installation", "Composer", "configuration", "migration"]
+---
+
+[← Anterior](./introduction.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./create-feeds.mdx)
+
+# Instalação e configuração
+
+Você pode instalar o pacote usando o [Composer](https://getcomposer.org):
+
+```bash
+composer require dragon-code/laravel-feeds
+```
+
+Publique a [migração](https://github.com/TheDragonCode/laravel-feeds/blob/main/database/migrations/2025_09_01_231655_create_feeds_table.php) e o arquivo de configuração [config/feeds.php](https://github.com/TheDragonCode/laravel-feeds/blob/main/config/feeds.php) com:
+
+```bash
+php artisan vendor:publish --tag="feeds"
+```
+
+:::warning
+**Antes de executar as migrações**, verifique as configurações de conexão com o banco de dados no arquivo `config/feeds.php`.
+:::
+
+Agora você pode executar as migrações e seguir para a etapa de [criação dos feeds](./create-feeds.mdx).
+
+```bash
+php artisan migrate
+```
+
+Para uma instalação existente, copie somente `database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` do pacote para o diretório de migrations da aplicação. Escolha um timestamp no nome do arquivo imediatamente após a migration `create_feeds_table` efetivamente presente na aplicação e antes de todas as migrations de registro de feeds; mantenha o sufixo `add_slug_to_feeds_table`. Em seguida, execute `php artisan migrate`. A migration usa a conexão e a tabela configuradas e preenche os slugs a partir dos títulos existentes, incluindo registros excluídos logicamente. Não publique nem execute novamente a migration original que cria a tabela. Substitua os IDs numéricos dos feeds nos comandos e agendamentos manuais pelos slugs armazenados.
+
+## Veja também
+
+- [Criar feeds](./create-feeds.mdx)
+- [Geração e agendamento](./generation.mdx)
+- [Formatos compatíveis](./supported-formats.mdx)

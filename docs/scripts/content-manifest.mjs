@@ -361,10 +361,74 @@ const manifestRoutes = routes.map((route) => {
 const output = `${JSON.stringify({ version: 3, routes: manifestRoutes }, null, 4)}\n`;
 const searchOutputs = Object.fromEntries(
     locales.map((locale) => [
-        locale,
+        `${locale}.json`,
         `${JSON.stringify(search[locale], null, 4)}\n`,
     ]),
 );
+const versions = JSON.parse(
+    await readFile(path.join(siteDirectory, "versions.json"), "utf8"),
+);
+
+for (const version of versions) {
+    let versionRoutes;
+
+    for (const locale of [
+        defaultLocale,
+        ...locales.filter((locale) => locale !== defaultLocale),
+    ]) {
+        const directory = locale === defaultLocale
+            ? path.join(siteDirectory, "versioned_docs", `version-${version}`)
+            : path.join(
+                siteDirectory,
+                "i18n",
+                locale,
+                "docusaurus-plugin-content-docs",
+                `version-${version}`,
+            );
+        const archivedRoutes = [];
+
+        for (const source of await listPages(directory)) {
+            const parsed = parsePage(
+                `${version}/${locale}/${source}`,
+                await readFile(path.join(directory, source), "utf8"),
+            );
+
+            archivedRoutes.push({
+                ...parsed.metadata,
+                route: routeFor(source, parsed.metadata.slug),
+                headings: parsed.headings,
+                content: parsed.content,
+            });
+        }
+
+        archivedRoutes.sort((left, right) =>
+            left.route.localeCompare(right.route, "en"),
+        );
+        const routePaths = archivedRoutes.map((route) => route.route);
+
+        if (locale === defaultLocale) {
+            versionRoutes = routePaths;
+        }
+
+        if (
+            new Set(routePaths).size !== routePaths.length ||
+            JSON.stringify(routePaths) !== JSON.stringify(versionRoutes)
+        ) {
+            throw new Error(`${version}/${locale}: archived routes do not match English routes.`);
+        }
+
+        const prefix = locale === defaultLocale
+            ? `/${version}`
+            : `/${locale}/${version}`;
+        searchOutputs[`${version}/${locale}.json`] = `${JSON.stringify(
+            archivedRoutes.map((route) =>
+                searchEntry(route, `${prefix}${route.route}`),
+            ),
+            null,
+            4,
+        )}\n`;
+    }
+}
 
 if (process.argv.includes("--check")) {
     const current = normalize(await readFile(manifestPath, "utf8"));
@@ -373,14 +437,14 @@ if (process.argv.includes("--check")) {
         throw new Error("routes.json is stale. Run npm run content:manifest.");
     }
 
-    for (const locale of locales) {
+    for (const [filename, searchOutput] of Object.entries(searchOutputs)) {
         const currentSearch = normalize(
-            await readFile(path.join(searchDirectory, `${locale}.json`), "utf8"),
+            await readFile(path.join(searchDirectory, filename), "utf8"),
         );
 
-        if (currentSearch !== searchOutputs[locale]) {
+        if (currentSearch !== searchOutput) {
             throw new Error(
-                `static/search/${locale}.json is stale. Run npm run content:manifest.`,
+                `static/search/${filename} is stale. Run npm run content:manifest.`,
             );
         }
     }
@@ -388,12 +452,11 @@ if (process.argv.includes("--check")) {
     await mkdir(searchDirectory, { recursive: true });
     await Promise.all([
         writeFile(manifestPath, output, "utf8"),
-        ...locales.map((locale) =>
-            writeFile(
-                path.join(searchDirectory, `${locale}.json`),
-                searchOutputs[locale],
-                "utf8",
-            ),
-        ),
+        ...Object.entries(searchOutputs).map(async ([filename, searchOutput]) => {
+            const target = path.join(searchDirectory, filename);
+
+            await mkdir(path.dirname(target), { recursive: true });
+            await writeFile(target, searchOutput, "utf8");
+        }),
     ]);
 }

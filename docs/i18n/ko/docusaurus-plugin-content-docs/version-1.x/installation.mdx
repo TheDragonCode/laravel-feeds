@@ -1,0 +1,42 @@
+---
+title: "설치 및 설정"
+description: "Laravel Feeds 설치 및 구성 안내"
+type: guide
+status: stable
+since: "1.0"
+keywords: ["installation", "Composer", "configuration", "migration"]
+---
+
+[← 이전](./introduction.mdx) · [README로 돌아가기](https://github.com/TheDragonCode/laravel-feeds#readme) · [다음 →](./create-feeds.mdx)
+
+# 설치 및 설정
+
+[Composer](https://getcomposer.org)를 사용하여 패키지를 설치할 수 있습니다.
+
+```bash
+composer require dragon-code/laravel-feeds
+```
+
+다음 명령으로 [마이그레이션](https://github.com/TheDragonCode/laravel-feeds/blob/main/database/migrations/2025_09_01_231655_create_feeds_table.php)과 [config/feeds.php](https://github.com/TheDragonCode/laravel-feeds/blob/main/config/feeds.php) 구성 파일을 게시해야 합니다.
+
+```bash
+php artisan vendor:publish --tag="feeds"
+```
+
+:::warning
+**마이그레이션을 실행하기 전에** `config/feeds.php` 파일의 데이터베이스 연결 설정을 확인하십시오.
+:::
+
+이제 마이그레이션을 실행하고 [피드를 생성](./create-feeds.mdx)할 수 있습니다.
+
+```bash
+php artisan migrate
+```
+
+기존 설치에서는 패키지의 `database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php`만 애플리케이션의 마이그레이션 디렉터리에 복사하십시오. 파일 이름의 타임스탬프는 애플리케이션의 실제 `create_feeds_table` 마이그레이션 바로 다음이면서 모든 피드 등록 마이그레이션보다 앞서도록 정하고, `add_slug_to_feeds_table` 접미사는 유지하십시오. 그런 다음 `php artisan migrate`를 실행하십시오. 이 마이그레이션은 구성된 연결과 테이블을 사용하여 소프트 삭제된 레코드를 포함한 기존 제목에서 slug를 채웁니다. 원래 테이블 생성 마이그레이션을 다시 게시하거나 실행하지 마십시오. 명령과 수동 스케줄의 숫자 피드 ID를 저장된 slug로 바꾸십시오.
+
+## 관련 문서
+
+- [피드 생성](./create-feeds.mdx)
+- [생성 및 스케줄](./generation.mdx)
+- [지원 형식](./supported-formats.mdx)

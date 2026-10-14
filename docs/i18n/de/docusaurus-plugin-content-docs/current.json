@@ -1,6 +1,6 @@
 {
   "version.label": {
-    "message": "1.x",
+    "message": "2.x",
     "description": "Label für die aktuelle Version"
   },
   "sidebar.docs.category.Project": {

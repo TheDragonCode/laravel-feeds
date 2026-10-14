@@ -345,7 +345,7 @@
     "message": "Exporte grandes conjuntos de dados do Laravel para XML, JSON, JSON Lines, CSV, RSS e feeds de marketplaces."
   },
   "homepage.eyebrow": {
-    "message": "Pacote Laravel · Documentação 1.x"
+    "message": "Pacote Laravel · Documentação 2.x"
   },
   "homepage.title": {
     "message": "Exporte grandes conjuntos de dados sem carregá-los por completo na memória"

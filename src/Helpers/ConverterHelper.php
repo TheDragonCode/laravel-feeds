@@ -83,7 +83,7 @@ class ConverterHelper
     {
         $parameters = [];
 
-        foreach ((new ReflectionClass($class))->getConstructor()->getParameters() as $parameter) {
+        foreach (new ReflectionClass($class)->getConstructor()->getParameters() as $parameter) {
             if ($parameter->getAttributes(Config::class)) {
                 $parameters[$parameter->getName()] = true;
             }

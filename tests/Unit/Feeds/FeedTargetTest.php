@@ -51,7 +51,7 @@ test('survives serialization', function () {
 test('is extensible', function () {
     $target = new class ('extended', ['value' => 1]) extends FeedTarget {};
 
-    expect((new ReflectionClass(FeedTarget::class))->isFinal())
+    expect(new ReflectionClass(FeedTarget::class)->isFinal())
         ->toBeFalse()
         ->and($target)
         ->toBeInstanceOf(FeedTarget::class)
