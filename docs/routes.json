@@ -969,7 +969,7 @@
             "aliases": [
                 "/machine-learning.html"
             ],
-            "title": "Machine Learning",
+            "title": "AI Agents",
             "description": "Guidance for using the project with LLMs and a consolidated knowledge base",
             "type": "project",
             "status": "stable",
@@ -977,14 +977,14 @@
             "keywords": [
                 "LLM",
                 "llms.txt",
-                "machine learning",
+                "AI agents",
                 "knowledge base"
             ],
             "headings": [
                 {
                     "level": 1,
-                    "id": "machine-learning",
-                    "text": "Machine Learning"
+                    "id": "ai-agents",
+                    "text": "AI Agents"
                 },
                 {
                     "level": 2,

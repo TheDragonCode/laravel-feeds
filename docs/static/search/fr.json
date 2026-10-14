@@ -158,7 +158,7 @@
             "Code de conduite",
             "Voir aussi"
         ],
-        "content": "← Précédent · Retour au README · Suivant → Guide de contribution Les contributions sont les bienvenues et seront pleinement créditées . Nous acceptons les contributions sous forme de Pull Requests sur tous les projets de notre organisation. Style du code Laravel Feeds respecte la norme de codage PER-3 et la norme de chargement automatique PSR-4. Pour appliquer le formatage du code, exécutez la commande suivante : Code de conduite Le code de conduite de Laravel est issu du code de conduite Contributor Covenant. Toute infraction peut être signalée à Andrey Helldar : - Les participants doivent faire preuve de tolérance envers les opinions divergentes. - Les participants doivent veiller à ce que leurs propos et leurs actes soient exempts d’attaques personnelles et de remarques dénigrantes. - Lorsqu’ils interprètent les paroles et les actes d’autrui, les participants doivent toujours présumer de bonnes intentions. - Aucun comportement pouvant raisonnablement être considéré comme du harcèlement ne sera toléré. Voir aussi - Licence MIT - Bien démarrer - Apprentissage automatique"
+        "content": "← Précédent · Retour au README · Suivant → Guide de contribution Les contributions sont les bienvenues et seront pleinement créditées . Nous acceptons les contributions sous forme de Pull Requests sur tous les projets de notre organisation. Style du code Laravel Feeds respecte la norme de codage PER-3 et la norme de chargement automatique PSR-4. Pour appliquer le formatage du code, exécutez la commande suivante : Code de conduite Le code de conduite de Laravel est issu du code de conduite Contributor Covenant. Toute infraction peut être signalée à Andrey Helldar : - Les participants doivent faire preuve de tolérance envers les opinions divergentes. - Les participants doivent veiller à ce que leurs propos et leurs actes soient exempts d’attaques personnelles et de remarques dénigrantes. - Lorsqu’ils interprètent les paroles et les actes d’autrui, les participants doivent toujours présumer de bonnes intentions. - Aucun comportement pouvant raisonnablement être considéré comme du harcèlement ne sera toléré. Voir aussi - Licence MIT - Bien démarrer - Agents IA"
     },
     {
         "route": "/fr/create-feeds/",
@@ -394,7 +394,7 @@
             "Licence MIT",
             "Voir aussi"
         ],
-        "content": "← Précédent · Retour au README Licence MIT Copyright (c) 2025-2026 Andrey Helldar La permission est accordée, gratuitement, à toute personne obtenant une copie de ce logiciel et des fichiers de documentation associés (le « Logiciel »), d’utiliser le Logiciel sans restriction, notamment de l’utiliser, le copier, le modifier, le fusionner, le publier, le distribuer, le concéder sous licence et/ou d’en vendre des copies, ainsi que d’autoriser les personnes auxquelles le Logiciel est fourni à le faire, sous réserve des conditions suivantes : L’avis de droit d’auteur ci-dessus et le présent avis d’autorisation doivent être inclus dans toutes les copies ou parties substantielles du Logiciel. LE LOGICIEL EST FOURNI « EN L’ÉTAT », SANS GARANTIE D’AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS, MAIS SANS S’Y LIMITER, LES GARANTIES DE QUALITÉ MARCHANDE, D’ADÉQUATION À UN USAGE PARTICULIER ET D’ABSENCE DE CONTREFAÇON. EN AUCUN CAS LES AUTEURS OU LES TITULAIRES DES DROITS D’AUTEUR NE POURRONT ÊTRE TENUS RESPONSABLES DE TOUTE RÉCLAMATION, DE TOUT DOMMAGE OU DE TOUTE AUTRE RESPONSABILITÉ, QUE CE SOIT DANS LE CADRE D’UNE ACTION CONTRACTUELLE, DÉLICTUELLE OU AUTRE, DÉCOULANT DU LOGICIEL, DE SON UTILISATION OU D’AUTRES OPÉRATIONS SUR LE LOGICIEL, OU EN RELATION AVEC CEUX-CI. Voir aussi - Guide de contribution - Bien démarrer - Apprentissage automatique"
+        "content": "← Précédent · Retour au README Licence MIT Copyright (c) 2025-2026 Andrey Helldar La permission est accordée, gratuitement, à toute personne obtenant une copie de ce logiciel et des fichiers de documentation associés (le « Logiciel »), d’utiliser le Logiciel sans restriction, notamment de l’utiliser, le copier, le modifier, le fusionner, le publier, le distribuer, le concéder sous licence et/ou d’en vendre des copies, ainsi que d’autoriser les personnes auxquelles le Logiciel est fourni à le faire, sous réserve des conditions suivantes : L’avis de droit d’auteur ci-dessus et le présent avis d’autorisation doivent être inclus dans toutes les copies ou parties substantielles du Logiciel. LE LOGICIEL EST FOURNI « EN L’ÉTAT », SANS GARANTIE D’AUCUNE SORTE, EXPRESSE OU IMPLICITE, Y COMPRIS, MAIS SANS S’Y LIMITER, LES GARANTIES DE QUALITÉ MARCHANDE, D’ADÉQUATION À UN USAGE PARTICULIER ET D’ABSENCE DE CONTREFAÇON. EN AUCUN CAS LES AUTEURS OU LES TITULAIRES DES DROITS D’AUTEUR NE POURRONT ÊTRE TENUS RESPONSABLES DE TOUTE RÉCLAMATION, DE TOUT DOMMAGE OU DE TOUTE AUTRE RESPONSABILITÉ, QUE CE SOIT DANS LE CADRE D’UNE ACTION CONTRACTUELLE, DÉLICTUELLE OU AUTRE, DÉCOULANT DU LOGICIEL, DE SON UTILISATION OU D’AUTRES OPÉRATIONS SUR LE LOGICIEL, OU EN RELATION AVEC CEUX-CI. Voir aussi - Guide de contribution - Bien démarrer - Agents IA"
     },
     {
         "route": "/fr/location/",
@@ -417,19 +417,19 @@
     },
     {
         "route": "/fr/machine-learning/",
-        "title": "Apprentissage automatique",
+        "title": "Agents IA",
         "description": "Conseils pour utiliser le projet avec des LLM et une base de connaissances consolidée",
         "keywords": [
             "LLM",
             "llms.txt",
-            "machine learning",
+            "AI agents",
             "knowledge base"
         ],
         "headings": [
-            "Apprentissage automatique",
+            "Agents IA",
             "Voir aussi"
         ],
-        "content": "← Précédent · Retour au README · Suivant → Apprentissage automatique Vous pouvez aider votre LLM à mieux comprendre la structure et les conventions de ce projet. Pour cela, importez les instructions du fichier suivant : llms.txt . Ce fichier est un document Markdown unique et consolidé qui contient l’ensemble de la documentation compilée du projet. Il est conçu comme une base de connaissances pour les LLM, par exemple comme pièce jointe à un prompt système, corpus de recherche ou fichier de connaissances personnalisé. Enregistrez l’URL et réimportez régulièrement le fichier pour récupérer les mises à jour du projet. Voir aussi - Bien démarrer - Guide de contribution - Licence MIT"
+        "content": "← Précédent · Retour au README · Suivant → Agents IA Vous pouvez aider votre LLM à mieux comprendre la structure et les conventions de ce projet. Pour cela, importez les instructions du fichier suivant : llms.txt . Ce fichier est un document Markdown unique et consolidé qui contient l’ensemble de la documentation compilée du projet. Il est conçu comme une base de connaissances pour les LLM, par exemple comme pièce jointe à un prompt système, corpus de recherche ou fichier de connaissances personnalisé. Enregistrez l’URL et réimportez régulièrement le fichier pour récupérer les mises à jour du projet. Voir aussi - Bien démarrer - Guide de contribution - Licence MIT"
     },
     {
         "route": "/fr/performance/",

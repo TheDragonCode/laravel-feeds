@@ -158,7 +158,7 @@
             "Verhaltenskodex",
             "Siehe auch"
         ],
-        "content": "← Zurück · Zurück zur README · Weiter → Beitragsleitfaden Beiträge sind willkommen und werden vollständig gewürdigt . Wir nehmen Beiträge über Pull Requests zu allen Projekten unserer Organisation an. Codestil Laravel Feeds folgt dem Codierungsstandard PER-3 und dem Autoloading-Standard PSR-4. Führen Sie den folgenden Konsolenbefehl aus, um den Codestil anzuwenden: Verhaltenskodex Der Laravel-Verhaltenskodex basiert auf dem Verhaltenskodex des Contributor Covenant. Verstöße gegen den Verhaltenskodex können Andrey Helldar gemeldet werden: - Teilnehmer sollten gegenüber abweichenden Ansichten tolerant sein. - Teilnehmer müssen sicherstellen, dass ihre Sprache und ihr Verhalten frei von persönlichen Angriffen und herabwürdigenden persönlichen Bemerkungen sind. - Bei der Auslegung der Worte und Handlungen anderer sollten Teilnehmer stets gute Absichten unterstellen. - Verhalten, das vernünftigerweise als Belästigung angesehen werden kann, wird nicht toleriert. Siehe auch - MIT-Lizenz - Erste Schritte - Maschinelles Lernen"
+        "content": "← Zurück · Zurück zur README · Weiter → Beitragsleitfaden Beiträge sind willkommen und werden vollständig gewürdigt . Wir nehmen Beiträge über Pull Requests zu allen Projekten unserer Organisation an. Codestil Laravel Feeds folgt dem Codierungsstandard PER-3 und dem Autoloading-Standard PSR-4. Führen Sie den folgenden Konsolenbefehl aus, um den Codestil anzuwenden: Verhaltenskodex Der Laravel-Verhaltenskodex basiert auf dem Verhaltenskodex des Contributor Covenant. Verstöße gegen den Verhaltenskodex können Andrey Helldar gemeldet werden: - Teilnehmer sollten gegenüber abweichenden Ansichten tolerant sein. - Teilnehmer müssen sicherstellen, dass ihre Sprache und ihr Verhalten frei von persönlichen Angriffen und herabwürdigenden persönlichen Bemerkungen sind. - Bei der Auslegung der Worte und Handlungen anderer sollten Teilnehmer stets gute Absichten unterstellen. - Verhalten, das vernünftigerweise als Belästigung angesehen werden kann, wird nicht toleriert. Siehe auch - MIT-Lizenz - Erste Schritte - KI-Agenten"
     },
     {
         "route": "/de/create-feeds/",
@@ -394,7 +394,7 @@
             "MIT-Lizenz",
             "Siehe auch"
         ],
-        "content": "← Zurück · Zurück zur README MIT-Lizenz Copyright (c) 2025-2026 Andrey Helldar Hiermit wird jeder Person, die eine Kopie dieser Software und der zugehörigen Dokumentationsdateien (die „Software“) erhält, unentgeltlich die Erlaubnis erteilt, uneingeschränkt mit der Software zu handeln. Dies schließt ohne Einschränkung das Recht ein, sie zu verwenden, zu kopieren, zu ändern, zusammenzuführen, zu veröffentlichen, zu verbreiten, unterzulizenzieren und/oder Kopien der Software zu verkaufen sowie Personen, denen die Software zur Verfügung gestellt wird, dies unter den folgenden Bedingungen zu gestatten: Der obige Urheberrechtshinweis und dieser Erlaubnisvermerk müssen in allen Kopien oder wesentlichen Teilen der Software enthalten sein. DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER STILLSCHWEIGENDE GEWÄHRLEISTUNG „WIE BESEHEN“ BEREITGESTELLT, EINSCHLIESSLICH, ABER NICHT BESCHRÄNKT AUF DIE GEWÄHRLEISTUNG DER MARKTGÄNGIGKEIT, EIGNUNG FÜR EINEN BESTIMMTEN ZWECK UND NICHTVERLETZUNG VON RECHTEN. IN KEINEM FALL HAFTEN DIE AUTOREN ODER URHEBERRECHTSINHABER FÜR ANSPRÜCHE, SCHÄDEN ODER SONSTIGE HAFTUNG, SEI ES AUS EINEM VERTRAG, EINER UNERLAUBTEN HANDLUNG ODER ANDERWEITIG, DIE AUS DER SOFTWARE, IHRER VERWENDUNG ODER ANDEREN GESCHÄFTEN MIT DER SOFTWARE ENTSTEHEN ODER DAMIT IN VERBINDUNG STEHEN. Siehe auch - Beitragsleitfaden - Erste Schritte - Maschinelles Lernen"
+        "content": "← Zurück · Zurück zur README MIT-Lizenz Copyright (c) 2025-2026 Andrey Helldar Hiermit wird jeder Person, die eine Kopie dieser Software und der zugehörigen Dokumentationsdateien (die „Software“) erhält, unentgeltlich die Erlaubnis erteilt, uneingeschränkt mit der Software zu handeln. Dies schließt ohne Einschränkung das Recht ein, sie zu verwenden, zu kopieren, zu ändern, zusammenzuführen, zu veröffentlichen, zu verbreiten, unterzulizenzieren und/oder Kopien der Software zu verkaufen sowie Personen, denen die Software zur Verfügung gestellt wird, dies unter den folgenden Bedingungen zu gestatten: Der obige Urheberrechtshinweis und dieser Erlaubnisvermerk müssen in allen Kopien oder wesentlichen Teilen der Software enthalten sein. DIE SOFTWARE WIRD OHNE JEDE AUSDRÜCKLICHE ODER STILLSCHWEIGENDE GEWÄHRLEISTUNG „WIE BESEHEN“ BEREITGESTELLT, EINSCHLIESSLICH, ABER NICHT BESCHRÄNKT AUF DIE GEWÄHRLEISTUNG DER MARKTGÄNGIGKEIT, EIGNUNG FÜR EINEN BESTIMMTEN ZWECK UND NICHTVERLETZUNG VON RECHTEN. IN KEINEM FALL HAFTEN DIE AUTOREN ODER URHEBERRECHTSINHABER FÜR ANSPRÜCHE, SCHÄDEN ODER SONSTIGE HAFTUNG, SEI ES AUS EINEM VERTRAG, EINER UNERLAUBTEN HANDLUNG ODER ANDERWEITIG, DIE AUS DER SOFTWARE, IHRER VERWENDUNG ODER ANDEREN GESCHÄFTEN MIT DER SOFTWARE ENTSTEHEN ODER DAMIT IN VERBINDUNG STEHEN. Siehe auch - Beitragsleitfaden - Erste Schritte - KI-Agenten"
     },
     {
         "route": "/de/location/",
@@ -417,19 +417,19 @@
     },
     {
         "route": "/de/machine-learning/",
-        "title": "Maschinelles Lernen",
+        "title": "KI-Agenten",
         "description": "Anleitung zur Verwendung des Projekts mit LLMs und einer konsolidierten Wissensbasis",
         "keywords": [
             "LLM",
             "llms.txt",
-            "machine learning",
+            "AI agents",
             "knowledge base"
         ],
         "headings": [
-            "Maschinelles Lernen",
+            "KI-Agenten",
             "Siehe auch"
         ],
-        "content": "← Zurück · Zurück zur README · Weiter → Maschinelles Lernen Sie können Ihrem LLM helfen, die Struktur und Konventionen dieses Projekts wesentlich besser zu verstehen. Importieren Sie dazu die Anleitung aus der folgenden Datei: llms.txt . Diese Datei ist ein einzelnes, konsolidiertes Markdown-Dokument mit der zusammengestellten Dokumentation dieses Projekts. Sie dient als Wissensbasis für LLMs, beispielsweise als Anhang zu einem System-Prompt, als Retrieval-Korpus oder als benutzerdefinierte Wissensdatei. Speichern Sie die URL und importieren Sie die Datei regelmäßig erneut, um Aktualisierungen des Projekts zu übernehmen. Siehe auch - Erste Schritte - Beitragsleitfaden - MIT-Lizenz"
+        "content": "← Zurück · Zurück zur README · Weiter → KI-Agenten Sie können Ihrem LLM helfen, die Struktur und Konventionen dieses Projekts wesentlich besser zu verstehen. Importieren Sie dazu die Anleitung aus der folgenden Datei: llms.txt . Diese Datei ist ein einzelnes, konsolidiertes Markdown-Dokument mit der zusammengestellten Dokumentation dieses Projekts. Sie dient als Wissensbasis für LLMs, beispielsweise als Anhang zu einem System-Prompt, als Retrieval-Korpus oder als benutzerdefinierte Wissensdatei. Speichern Sie die URL und importieren Sie die Datei regelmäßig erneut, um Aktualisierungen des Projekts zu übernehmen. Siehe auch - Erste Schritte - Beitragsleitfaden - MIT-Lizenz"
     },
     {
         "route": "/de/performance/",
