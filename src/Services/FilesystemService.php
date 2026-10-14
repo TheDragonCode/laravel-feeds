@@ -18,8 +18,9 @@ use RuntimeException;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
 use Throwable;
 
-use function array_any;
+use function array_fill_keys;
 use function array_keys;
+use function array_map;
 use function array_reverse;
 use function basename;
 use function bin2hex;
@@ -371,8 +372,10 @@ class FilesystemService
                 $storage->move($draft, $target);
             }
 
+            $targetKeys = array_fill_keys(array_map(fn (string $target) => $this->storagePathKey($target), $targets), true);
+
             foreach ($existing as $published) {
-                if ($this->containsStoragePath($targets, $published) || ! $storage->fileExists($published)) {
+                if (isset($targetKeys[$this->storagePathKey($published)]) || ! $storage->fileExists($published)) {
                     continue;
                 }
 
@@ -449,8 +452,10 @@ class FilesystemService
                 $installed[] = $target;
             }
 
+            $targetKeys = array_fill_keys(array_map(fn (string $target) => $this->pathKey($target), $targets), true);
+
             foreach ($existing as $published) {
-                if ($this->containsPath($targets, $published) || ! $this->file->exists($published)) {
+                if (isset($targetKeys[$this->pathKey($published)]) || ! $this->file->exists($published)) {
                     continue;
                 }
 
@@ -492,20 +497,6 @@ class FilesystemService
 
             throw new CloseFeedException($path, $e);
         }
-    }
-
-    protected function containsPath(array $paths, string $expected): bool
-    {
-        $key = $this->pathKey($expected);
-
-        return array_any($paths, fn (string $path): bool => $this->pathKey($path) === $key);
-    }
-
-    protected function containsStoragePath(array $paths, string $expected): bool
-    {
-        $key = $this->storagePathKey($expected);
-
-        return array_any($paths, fn (string $path): bool => $this->storagePathKey($path) === $key);
     }
 
     protected function createStagingDirectory(string $path): TemporaryDirectory
@@ -749,19 +740,25 @@ class FilesystemService
         Closure $pathKey,
     ): void {
         $publicationKey = $pathKey($path);
+        $owners         = [];
+
+        foreach ($ownership as $target => $owner) {
+            $owners[$pathKey($resolvePath($target))] = $pathKey($resolvePath($owner));
+        }
 
         foreach ($targets as $target) {
-            $owner = $this->ownerOf($target, $ownership, $resolvePath, $pathKey);
+            $targetKey = $pathKey($target);
+            $ownerKey  = $owners[$targetKey] ?? null;
 
-            if ($owner !== null) {
-                if ($pathKey($owner) !== $publicationKey) {
+            if ($ownerKey !== null) {
+                if ($ownerKey !== $publicationKey) {
                     throw new RuntimeException("Feed publication target is not owned: [$target].");
                 }
 
                 continue;
             }
 
-            if ($pathKey($target) !== $publicationKey && $exists($target)) {
+            if ($targetKey !== $publicationKey && $exists($target)) {
                 throw new RuntimeException("Feed publication target is not owned: [$target].");
             }
         }
@@ -863,26 +860,29 @@ class FilesystemService
         Closure $resolvePath,
         Closure $pathKey,
     ): array {
-        $ownerKey = $pathKey($path);
+        $ownerKey  = $pathKey($path);
+        $ownedKeys = [];
 
         foreach ($ownership as $target => $owner) {
             if ($pathKey($resolvePath($owner)) === $ownerKey) {
                 unset($ownership[$target]);
+            } else {
+                $ownedKeys[$pathKey($resolvePath($target))] = $target;
             }
         }
 
         foreach ($targets as $target) {
             $targetKey = $pathKey($target);
 
-            foreach ($ownership as $owned => $owner) {
-                if ($pathKey($resolvePath($owned)) === $targetKey) {
-                    unset($ownership[$owned]);
-                }
+            if (isset($ownedKeys[$targetKey])) {
+                unset($ownership[$ownedKeys[$targetKey]]);
             }
 
             $ownership[basename($target)] = $targetKey === $ownerKey
                 ? basename($target)
                 : basename($path);
+
+            $ownedKeys[$targetKey] = basename($target);
         }
 
         ksort($ownership, SORT_NATURAL);
