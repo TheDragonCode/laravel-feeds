@@ -158,7 +158,7 @@
             "Code of Conduct",
             "See Also"
         ],
-        "content": "← Previous · Back to README · Next → Contribution guide Contributions are welcome and will be fully credited . We accept contributions through Pull Requests on all projects of our organization. Code Style Laravel Feeds follows the PER-3 coding standard and the PSR-4 autoloading standard. To apply code style formatting, run the following console command: Code of Conduct The Laravel code of conduct is derived from the Contributor Covenant code of conduct. Any violations of the code of conduct may be reported to Andrey Helldar: - Participants should be tolerant of opposing views. - Participants must ensure that their language and actions are free of personal attacks and disparaging personal remarks. - When interpreting the words and actions of others, participants should always assume good intentions. - Behavior that can be reasonably considered harassment will not be tolerated. See Also - MIT License - Getting started - Machine Learning"
+        "content": "← Previous · Back to README · Next → Contribution guide Contributions are welcome and will be fully credited . We accept contributions through Pull Requests on all projects of our organization. Code Style Laravel Feeds follows the PER-3 coding standard and the PSR-4 autoloading standard. To apply code style formatting, run the following console command: Code of Conduct The Laravel code of conduct is derived from the Contributor Covenant code of conduct. Any violations of the code of conduct may be reported to Andrey Helldar: - Participants should be tolerant of opposing views. - Participants must ensure that their language and actions are free of personal attacks and disparaging personal remarks. - When interpreting the words and actions of others, participants should always assume good intentions. - Behavior that can be reasonably considered harassment will not be tolerated. See Also - MIT License - Getting started - AI Agents"
     },
     {
         "route": "/create-feeds/",
@@ -394,7 +394,7 @@
             "MIT License",
             "See Also"
         ],
-        "content": "← Previous · Back to README MIT License Copyright (c) 2025-2026 Andrey Helldar Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. See Also - Contribution guide - Getting started - Machine Learning"
+        "content": "← Previous · Back to README MIT License Copyright (c) 2025-2026 Andrey Helldar Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. See Also - Contribution guide - Getting started - AI Agents"
     },
     {
         "route": "/location/",
@@ -417,19 +417,19 @@
     },
     {
         "route": "/machine-learning/",
-        "title": "Machine Learning",
+        "title": "AI Agents",
         "description": "Guidance for using the project with LLMs and a consolidated knowledge base",
         "keywords": [
             "LLM",
             "llms.txt",
-            "machine learning",
+            "AI agents",
             "knowledge base"
         ],
         "headings": [
-            "Machine Learning",
+            "AI Agents",
             "See Also"
         ],
-        "content": "← Previous · Back to README · Next → Machine Learning You can help your LLM understand the structure and conventions of this project much better. To do that, import the guidance from the following file: llms.txt . This file is a single, consolidated Markdown document containing the compiled documentation for this project. It is designed to be used as a knowledge base for LLMs (for example, as a system prompt attachment, a retrieval corpus, or a custom knowledge file). Save the URL and re-import it periodically to pick up updates as the project evolves. See Also - Getting started - Contribution guide - MIT License"
+        "content": "← Previous · Back to README · Next → AI Agents You can help your LLM understand the structure and conventions of this project much better. To do that, import the guidance from the following file: llms.txt . This file is a single, consolidated Markdown document containing the compiled documentation for this project. It is designed to be used as a knowledge base for LLMs (for example, as a system prompt attachment, a retrieval corpus, or a custom knowledge file). Save the URL and re-import it periodically to pick up updates as the project evolves. See Also - Getting started - Contribution guide - MIT License"
     },
     {
         "route": "/performance/",
