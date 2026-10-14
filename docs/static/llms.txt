@@ -3819,17 +3819,19 @@ Compare the installed package's `config/feeds.php` with the application's publis
 
 [PR #287](https://github.com/TheDragonCode/laravel-feeds/pull/287) changes single-feed selection from a database ID to a slug derived with `Str::slug(title)`.
 
-If the package's slug migration has already run, do not copy or run it again. Otherwise:
+If the package's slug migration has not run yet, publish the migrations:
 
-1. Copy only `vendor/dragon-code/laravel-feeds/database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` into the application's `database/migrations` directory.
-2. Set its filename timestamp immediately after the application's actual `create_feeds_table` migration and before any feed-registration migrations. Keep the `add_slug_to_feeds_table` suffix. This order also lets a fresh database create registrations after the slug column exists.
-3. Confirm that `feeds.table.connection` and `feeds.table.table` point to the existing registration table, then run migrations:
+```bash
+php artisan vendor:publish --tag=feeds-migrations
+```
+
+The command publishes all migration files. Validate the published files and delete any unnecessary ones, then run the migrations:
 
 ```bash
 php artisan migrate
 ```
 
-The migration adds a nullable `slug` column and fills it from existing titles, including soft-deleted records. Existing titles and IDs are preserved. Do not republish or rerun the original create-table migration.
+The migration adds a nullable `slug` column and fills it from existing titles, including soft-deleted records. Existing titles and IDs are preserved.
 
 :::warning
 If the application already owns a `slug` column and the package migration has not run, the migration fails before backfilling any data. Resolve that schema conflict before deployment; do not drop an application-owned column without preserving its data and updating its callers.
@@ -3849,7 +3851,7 @@ Saving a feed model recalculates its slug from the stored title. Query Builder b
 
 ## Replace IDs in generation calls
 
-For registration ID `42` with stored title `Products Feed`, the migrated slug is `products-feed`.
+For registration ID `42` with stored title `Products`, the migrated slug is `products`.
 
 Before:
 
@@ -3860,13 +3862,13 @@ php artisan feed:generate 42
 After:
 
 ```bash
-php artisan feed:generate products-feed
+php artisan feed:generate products
 ```
 
 The argument is always a slug in `2.x`; a numeric string no longer selects a database ID. Calling `php artisan feed:generate` without an argument still processes all active registrations. With `--target`, replace only the registration argument; target keys stay the same:
 
 ```bash
-php artisan feed:generate products-feed --target=42
+php artisan feed:generate products --target=42
 ```
 
 Update manual schedules and programmatic command calls in the same way. Before:
@@ -3884,7 +3886,7 @@ After:
 use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command(FeedGenerateCommand::class, ['products-feed'])->daily();
+Schedule::command(FeedGenerateCommand::class, ['products'])->daily();
 ```
 
 Keep the manual schedule's existing overlap, background, and frequency settings. Update hardcoded slugs when renaming registrations. `ScheduleFeedHelper::register()` uses stored slugs automatically and keeps overlap locks tied to the registration when its title or cron expression changes.
