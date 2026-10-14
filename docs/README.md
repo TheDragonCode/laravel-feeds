@@ -29,7 +29,7 @@ The production build contains every configured locale.
 - `versioned_docs/version-1.x/` and each locale's `version-1.x/` directory preserve the `1.x` release line.
 - `i18n/<locale>/*.json` contains localized UI messages.
 - `snippets/` contains examples generated and checked by the PHP test suite.
-- `static/` contains site-wide assets that do not change between documentation versions.
+- `static/` contains shared assets and generated search indexes and LLM bundles for each documentation version.
 
 English is the default locale. The complete locale set is `be`, `de`, `en`, `fr`, `ko`, `pt-BR`, `ru`, `uk`, and `zh-CN`. The `zh-CN` locale uses Simplified Chinese.
 
@@ -48,6 +48,8 @@ npm run translate
 The command generates catalogs. It does not translate documentation pages. Complete the JSON messages and localized MDX files before running `npm run check:i18n`.
 
 Code fences with a `source` field contain a version-frozen copy of a tracked example. Run `npm run check:snippets` after changing either the source file or the embedded block.
+
+Run `npm run content:manifest` and `npm run build:llms` after changing documentation content. Each archived version has its own `static/search/<version>/<locale>.json` indexes and `static/<version>/llms.txt` bundle, generated from its frozen pages. Current documentation keeps `static/search/<locale>.json` and `static/llms.txt`.
 
 ## PHP tests
 
@@ -76,6 +78,6 @@ npm run docs:version -- 1.15
 npm run build
 ```
 
-The wrapper validates the current content, runs the Docusaurus version command for every locale, corrects the localized version labels, and validates the frozen result. It creates `versioned_docs/`, `versioned_sidebars/`, `versions.json`, and matching localized version directories. Create versions only when maintained release lines require different documentation.
+The wrapper validates the current content, runs the Docusaurus version command for every locale, corrects the localized version labels and LLM bundle links, and validates the frozen result. It creates `versioned_docs/`, `versioned_sidebars/`, `versions.json`, matching localized version directories, and the version's search indexes and LLM bundle. Create versions only when maintained release lines require different documentation.
 
 The current documentation stays under `docs/` and each locale's `current/` directory. A version snapshot must remain immutable except for factual or security corrections that also need to apply to that release line.

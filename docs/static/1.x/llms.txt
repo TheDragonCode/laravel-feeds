@@ -1,0 +1,3845 @@
+# Laravel Feeds
+
+> Fast export of large datasets to feeds for marketplaces and services.
+
+Source: https://github.com/TheDragonCode/laravel-feeds
+Documentation: https://feeds.dragon-code.pro/1.x/introduction/
+
+---
+
+# Getting started
+
+<PageLead>
+Install the package, define an Eloquent query and item shape, then generate a feed file. The first working export takes about five minutes in an existing Laravel application.
+</PageLead>
+
+## Prerequisites
+
+- PHP `8.2` or a later `8.x` release accepted by Composer
+- Laravel `11.x`, `12.x`, or `13.x`
+- A configured database and filesystem disk
+
+## Install and prepare
+
+```bash
+composer require dragon-code/laravel-feeds
+php artisan vendor:publish --tag="feeds"
+php artisan migrate
+php artisan make:feed User --item
+```
+
+The generator creates the feed and item classes. It also creates the database change that registers the feed. Run that generated migration before the first generation if it was created after the earlier `migrate` command.
+
+## Define the data source
+
+Use an Eloquent builder so records can be read in chunks.
+
+```php
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+## Define each item
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+## Generate the file
+
+```bash
+php artisan feed:generate
+```
+
+The command reports the status of each feed; normal console output does not include generated file paths. Feed classes use XML and the `public` disk by default. Change either value in the feed class.
+
+## Next steps
+
+- [Installation and configuration](https://feeds.dragon-code.pro/1.x/installation/)
+- [Create feeds](https://feeds.dragon-code.pro/1.x/create-feeds/)
+- [Generation and schedule](https://feeds.dragon-code.pro/1.x/generation/)
+- [Supported formats](https://feeds.dragon-code.pro/1.x/supported-formats/)
+
+---
+
+# Installation & setup
+
+You can install the package via [Composer](https://getcomposer.org):
+
+```bash
+composer require dragon-code/laravel-feeds
+```
+
+You should publish the [migration](https://github.com/TheDragonCode/laravel-feeds/blob/main/database/migrations/2025_09_01_231655_create_feeds_table.php) and the [config/feeds.php](https://github.com/TheDragonCode/laravel-feeds/blob/main/config/feeds.php) config file with:
+
+```bash
+php artisan vendor:publish --tag="feeds"
+```
+
+:::warning
+**Before running migrations**, check the database connection settings in the `config/feeds.php` file.
+:::
+
+Now you can run migrations and proceed to [create feeds](https://feeds.dragon-code.pro/1.x/create-feeds/).
+
+```bash
+php artisan migrate
+```
+
+For an existing installation, copy only `database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` from the package into your application's migrations directory. Choose a filename timestamp immediately after the application's actual `create_feeds_table` migration and before any feed-registration migrations; keep the `add_slug_to_feeds_table` suffix. Then run `php artisan migrate`. The migration uses the configured connection and table and fills slugs from existing titles, including soft-deleted records. Do not republish or rerun the original create-table migration. Replace numeric feed IDs in commands and manual schedules with the stored slugs.
+
+## See Also
+
+- [Create feeds](https://feeds.dragon-code.pro/1.x/create-feeds/)
+- [Generation & schedule](https://feeds.dragon-code.pro/1.x/generation/)
+- [Supported formats](https://feeds.dragon-code.pro/1.x/supported-formats/)
+
+---
+
+# Create feeds
+
+:::note
+The most convenient way to create the necessary classes is to use the [Laravel Idea](https://laravel-idea.com) plugin for [PhpStorm](https://www.jetbrains.com/phpstorm/).
+
+![Laravel Idea](https://feeds.dragon-code.pro/img/laravel-idea.png)
+:::
+
+To create a feed class, use the `make:feed` console command:
+
+```bash
+php artisan make:feed <name>
+```
+
+This will create a feed file. For example, `app/Feeds/UserFeed.php`.
+
+This console command can also create the item and info classes along with the feed class. To do this, use the `--item` and `--info` options.
+
+```bash
+# Create a feed class and info class
+php artisan make:feed <name> --info
+
+# Create a feed class and item class
+php artisan make:feed <name> --item
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> --item --info
+```
+
+Shortcuts are also available:
+
+```bash
+# Create a feed class and item class
+php artisan make:feed <name> -t
+
+# Create a feed class and info class
+php artisan make:feed <name> -i
+
+# Create a feed class, item class, and info class
+php artisan make:feed <name> -it
+```
+
+:::note
+When creating a feed, an operation or a migration will also be created to add it to the database.
+
+If the project uses [**Laravel Deploy Operations**](https://deploy-operations.dragon-code.pro), then an operation class will be created; otherwise, a migration class will be created.
+
+This is required to add and manage feed information in the database.
+:::
+
+## Populating feeds
+
+### Feed
+
+Populate the main feed class. For example:
+
+```php
+namespace App\Feeds;
+
+use App\Feeds\Items\UserFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class UserFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query()
+            ->whereNotNull('email_verified_at')
+            ->where('created_at', '>', now()->subYear());
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new UserFeedItem($model);
+    }
+}
+```
+
+#### Feed item
+
+Populate the feed item class. For example:
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \App\Models\User $model */
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->model->name,
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+##### Optional values
+
+To omit a field when its value is unavailable, return an instance of `DragonCode\LaravelFeed\Data\OptionalData` as its value:
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Data\OptionalData;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class UserFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'id'   => $this->model->id,
+            'name' => $this->model->name,
+
+            'cityId' => $this->model->city?->id ?? new OptionalData,
+
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at ?? new OptionalData,
+        ];
+    }
+}
+```
+
+Optional fields are removed from JSON and JSON Lines objects and from XML and RSS elements, including regular nested fields. CSV keeps the column position and writes an empty field.
+
+If your application uses [Spatie Laravel Data](https://spatie.be/docs/laravel-data/v4/as-a-data-transfer-object/optional-properties), you can return `Spatie\LaravelData\Optional` instead. Both optional value classes are handled automatically.
+
+```php
+use Spatie\LaravelData\Optional;
+
+'updatedAt' => $this->model->updated_at ?? Optional::create(),
+```
+
+## Separate output files
+
+Generating separate files for different business conditions is an advanced output scenario. Read the [separate output files guide](https://feeds.dragon-code.pro/1.x/feed-targets/), then use the [multiple targeted feed files recipe](https://feeds.dragon-code.pro/1.x/receipt-target-feeds/) as a complete example.
+
+## File format
+
+:::tip
+You can find the list of available formats on the [supported formats](https://feeds.dragon-code.pro/1.x/supported-formats/) page.
+:::
+
+You can generate feeds in different formats. A feed class can be correctly exported only to the format for which it is intended. This is due to the use of [directives](https://feeds.dragon-code.pro/1.x/directives/) and other format specifics.
+
+To apply the required format, simply override the `$format` property in the feed class:
+
+```php
+namespace App\Feeds;
+
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Json;
+
+    public function builder(): Builder
+    {
+        //
+    }
+}
+```
+
+## See Also
+
+- [Generation & schedule](https://feeds.dragon-code.pro/1.x/generation/)
+- [Separate output files](https://feeds.dragon-code.pro/1.x/feed-targets/)
+- [Supported formats](https://feeds.dragon-code.pro/1.x/supported-formats/)
+
+---
+
+# Large dataset performance
+
+<PageLead>
+Laravel Feeds is designed to write records incrementally. Memory stays bounded only when the application keeps every upstream step lazy.
+</PageLead>
+
+## Keep the query lazy
+
+Return an Eloquent `Builder` directly:
+
+```php
+public function builder(): Builder
+{
+    return Product::query()
+        ->select(['id', 'title', 'updated_at'])
+        ->where('is_exportable', true);
+}
+```
+
+Do not materialize the complete result before generation. Select only required columns and eager-load only relationships used by `item()` to avoid N+1 queries.
+
+## Tune chunk size
+
+The default is `1000` records. Lower values reduce peak model memory and increase query count. Higher values reduce query overhead and increase memory. Measure with production-like row sizes.
+
+```php
+public function chunkSize(): int
+{
+    return 500;
+}
+```
+
+## Split output files
+
+Use `perFile()` when consumers accept multiple files or one output would become difficult to publish and retry.
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+Leave `maxFiles()` at its default `0` when every matching record must be exported. When both `perFile()` and `maxFiles()` are greater than zero, Laravel Feeds exports at most their product and completes successfully without reporting that later records were omitted. Set `maxFiles()` only when that record cap is intentional.
+
+## Queue long-running feeds
+
+Queue mode moves generation out of the console request, but it does not reduce the memory used by a feed. Use an asynchronous connection, run workers with suitable timeout and memory limits, and keep the uniqueness TTL longer than the expected generation time.
+
+## Measure the whole path
+
+Measure database time, model hydration, transformation, serialization, and storage publication separately. Remote disks can make publication the dominant cost even when generation is fast.
+
+## See Also
+
+- [Eloquent chunk size](https://feeds.dragon-code.pro/1.x/eloquent/#chunk_size)
+- [Generation queues](https://feeds.dragon-code.pro/1.x/generation/#queue)
+- [Storage publication guarantees](https://feeds.dragon-code.pro/1.x/location/#publication_guarantees)
+
+---
+
+# Generation & schedule
+
+To generate all active feeds, use the console command:
+
+```bash
+php artisan feed:generate
+```
+
+As a result, all active feeds (`is_active = true`) will be executed from the `feeds` table (or the one you specified in the `config/feeds.php` file).
+
+:::tip
+Please note that when you call the command without a parameter, the console will display links to all feeds, even those with the `is_active` property set to `false`.
+
+However, instead of being executed, such feeds will be marked with the `SKIP` status.
+:::
+
+## Single feed
+
+:::warning
+Please note that the specified feed **will be executed** even if it is disabled in the `feeds` table in the database.
+:::
+
+To generate a specific feed, call the `feed:generate` console command, passing the feed slug from the `feeds` table as its parameter:
+
+```bash
+php artisan feed:generate products
+```
+
+## Generate selected output files
+
+For a feed configured with [separate output files](https://feeds.dragon-code.pro/1.x/feed-targets/), the registration slug selects the feed class and the target key selects one partner, store, locale, or other output.
+
+Running the feed without `--target` consumes `targets()` lazily and generates every target:
+
+```bash
+php artisan feed:generate products
+```
+
+Pass the repeatable `--target` option to generate only selected targets:
+
+```bash
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
+```
+
+Explicit keys use `findTarget()` instead of enumerating `targets()`. Duplicate keys are processed once, in first-seen order. All requested keys are resolved before generation starts.
+
+`--target` requires one feed registration slug. The command rejects empty or unknown keys and rejects target selection for a feed that does not implement `HasFeedTargets`.
+
+Full target enumeration is streamed rather than atomic. If `targets()` fails after yielding some values, earlier targets may already be generated or queued. An empty iterable generates nothing and does not create an implicit default target.
+
+## AI agent output
+
+When `feed:generate` runs inside an AI coding agent recognized by [Laravel Agent Detector](https://github.com/laravel/agent-detector), it automatically writes a single JSON object instead of progress bars and formatted status lines. No command option is required. Outside a recognized agent, the regular console output remains unchanged.
+
+For direct generation, each generated feed includes every published file and its record count:
+
+```json
+{
+  "tool": "feed:generate",
+  "result": "success",
+  "feeds": [
+    {
+      "class": "App\\Feeds\\SitemapFeed",
+      "status": "generated",
+      "files": [
+        {
+          "path": "/var/www/html/storage/app/public/sitemap.xml",
+          "records": 1250
+        }
+      ]
+    },
+    {
+      "class": "App\\Feeds\\DisabledFeed",
+      "status": "skipped"
+    }
+  ]
+}
+```
+
+The command emits compact JSON on one line. The example is formatted only for readability.
+
+| Status | Meaning | Additional fields |
+| --- | --- | --- |
+| `generated` | The feed files were generated directly. | `files`, containing `path` and `records` for each file |
+| `queued` | Queue mode is enabled and the feed job was dispatched synchronously for the agent. | None |
+| `skipped` | The feed is inactive and the command was run without a feed slug. | None |
+
+Each targeted `generated` or `queued` entry also contains a `target` field with the selected key.
+
+:::note
+In queue mode, the agent-aware path runs each enabled job synchronously before returning the JSON result. The regular human-oriented path continues to dispatch jobs through the configured queue connection.
+:::
+
+Only successful runs use this JSON envelope. If generation throws an exception, Laravel handles the command error normally and no JSON error envelope is emitted.
+
+## Queue
+
+Feed generation runs in the console process by default. For feeds that take a long time or use a large amount of memory, enable Laravel Queue mode in your environment:
+
+```bash
+FEED_QUEUE_ENABLED=true
+FEED_QUEUE_CONNECTION=redis
+FEED_QUEUE_NAME=feeds
+FEED_QUEUE_UNIQUE_TTL=3600
+```
+
+When queue mode is enabled, `feed:generate` dispatches one job for every ordinary active feed and one job for every selected target of a targeted feed. With an asynchronous connection, the command returns after the jobs have been dispatched. Start a [queue worker](https://laravel.com/docs/queues#running-the-queue-worker) for the selected connection and queue to process those jobs.
+
+- `FEED_QUEUE_CONNECTION` selects the queue connection. It falls back to `QUEUE_CONNECTION` and then to `database`.
+- `FEED_QUEUE_NAME` selects a queue on that connection. Leave it unset to use the connection's default queue.
+- `FEED_QUEUE_UNIQUE_TTL` sets the maximum lifetime of the uniqueness lock in seconds. Ordinary jobs are unique by feed class. Targeted jobs are unique by feed class and target key; target parameters do not change that identity.
+
+:::note
+The `sync` connection executes each job immediately in the console process. Select an asynchronous connection to move generation to a worker. Set `FEED_QUEUE_ENABLED=false` to generate feeds directly without dispatching jobs.
+:::
+
+## Schedule
+
+### Registration expression
+
+Pass either a raw cron expression string or a fluent `DragonCode\LaravelFeed\Scheduling\Expression` when creating a feed registration.
+
+```php
+use App\Feeds\ProductFeed;
+use DragonCode\LaravelFeed\Queries\FeedQuery;
+use DragonCode\LaravelFeed\Scheduling\Expression;
+
+app(FeedQuery::class)->create(
+    class: ProductFeed::class,
+    title: 'Products',
+    expression: (new Expression)
+        ->weekly()
+        ->mondays()
+        ->at('13:00'),
+);
+```
+
+The fluent example stores `0 13 * * 1`. Raw strings, including aliases supported by `dragonmantank/cron-expression` such as `@daily`, remain supported.
+
+Available fluent methods follow the schedule frequency options provided by the installed Laravel version. See the [Laravel 13 frequency reference](https://laravel.com/docs/13.x/scheduling#schedule-frequency-options) for the current list. Only methods whose result can be stored as a stable five-field cron expression are exposed. Sub-minute intervals, timezones, time-window constraints, and `lastDayOfMonth()` are not available on this value object.
+
+### Automatic
+
+To automate feed generation, use a [schedule](https://laravel.com/docs/scheduling#running-the-scheduler). To do this, specify the helper call in the `routes/console.php` file (the default path, unless you have changed it):
+
+```php
+use DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper;
+use Illuminate\Support\Facades\Schedule;
+
+ScheduleFeedHelper::register();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+This registers all active feeds according to the schedule in the database `expression` column. A scheduled targeted feed generates every value returned by `targets()`.
+
+### Manual
+
+You can also specify the schedule directly according to your own rules. In this case, only the feeds you specify will be executed.
+
+```php
+use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
+use Illuminate\Support\Facades\Schedule;
+
+Schedule::command(FeedGenerateCommand::class, ['products'])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->daily();
+
+Schedule::command(FeedGenerateCommand::class, ['sitemap'])
+    ->withoutOverlapping()
+    ->runInBackground()
+    ->hourly();
+
+Schedule::call(function () {
+    // ... other action
+})->everySecond();
+```
+
+## See Also
+
+- [Create feeds](https://feeds.dragon-code.pro/1.x/create-feeds/)
+- [Separate output files](https://feeds.dragon-code.pro/1.x/feed-targets/)
+- [Events](https://feeds.dragon-code.pro/1.x/events/)
+- [Location](https://feeds.dragon-code.pro/1.x/location/)
+
+---
+
+# Separate output files by partner, store, or locale
+
+<PageLead>
+Use feed targets when one registered feed must create an independent, filtered output file for each partner, store, locale, or other business key.
+</PageLead>
+
+## Choose the correct type of splitting
+
+The phrase “split a feed into files” can describe two different mechanisms:
+
+| Goal | Use |
+| --- | --- |
+| One filtered output per partner, store, locale, or other business key | `HasFeedTargets` and `FeedTarget` |
+| Sequential parts with a fixed number of records in each file | `perFile()` and optionally `maxFiles()` |
+| Separate outputs that may each contain several parts | Feed targets together with `perFile()` |
+
+Feed targets split data by application meaning. `perFile()` splits one already selected dataset by record count.
+
+## How feed targets work
+
+The `feeds` table still contains one row for the feed class. Each `FeedTarget` describes one output variant with a stable key and a small parameter snapshot.
+
+Implement `HasFeedTargets` on the feed class. The packaged `InteractsWithFeedTargets` trait provides `forTarget()` and `target()`; the feed class implements discovery and lookup:
+
+| Method | Responsibility |
+| --- | --- |
+| `targets(): iterable` | Lazily yields every available output for full command and scheduled runs. |
+| `findTarget(string $key): ?FeedTarget` | Resolves one explicitly requested `--target` key or returns `null`. |
+| `forTarget(FeedTarget $target): static` | Returns a configured clone of the feed. |
+| `target(): FeedTarget` | Returns the active target inside `builder()`, `filename()`, and other execution hooks. |
+
+`FeedTarget::$key` must be non-empty, stable, unique within the feed class, and safe to expose. Keys are not normalized or sanitized. They appear in console output, agent JSON, events, and failure context.
+
+`FeedTarget::$parameters` is an application-owned snapshot stored in queued jobs. Keep it small, serializable, and free of secrets. Store identifiers instead of Eloquent models.
+
+:::warning
+Every target must resolve to a different output filename. Otherwise, a later target overwrites an earlier output. Use a target key in a path only when the application controls its format.
+:::
+
+## Generate output files
+
+Generate every target returned by `targets()`:
+
+```bash
+php artisan feed:generate products
+```
+
+Generate one or more selected targets:
+
+```bash
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
+```
+
+Explicit keys use `findTarget()` instead of enumerating `targets()`. Duplicate keys are processed once, in first-seen order. All requested keys are resolved before generation starts.
+
+Full enumeration is streamed rather than atomic. If `targets()` fails after yielding some values, earlier targets may already be generated or queued. A scheduled feed generates every target, and queue mode dispatches one job per target.
+
+Normal record-count splitting applies separately to each target. For example, `partners/42.xml` becomes `partners/42-1.xml`, `partners/42-2.xml`, and so on.
+
+## Complete example
+
+Follow the [multiple targeted feed files recipe](https://feeds.dragon-code.pro/1.x/receipt-target-feeds/) for a complete feed class, generation commands, and expected output paths.
+
+## See Also
+
+- [Multiple targeted feed files recipe](https://feeds.dragon-code.pro/1.x/receipt-target-feeds/)
+- [Generation & schedule](https://feeds.dragon-code.pro/1.x/generation/)
+- [Feeds and data API](https://feeds.dragon-code.pro/1.x/api/feed/#feed-targets)
+
+---
+
+# Supported formats
+
+- **xml** — Generates feeds in XML format.
+- **json** — Generates feeds in JSON format.
+- **jsonl** — Generates feeds in JSON Lines format.
+- **csv** — Generates feeds in CSV format.
+- **rss** — Generates feeds in RSS Atom format.
+
+By default, the `xml` format is used.
+
+## Per-feed converter options
+
+Apply `DragonCode\LaravelFeed\Attributes\Config` to a feed class to override its converter settings:
+
+```php
+use App\Models\User;
+use DragonCode\LaravelFeed\Attributes\Config;
+use DragonCode\LaravelFeed\Enums\FeedFormatEnum;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+#[Config('delimiter', ',')]
+#[Config('enclosure', "'")]
+#[Config('lineEnding', "\r\n")]
+class UserFeed extends Feed
+{
+    protected FeedFormatEnum $format = FeedFormatEnum::Csv;
+
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+}
+```
+
+Repeat the attribute for each setting. If a name is repeated on the same class, the last declared attribute wins.
+
+Setting names are converter constructor parameter names. Only supplied values override the application configuration; other settings keep their configured values. `lineEnding` corresponds to `feeds.converters.csv.line_ending`.
+
+| Format | Supported keys |
+| --- | --- |
+| `csv` | `delimiter`, `enclosure`, `escape`, `lineEnding` |
+| `json` | `options`, `pretty` |
+| `jsonl` | `options` |
+| `xml`, `rss` | `pretty` |
+
+Parent feed options are inherited, and child keys override parent keys. Use only keys supported by the selected format; unsupported keys throw `InvalidArgumentException`. The attribute does not change the application configuration or other feeds.
+
+JSON Lines always writes one item per line, and `JSON_PRETTY_PRINT` is removed from `options`. Custom container bindings must honor the supplied constructor parameters.
+
+A custom `DragonCode\LaravelFeed\Helpers\ConverterHelper` that overrides `get()` or `resolve()` must also override the protected `resolveWithOptions(FeedFormatEnum $format, array $options = []): Converter` hook to use per-feed options. Pass `$options` to `Container::make()` so settings apply before the converter is initialized. Otherwise, resolving a feed with options throws `LogicException`; feeds without options retain the legacy helper behavior.
+
+## See Also
+
+- [Elements](https://feeds.dragon-code.pro/1.x/elements/)
+- [Directives](https://feeds.dragon-code.pro/1.x/directives/)
+- [Create feeds](https://feeds.dragon-code.pro/1.x/create-feeds/)
+
+---
+
+# Elements
+
+## Root element
+
+**Formats:** XML, RSS, JSON
+
+:::tip
+By default, the name of the root element is derived from the base name of the feed class.
+
+For example, for the `App\Feeds\FooBarFeed` class, the name is `foo_bar`.
+:::
+
+To add a root element and/or its attributes, override the `root` method:
+
+```php
+namespace App\Feeds;
+
+use App\Models\User;
+use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+use function now;
+
+class RootElementFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function root(): ElementData
+    {
+        return new ElementData(
+            name      : 'foo',
+            attributes: [
+                'count' => $this->builder()->count(),
+
+                'generated_at' => now(),
+            ],
+        );
+    }
+}
+```
+
+To disable the addition of the root element, specify its name as empty — `null` or `""`.
+
+This code will result in:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<foo count="2" generated_at="2025-09-04T04:08:12+00:00">
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</foo>
+```
+
+## Information
+
+**Formats:** XML, RSS, JSON, JSONL, CSV
+
+To add information to the beginning of the root element (if present) or without it, override the `info` method in the feed class and create an object that extends the `DragonCode\LaravelFeed\Feeds\Info\FeedInfo` class:
+
+```php
+namespace App\Feeds;
+
+use App\Feeds\Info\InfoMethodFeedInfo;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Database\Eloquent\Builder;
+
+class InfoMethodFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function info(): FeedInfo
+    {
+        return new InfoMethodFeedInfo;
+    }
+}
+```
+
+```php
+namespace App\Feeds\Info;
+
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+
+use function config;
+
+class InfoMethodFeedInfo extends FeedInfo
+{
+    public function toArray(): array
+    {
+        return [
+            'company' => config('app.name'),
+            'url'     => config('app.url'),
+        ];
+    }
+}
+```
+
+This code will result in:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<info_method>
+
+<company>Laravel</company>
+<url>https://example.com</url>
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</info_method>
+```
+
+If you need to change the order in which the root element is output relative to the information block, set the `beforeInfo` parameter in the `root` method:
+
+```php
+namespace App\Feeds;
+
+use App\Feeds\Info\InfoMethodFeedInfo;
+use App\Models\User;
+use DragonCode\LaravelFeed\Data\ElementData;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Database\Eloquent\Builder;
+
+class InfoMethodBeforeFalseTest extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function root(): ElementData
+    {
+        return new ElementData(
+            name      : 'info_method',
+            beforeInfo: false
+        );
+    }
+
+    public function info(): FeedInfo
+    {
+        return new InfoMethodFeedInfo;
+    }
+}
+```
+
+This code will result in:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<company>Laravel</company>
+<url>https://example.com</url>
+
+<info_method>
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</info_method>
+```
+
+## Header & footer
+
+**Formats:** XML, RSS, JSON
+
+To change the header and footer, override the `header` and `footer` methods:
+
+```php
+namespace App\Feeds;
+
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class HeaderFooterFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function header(): string
+    {
+        return '<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">';
+    }
+
+    public function footer(): string
+    {
+        return "\n<g:footer>This is a custom footer element</g:footer>";
+    }
+}
+```
+
+This code will result in:
+
+```xml
+<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+<header_footer>
+
+<user>
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user>
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</header_footer>
+
+<g:footer>This is a custom footer element</g:footer>
+```
+
+## Attributes
+
+**Formats:** XML, RSS
+
+```php
+namespace App\Feeds;
+
+use App\Feeds\Items\AttributeFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class AttributeFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new AttributeFeedItem($model);
+    }
+}
+```
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class AttributeFeedItem extends FeedItem
+{
+    public function attributes(): array
+    {
+        return [
+            'created_at' => $this->model->created_at,
+        ];
+    }
+}
+```
+
+This code will result in:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<attribute>
+
+<user created_at="2025-09-04T04:08:12+00:00">
+  <id>1</id>
+  <name>User 1</name>
+</user>
+<user created_at="2025-09-04T04:08:12+00:00">
+  <id>2</id>
+  <name>User 2</name>
+</user>
+
+</attribute>
+```
+
+## Split files
+
+**Formats:** XML, RSS, JSON, JSONL, CSV
+
+If necessary, you can limit the number of lines output to a file, as well as the number of files themselves. To do this, use the `perFile` and `maxFiles` functions.
+
+```php
+namespace App\Feeds;
+
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class AttributeFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function perFile(): int
+    {
+        return 100;
+    }
+
+    public function maxFiles(): int
+    {
+        return 10;
+    }
+}
+```
+
+The methods work independently of each other.
+
+When splitting, a sequential number will be added to the file names. For example:
+
+- `attribute-1.xml`
+- `attribute-2.xml`
+- `attribute-3.xml`
+
+## See Also
+
+- [Directives](https://feeds.dragon-code.pro/1.x/directives/)
+- [Supported formats](https://feeds.dragon-code.pro/1.x/supported-formats/)
+- [Location](https://feeds.dragon-code.pro/1.x/location/)
+
+---
+
+# Directives
+
+**Formats:** XML
+
+:::note[Reserved directives]
+- [`@attributes`](#_attributes)
+- [`@value`](#_value)
+- [`@cdata`](#_cdata)
+- [`@mixed`](#_mixed)
+- [`@custom`](#_custom)
+
+The use of directives is available only when generating feeds in the XML format.
+:::
+
+## @attributes
+
+Indicates an array of attributes.
+
+You can use a key named `@attributes` to add attributes to a node:
+
+```php
+namespace App\Feeds;
+
+use App\Feeds\Info\AttributesDirectiveFeedInfo;
+use App\Feeds\Items\AttributesDirectiveFeedItem;
+use App\Models\User;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class AttributesDirectiveFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return User::query();
+    }
+
+    public function info(): FeedInfo
+    {
+        return new AttributesDirectiveFeedInfo;
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return new AttributesDirectiveFeedItem($model);
+    }
+}
+```
+
+```php
+namespace App\Feeds\Info;
+
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+
+use function fake;
+
+class AttributesDirectiveFeedInfo extends FeedInfo
+{
+    public function toArray(): array
+    {
+        return [
+            'company' => [
+                '@attributes' => ['since' => fake()->year],
+            ],
+
+            'url' => config('app.url'),
+        ];
+    }
+}
+```
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class AttributesDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->model->name,
+
+            'contact' => [
+                '@attributes' => [
+                    'email' => $this->model->email,
+                    'phone' => '555-000-' . $this->model->id,
+                ],
+            ],
+        ];
+    }
+}
+```
+
+This code will result in:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<attributes_directive>
+
+<company since="1994"/>
+<url>https://example.com</url>
+
+<user>
+  <name>User 1</name>
+  <contact email="user1@example.com" phone="555-000-1"/>
+</user>
+<user>
+  <name>User 2</name>
+  <contact email="user2@example.com" phone="555-000-2"/>
+</user>
+
+</attributes_directive>
+```
+
+## @value
+
+Indicates the applicable value “as it is”.
+
+:::tip
+Note that the value of the `@value` field must be a string.
+:::
+
+You can use a key named `@value` to add value to a node:
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class ValueDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => [
+                '@value' => $this->model->name,
+            ],
+
+            'contact' => [
+                '@attributes' => ['type' => 'email'],
+                '@value'      => $this->model->email,
+            ],
+        ];
+    }
+}
+```
+
+This code will result in:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<value_directive>
+
+<user>
+  <name>User 1</name>
+  <contact type="email">user1@example.com</contact>
+</user>
+<user>
+  <name>User 2</name>
+  <contact type="email">user2@example.com</contact>
+</user>
+
+</value_directive>
+```
+
+## @cdata
+
+Allows the use of XML markup without transformation.
+
+:::tip
+It is also possible to wrap the value of a node into a CDATA section. This allows you to use reserved characters.
+:::
+
+You can use a key named `@cdata` to add CDATA to a node:
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+use function sprintf;
+
+class CdataDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => [
+                '@cdata' => sprintf('<h1>%s</h1>', $this->model->name),
+            ],
+
+            'email' => $this->model->email,
+        ];
+    }
+}
+```
+
+This code will result in:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<cdata_directive>
+
+<user>
+  <name><![CDATA[<h1>User 1</h1>]]></name>
+  <email>user1@example.com</email>
+</user>
+<user>
+  <name><![CDATA[<h1>User 2</h1>]]></name>
+  <email>user2@example.com</email>
+</user>
+
+</cdata_directive>
+```
+
+## @mixed
+
+Allows you to use XML markup directly within the structure of the document.
+
+To insert XML fragments “as is”, use the `@mixed` directive:
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+class MixedDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->model->name,
+
+            '@mixed' => <<<XML
+                <some>
+                    <first>Foo</first>
+                    <second>{$this->model->email}</second>
+                </some>
+                XML,
+        ];
+    }
+}
+```
+
+This code will result in:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<mixed_directive>
+
+<user>
+  <name>User 1</name>
+  <some>
+    <first>Foo</first>
+    <second>user1@example.com</second>
+</some>
+</user>
+<user>
+  <name>User 2</name>
+  <some>
+    <first>Foo</first>
+    <second>user2@example.com</second>
+</some>
+</user>
+
+</mixed_directive>
+```
+
+## @custom
+
+Describes the possibility of listing an array of elements with the same keys.
+
+In some cases, you need to place an array of elements with the same names.
+
+To do this, add a `@` symbol to the start of the key name:
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+use function fake;
+
+class ArrayDirectiveFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->model->name,
+
+            '@avatar' => [
+                fake()->imageUrl(),
+                fake()->imageUrl(),
+            ],
+
+            '@images' => [
+                [
+                    '@attributes' => ['name' => fake()->words(asText: true)],
+                    '@value'      => fake()->imageUrl(),
+                ],
+                [
+                    '@attributes' => ['name' => fake()->words(asText: true)],
+                    '@value'      => fake()->imageUrl(),
+                ],
+            ],
+        ];
+    }
+}
+```
+
+This code will result in:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<array_directive>
+
+<user>
+  <name>User 1</name>
+  <avatar>https://via.placeholder.com/640x480.png/00ffff?text=aut</avatar>
+  <avatar>https://via.placeholder.com/640x480.png/0022dd?text=et</avatar>
+  <images name="doloremque distinctio facere">https://via.placeholder.com/640x480.png/0099dd?text=ea</images>
+  <images name="fuga odio expedita">https://via.placeholder.com/640x480.png/00cc77?text=sint</images>
+</user>
+<user>
+  <name>User 2</name>
+  <avatar>https://via.placeholder.com/640x480.png/00ff99?text=est</avatar>
+  <avatar>https://via.placeholder.com/640x480.png/003300?text=non</avatar>
+  <images name="distinctio et aliquam">https://via.placeholder.com/640x480.png/0099aa?text=accusantium</images>
+  <images name="consequatur soluta nemo">https://via.placeholder.com/640x480.png/0099cc?text=ab</images>
+</user>
+
+</array_directive>
+```
+
+## See Also
+
+- [Elements](https://feeds.dragon-code.pro/1.x/elements/)
+- [Supported formats](https://feeds.dragon-code.pro/1.x/supported-formats/)
+- [Yandex recipe](https://feeds.dragon-code.pro/1.x/receipt-yandex/)
+
+---
+
+# Eloquent
+
+Model saves automatically store `Str::slug(title)` in `slug` through `SlugCast`, using the final stored `title` after custom title setters. Custom title mutators and `saveQuietly()` are supported. Renaming the title changes the slug. For example, `Products` becomes `products`. Query Builder bulk updates and inserts bypass model saving; use model `create()`, `update()`, or `save()` instead.
+
+Choose titles that produce distinct, non-empty slugs for selected and scheduled feeds. A title that normalizes to an empty slug cannot be selected. Multiple non-deleted registrations with the same slug cause `Illuminate\Database\MultipleRecordsFoundException` on lookup; no suffix is added automatically.
+
+## Custom feed registration model
+
+Set `feeds.model` to an application model when feed registration records need additional columns, casts, relationships, or methods. The custom model must extend `DragonCode\LaravelFeed\Models\Feed`.
+
+```php
+namespace App\Models;
+
+use DragonCode\LaravelFeed\Models\Feed as BaseFeed;
+
+class Feed extends BaseFeed
+{
+    protected $fillable = [
+        'class',
+        'title',
+        'expression',
+        'is_active',
+        'last_activity',
+        'is_foo',
+        'is_bar',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            ...parent::casts(),
+            'is_foo' => 'boolean',
+            'is_bar' => 'boolean',
+        ];
+    }
+}
+```
+
+Register the model in `config/feeds.php`:
+
+```php
+'model' => App\Models\Feed::class,
+```
+
+Add the custom columns to the feeds table in an application migration. Keep every attribute accepted by mass assignment in `$fillable`.
+
+`FeedQuery` uses the configured model for create, find, list, update, delete, and restore operations. Pass application-specific values through `extra` when creating a record. These values are applied last and can override the method arguments:
+
+```php
+$feed = app(FeedQuery::class)->create(
+    class: SomeFeed::class,
+    title: 'Some',
+    expression: '0 */12 * * *',
+    extra: [
+        'is_foo' => true,
+        'is_bar' => true,
+    ]
+);
+```
+
+The application model can also use the regular Eloquent API:
+
+```php
+use App\Models\Feed;
+
+$feed = Feed::create([
+    'class' => SomeFeed::class,
+    'title' => 'Some',
+    'expression' => '0 */12 * * *',
+    'is_active' => true,
+    'is_foo' => true,
+    'is_bar' => true,
+]);
+```
+
+:::note
+The configured model is resolved at runtime. Static analysis sees the result of `FeedQuery::create()` as the package base model. Use `App\Models\Feed::create()` or an explicit local type when autocomplete for application-specific properties is required.
+:::
+
+## Chunk size
+
+Database queries use chunks, which are `1000` items by default. You can change this by overriding the `chunkSize` method:
+
+```php
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    public function chunkSize(): int
+    {
+        return 500;
+    }
+}
+```
+
+## See Also
+
+- [Create feeds](https://feeds.dragon-code.pro/1.x/create-feeds/)
+- [Generation & schedule](https://feeds.dragon-code.pro/1.x/generation/)
+- [Extending functionality](https://feeds.dragon-code.pro/1.x/extending-functionality/)
+
+---
+
+# Location
+
+By default, feeds are stored in `public` storage, and the file name will be automatically generated from the feed class name after `App\Feeds\` in `kebab-case` format. For example:
+
+```text
+# App\Feeds\UserFeed
+user.xml
+
+# App\Feeds\Sitemaps\ProductFeed
+sitemaps-product.xml
+```
+
+You can change these values by overriding the `$storage` property and the `filename` method:
+
+```php
+use DragonCode\LaravelFeed\Feeds\Feed;
+
+class UserFeed extends Feed
+{
+    protected string $storage = 's3';
+
+    public function filename(): string
+    {
+        return 'some/path/will/be/here.xml';
+    }
+}
+```
+
+## Supported disks
+
+Feed generation supports Laravel disks that resolve to `Illuminate\Filesystem\FilesystemAdapter`. This includes the `local`, `s3`, `sftp`, and `ftp` drivers when their Flysystem adapters are installed and configured. Custom adapters are supported when they provide writable streams, file moves, directory management and listings, and deletion through Flysystem.
+
+:::warning
+Read-only disks and custom disks that implement only `Illuminate\Contracts\Filesystem\Filesystem` are not supported. A custom disk that does not resolve to `Illuminate\Filesystem\FilesystemAdapter` fails before the feed database query starts with `UnsupportedStorageDiskException`. A Laravel read-only disk still resolves to `FilesystemAdapter`, so the feed query and local staging finish before the publication write fails. `GeneratorService` wraps that storage failure in `FeedGenerationException`.
+:::
+
+## Path contract
+
+- `storage()` returns the configured `FilesystemAdapter`.
+- `storagePath()` returns the disk-relative path used for storage operations, including an optional split-file suffix.
+- `path()` returns the path resolved by Laravel's adapter. It is an absolute filesystem path for a local disk and an adapter-resolved path for a remote disk.
+
+## Publication guarantees
+
+Every feed part is completed before publication starts. Local disks publish staged files with filesystem moves under an exclusive application lock. If a move fails, Laravel Feeds attempts to restore every previous file from its staging backup.
+
+Remote disks receive complete staged files through Flysystem streams before published objects are changed. Publication then moves each staged object into place and attempts the same rollback on failure.
+
+:::warning
+Remote moves can be implemented as copy-and-delete operations and may be eventually consistent. Atomic replacement of one object or an entire split feed is therefore not guaranteed. The publication lock is local to the application host, so generators running on different hosts require an external distributed lock if they can publish the same feed concurrently.
+:::
+
+## See Also
+
+- [Generation & schedule](https://feeds.dragon-code.pro/1.x/generation/)
+- [Elements](https://feeds.dragon-code.pro/1.x/elements/)
+- [Events](https://feeds.dragon-code.pro/1.x/events/)
+
+---
+
+# Presets
+
+You can quickly create feeds using the out-of-the-box presets:
+
+- `DragonCode\LaravelFeed\Presets\InstagramFeedPreset`
+- `DragonCode\LaravelFeed\Presets\YandexFeedPreset`
+- `DragonCode\LaravelFeed\Presets\SitemapFeedPreset`
+- `DragonCode\LaravelFeed\Presets\RssFeedPreset`
+
+Create a feed class manually or via the `php artisan make:feed <name>` console command and extend the preset you need. For example:
+
+```php
+use DragonCode\LaravelFeed\Presets\InstagramFeedPreset;
+use DragonCode\LaravelFeed\Presets\RssFeedPreset;
+use DragonCode\LaravelFeed\Presets\SitemapFeedPreset;
+use DragonCode\LaravelFeed\Presets\YandexFeedPreset;
+
+class ProductFeed extends InstagramFeedPreset {}
+class ProductFeed extends YandexFeedPreset {}
+class ProductFeed extends SitemapFeedPreset {}
+class ProductFeed extends RssFeedPreset {}
+```
+
+Then implement the two required methods — `builder` and `item`. For example:
+
+```php
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\InstagramFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class InstagramFeed extends InstagramFeedPreset
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->title($model->title)
+            ->description($model->description)
+            ->brand($model->brand) // By default, null
+            ->url($model->url)
+            ->price(price: $model->price, salePrice: $model->price) // By default, salePrice = price
+            ->image($model->images[0])
+            ->images($model->images) // By default, null
+            ->availability($model->quantity > 0 ? 'in stock' : 'out of stock') // By default, 'in stock'
+            ->status($model->quantity > 0 ? 'active' : 'inactive') // By default, 'active'
+            ->condition('new')      // By default, 'new'
+            ->group(12345)          // By default, null
+            ->googleCategory(123)   // By default, null
+            ->facebookCategory(456) // By default, null
+            ->additional([
+                'g:foo' => 'Some foo',
+                'g:bar' => 'Some bar',
+
+                'g:baz' => [
+                    '@attributes' => ['qwe' => 'rty'],
+                    '@value'      => 'Some baz',
+                ],
+
+                '@g:arrayable' => [
+                    'a',
+                    'b',
+                    'c',
+                ],
+            ]);
+    }
+}
+```
+
+Technically, preset classes are the same as the base `Feed` class, except they include the service-specific logic they target, including how information blocks and items are built.
+
+## Defaults
+
+### Instagram
+
+<details>
+<summary>class InstagramFeedItem extends FeedItem</summary>
+
+```php
+namespace DragonCode\LaravelFeed\Presets\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+use function blank;
+use function collect;
+
+/** @property-read \Illuminate\Database\Eloquent\Model $model */
+class InstagramFeedItem extends FeedItem
+{
+    protected string $title;
+
+    protected string $description;
+
+    protected string $url;
+
+    protected string $image;
+
+    protected ?array $images = null;
+
+    protected ?string $brand = null;
+
+    protected string $condition = 'new';
+
+    protected string $availability = 'in stock';
+
+    protected float $price;
+
+    protected float $salePrice;
+
+    protected ?string $groupId = null;
+
+    protected ?string $status = 'active';
+
+    protected ?int $googleCategory = null;
+
+    protected ?int $facebookCategory = null;
+
+    protected array $additional = [];
+
+    public function name(): string
+    {
+        return 'item';
+    }
+
+    public function title(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function description(string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function brand(string $name): static
+    {
+        $this->brand = $name;
+
+        return $this;
+    }
+
+    public function url(string $url): static
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    public function image(string $url): static
+    {
+        $this->image = $url;
+
+        return $this;
+    }
+
+    public function images(?array $urls): static
+    {
+        $this->images = $urls;
+
+        return $this;
+    }
+
+    public function condition(string $condition): static
+    {
+        $this->condition = $condition;
+
+        return $this;
+    }
+
+    public function availability(string $availability): static
+    {
+        $this->availability = $availability;
+
+        return $this;
+    }
+
+    public function price(float $price, ?float $salePrice = null): static
+    {
+        $this->price     = $price;
+        $this->salePrice = $salePrice ?? $price;
+
+        return $this;
+    }
+
+    public function group(int|string|null $id): static
+    {
+        $this->groupId = (string) $id ?: null;
+
+        return $this;
+    }
+
+    public function status(?string $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function googleCategory(?int $id): static
+    {
+        $this->googleCategory = $id;
+
+        return $this;
+    }
+
+    public function facebookCategory(?int $id): static
+    {
+        $this->facebookCategory = $id;
+
+        return $this;
+    }
+
+    public function additional(array $additional): static
+    {
+        $this->additional = $additional;
+
+        return $this;
+    }
+
+    public function toArray(): array
+    {
+        return collect([
+            'g:id' => $this->model->getKey(),
+
+            'g:title'       => ['@cdata' => $this->title],
+            'g:description' => ['@cdata' => $this->description],
+
+            'g:link'       => $this->url,
+            'g:image_link' => $this->image,
+
+            '@g:additional_image_link' => $this->images,
+
+            'g:brand'        => $this->brand,
+            'g:condition'    => $this->condition,
+            'g:availability' => $this->availability,
+
+            'g:price'      => $this->price,
+            'g:sale_price' => $this->salePrice,
+
+            'g:item_group_id' => $this->groupId,
+
+            'g:status' => $this->status,
+
+            'g:google_product_category' => $this->googleCategory,
+            'g:fb_product_category'     => $this->facebookCategory,
+        ])
+            ->merge($this->additional)
+            ->reject(static fn (mixed $value) => blank($value))
+            ->all();
+    }
+}
+```
+
+</details>
+
+### Yandex
+
+<details>
+<summary>class YandexFeedItem extends FeedItem</summary>
+
+```php
+namespace DragonCode\LaravelFeed\Presets\Items;
+
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+use function blank;
+use function collect;
+
+/** @property-read \Illuminate\Database\Eloquent\Model $model */
+class YandexFeedItem extends FeedItem
+{
+    protected int|string|null $attributeId = null;
+
+    protected bool $attributeAvailable = true;
+
+    protected string $attributeType = 'vendor.model';
+
+    protected string $url;
+
+    protected ?string $barcode = null;
+
+    protected string $title;
+
+    protected string $description;
+
+    protected string $price;
+
+    protected string $currencyId = 'RUB';
+
+    protected ?string $vendor = null;
+
+    protected array $images;
+
+    protected array $additional = [];
+
+    public function name(): string
+    {
+        return 'offer';
+    }
+
+    public function attributeId(int|string|null $id): static
+    {
+        $this->attributeId = $id;
+
+        return $this;
+    }
+
+    public function attributeAvailable(bool $available): static
+    {
+        $this->attributeAvailable = $available;
+
+        return $this;
+    }
+
+    public function attributeType(string $type): static
+    {
+        $this->attributeType = $type;
+
+        return $this;
+    }
+
+    public function url(string $url): static
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    public function barcode(string $barcode): static
+    {
+        $this->barcode = $barcode;
+
+        return $this;
+    }
+
+    public function title(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function description(string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function price(float|string $price): static
+    {
+        $this->price = (string) $price;
+
+        return $this;
+    }
+
+    public function currencyId(string $currencyId): static
+    {
+        $this->currencyId = $currencyId;
+
+        return $this;
+    }
+
+    public function vendor(?string $vendor): static
+    {
+        $this->vendor = $vendor;
+
+        return $this;
+    }
+
+    public function images(array $images): static
+    {
+        $this->images = $images;
+
+        return $this;
+    }
+
+    public function additional(array $additional): static
+    {
+        $this->additional = $additional;
+
+        return $this;
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'id'        => $this->attributeId,
+            'available' => $this->attributeAvailable,
+            'type'      => $this->attributeType,
+        ];
+    }
+
+    public function toArray(): array
+    {
+        return collect([
+            'url' => $this->url,
+
+            'barcode'     => $this->barcode,
+            'name'        => $this->title,
+            'description' => $this->description,
+
+            'price' => $this->price,
+
+            'currencyId' => $this->currencyId,
+            'vendor'     => $this->vendor,
+
+            '@picture' => $this->images,
+        ])
+            ->merge($this->additional)
+            ->reject(static fn (mixed $value) => blank($value))
+            ->all();
+    }
+}
+```
+
+</details>
+
+### Sitemap
+
+<details>
+<summary>class SitemapFeedItem extends FeedItem</summary>
+
+```php
+namespace DragonCode\LaravelFeed\Presets\Items;
+
+use Carbon\Carbon;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+/** @property-read \Illuminate\Database\Eloquent\Model $model */
+class SitemapFeedItem extends FeedItem
+{
+    protected string $url;
+
+    protected string $modifiedAt;
+
+    protected float $priority = 0.9;
+
+    public function name(): string
+    {
+        return 'url';
+    }
+
+    public function url(string $url): static
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    public function modifiedAt(Carbon $updatedAt): static
+    {
+        $this->modifiedAt = $updatedAt->toIso8601String();
+
+        return $this;
+    }
+
+    public function priority(float $priority): static
+    {
+        $this->priority = $priority;
+
+        return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'loc'      => $this->url,
+            'lastmod'  => $this->modifiedAt,
+            'priority' => $this->priority,
+        ];
+    }
+}
+```
+
+</details>
+
+### RSS
+
+<details>
+<summary>class RssFeedItem extends FeedItem</summary>
+
+```php
+namespace DragonCode\LaravelFeed\Presets\Items;
+
+use Carbon\Carbon;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+use function blank;
+use function collect;
+
+/** @property-read \Illuminate\Database\Eloquent\Model $model */
+class RssFeedItem extends FeedItem
+{
+    protected ?string $guid = null;
+
+    protected string $title;
+
+    protected string $url;
+
+    protected string $description;
+
+    protected ?string $category = null;
+
+    protected ?Carbon $publishedAt = null;
+
+    public array $additional = [];
+
+    public function guid(int|string $guid): static
+    {
+        $this->guid = (string) $guid;
+
+        return $this;
+    }
+
+    public function title(string $title): static
+    {
+        $this->title = $title;
+
+        return $this;
+    }
+
+    public function url(string $url): static
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    public function description(string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function category(string $category): static
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+    public function publishedAt(Carbon $publishedAt): static
+    {
+        $this->publishedAt = $publishedAt;
+
+        return $this;
+    }
+
+    public function additional(array $additional): static
+    {
+        $this->additional = $additional;
+
+        return $this;
+    }
+
+    public function toArray(): array
+    {
+        return collect([
+            'title' => $this->title,
+
+            'link' => $this->url,
+            'guid' => $this->guid,
+
+            'description' => ['@cdata' => $this->description],
+
+            'category' => $this->category,
+
+            'pubDate' => $this->publishedAt->toRfc1123String(),
+        ])
+            ->merge($this->additional)
+            ->reject(static fn (mixed $value) => blank($value))
+            ->all();
+    }
+}
+```
+
+</details>
+
+## See Also
+
+- [Instagram recipe](https://feeds.dragon-code.pro/1.x/receipt-instagram/)
+- [Yandex recipe](https://feeds.dragon-code.pro/1.x/receipt-yandex/)
+- [Sitemap recipe](https://feeds.dragon-code.pro/1.x/receipt-sitemap/)
+
+---
+
+# Events
+
+Feeds dispatch two events when running the command:
+
+- **`DragonCode\LaravelFeed\Events\FeedStartingEvent`** — The `FeedStartingEvent` is dispatched after storage and path preflight, before converter resolution and staging. It does not mean that a draft file exists.
+- **`DragonCode\LaravelFeed\Events\FeedFinishedEvent`** — The `FeedFinishedEvent` is dispatched after every generated file has been published successfully. A failed generation does not dispatch this event.
+
+Both events expose `$feed` with the generated feed class and nullable `$target` with the target key. `$target` is `null` for an ordinary feed.
+
+## Finished event contract
+
+The finished event exposes these public properties:
+
+- `$paths` contains every published file path in output order.
+- `$path` remains available for backward compatibility and contains the first published path. Use `$paths` when a feed can be split across files.
+
+`GeneratorService::feed()` returns a `GenerationResultData` object. Its `$paths` property contains the same ordered paths, and its `$records` property maps each path to the number of records written to that file.
+
+## See Also
+
+- [Generation & schedule](https://feeds.dragon-code.pro/1.x/generation/)
+- [Location](https://feeds.dragon-code.pro/1.x/location/)
+- [Extending functionality](https://feeds.dragon-code.pro/1.x/extending-functionality/)
+
+---
+
+# Extending functionality
+
+## Conditional clauses
+
+:::note
+Conditional clauses are available for `Feed`, `FeedInfo` and `FeedItem` classes.
+:::
+
+Sometimes, you may want certain feed clauses to apply to a feed based on another condition. For instance, you may only want to apply a where statement if a given input value is present or another attribute has a value. You can accomplish this using the `when` method:
+
+```php
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->when($model->category, function (ProductFeedItem $item) {
+                $item->title .= ' (first)';
+            });
+    }
+}
+```
+
+The `when` method only executes the given closure when the first argument is `true`. If the first argument is `false`, the closure will not be executed. So, in the example above, the closure given to the `when` method will only be invoked if the `category` field is present on the model and evaluates to `true`.
+
+You may pass another closure as the third argument to the `when` method. This closure will only execute if the first argument evaluates to `false`. To illustrate how this feature may be used, we will use it to configure the model title suffix:
+
+```php
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->when(
+                value   : $model->category,
+                callback: function (ProductFeedItem $item) {
+                    $item->title .= ' (first)';
+                },
+                default : function (ProductFeedItem $item) {
+                    $item->title .= ' (second)';
+                },
+            );
+    }
+}
+```
+
+Additionally, the inverse method `unless` is available. In this case, the processing logic is the exact opposite.
+
+```php
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends Feed
+{
+    public function item(Model $model): FeedItem
+    {
+        return (new ProductFeedItem($model))
+            ->unless(
+                value   : $model->category,
+                callback: function (ProductFeedItem $item) {
+                    $item->title .= ' (second)';
+                },
+                default : function (ProductFeedItem $item) {
+                    $item->title .= ' (first)';
+                },
+            );
+    }
+}
+```
+
+## Macroable
+
+`Feed`, `FeedItem`, and `FeedInfo` are "macroable", which allows you to add additional methods to them at runtime. The `macro` method accepts a closure that will be executed when your macro is called. The macro closure may access the feed's other methods via `$this`, just as if it were a real method of the feed classes.
+
+For example, the following code adds a `customFilename` method to the `Feed` class:
+
+```php
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        Feed::macro('customFilename', function (Feed $feed, string $name) {
+            $this->filename = $name;
+
+            return $this;
+        });
+    }
+}
+```
+
+Additionally, here are examples for `FeedInfo` and `FeedItem`:
+
+```php
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        FeedInfo::macro('titleWithPrefix', function () {
+            return sprintf('[%s]: %s', date('Y'), $this->title);
+        });
+    }
+}
+
+class ProductFeedInfo extends FeedInfo
+{
+    public function __construct(
+        protected string $title,
+    ) {}
+
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->titleWithPrefix(),
+        ];
+    }
+}
+```
+
+```php
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use Illuminate\Support\ServiceProvider;
+
+class FeedServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        FeedItem::macro('titleWithPrefix', function () {
+            return sprintf('[%s]: %s]', $this->model->getKey(), $this->model->title);
+        });
+    }
+}
+
+class ProductFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'title' => $this->titleWithPrefix(),
+        ];
+    }
+}
+```
+
+## Custom transformers
+
+A transformer converts a supported value before the converter serializes it. Register transformer class names in `config/feeds.php`. Laravel resolves each class through the service container, so constructor dependencies and custom container bindings are supported.
+
+```php
+namespace App\Feeds\Transformers;
+
+use App\Services\PriceFormatter;
+use DragonCode\LaravelFeed\Contracts\Transformer;
+
+class PriceTransformer implements Transformer
+{
+    public function __construct(
+        protected PriceFormatter $formatter,
+    ) {}
+
+    public function allow(mixed $value): bool
+    {
+        return is_float($value);
+    }
+
+    public function transform(mixed $value): string
+    {
+        return $this->formatter->format($value);
+    }
+}
+```
+
+Add the transformer to the configured list after the built-in transformers:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use App\Feeds\Transformers\PriceTransformer;
+use DragonCode\LaravelFeed\Transformers;
+
+return [
+    'transformers' => [
+        Transformers\BoolTransformer::class,
+        Transformers\DateTimeTransformer::class,
+        Transformers\EnumTransformer::class,
+        PriceTransformer::class,
+    ],
+];
+```
+
+The configured transformers run in declaration order. Each `allow()` call receives the current value, including changes made by earlier transformers, and every matching transformer may update it. Duplicate entries are removed after container resolution while the first occurrence keeps its position.
+
+A converter builds this ordered pipeline once and reuses the same transformer instances for every field in that feed generation.
+
+### Prepending feed transformers
+
+Override `transformers()` on a feed to prepend transformers for that feed. The method returns transformer class names, and Laravel resolves them through the service container in the same way as the global list.
+
+For example, define a date transformer with a feed-specific format:
+
+```php
+namespace App\Feeds\Transformers;
+
+use DragonCode\LaravelFeed\Transformers\DateTimeTransformer;
+
+class FeedDateTimeTransformer extends DateTimeTransformer
+{
+    protected function format(): string
+    {
+        return 'Y-m-d';
+    }
+}
+```
+
+Then return it from the feed:
+
+```php
+namespace App\Feeds;
+
+use App\Feeds\Transformers\FeedDateTimeTransformer;
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use Illuminate\Database\Eloquent\Builder;
+
+class ProductFeed extends Feed
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function transformers(): array
+    {
+        return [
+            FeedDateTimeTransformer::class,
+        ];
+    }
+}
+```
+
+The prepended list does not replace the global list from `config/feeds.php`. Transformers run in this order:
+
+1. Prepended transformers returned by `transformers()`.
+2. Global transformers from `config/feeds.php`.
+3. Converter-specific transformers required by the selected output format.
+
+A prepended transformer can therefore format a date first. The global date transformer receives the resulting string and skips it, while other global transformers still process matching fields.
+
+## See Also
+
+- [Create feeds](https://feeds.dragon-code.pro/1.x/create-feeds/)
+- [Eloquent](https://feeds.dragon-code.pro/1.x/eloquent/)
+- [Directives](https://feeds.dragon-code.pro/1.x/directives/)
+
+---
+
+# Multiple targeted feed files
+
+This recipe registers one `ProductFeed` and uses feed targets to generate multiple XML files. Each target provides parameters that `builder()` uses for its own query conditions and `filename()` uses for its own output path. The `available` and `unavailable` targets are only examples; a target can represent any business condition.
+
+## Feed targets versus perFile()
+
+`perFile()` splits one query result into sequential files after a fixed number of records. The query and selection conditions stay the same across those files.
+
+`FeedTarget` runs the feed separately for every target. The application can therefore use `target()` to change the query conditions and filename for each output. Both mechanisms can be combined: select a target-specific dataset first, then split that dataset by record count.
+
+This example creates the following target files:
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## Create the feed
+
+```bash
+php artisan make:feed Product
+```
+
+## Configure output
+
+Replace the generated feed class with:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets;
+use DragonCode\LaravelFeed\Contracts\HasFeedTargets;
+use DragonCode\LaravelFeed\Feeds\Feed;
+use DragonCode\LaravelFeed\Feeds\FeedTarget;
+use Illuminate\Database\Eloquent\Builder;
+
+class ProductFeed extends Feed implements HasFeedTargets
+{
+    use InteractsWithFeedTargets;
+
+    private const TARGETS = [
+        'available'   => ['in_stock' => true],
+        'unavailable' => ['in_stock' => false],
+    ];
+
+    public function targets(): iterable
+    {
+        foreach (array_keys(self::TARGETS) as $key) {
+            yield $this->makeTarget($key);
+        }
+    }
+
+    public function findTarget(string $key): ?FeedTarget
+    {
+        return isset(self::TARGETS[$key]) ? $this->makeTarget($key) : null;
+    }
+
+    public function builder(): Builder
+    {
+        return Product::query()->where(
+            'in_stock',
+            $this->target()->parameters['in_stock'],
+        );
+    }
+
+    public function filename(): string
+    {
+        return "products/{$this->target()->key}.xml";
+    }
+
+    private function makeTarget(string $key): FeedTarget
+    {
+        return new FeedTarget(
+            key       : $key,
+            parameters: self::TARGETS[$key],
+        );
+    }
+}
+```
+
+`targets()` enumerates the configured target keys for full runs. `findTarget()` resolves explicitly requested keys without enumerating every target. `builder()` filters products for the active target, and `filename()` gives every target a unique path.
+
+## Activate
+
+Review the generated [operation or migration](https://feeds.dragon-code.pro/1.x/create-feeds/) file, then run the appropriate command:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Generate files
+
+Pass the feed registration slug. The command generates a file for every target returned by `targets()`:
+
+```bash
+php artisan feed:generate product
+```
+
+For the `available` and `unavailable` targets, the generated paths are:
+
+```text
+storage/app/public/products/available.xml
+storage/app/public/products/unavailable.xml
+```
+
+## Generate files with filtering
+
+Use the repeatable `--target` option when only selected targets need fresh files:
+
+```bash
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
+```
+
+## Split files by record count
+
+Add `perFile()` when one target file can become too large:
+
+```php
+public function perFile(): int
+{
+    return 50000;
+}
+```
+
+The `available` target can then produce `products/available-1.xml`, `products/available-2.xml`, and later parts. This record-count split is applied independently to every target.
+
+## See Also
+
+- [Separate output files guide](https://feeds.dragon-code.pro/1.x/feed-targets/)
+- [Generation & schedule](https://feeds.dragon-code.pro/1.x/generation/)
+- [Feeds and data API](https://feeds.dragon-code.pro/1.x/api/feed/#feed-targets)
+
+---
+
+# Sitemap
+
+This recipe walks you through creating a product sitemap feed using Laravel Feeds. You will:
+
+- Generate the necessary classes.
+- Implement the feed logic.
+- Expose the files via the file system.
+- Optionally reference the generated sitemap from a root `sitemap.xml` file.
+
+## Create the files
+
+Generate the feed and its item class using the following console command:
+
+```bash
+php artisan make:feed Sitemaps/Product
+```
+
+## Populate the feed
+
+Replace `extends Feed` with `extends SitemapFeedPreset` in the generated class:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds\Sitemaps;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\SitemapFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class ProductFeed extends SitemapFeedPreset
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->url($model->url)
+            ->modifiedAt($model->updated_at) // By default, $model->updated_at
+            ->priority(0.9); // By default, 0.9
+    }
+
+    public function filename(): string
+    {
+        return 'sitemaps/' . parent::filename();
+    }
+}
+```
+
+Available methods of the `FeedItem` class:
+
+- `url` - It is required to indicate
+- `modifiedAt` - by default, `$model->updated_at`
+- `priority` - by default, `0.9`
+
+## Activate
+
+Review the generated [operation or migration](https://feeds.dragon-code.pro/1.x/create-feeds/) file, then run the appropriate console command:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Links
+
+Add a file system disk that points to the directory containing your sitemaps in the [config/filesystems.php](https://github.com/laravel/laravel/blob/12.x/config/filesystems.php#L76-L78) configuration file:
+
+```php
+return [
+    'links' => [
+        public_path('storage')  => storage_path('app/public'),
+        public_path('sitemaps') => storage_path('app/public/sitemaps'),
+    ],
+];
+```
+
+Then create the public symlink so the files are accessible in a browser:
+
+```bash
+php artisan storage:link
+```
+
+## Generate feed
+
+Generate the feed by running the following console command:
+
+```bash
+php artisan feed:generate
+```
+
+## Add a link to the root sitemap.xml
+
+If you maintain a root sitemap.xml file that references other sitemaps, add an entry like this:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <sitemap>
+        <loc>https://example.com/sitemaps/products.xml</loc>
+    </sitemap>
+    <sitemap>
+        <loc>https://example.com/sitemaps/other-sitemaps.xml</loc>
+    </sitemap>
+</sitemapindex>
+```
+
+## Result
+
+The generated sitemap.xml for your products will look like this:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
+
+<url>
+  <loc>https://example.com/products/ea-voluptatum-fuga-odio-expedita</loc>
+  <lastmod>2025-08-31T20:00:00+00:00</lastmod>
+  <priority>0.9</priority>
+</url>
+<url>
+  <loc>https://example.com/products/dolores-rerum-ut-consequatur-in</loc>
+  <lastmod>2025-08-30T19:00:00+00:00</lastmod>
+  <priority>0.9</priority>
+</url>
+
+</urlset>
+```
+
+## See Also
+
+- [Presets](https://feeds.dragon-code.pro/1.x/presets/)
+- [Yandex recipe](https://feeds.dragon-code.pro/1.x/receipt-yandex/)
+- [RSS Atom recipe](https://feeds.dragon-code.pro/1.x/receipt-rss-atom/)
+
+---
+
+# Instagram
+
+## Create the files
+
+```bash
+php artisan make:feed Instagram
+```
+
+## Populate the feed
+
+Replace `extends Feed` with `extends InstagramFeedPreset` in the generated class:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\InstagramFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class InstagramFeed extends InstagramFeedPreset
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->title($model->title)
+            ->description($model->description)
+            ->brand($model->brand) // By default, null
+            ->url($model->url)
+            ->price(price: $model->price, salePrice: $model->price) // By default, salePrice = price
+            ->image($model->images[0])
+            ->images($model->images) // By default, null
+            ->availability($model->quantity > 0 ? 'in stock' : 'out of stock') // By default, 'in stock'
+            ->status($model->quantity > 0 ? 'active' : 'inactive') // By default, 'active'
+            ->condition('new')      // By default, 'new'
+            ->group(12345)          // By default, null
+            ->googleCategory(123)   // By default, null
+            ->facebookCategory(456) // By default, null
+            ->additional([
+                'g:foo' => 'Some foo',
+                'g:bar' => 'Some bar',
+
+                'g:baz' => [
+                    '@attributes' => ['qwe' => 'rty'],
+                    '@value'      => 'Some baz',
+                ],
+
+                '@g:arrayable' => [
+                    'a',
+                    'b',
+                    'c',
+                ],
+            ]);
+    }
+
+    public function filename(): string
+    {
+        return 'instagram.xml';
+    }
+}
+```
+
+## Activate
+
+Review the generated [operation or migration](https://feeds.dragon-code.pro/1.x/create-feeds/) file, then run the appropriate console command:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Generate feed
+
+Generate the feed by running the following console command:
+
+```bash
+php artisan feed:generate
+```
+
+## Result
+
+```xml
+<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+<channel>
+    <title>Laravel</title>
+    <link>https://example.com</link>
+<offers>
+
+<item>
+  <g:id>1</g:id>
+  <g:title><![CDATA[Some 1]]></g:title>
+  <g:description><![CDATA[Some description 1]]></g:description>
+  <g:link>https://example.com/products/ea-voluptatum-fuga-odio-expedita</g:link>
+  <g:image_link>https://via.placeholder.com/640x480.png/008877?text=repudiandae</g:image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/008877?text=repudiandae</g:additional_image_link>
+  <g:brand>The Best</g:brand>
+  <g:condition>new</g:condition>
+  <g:availability>in stock</g:availability>
+  <g:price>100</g:price>
+  <g:sale_price>100</g:sale_price>
+  <g:item_group_id>12345</g:item_group_id>
+  <g:status>active</g:status>
+  <g:google_product_category>123</g:google_product_category>
+  <g:fb_product_category>456</g:fb_product_category>
+  <g:foo>Some foo</g:foo>
+  <g:bar>Some bar</g:bar>
+  <g:baz qwe="rty">Some baz</g:baz>
+  <g:arrayable>a</g:arrayable>
+  <g:arrayable>b</g:arrayable>
+  <g:arrayable>c</g:arrayable>
+</item>
+<item>
+  <g:id>2</g:id>
+  <g:title><![CDATA[Some 2]]></g:title>
+  <g:description><![CDATA[Some description 2]]></g:description>
+  <g:link>https://example.com/products/dolores-rerum-ut-consequatur-in</g:link>
+  <g:image_link>https://via.placeholder.com/640x480.png/009966?text=beatae</g:image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/009966?text=beatae</g:additional_image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/000011?text=deleniti</g:additional_image_link>
+  <g:additional_image_link>https://via.placeholder.com/640x480.png/009999?text=voluptates</g:additional_image_link>
+  <g:brand>The Best</g:brand>
+  <g:condition>new</g:condition>
+  <g:availability>in stock</g:availability>
+  <g:price>250</g:price>
+  <g:sale_price>250</g:sale_price>
+  <g:item_group_id>12345</g:item_group_id>
+  <g:status>active</g:status>
+  <g:google_product_category>123</g:google_product_category>
+  <g:fb_product_category>456</g:fb_product_category>
+  <g:foo>Some foo</g:foo>
+  <g:bar>Some bar</g:bar>
+  <g:baz qwe="rty">Some baz</g:baz>
+  <g:arrayable>a</g:arrayable>
+  <g:arrayable>b</g:arrayable>
+  <g:arrayable>c</g:arrayable>
+</item>
+
+</offers>
+
+</channel>
+</rss>
+```
+
+## See Also
+
+- [Presets](https://feeds.dragon-code.pro/1.x/presets/)
+- [Yandex recipe](https://feeds.dragon-code.pro/1.x/receipt-yandex/)
+- [RSS Atom recipe](https://feeds.dragon-code.pro/1.x/receipt-rss-atom/)
+
+---
+
+# Yandex
+
+## Create the files
+
+```bash
+php artisan make:feed Yandex
+```
+
+## Populate the feed
+
+Replace `extends Feed` with `extends YandexFeedPreset` in the generated class:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\Product;
+use DragonCode\LaravelFeed\Feeds\Info\FeedInfo;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\YandexFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+use function config;
+
+class YandexFeed extends YandexFeedPreset
+{
+    public function builder(): Builder
+    {
+        return Product::query();
+    }
+
+    public function info(): FeedInfo
+    {
+        return parent::info()
+            ->name('My App')        // By default, config('app.name')
+            ->company('My Company')       // By default, config('app.name')
+            ->platform('My Platform')     // By default, config('app.name')
+            ->url(config('app.url')) // By default, config('app.url')
+            ->email(config('app.email', 'feeds@example.com'))
+            ->currencies(['RUB' => 1])   // By default, ['RUB' => 1]
+            ->categories([
+                1 => 'Foo',
+                2 => 'Bar',
+            ])
+            ->additional([
+                'foo' => 'bar',
+            ]);
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->attributeId($model->getKey()) // By default, $model->getKey()
+            ->attributeAvailable($model->quantity > 0) // By default, true
+            ->attributeType('vendor.model') // By default, 'vendor.model'
+            ->barcode($model->article)      // By default, null
+            ->url($model->url)
+            ->title($model->title)
+            ->description($model->description)
+            ->price($model->price)
+            ->currencyId('RUB')     // By default, 'RUB'
+            ->vendor($model->brand) // By default, null
+            ->images($model->images)
+            ->additional([
+                'foo' => 'bar',
+            ]);
+    }
+
+    public function filename(): string
+    {
+        return 'yandex.xml';
+    }
+}
+```
+
+## Custom category structure
+
+By default, `category()` builds a category from its ID and name. Use `rawCategory()` when additional properties or another structure are required. The array is added to the feed unchanged:
+
+```php
+use DragonCode\LaravelFeed\Presets\Info\YandexFeedInfo;
+
+$info = (new YandexFeedInfo)
+    ->category(1, 'Electronics')
+    ->rawCategory([
+        '@attributes' => [
+            'id'       => 2,
+            'parentId' => 1,
+        ],
+        '@value' => 'Smartphones',
+    ]);
+```
+
+The `categories()` method accepts both forms. It sends string values to `category()` and array values to `rawCategory()`.
+
+:::note
+Custom category arrays are not validated or transformed. Build them with the supported [XML directives](https://feeds.dragon-code.pro/1.x/directives/).
+:::
+
+## Activate
+
+Review the generated [operation or migration](https://feeds.dragon-code.pro/1.x/create-feeds/) file, then run the appropriate console command:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Generate feed
+
+Generate the feed by running the following console command:
+
+```bash
+php artisan feed:generate
+```
+
+## Result
+
+```xml
+<!DOCTYPE yml_catalog SYSTEM "shops.dtd">
+<yml_catalog date="2025-09-04T04:08:12+00:00">
+    <shop>
+<name>My App</name>
+<company>My Company</company>
+<platform>My Platform</platform>
+<url>https://example.com</url>
+<email>feeds@example.com</email>
+<currencies>
+  <currency id="RUB" rate="1"/>
+</currencies>
+<categories>
+  <category id="1">Foo</category>
+  <category id="2">Bar</category>
+</categories>
+<foo>bar</foo>
+
+<offers>
+
+<offer id="1" available="true" type="vendor.model">
+  <url>https://example.com/products/ea-voluptatum-fuga-odio-expedita</url>
+  <barcode>GD-PRDCT-1</barcode>
+  <name>Some 1</name>
+  <description>Some description 1</description>
+  <price>100</price>
+  <currencyId>RUB</currencyId>
+  <vendor>The Best</vendor>
+  <picture>https://via.placeholder.com/640x480.png/008877?text=repudiandae</picture>
+  <foo>bar</foo>
+</offer>
+<offer id="2" available="true" type="vendor.model">
+  <url>https://example.com/products/dolores-rerum-ut-consequatur-in</url>
+  <barcode>GD-PRDCT-2</barcode>
+  <name>Some 2</name>
+  <description>Some description 2</description>
+  <price>250</price>
+  <currencyId>RUB</currencyId>
+  <vendor>The Best</vendor>
+  <picture>https://via.placeholder.com/640x480.png/009966?text=beatae</picture>
+  <picture>https://via.placeholder.com/640x480.png/000011?text=deleniti</picture>
+  <picture>https://via.placeholder.com/640x480.png/009999?text=voluptates</picture>
+  <foo>bar</foo>
+</offer>
+
+</offers>
+</shop>
+</yml_catalog>
+```
+
+## See Also
+
+- [Presets](https://feeds.dragon-code.pro/1.x/presets/)
+- [Directives](https://feeds.dragon-code.pro/1.x/directives/)
+- [Sitemap recipe](https://feeds.dragon-code.pro/1.x/receipt-sitemap/)
+
+---
+
+# RSS Atom
+
+## Create the files
+
+```bash
+php artisan make:feed Rss
+```
+
+## Populate the feed
+
+Replace `extends Feed` with `extends RssFeedPreset` in the generated class:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Feeds;
+
+use App\Models\News;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+use DragonCode\LaravelFeed\Presets\RssFeedPreset;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class RssFeed extends RssFeedPreset
+{
+    public function builder(): Builder
+    {
+        return News::query()->take(2);
+    }
+
+    public function item(Model $model): FeedItem
+    {
+        return parent::item($model)
+            ->guid($model->id) // By default, $model->getKey()
+            ->title($model->title)
+            ->description($model->content)
+            ->category($model->category)
+            ->url($model->url)
+            ->publishedAt($model->updated_at) // By default, $model->created_at ?? Carbon::now()
+            ->additional(['foo' => 'bar']); // By default, []
+    }
+
+    public function filename(): string
+    {
+        return 'rss.xml';
+    }
+}
+```
+
+## Activate
+
+Review the generated [operation or migration](https://feeds.dragon-code.pro/1.x/create-feeds/) file, then run the appropriate console command:
+
+```bash
+# For Laravel Deploy Operations
+php artisan operations
+
+# For Laravel Migrations
+php artisan migrate
+```
+
+## Generate feed
+
+Generate the feed by running the following console command:
+
+```bash
+php artisan feed:generate
+```
+
+## Result
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+
+<item>
+  <title>Some 1</title>
+  <link>https://example.com/news/some-1</link>
+  <guid>1</guid>
+  <description><![CDATA[Some content 1]]></description>
+  <category>Some category 1</category>
+  <pubDate>Wed, 03 Sep 2025 22:35:34 +0000</pubDate>
+  <foo>bar</foo>
+</item>
+<item>
+  <title>Some 2</title>
+  <link>https://example.com/news/some-2</link>
+  <guid>2</guid>
+  <description><![CDATA[Some content 2]]></description>
+  <category>Some category 2</category>
+  <pubDate>Thu, 04 Sep 2025 02:44:27 +0000</pubDate>
+  <foo>bar</foo>
+</item>
+
+</channel>
+</rss>
+```
+
+## See Also
+
+- [Presets](https://feeds.dragon-code.pro/1.x/presets/)
+- [Sitemap recipe](https://feeds.dragon-code.pro/1.x/receipt-sitemap/)
+- [Instagram recipe](https://feeds.dragon-code.pro/1.x/receipt-instagram/)
+
+---
+
+# API reference
+
+<PageLead>
+Use this section when you already know the workflow and need an exact class, method, configuration key, event, or failure contract.
+</PageLead>
+
+| Area | Main entry points | Reference |
+| --- | --- | --- |
+| Configuration | `config/feeds.php` | [Configuration](https://feeds.dragon-code.pro/1.x/api/configuration/) |
+| Feed classes | `Feed`, `FeedItem`, `FeedInfo` | [Feeds and data](https://feeds.dragon-code.pro/1.x/api/feed/) |
+| Output structure | `ElementData`, XML directives | [Elements](https://feeds.dragon-code.pro/1.x/elements/), [Directives](https://feeds.dragon-code.pro/1.x/directives/) |
+| Formats | `FeedFormatEnum`, converters | [Supported formats](https://feeds.dragon-code.pro/1.x/supported-formats/) |
+| Runtime | `GeneratorService`, `FeedQuery`, `ScheduleFeedHelper` | [Runtime services and contracts](https://feeds.dragon-code.pro/1.x/api/runtime/) |
+| Lifecycle | Starting and finished events | [Events and exceptions](https://feeds.dragon-code.pro/1.x/api/events-exceptions/) |
+| Presets | Sitemap, RSS, Instagram, Yandex | [Presets](https://feeds.dragon-code.pro/1.x/presets/) |
+
+## Extension points
+
+- Extend `Feed` or a preset to define a data source and output contract.
+- Extend `FeedItem` and `FeedInfo` to control serialized data.
+- Implement `DragonCode\LaravelFeed\Contracts\Transformer` for custom scalar conversion.
+- Return `DragonCode\LaravelFeed\Data\OptionalData` when a field should be omitted.
+- Register macros on `Feed`, `FeedItem`, or `FeedInfo` for application-level helpers.
+
+## See Also
+
+- [Create feeds](https://feeds.dragon-code.pro/1.x/create-feeds/)
+- [Extending functionality](https://feeds.dragon-code.pro/1.x/extending-functionality/)
+- [Troubleshooting](https://feeds.dragon-code.pro/1.x/troubleshooting/)
+
+---
+
+# Configuration reference
+
+<PageLead>
+Publish `config/feeds.php` with `php artisan vendor:publish --tag="feeds"`. Environment values are read when Laravel builds the configuration cache.
+</PageLead>
+
+## Core settings
+
+| Key | Default | Purpose |
+| --- | --- | --- |
+| `model` | `DragonCode\LaravelFeed\Models\Feed` | Eloquent model used for feed registrations. A replacement must extend the package model. |
+| `pretty` / `FEED_PRETTY` | `false` | Enables formatted XML and JSON output. |
+| `date.format` | `DATE_ATOM` | PHP date format used by the date transformer. |
+| `date.timezone` / `FEED_TIMEZONE` | `UTC` | Timezone used while serializing dates. |
+| `table.connection` | `DB_CONNECTION`, then `sqlite` | Database connection for feed registrations. |
+| `table.table` / `FEED_TABLE` | `feeds` | Feed registration table name. |
+
+## Scheduling and queues
+
+| Environment variable | Default | Purpose |
+| --- | --- | --- |
+| `FEED_SCHEDULE_TTL` | `1440` | Schedule lock lifetime in minutes. |
+| `FEED_SCHEDULE_RUN_BACKGROUND` | `true` | Runs scheduled feed commands in the background. |
+| `FEED_QUEUE_ENABLED` | `false` | Dispatches generation through Laravel Queue. |
+| `FEED_QUEUE_CONNECTION` | `QUEUE_CONNECTION`, then `database` | Queue connection for feed jobs. |
+| `FEED_QUEUE_NAME` | Connection default | Queue name. |
+| `FEED_QUEUE_UNIQUE_TTL` | `3600` | Unique job lock lifetime in seconds. |
+| `FEED_CONSOLE_PROGRESS_BAR_ENABLED` | `false` | Displays the console progress bar. |
+
+Queue mode requires a worker when the selected connection is asynchronous. The `sync` connection still runs generation in the command process.
+
+## Transformers
+
+The default pipeline contains `BoolTransformer`, `DateTimeTransformer`, and `EnumTransformer` in that order. Each matching transformer receives the value returned by the previous transformer.
+
+Add a custom class to `transformers` after implementing `DragonCode\LaravelFeed\Contracts\Transformer`. Laravel resolves the class through the service container.
+
+## Converter settings
+
+| Key | Default |
+| --- | --- |
+| `converters.json.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.jsonl.options` | `JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE` |
+| `converters.csv.delimiter` | `;` |
+| `converters.csv.enclosure` | `"` |
+| `converters.csv.escape` | Empty string |
+| `converters.csv.line_ending` | `PHP_EOL` |
+
+These values are application-wide defaults. Override them for one feed with [per-feed converter options](https://feeds.dragon-code.pro/1.x/supported-formats/#converter-options), using constructor parameter names such as `lineEnding` instead of configuration keys such as `line_ending`.
+
+## See Also
+
+- [Installation](https://feeds.dragon-code.pro/1.x/installation/)
+- [Generation and schedule](https://feeds.dragon-code.pro/1.x/generation/)
+- [Eloquent model configuration](https://feeds.dragon-code.pro/1.x/eloquent/)
+
+---
+
+# Feeds and data
+
+<PageLead>
+The core API separates the data source, item mapping, feed-level metadata, output structure, and generation result.
+</PageLead>
+
+## Feed
+
+`DragonCode\LaravelFeed\Feeds\Feed` is the base class for an export. Implement `builder()` and override only the output hooks your feed needs.
+
+<ApiSignature>abstract public function builder(): Builder</ApiSignature>
+
+| Method | Default | Contract |
+| --- | --- | --- |
+| `builder(): Builder` | Abstract | Returns the Eloquent query used as the data source. |
+| `item(Model $model): FeedItem` | New base `FeedItem` | Maps one model to an output item. |
+| `transformers(): array` | `[]` | Prepends transformer class names for this feed. |
+| `chunkSize(): int` | `1000` | Database query chunk size. |
+| `perFile(): int` | `0` | Records per file. Zero disables splitting by count. |
+| `maxFiles(): int` | `0` | Maximum number of output files. Zero means no limit. |
+| `header(): string` | XML declaration for XML/RSS | Content written before the root and items. |
+| `footer(): string` | Empty string | Content written after the root and items. |
+| `root(): ElementData` | Class-derived element name | Defines the root element and attributes. |
+| `info(): FeedInfo` | Empty `FeedInfo` | Defines feed-level information. |
+| `filename(): string` | Class-derived filename | Returns the disk-relative output filename. |
+| `path($suffix): string` | Adapter-resolved path | Returns a local or adapter-resolved path. |
+| `storagePath($suffix): string` | Disk-relative filename | Returns the path used for storage operations. |
+| `storage(): FilesystemAdapter` | `public` disk | Resolves and validates the Laravel filesystem disk. |
+| `format(): FeedFormatEnum` | `Xml` | Returns the configured output format. |
+| `converterOptions(): array` | `[]` | Returns inherited `Config` attribute values for this feed; child keys override parent keys. |
+
+`Feed` uses Laravel `Conditionable` and `Macroable`.
+
+## Feed targets
+
+`DragonCode\LaravelFeed\Feeds\FeedTarget` identifies one independently generated output. Its constructor accepts a non-empty string key and an optional parameter array:
+
+<ApiSignature>public function __construct(public readonly string $key, public readonly array $parameters = [])</ApiSignature>
+
+Implement `DragonCode\LaravelFeed\Contracts\HasFeedTargets` on an opt-in feed class. The optional `DragonCode\LaravelFeed\Concerns\InteractsWithFeedTargets` trait implements `forTarget()` and `target()`; the feed class implements discovery:
+
+| Method | Contract |
+| --- | --- |
+| `targets(): iterable` | Lazily returns every available `FeedTarget` for full command and scheduled runs. |
+| `findTarget(string $key): ?FeedTarget` | Directly resolves one explicit command target with the same key or returns `null`. |
+| `forTarget(FeedTarget $target): static` | Returns a configured clone and resets its memoized filename. |
+| `target(): FeedTarget` | Returns the configured target or throws `LogicException` when none is set. |
+
+The constructor rejects empty and whitespace-only keys but does not normalize or sanitize other values. Target parameters are opaque to the package and serialized as a queue-job snapshot. The key is the target identity, so it must be stable and unique within the feed class. See [separate output file setup](https://feeds.dragon-code.pro/1.x/feed-targets/) and [command selection](https://feeds.dragon-code.pro/1.x/generation/#target_selection).
+
+## FeedItem and FeedInfo
+
+`FeedItem` receives the current Eloquent model. Its defaults are:
+
+- `name()` returns the model class basename in kebab case;
+- `attributes()` returns an empty array;
+- `toArray()` returns the model array.
+
+`FeedInfo::toArray()` returns an empty array. Both classes use `Conditionable` and `Macroable`; extend them when the output needs an explicit schema.
+
+### Item date format
+
+Apply `#[DateFormat('Y-m-d H:i')]` from `DragonCode\LaravelFeed\Attributes\DateFormat` to a `FeedItem` class to override its date format.
+
+Return raw `DateTimeInterface` values from `toArray()`, with date casts on the model. Preformatted strings are not reformatted:
+
+```php
+namespace App\Feeds\Items;
+
+use DragonCode\LaravelFeed\Attributes\DateFormat;
+use DragonCode\LaravelFeed\Feeds\Items\FeedItem;
+
+#[DateFormat('Y-m-d H:i')]
+class ProductFeedItem extends FeedItem
+{
+    public function toArray(): array
+    {
+        return [
+            'finishedAt' => $this->model->finished_at,
+            'createdAt' => $this->model->created_at,
+            'updatedAt' => $this->model->updated_at,
+        ];
+    }
+}
+```
+
+The attribute applies in every output format, including dates nested in JSON/XML and dates returned by `attributes()` for XML/RSS item attributes.
+
+The nearest annotated parent class supplies the inherited format; an attribute on the child class overrides it. The attribute takes precedence over feed-specific and global date formats while retaining `feeds.date.timezone`.
+
+`FeedInfo`, root attributes, and other items without the attribute keep the normal configured transformation pipeline.
+
+## ElementData
+
+`ElementData` is a readonly object with three constructor properties:
+
+| Property | Type | Default |
+| --- | --- | --- |
+| `name` | `?string` | `null` |
+| `attributes` | `array` | `[]` |
+| `beforeInfo` | `bool` | `true` |
+
+Set `name` to `null` or an empty string to suppress the root element. Set `beforeInfo` to `false` to write feed information before the root.
+
+## Generation result
+
+`GeneratorService::feed()` returns `GenerationResultData`. Its readonly `paths` property contains published files in output order. Its readonly `records` property maps each path to the number of records written to that file.
+
+Programmatic generation and registration methods are listed in [runtime services and contracts](https://feeds.dragon-code.pro/1.x/api/runtime/).
+
+## FeedFormatEnum
+
+| Case | Value |
+| --- | --- |
+| `Xml` | `xml` |
+| `Json` | `json` |
+| `JsonLines` | `jsonl` |
+| `Csv` | `csv` |
+| `Rss` | `rss` |
+
+## See Also
+
+- [Separate output files](https://feeds.dragon-code.pro/1.x/feed-targets/)
+- [Elements](https://feeds.dragon-code.pro/1.x/elements/)
+- [Location](https://feeds.dragon-code.pro/1.x/location/)
+- [Runtime services and contracts](https://feeds.dragon-code.pro/1.x/api/runtime/)
+
+---
+
+# Runtime services and contracts
+
+<PageLead>
+These entry points support programmatic generation, feed registration, scheduler integration, scalar transformation, and optional fields.
+</PageLead>
+
+## GeneratorService
+
+`DragonCode\LaravelFeed\Services\GeneratorService` generates and publishes one feed.
+
+<ApiSignature>public function feed(Feed $feed, ?OutputStyle $output = null): GenerationResultData</ApiSignature>
+
+The method publishes all parts as one operation, updates the registration's last activity, dispatches lifecycle events, and returns paths with per-file record counts. Storage resolution and output path lookup happen before generation starts. For an ordinary feed, exceptions raised during this preflight, including `UnsupportedStorageDiskException`, are thrown directly. For a configured feed that implements `HasFeedTargets`, preflight failures are wrapped in `FeedGenerationException` so the target key remains available. After preflight succeeds, generation failures are wrapped for every feed, with the original exception as the previous throwable.
+
+Resolve the service through Laravel's container instead of constructing its internal collaborators.
+
+```php
+use App\Feeds\UserFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+
+$result = app(GeneratorService::class)->feed(app(UserFeed::class));
+
+foreach ($result->records as $path => $count) {
+    processFeedResult($path, $count);
+}
+```
+
+`GeneratorService` generates one configured feed and does not enumerate targets. Resolve a target first when calling it directly:
+
+```php
+use App\Feeds\PartnerFeed;
+use DragonCode\LaravelFeed\Services\GeneratorService;
+use RuntimeException;
+
+$feed = app(PartnerFeed::class);
+$target = $feed->findTarget('42')
+    ?? throw new RuntimeException('Feed target [42] not found.');
+
+$result = app(GeneratorService::class)->feed(
+    $feed->forTarget($target),
+);
+```
+
+## FeedQuery
+
+`DragonCode\LaravelFeed\Queries\FeedQuery` manages persisted feed registrations.
+
+| Method | Result |
+| --- | --- |
+| `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Creates a registration. |
+| `find(int $id): Feed` | Returns a registration or throws `FeedNotFoundException`. |
+| `findBySlug(string $slug): Feed` | Returns one registration; throws `FeedNotFoundException` when missing or `MultipleRecordsFoundException` when ambiguous. |
+| `all(): Builder` | Returns all registrations ordered by ID. |
+| `active(): Builder` | Returns active registrations ordered by ID. |
+| `setLastActivity(string $class): void` | Updates `last_activity` for a feed class. |
+| `delete(int $id): void` | Soft-deletes a registration by ID. |
+| `deleteByClass(string $class): void` | Permanently removes registrations for a class, including trashed rows. |
+| `restore(int $id): void` | Restores a soft-deleted registration. |
+
+`$expression` accepts a raw cron expression string, including aliases supported by `dragonmantank/cron-expression` such as `@daily`, or `DragonCode\LaravelFeed\Scheduling\Expression`. Fluent values are converted to their cron string before validation and persistence. Reading the model returns the stored string. See [registration expressions](https://feeds.dragon-code.pro/1.x/generation/#registration_expression) for an example.
+
+Use the generated migration or deployment operation for normal registration changes so they remain reproducible across environments.
+
+## ScheduleFeedHelper
+
+`DragonCode\LaravelFeed\Helpers\ScheduleFeedHelper::register()` adds active registrations to Laravel's scheduler. Each registration uses its stored cron expression and an overlap lock. Background execution and lock TTL come from `feeds.schedule` configuration.
+
+Registration is skipped safely when the configured feeds table does not exist.
+
+## Transformer
+
+Implement `DragonCode\LaravelFeed\Contracts\Transformer` to convert supported values before serialization.
+
+<ApiSignature>public function allow(mixed $value): bool</ApiSignature>
+
+<ApiSignature>public function transform(mixed $value): string</ApiSignature>
+
+`allow()` decides whether the transformer accepts a value. `transform()` returns its serialized scalar representation. Add the class through `Feed::transformers()` or `feeds.transformers`.
+
+## OptionalData
+
+Return a new `DragonCode\LaravelFeed\Data\OptionalData` for a field that should be omitted when no value exists. XML, RSS, JSON, and JSON Lines omit it. CSV preserves the column and writes an empty field.
+
+## See Also
+
+- [Feeds and data](https://feeds.dragon-code.pro/1.x/api/feed/)
+- [Configuration](https://feeds.dragon-code.pro/1.x/api/configuration/)
+- [Events and exceptions](https://feeds.dragon-code.pro/1.x/api/events-exceptions/)
+- [Generation and schedule](https://feeds.dragon-code.pro/1.x/generation/)
+
+---
+
+# Events and exceptions
+
+<PageLead>
+Use lifecycle events for application integration and exception types for recovery at the boundary that can handle the failure.
+</PageLead>
+
+## Lifecycle events
+
+| Event | Public data | Dispatch point |
+| --- | --- | --- |
+| `FeedStartingEvent` | `feed`, `target` | After storage and path preflight, before converter resolution and staging. |
+| `FeedFinishedEvent` | `feed`, `target`, `path`, `paths` | After every generated file is published successfully. |
+
+`$target` contains the target key for targeted generation and `null` for an ordinary feed. `FeedFinishedEvent::$paths` contains all published paths in order. `$path` is retained for compatibility and always contains the first path.
+
+## Input and lookup failures
+
+| Exception | Meaning |
+| --- | --- |
+| `InvalidFeedArgumentException` | A console feed slug is invalid. |
+| `FeedNotFoundException` | No registration exists for the requested feed ID or slug. |
+| `Illuminate\Database\MultipleRecordsFoundException` | More than one non-deleted registration has the requested slug. |
+| `InvalidExpressionException` | A schedule expression is invalid. |
+| `UnknownFeedClassException` | A configured feed class cannot be resolved. |
+| `UnexpectedClassException` | A resolved class does not satisfy the expected contract. |
+
+Target selection uses SPL exceptions. When `--target` is provided, `feed:generate` throws `InvalidArgumentException` if no feed registration slug is supplied, a target key is empty, or the selected feed does not implement `HasFeedTargets`. It throws `UnexpectedValueException` when `findTarget()` returns `null`.
+
+## Serialization and storage failures
+
+| Exception | Meaning |
+| --- | --- |
+| `InvalidCsvRowException` | A CSV row does not match the established column schema. |
+| `InvalidCsvValueException` | A CSV field cannot be serialized as a scalar value. |
+| `InvalidXmlCDataException` | A CDATA value is invalid. |
+| `InvalidXmlFragmentException` | A raw XML fragment is invalid. |
+| `UnsupportedStorageDiskException` | The selected Laravel disk does not resolve to `FilesystemAdapter`. |
+| `OpenFeedException` | A draft output resource cannot be opened. |
+| `WriteFeedException` | The full output cannot be written. |
+| `CloseFeedException` | The output resource cannot be closed. |
+| `ResourceMetaException` | Required stream metadata is unavailable. |
+| `FeedGenerationException` | Generation failed for a specific feed class. |
+
+`FeedGenerationException::getFeed()` returns the feed class. `getFeedTarget()` returns the target key for targeted generation and `null` for an ordinary feed. The original failure remains available through `getPrevious()`.
+
+Catch exceptions only where the application can add recovery or user-facing context. Let Laravel report unrecoverable generation failures.
+
+## See Also
+
+- [Events guide](https://feeds.dragon-code.pro/1.x/events/)
+- [Troubleshooting](https://feeds.dragon-code.pro/1.x/troubleshooting/)
+- [Storage guarantees](https://feeds.dragon-code.pro/1.x/location/#publication_guarantees)
+
+---
+
+# Frequently asked questions
+
+<PageLead>
+Short answers to common setup, generation, storage, format, and memory questions.
+</PageLead>
+
+<details className="faqItem" id="large-datasets">
+<summary>Can Laravel Feeds export millions of records?</summary>
+
+Yes. The package reads Eloquent results in chunks and writes output incrementally. Keep `builder()` lazy, avoid calling `get()` or `toArray()` on the full result, and tune `chunkSize()` after measuring memory and database load.
+
+See [large dataset performance](https://feeds.dragon-code.pro/1.x/performance/).
+</details>
+
+<details className="faqItem" id="choose-format">
+<summary>Which format should I use?</summary>
+
+Use the consumer's required contract. XML and RSS support hierarchical directives, JSON preserves nested data, JSON Lines is suited to line-oriented processing, and CSV requires a stable column schema.
+
+See [supported formats](https://feeds.dragon-code.pro/1.x/supported-formats/).
+</details>
+
+<details className="faqItem" id="split-files">
+<summary>Can one feed create multiple files?</summary>
+
+Yes, but choose the mechanism based on why the files differ:
+
+- Use `perFile()` and optionally `maxFiles()` to split one dataset into sequential parts with a fixed number of records.
+- Use [feed targets](https://feeds.dragon-code.pro/1.x/feed-targets/) to create a separate filtered output for each partner, store, locale, or other business key.
+- Combine both mechanisms when each partner output may also need several record-count parts.
+
+See the [multiple targeted feed files recipe](https://feeds.dragon-code.pro/1.x/receipt-target-feeds/) for a complete example.
+</details>
+
+<details className="faqItem" id="remote-storage">
+<summary>Can I store feeds on S3 or another remote disk?</summary>
+
+Yes, when the configured Laravel disk resolves to a writable `FilesystemAdapter`. Remote moves may be implemented as copy and delete, so atomic replacement is not guaranteed.
+
+See [supported disks](https://feeds.dragon-code.pro/1.x/location/#supported_disks).
+</details>
+
+<details className="faqItem" id="disabled-feed">
+<summary>Why did a disabled feed run?</summary>
+
+Passing a feed slug to `feed:generate` executes that feed even when its registration is inactive. Running the command without a slug skips inactive registrations.
+
+See [single feed generation](https://feeds.dragon-code.pro/1.x/generation/#single_feed).
+</details>
+
+<details className="faqItem" id="optional-field">
+<summary>How do I omit an optional field?</summary>
+
+Return `DragonCode\LaravelFeed\Data\OptionalData` or `Spatie\LaravelData\Optional` as the field value. CSV keeps the column and writes an empty value; object and XML formats omit the field.
+
+See [optional values](https://feeds.dragon-code.pro/1.x/create-feeds/#optional_values).
+</details>
+
+## See Also
+
+- [Troubleshooting](https://feeds.dragon-code.pro/1.x/troubleshooting/)
+- [Configuration reference](https://feeds.dragon-code.pro/1.x/api/configuration/)
+- [API reference](https://feeds.dragon-code.pro/1.x/api/)
+
+---
+
+# Troubleshooting
+
+<PageLead>
+Start with the first failing boundary: registration, query, conversion, storage, or delivery. Preserve the original exception because it contains the feed class and output context.
+</PageLead>
+
+## The feed class is not found
+
+Confirm that the registration contains the full class name, Composer autoloading can resolve it, and the class extends `DragonCode\LaravelFeed\Feeds\Feed` or a preset. Run `composer dump-autoload` after moving a class.
+
+## Generation uses too much memory
+
+- Return an Eloquent `Builder` from `builder()`.
+- Do not call `get()`, `all()`, or `toArray()` on the complete dataset.
+- Lower `chunkSize()` and measure again.
+- Split large outputs with `perFile()`.
+- Move work to an asynchronous queue only after the feed itself remains streaming.
+
+See [performance](https://feeds.dragon-code.pro/1.x/performance/).
+
+## A queue job never runs
+
+Check `FEED_QUEUE_CONNECTION`, `FEED_QUEUE_NAME`, and the worker command. The `sync` connection runs immediately and does not test asynchronous delivery. A uniqueness lock can suppress another job for the same feed until `FEED_QUEUE_UNIQUE_TTL` expires.
+
+## The storage disk is rejected
+
+The disk must resolve to `Illuminate\Filesystem\FilesystemAdapter` and support writable streams, moves, directory management, listings, and deletion. A custom implementation that is not a `FilesystemAdapter` fails before the database query with `UnsupportedStorageDiskException`. A Laravel read-only disk passes that type check. Its write fails during publication, after the feed query and local staging have completed, and `GeneratorService` wraps the storage failure in `FeedGenerationException`.
+
+## XML generation fails
+
+Validate raw XML passed through `@mixed`, ensure CDATA content is valid, and keep directive values within their documented scalar or array contracts. Prefer normal escaped values unless raw XML is required.
+
+## CSV rows fail after the first item
+
+CSV establishes its columns from the output schema. Every item must produce the same keys. Optional values keep an empty column rather than removing it.
+
+## Published files are incomplete or stale
+
+Inspect the original storage exception and verify disk permissions. On remote disks, account for eventual consistency and non-atomic copy-and-delete moves. Generators on multiple hosts need an external distributed lock when they can publish the same target.
+
+During publication, Laravel Feeds creates a temporary `.feeds_staging_*` directory next to the target path. It removes this directory after a successful publication and after ordinary generation failures. The directory is preserved when rollback fails so that its backups remain available. An interrupted process or a cleanup failure can also leave one behind.
+
+A large or growing number of `.feeds_staging_*` directories indicates repeated publication or cleanup failures. Inspect the generation logs and the original exception, fix the underlying storage, permission, or process failure, and review any preserved backups before deleting stale directories manually.
+
+## See Also
+
+- [Events and exceptions](https://feeds.dragon-code.pro/1.x/api/events-exceptions/)
+- [Location](https://feeds.dragon-code.pro/1.x/location/)
+- [Frequently asked questions](https://feeds.dragon-code.pro/1.x/faq/)
+
+---
+
+# Upgrade guide
+
+<PageLead>
+The documentation currently covers the `1.x` release line. Review the package release notes and your dependency lock before each update.
+</PageLead>
+
+## Before upgrading
+
+1. Confirm that the target version supports the application's PHP and Laravel versions.
+2. Commit `composer.lock` and the current published `config/feeds.php`.
+3. Record active feed registrations and generated-file destinations.
+4. Run the application's feed generation tests or generate representative feeds in a non-production environment.
+
+## Apply the update
+
+```bash
+composer update dragon-code/laravel-feeds --with-all-dependencies
+```
+
+For an existing installation, copy only `database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` from the package into your application's migrations directory. Choose a filename timestamp immediately after the application's actual `create_feeds_table` migration and before any feed-registration migrations; keep the `add_slug_to_feeds_table` suffix. Then run `php artisan migrate`. The migration uses the configured connection and table and fills slugs from existing titles, including soft-deleted records. Do not republish or rerun the original create-table migration. Replace numeric feed IDs in commands and manual schedules with the stored slugs.
+
+```bash
+php artisan migrate
+```
+
+Compare the installed package's `config/feeds.php` with the application's published copy and merge new keys manually. Do not republish with `--force`: it overwrites application-specific values.
+
+## Verify
+
+- Generate one feed for every used format.
+- Verify split-file counts and filenames.
+- Confirm scheduled and queued generation.
+- Confirm custom feed models, transformers, macros, and preset subclasses.
+- Compare representative output with the previous version.
+
+## Rollback
+
+Restore the previous `composer.lock` and configuration, run `composer install`, and apply the application's migration rollback policy. Generated files are deployment artifacts; restore or regenerate them according to the storage recovery plan.
+
+## See Also
+
+- [Compatibility](https://feeds.dragon-code.pro/1.x/compatibility/)
+- [Configuration reference](https://feeds.dragon-code.pro/1.x/api/configuration/)
+- [Contribution guide](https://feeds.dragon-code.pro/1.x/contributions/)
+
+---
+
+# Compatibility
+
+<PageLead>
+Use Composer's resolved dependency graph as the final compatibility check for a specific application.
+</PageLead>
+
+## Runtime matrix
+
+<ResponsiveTable label="Laravel Feeds runtime compatibility">
+
+| Component | Supported versions |
+| --- | --- |
+| PHP | `8.2` and later `8.x` versions allowed by the installed package constraints |
+| Laravel components | `11.x`, `12.x`, `13.x` |
+| Database | Any Laravel connection supported by the configured Eloquent model and migration |
+| Filesystem | Writable Laravel disks resolving to `FilesystemAdapter` |
+
+</ResponsiveTable>
+
+The installed `composer.lock` is the final authority for a specific application. Composer rejects unsupported combinations.
+
+## Output formats
+
+| Format | Extension | Nested data | XML directives |
+| --- | --- | --- | --- |
+| XML | `.xml` | Yes | Yes |
+| JSON | `.json` | Yes | No |
+| JSON Lines | `.jsonl` | One JSON value per line | No |
+| CSV | `.csv` | No; stable scalar columns required | No |
+| RSS | `.rss` | Yes | Yes |
+
+## Optional integrations
+
+- Laravel Queue is required only when queue mode is enabled.
+- Laravel Deploy Operations is used by `make:feed` when installed; otherwise the command creates a migration.
+- Spatie Laravel Data optional values are recognized when that package is installed.
+
+## See Also
+
+- [Installation](https://feeds.dragon-code.pro/1.x/installation/)
+- [Supported formats](https://feeds.dragon-code.pro/1.x/supported-formats/)
+- [Upgrade guide](https://feeds.dragon-code.pro/1.x/upgrade-guide/)
+
+---
+
+# Contribution guide
+
+Contributions are **welcome** and will be fully **credited**.
+
+We accept contributions through Pull Requests on [all projects](https://github.com/TheDragonCode) of our organization.
+
+## Code Style
+
+**Laravel Feeds** follows the [PER-3](https://www.php-fig.org/per/coding-style/) coding standard and the [PSR-4](https://www.php-fig.org/psr/psr-4/) autoloading standard.
+
+To apply code style formatting, run the following console command:
+
+```bash
+composer style
+```
+
+## Code of Conduct
+
+The Laravel code of conduct is derived from the [Contributor Covenant](https://www.contributor-covenant.org/version/2/1/code_of_conduct/) code of conduct. Any violations of the code of conduct may be reported to [Andrey Helldar](mailto:helldar@dragon-code.pro):
+
+- Participants should be tolerant of opposing views.
+- Participants must ensure that their language and actions are free of personal attacks and disparaging personal remarks.
+- When interpreting the words and actions of others, participants should always assume good intentions.
+- Behavior that can be reasonably considered harassment will not be tolerated.
+
+## See Also
+
+- [MIT License](https://feeds.dragon-code.pro/1.x/license/)
+- [Getting started](https://feeds.dragon-code.pro/1.x/introduction/)
+- [Machine Learning](https://feeds.dragon-code.pro/1.x/machine-learning/)
+
+---
+
+# Machine Learning
+
+You can help your LLM understand the structure and conventions of this project much better.
+
+To do that, import the guidance from the following file: [**llms.txt**](https://feeds.dragon-code.pro/1.x/llms.txt).
+
+This file is a single, consolidated Markdown document containing the compiled documentation for this project. It is designed to be used as a knowledge base for LLMs (for example, as a system prompt attachment, a retrieval corpus, or a custom knowledge file).
+
+:::note
+Save the URL and re-import it periodically to pick up updates as the project evolves.
+:::
+
+## See Also
+
+- [Getting started](https://feeds.dragon-code.pro/1.x/introduction/)
+- [Contribution guide](https://feeds.dragon-code.pro/1.x/contributions/)
+- [MIT License](https://feeds.dragon-code.pro/1.x/license/)
+
+---
+
+# MIT License
+
+Copyright (c) 2025-2026 Andrey Helldar
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## See Also
+
+- [Contribution guide](https://feeds.dragon-code.pro/1.x/contributions/)
+- [Getting started](https://feeds.dragon-code.pro/1.x/introduction/)
+- [Machine Learning](https://feeds.dragon-code.pro/1.x/machine-learning/)

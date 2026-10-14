@@ -22,12 +22,13 @@ const config = await readFile(
     "utf8",
 );
 const defaultLocale = config.match(/defaultLocale:\s*["']([^"']+)["']/)?.[1];
+const siteUrl = config.match(/const siteUrl = "([^"]+)"/)?.[1];
 const localeBlock = config.match(/locales:\s*\[([^\]]+)]/)?.[1];
 const locales = [...(localeBlock?.matchAll(/["']([^"']+)["']/g) ?? [])].map(
     (match) => match[1],
 );
 
-if (!defaultLocale || locales.length === 0) {
+if (!defaultLocale || !siteUrl || locales.length === 0) {
     throw new Error("Unable to read the Docusaurus locale configuration.");
 }
 
@@ -96,6 +97,15 @@ try {
     }
 }
 
+const generatedVersionTargets = [
+    path.join(siteDirectory, "static", "search", version),
+    path.join(siteDirectory, "static", version),
+];
+
+for (const target of generatedVersionTargets) {
+    await assertMissing(target);
+}
+
 const versionTargets = [
     path.join(siteDirectory, "versioned_docs", `version-${version}`),
     path.join(
@@ -107,6 +117,7 @@ const versionTargets = [
         localizedVersion.targetDirectory,
         localizedVersion.targetCatalog,
     ]),
+    ...generatedVersionTargets,
 ];
 
 const rollbackVersion = async () => {
@@ -183,7 +194,23 @@ try {
         );
     }
 
+    for (const directory of [
+        path.join(siteDirectory, "versioned_docs", `version-${version}`),
+        ...localizedVersions.map((localizedVersion) => localizedVersion.targetDirectory),
+    ]) {
+        const filename = path.join(directory, "machine-learning.mdx");
+        const content = await readFile(filename, "utf8");
+
+        await writeFile(
+            filename,
+            content.replaceAll(`${siteUrl}/llms.txt`, `${siteUrl}/${version}/llms.txt`),
+            "utf8",
+        );
+    }
+
     run([path.join(siteDirectory, "scripts", "check-i18n.mjs")]);
+    run([path.join(siteDirectory, "scripts", "content-manifest.mjs")]);
+    run([path.join(siteDirectory, "scripts", "build-llms.mjs")]);
 } catch (error) {
     try {
         await rollbackVersion();

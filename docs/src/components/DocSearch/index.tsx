@@ -1,6 +1,7 @@
 import Translate, { translate } from "@docusaurus/Translate";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { useActiveDocContext } from "@docusaurus/plugin-content-docs/client";
 import clsx from "clsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -27,17 +28,19 @@ export default function DocSearch({
     onClick,
 }: DocSearchProps) {
     const { i18n } = useDocusaurusContext();
+    const version = useActiveDocContext(undefined).activeVersion?.name ?? "current";
+    const indexUrl = `/search/${version === "current" ? "" : `${version}/`}${i18n.currentLocale}.json`;
     const dialogRef = useRef<HTMLDialogElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [isReady, setIsReady] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [searchIndex, setSearchIndex] = useState<{
-        locale: string;
+        url: string;
         routes: SearchRoute[];
     } | null>(null);
     const activeSearchIndex =
-        searchIndex?.locale === i18n.currentLocale ? searchIndex.routes : null;
+        searchIndex?.url === indexUrl ? searchIndex.routes : null;
     const searchableRoutes = useMemo(
         () =>
             (activeSearchIndex ?? []).map((route) => ({
@@ -99,9 +102,7 @@ export default function DocSearch({
         }
 
         let active = true;
-        const locale = i18n.currentLocale;
-
-        void fetch(`/search/${locale}.json`)
+        void fetch(indexUrl)
             .then(async (response) => {
                 if (!response.ok) {
                     throw new Error(`Search index request failed: ${response.status}`);
@@ -111,7 +112,7 @@ export default function DocSearch({
             })
             .then((routes) => {
                 if (active) {
-                    setSearchIndex({ locale, routes });
+                    setSearchIndex({ url: indexUrl, routes });
                 }
             })
             .catch(() => undefined);
@@ -119,7 +120,7 @@ export default function DocSearch({
         return () => {
             active = false;
         };
-    }, [activeSearchIndex, i18n.currentLocale, isOpen]);
+    }, [activeSearchIndex, indexUrl, isOpen]);
 
     useEffect(() => {
         if (mobile) {

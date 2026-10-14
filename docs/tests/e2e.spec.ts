@@ -213,6 +213,131 @@ test("localized search uses translated content", async ({ page }) => {
     expect([...searchAssets]).toEqual(["/search/ru.json"]);
 });
 
+for (const locale of ["en", "ru"]) {
+    const prefix = locale === "en" ? "" : `/${locale}`;
+    const triggerName = locale === "en" ? "Search" : "Поиск";
+    const compatibility = locale === "en" ? /Compatibility/ : /Совместимость/;
+
+    test(`archived search uses ${locale} version content and routes`, async ({ page }) => {
+        const searchAssets = new Set<string>();
+
+        page.on("request", (request) => {
+            const pathname = new URL(request.url()).pathname;
+
+            if (pathname.startsWith("/search/") && pathname.endsWith(".json")) {
+                searchAssets.add(pathname);
+            }
+        });
+
+        await page.goto(`${prefix}/1.x/compatibility/`);
+        await page.getByRole("button", { name: triggerName }).click();
+
+        const dialog = page.getByRole("dialog");
+        await dialog.getByRole("searchbox").fill("8.2");
+
+        const result = dialog.getByRole("link", { name: compatibility });
+        await expect(result).toHaveAttribute("href", `${prefix}/1.x/compatibility/`);
+        expect([...searchAssets]).toEqual([`/search/1.x/${locale}.json`]);
+        await result.click();
+
+        await expect(page).toHaveURL(`${prefix}/1.x/compatibility/`);
+    });
+
+    test(`search follows ${locale} version switches without stale results`, async ({ page }) => {
+        await page.goto(`${prefix}/compatibility/`);
+
+        const trigger = page.getByRole("button", { name: triggerName });
+        const dialog = page.getByRole("dialog");
+        const result = dialog.getByRole("link", { name: compatibility });
+        const navbar = page.locator(".navbar");
+
+        await trigger.click();
+        await dialog.getByRole("searchbox").fill("8.4");
+        await expect(result).toHaveAttribute("href", `${prefix}/compatibility/`);
+        await dialog.getByRole("button").click();
+        await expect(dialog).toBeHidden();
+
+        for (const [from, to, php, route] of [
+            ["2.x", "1.x", "8.2", `${prefix}/1.x/compatibility/`],
+            ["1.x", "2.x", "8.4", `${prefix}/compatibility/`],
+            ["2.x", "1.x", "8.2", `${prefix}/1.x/compatibility/`],
+        ]) {
+            await navbar.getByRole("button", { name: from, exact: true }).click();
+            await navbar.getByRole("link", { name: to, exact: true }).click();
+
+            await trigger.click();
+            await dialog.getByRole("searchbox").fill(php);
+            await expect(result).toHaveAttribute("href", route);
+            await dialog.getByRole("button").click();
+            await expect(dialog).toBeHidden();
+        }
+
+        await navbar.locator(".navbar__brand").click();
+        await expect(page).toHaveURL(`${prefix}/`);
+        await trigger.click();
+        await dialog.getByRole("searchbox").fill("8.4");
+        await expect(result).toHaveAttribute("href", `${prefix}/compatibility/`);
+    });
+}
+
+test("search ignores a delayed index after switching versions", async ({ page }) => {
+    let currentRequests = 0;
+    let releaseArchive: () => void = () => undefined;
+    const archivedRequest = new Promise<void>((resolve) => {
+        releaseArchive = resolve;
+    });
+
+    page.on("close", releaseArchive);
+    page.on("request", (request) => {
+        if (new URL(request.url()).pathname === "/search/en.json") {
+            currentRequests++;
+        }
+    });
+    await page.route("**/search/1.x/en.json", async (route) => {
+        const response = await route.fetch();
+        await archivedRequest;
+        await route.fulfill({ response });
+    });
+    await page.goto("/1.x/compatibility/");
+
+    const trigger = page.getByRole("button", { name: "Search" });
+    const dialog = page.getByRole("dialog");
+    const archiveStarted = page.waitForRequest("**/search/1.x/en.json");
+    const archiveFinished = page.waitForResponse("**/search/1.x/en.json");
+
+    await trigger.click();
+    await archiveStarted;
+    await dialog.getByRole("button").click();
+    await expect(dialog).toBeHidden();
+
+    const navbar = page.locator(".navbar");
+    await navbar.getByRole("button", { name: "1.x", exact: true }).click();
+    await navbar.getByRole("link", { name: "2.x", exact: true }).click();
+    await trigger.click();
+    await dialog.getByRole("searchbox").fill("8.4");
+    await expect(dialog.getByRole("link", { name: /Compatibility/ }))
+        .toHaveAttribute("href", "/compatibility/");
+
+    releaseArchive();
+    await (await archiveFinished).finished();
+    await dialog.getByRole("searchbox").fill("8.2");
+    await expect(dialog.getByRole("link", { name: /Compatibility/ })).toHaveCount(0);
+    await dialog.getByRole("searchbox").fill("8.4");
+    await expect(dialog.getByRole("link", { name: /Compatibility/ }))
+        .toHaveAttribute("href", "/compatibility/");
+    expect(currentRequests).toBe(1);
+});
+
+test("search does not treat a version-like unknown route as archived", async ({ page }) => {
+    await page.goto("/1.x-unknown/");
+    await page.getByRole("button", { name: "Search" }).click();
+
+    const dialog = page.getByRole("dialog");
+    await dialog.getByRole("searchbox").fill("8.4");
+    await expect(dialog.getByRole("link", { name: /Compatibility/ }))
+        .toHaveAttribute("href", "/compatibility/");
+});
+
 test("localized search finds separate output files by common wording", async ({
     page,
 }) => {

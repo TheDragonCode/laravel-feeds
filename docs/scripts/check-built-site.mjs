@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -61,6 +61,51 @@ const expectedCanonical = (locale, route) => {
 
 const expectedHreflangs = new Set([...htmlLangs, "x-default"]);
 const errors = [];
+let versions = [];
+
+try {
+    versions = JSON.parse(
+        await readFile(path.join(siteDirectory, "versions.json"), "utf8"),
+    );
+} catch (error) {
+    if (error.code !== "ENOENT") {
+        throw error;
+    }
+}
+
+for (const version of versions) {
+    for (const asset of [
+        `${version}/llms.txt`,
+        ...locales.map((locale) => `search/${version}/${locale}.json`),
+    ]) {
+        const [source, built] = await Promise.all([
+            readFile(path.join(siteDirectory, "static", asset), "utf8"),
+            readFile(path.join(buildDirectory, asset), "utf8"),
+        ]);
+
+        if (built !== source) {
+            errors.push(`${asset}: built asset differs from its versioned source`);
+        }
+
+        if (!asset.endsWith(".json")) {
+            continue;
+        }
+
+        const locale = path.basename(asset, ".json");
+        const prefix = locale === defaultLocale ? "" : `/${locale}`;
+
+        for (const entry of JSON.parse(built)) {
+            if (!entry.route.startsWith(`${prefix}/${version}/`)) {
+                errors.push(`${asset}: search result leaves its version: ${entry.route}`);
+                continue;
+            }
+
+            await access(
+                path.join(buildDirectory, entry.route.replace(/^\//, ""), "index.html"),
+            );
+        }
+    }
+}
 
 for (const [localeIndex, locale] of locales.entries()) {
     for (const route of manifest.routes) {
