@@ -73,7 +73,7 @@ class ExportService
             throw new InvalidArgumentException("Feed chunkSize must be greater than 0, [$chunk] given.");
         }
 
-        $this->chunk = $chunk;
+        $this->chunk = min($chunk, $this->capacity ?? $chunk);
 
         return $this;
     }
