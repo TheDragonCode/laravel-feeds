@@ -16,6 +16,22 @@
         "content": ""
     },
     {
+        "route": "/pt-BR/ai-agents/",
+        "title": "Agentes de IA",
+        "description": "Orientações para usar o projeto com LLMs e uma base de conhecimento consolidada",
+        "keywords": [
+            "LLM",
+            "llms.txt",
+            "AI agents",
+            "knowledge base"
+        ],
+        "headings": [
+            "Agentes de IA",
+            "Veja também"
+        ],
+        "content": "← Anterior · Voltar ao README · Próximo → Agentes de IA Você pode ajudar seu LLM a entender muito melhor a estrutura e as convenções deste projeto. Para isso, importe as orientações do arquivo a seguir: llms.txt . Esse arquivo é um único documento Markdown consolidado com toda a documentação compilada do projeto. Ele foi criado para servir como base de conhecimento para LLMs, por exemplo, como anexo de um prompt de sistema, corpus de recuperação ou arquivo de conhecimento personalizado. Salve a URL e importe o arquivo novamente de tempos em tempos para acompanhar as atualizações do projeto. Veja também - Primeiros passos - Guia de contribuição - Licença MIT"
+    },
+    {
         "route": "/pt-BR/api/",
         "title": "Referência da API",
         "description": "Mapa das classes, contratos, objetos de dados, eventos e exceções públicos do Laravel Feeds",
@@ -414,22 +430,6 @@
             "Veja também"
         ],
         "content": "← Anterior · Voltar ao README · Próximo → Armazenamento Por padrão, os feeds são armazenados no disco public , e o nome do arquivo é gerado automaticamente a partir do nome da classe do feed após App\\Feeds\\ , no formato kebab-case . Por exemplo: Para alterar esses valores, sobrescreva a propriedade $storage e o método filename : Discos compatíveis A geração de feeds aceita discos do Laravel que sejam resolvidos como Illuminate\\Filesystem\\FilesystemAdapter . Isso inclui os drivers local , s3 , sftp e ftp quando os adaptadores correspondentes do Flysystem estão instalados e configurados. Adaptadores personalizados são compatíveis quando oferecem streams graváveis, movimentação de arquivos, gerenciamento e listagem de diretórios e exclusão pelo Flysystem. Discos somente leitura e discos personalizados que implementam apenas Illuminate\\Contracts\\Filesystem\\Filesystem não são compatíveis. Um disco personalizado que não é resolvido como Illuminate\\Filesystem\\FilesystemAdapter causa UnsupportedStorageDiskException antes do início da consulta do feed ao banco de dados. Um disco somente leitura do Laravel ainda é resolvido como FilesystemAdapter ; por isso, a consulta do feed e o staging local terminam antes de a gravação da publicação falhar. GeneratorService envolve essa falha de armazenamento em FeedGenerationException . Contrato dos caminhos - storage() retorna o FilesystemAdapter configurado. - storagePath() retorna o caminho relativo ao disco usado nas operações de armazenamento, incluindo um sufixo opcional para arquivos divididos. - path() retorna o caminho resolvido pelo adaptador do Laravel. Para um disco local, é um caminho absoluto do sistema de arquivos. Para um disco remoto, é o caminho resolvido pelo adaptador. Garantias de publicação Cada parte do feed é concluída antes do início da publicação. Em discos locais, os arquivos preparados são publicados por movimentações no sistema de arquivos sob um bloqueio exclusivo da aplicação. Se uma movimentação falhar, o Laravel Feeds tenta restaurar todos os arquivos anteriores a partir do backup temporário. Os discos remotos recebem arquivos preparados completos por streams do Flysystem antes que os objetos publicados sejam alterados. Em seguida, a publicação move cada objeto preparado para o destino e tenta a mesma reversão em caso de falha. Movimentações remotas podem ser implementadas como operações de copiar e excluir e podem apresentar consistência eventual. Por isso, a substituição atômica de um objeto ou de um feed dividido inteiro não é garantida. O bloqueio de publicação é local ao host da aplicação. Geradores executados em hosts diferentes precisam de um bloqueio distribuído externo se puderem publicar o mesmo feed simultaneamente. Veja também - Geração e agendamento - Elementos - Eventos"
-    },
-    {
-        "route": "/pt-BR/machine-learning/",
-        "title": "Agentes de IA",
-        "description": "Orientações para usar o projeto com LLMs e uma base de conhecimento consolidada",
-        "keywords": [
-            "LLM",
-            "llms.txt",
-            "AI agents",
-            "knowledge base"
-        ],
-        "headings": [
-            "Agentes de IA",
-            "Veja também"
-        ],
-        "content": "← Anterior · Voltar ao README · Próximo → Agentes de IA Você pode ajudar seu LLM a entender muito melhor a estrutura e as convenções deste projeto. Para isso, importe as orientações do arquivo a seguir: llms.txt . Esse arquivo é um único documento Markdown consolidado com toda a documentação compilada do projeto. Ele foi criado para servir como base de conhecimento para LLMs, por exemplo, como anexo de um prompt de sistema, corpus de recuperação ou arquivo de conhecimento personalizado. Salve a URL e importe o arquivo novamente de tempos em tempos para acompanhar as atualizações do projeto. Veja também - Primeiros passos - Guia de contribuição - Licença MIT"
     },
     {
         "route": "/pt-BR/performance/",

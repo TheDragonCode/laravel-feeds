@@ -10,7 +10,8 @@ const yandexMetrikaId = 103961626;
 
 const legacyRedirects = [
     { from: "/contributions.html", to: "/contributions/" },
-    { from: "/machine-learning.html", to: "/machine-learning/" },
+    { from: "/machine-learning.html", to: "/ai-agents/" },
+    { from: "/machine-learning/", to: "/ai-agents/" },
     { from: "/license.html", to: "/license/" },
     { from: "/introduction.html", to: "/introduction/" },
     { from: "/installation.html", to: "/installation/" },
@@ -165,6 +166,13 @@ const config: Config = {
             "@docusaurus/plugin-client-redirects",
             {
                 redirects: legacyRedirects,
+                createRedirects(existingPath: string) {
+                    if (existingPath.endsWith("/ai-agents/") && existingPath !== "/ai-agents/") {
+                        return existingPath.replace(/\/ai-agents\/$/, "/machine-learning/");
+                    }
+
+                    return undefined;
+                },
             },
         ],
     ],

@@ -16,6 +16,22 @@
         "content": ""
     },
     {
+        "route": "/de/ai-agents/",
+        "title": "KI-Agenten",
+        "description": "Anleitung zur Verwendung des Projekts mit LLMs und einer konsolidierten Wissensbasis",
+        "keywords": [
+            "LLM",
+            "llms.txt",
+            "AI agents",
+            "knowledge base"
+        ],
+        "headings": [
+            "KI-Agenten",
+            "Siehe auch"
+        ],
+        "content": "← Zurück · Zurück zur README · Weiter → KI-Agenten Sie können Ihrem LLM helfen, die Struktur und Konventionen dieses Projekts wesentlich besser zu verstehen. Importieren Sie dazu die Anleitung aus der folgenden Datei: llms.txt . Diese Datei ist ein einzelnes, konsolidiertes Markdown-Dokument mit der zusammengestellten Dokumentation dieses Projekts. Sie dient als Wissensbasis für LLMs, beispielsweise als Anhang zu einem System-Prompt, als Retrieval-Korpus oder als benutzerdefinierte Wissensdatei. Speichern Sie die URL und importieren Sie die Datei regelmäßig erneut, um Aktualisierungen des Projekts zu übernehmen. Siehe auch - Erste Schritte - Beitragsleitfaden - MIT-Lizenz"
+    },
+    {
         "route": "/de/api/",
         "title": "API-Referenz",
         "description": "Übersicht öffentlicher Klassen, Verträge, Datenobjekte, Ereignisse und Ausnahmen von Laravel Feeds",
@@ -414,22 +430,6 @@
             "Siehe auch"
         ],
         "content": "← Zurück · Zurück zur README · Weiter → Speicherort Standardmäßig werden Feeds im Speicher public abgelegt. Der Dateiname wird automatisch aus dem Namen der Feed-Klasse nach App\\Feeds\\ im Format kebab-case erzeugt. Beispiel: Sie können diese Werte ändern, indem Sie die Eigenschaft $storage und die Methode filename überschreiben: Unterstützte Datenträger Die Feed-Generierung unterstützt Laravel-Datenträger, die zu Illuminate\\Filesystem\\FilesystemAdapter aufgelöst werden. Dazu gehören die Treiber local , s3 , sftp und ftp , wenn ihre Flysystem-Adapter installiert und konfiguriert sind. Benutzerdefinierte Adapter werden unterstützt, wenn sie beschreibbare Streams, Dateiverschiebungen, Verzeichnisverwaltung und -auflistung sowie Löschvorgänge über Flysystem bereitstellen. Schreibgeschützte Datenträger und benutzerdefinierte Datenträger, die nur Illuminate\\Contracts\\Filesystem\\Filesystem implementieren, werden nicht unterstützt. Ein benutzerdefinierter Datenträger, der nicht zu Illuminate\\Filesystem\\FilesystemAdapter aufgelöst wird, schlägt vor dem Start der Datenbankabfrage des Feeds mit UnsupportedStorageDiskException fehl. Ein schreibgeschützter Laravel-Datenträger wird weiterhin zu FilesystemAdapter aufgelöst; daher werden die Feed-Abfrage und das lokale Staging abgeschlossen, bevor der Schreibvorgang bei der Veröffentlichung fehlschlägt. GeneratorService schließt diesen Speicherfehler in FeedGenerationException ein. Pfadvertrag - storage() gibt den konfigurierten FilesystemAdapter zurück. - storagePath() gibt den datenträgerrelativen Pfad für Speichervorgänge zurück, einschließlich eines optionalen Suffixes für aufgeteilte Dateien. - path() gibt den vom Laravel-Adapter aufgelösten Pfad zurück. Bei einem lokalen Datenträger ist dies ein absoluter Dateisystempfad, bei einem entfernten Datenträger ein vom Adapter aufgelöster Pfad. Veröffentlichungsgarantien Jeder Feed-Teil wird vollständig fertiggestellt, bevor die Veröffentlichung beginnt. Lokale Datenträger veröffentlichen bereitgestellte Dateien durch Dateisystemverschiebungen unter einer exklusiven Anwendungssperre. Schlägt eine Verschiebung fehl, versucht Laravel Feeds, jede vorherige Datei aus ihrer Staging-Sicherung wiederherzustellen. Entfernte Datenträger erhalten vollständige Staging-Dateien über Flysystem-Streams, bevor veröffentlichte Objekte geändert werden. Anschließend verschiebt die Veröffentlichung jedes Staging-Objekt an seinen Zielort und versucht bei einem Fehler dieselbe Wiederherstellung. Entfernte Verschiebungen können als Kopier- und Löschvorgänge umgesetzt werden und eventuell konsistent sein. Daher ist der atomare Austausch eines einzelnen Objekts oder eines vollständig aufgeteilten Feeds nicht garantiert. Die Veröffentlichungssperre gilt nur lokal auf dem Anwendungshost. Generatoren auf verschiedenen Hosts benötigen eine externe verteilte Sperre, wenn sie denselben Feed gleichzeitig veröffentlichen können. Siehe auch - Generierung und Zeitplanung - Elemente - Ereignisse"
-    },
-    {
-        "route": "/de/machine-learning/",
-        "title": "KI-Agenten",
-        "description": "Anleitung zur Verwendung des Projekts mit LLMs und einer konsolidierten Wissensbasis",
-        "keywords": [
-            "LLM",
-            "llms.txt",
-            "AI agents",
-            "knowledge base"
-        ],
-        "headings": [
-            "KI-Agenten",
-            "Siehe auch"
-        ],
-        "content": "← Zurück · Zurück zur README · Weiter → KI-Agenten Sie können Ihrem LLM helfen, die Struktur und Konventionen dieses Projekts wesentlich besser zu verstehen. Importieren Sie dazu die Anleitung aus der folgenden Datei: llms.txt . Diese Datei ist ein einzelnes, konsolidiertes Markdown-Dokument mit der zusammengestellten Dokumentation dieses Projekts. Sie dient als Wissensbasis für LLMs, beispielsweise als Anhang zu einem System-Prompt, als Retrieval-Korpus oder als benutzerdefinierte Wissensdatei. Speichern Sie die URL und importieren Sie die Datei regelmäßig erneut, um Aktualisierungen des Projekts zu übernehmen. Siehe auch - Erste Schritte - Beitragsleitfaden - MIT-Lizenz"
     },
     {
         "route": "/de/performance/",

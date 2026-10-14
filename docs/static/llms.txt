@@ -3806,7 +3806,7 @@ The Laravel code of conduct is derived from the [Contributor Covenant](https://w
 
 - [MIT License](https://feeds.dragon-code.pro/license/)
 - [Getting started](https://feeds.dragon-code.pro/introduction/)
-- [AI Agents](https://feeds.dragon-code.pro/machine-learning/)
+- [AI Agents](https://feeds.dragon-code.pro/ai-agents/)
 
 ---
 
@@ -3844,4 +3844,4 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 - [Contribution guide](https://feeds.dragon-code.pro/contributions/)
 - [Getting started](https://feeds.dragon-code.pro/introduction/)
-- [AI Agents](https://feeds.dragon-code.pro/machine-learning/)
+- [AI Agents](https://feeds.dragon-code.pro/ai-agents/)

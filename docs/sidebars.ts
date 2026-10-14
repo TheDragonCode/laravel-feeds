@@ -72,7 +72,7 @@ const sidebars: SidebarsConfig = {
                 "upgrade-guide",
                 "compatibility",
                 "contributions",
-                "machine-learning",
+                "ai-agents",
                 "license",
             ],
         },

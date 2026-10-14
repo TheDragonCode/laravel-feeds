@@ -198,7 +198,7 @@ try {
         path.join(siteDirectory, "versioned_docs", `version-${version}`),
         ...localizedVersions.map((localizedVersion) => localizedVersion.targetDirectory),
     ]) {
-        const filename = path.join(directory, "machine-learning.mdx");
+        const filename = path.join(directory, "ai-agents.mdx");
         const content = await readFile(filename, "utf8");
 
         await writeFile(

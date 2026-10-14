@@ -1,5 +1,21 @@
 [
     {
+        "route": "/fr/1.x/ai-agents/",
+        "title": "Apprentissage automatique",
+        "description": "Conseils pour utiliser le projet avec des LLM et une base de connaissances consolidée",
+        "keywords": [
+            "LLM",
+            "llms.txt",
+            "machine learning",
+            "knowledge base"
+        ],
+        "headings": [
+            "Apprentissage automatique",
+            "Voir aussi"
+        ],
+        "content": "← Précédent · Retour au README · Suivant → Apprentissage automatique Vous pouvez aider votre LLM à mieux comprendre la structure et les conventions de ce projet. Pour cela, importez les instructions du fichier suivant : llms.txt . Ce fichier est un document Markdown unique et consolidé qui contient l’ensemble de la documentation compilée du projet. Il est conçu comme une base de connaissances pour les LLM, par exemple comme pièce jointe à un prompt système, corpus de recherche ou fichier de connaissances personnalisé. Enregistrez l’URL et réimportez régulièrement le fichier pour récupérer les mises à jour du projet. Voir aussi - Bien démarrer - Guide de contribution - Licence MIT"
+    },
+    {
         "route": "/fr/1.x/api/",
         "title": "Référence API",
         "description": "Carte des classes, contrats, objets de données, événements et exceptions publics de Laravel Feeds",
@@ -398,22 +414,6 @@
             "Voir aussi"
         ],
         "content": "← Précédent · Retour au README · Suivant → Emplacement Par défaut, les flux sont enregistrés dans le stockage public . Le nom du fichier est généré automatiquement à partir du nom de la classe du flux après App\\Feeds\\ , au format kebab-case . Exemple : Vous pouvez modifier ces valeurs en remplaçant la propriété $storage et la méthode filename : Disques pris en charge La génération des flux prend en charge les disques Laravel résolus en Illuminate\\Filesystem\\FilesystemAdapter . Cela comprend les pilotes local , s3 , sftp et ftp lorsque leurs adaptateurs Flysystem sont installés et configurés. Les adaptateurs personnalisés sont pris en charge s’ils fournissent des flux accessibles en écriture, le déplacement de fichiers, la gestion et l’énumération des répertoires ainsi que la suppression via Flysystem. Les disques en lecture seule et les disques personnalisés qui implémentent uniquement Illuminate\\Contracts\\Filesystem\\Filesystem ne sont pas pris en charge. Un disque personnalisé qui n’est pas résolu en Illuminate\\Filesystem\\FilesystemAdapter échoue avec UnsupportedStorageDiskException avant le démarrage de la requête de base de données du flux. Un disque Laravel en lecture seule est toujours résolu en FilesystemAdapter ; la requête du flux et la préparation locale se terminent donc avant l’échec de l’écriture lors de la publication. GeneratorService enveloppe cette erreur de stockage dans FeedGenerationException . Contrat des chemins - storage() renvoie le FilesystemAdapter configuré. - storagePath() renvoie le chemin relatif au disque utilisé pour les opérations de stockage, y compris un suffixe facultatif pour les fichiers répartis. - path() renvoie le chemin résolu par l’adaptateur Laravel. Il s’agit d’un chemin absolu du système de fichiers pour un disque local et d’un chemin résolu par l’adaptateur pour un disque distant. Garanties de publication Chaque partie du flux est terminée avant le début de la publication. Les disques locaux publient les fichiers préparés au moyen de déplacements dans le système de fichiers, sous un verrou applicatif exclusif. Si un déplacement échoue, Laravel Feeds tente de restaurer chaque fichier précédent depuis sa sauvegarde de préparation. Les disques distants reçoivent les fichiers préparés complets via des flux Flysystem avant toute modification des objets publiés. La publication déplace ensuite chaque objet préparé vers sa destination et tente la même restauration en cas d’échec. Les déplacements distants peuvent être réalisés sous forme d’opérations de copie et de suppression, avec une cohérence éventuelle. Le remplacement atomique d’un objet ou d’un flux réparti complet n’est donc pas garanti. Le verrou de publication est local à l’hôte de l’application. Des générateurs exécutés sur des hôtes différents nécessitent donc un verrou distribué externe s’ils peuvent publier simultanément le même flux. Voir aussi - Génération et planification - Éléments - Événements"
-    },
-    {
-        "route": "/fr/1.x/machine-learning/",
-        "title": "Apprentissage automatique",
-        "description": "Conseils pour utiliser le projet avec des LLM et une base de connaissances consolidée",
-        "keywords": [
-            "LLM",
-            "llms.txt",
-            "machine learning",
-            "knowledge base"
-        ],
-        "headings": [
-            "Apprentissage automatique",
-            "Voir aussi"
-        ],
-        "content": "← Précédent · Retour au README · Suivant → Apprentissage automatique Vous pouvez aider votre LLM à mieux comprendre la structure et les conventions de ce projet. Pour cela, importez les instructions du fichier suivant : llms.txt . Ce fichier est un document Markdown unique et consolidé qui contient l’ensemble de la documentation compilée du projet. Il est conçu comme une base de connaissances pour les LLM, par exemple comme pièce jointe à un prompt système, corpus de recherche ou fichier de connaissances personnalisé. Enregistrez l’URL et réimportez régulièrement le fichier pour récupérer les mises à jour du projet. Voir aussi - Bien démarrer - Guide de contribution - Licence MIT"
     },
     {
         "route": "/fr/1.x/performance/",
