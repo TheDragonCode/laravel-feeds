@@ -110,10 +110,10 @@ php artisan migrate
 
 ## Згенеруйце файлы {/* #generate-all */}
 
-Перадайце ідэнтыфікатар рэгістрацыі стужкі. Каманда згенеруе файл для кожнай мэты, вернутай `targets()`:
+Перадайце slug рэгістрацыі стужкі. Каманда згенеруе файл для кожнай мэты, вернутай `targets()`:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate product
 ```
 
 Для мэт `available` і `unavailable` будуць створаны наступныя шляхі:
@@ -128,8 +128,8 @@ storage/app/public/products/unavailable.xml
 Выкарыстоўвайце паўтаральны параметр `--target`, калі трэба абнавіць файлы толькі выбраных мэт:
 
 ```bash
-php artisan feed:generate 123 --target=available
-php artisan feed:generate 123 --target=available --target=unavailable
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
 ```
 
 ## Падзяліце файлы паводле колькасці запісаў {/* #split-each-output */}

@@ -8,13 +8,14 @@ use Workbench\App\Feeds\SitemapFeed;
 
 use function Pest\Laravel\artisan;
 
-test('generate', function () {
+test('generates a disabled feed by its updated slug', function () {
     disableFeeds([SitemapFeed::class]);
 
     $source = findFeed(SitemapFeed::class);
+    $source->update(['title' => 'Renamed sitemap']);
 
     $command = artisan(FeedGenerateCommand::class, [
-        'feed' => (string) $source->id,
+        'feed' => $source->slug,
     ]);
 
     getAllFeeds()->each(

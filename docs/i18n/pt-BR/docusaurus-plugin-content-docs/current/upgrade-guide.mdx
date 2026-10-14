@@ -24,6 +24,11 @@ Esta documentação cobre a linha `1.x`. Revise as notas da versão e o arquivo 
 
 ```bash
 composer update dragon-code/laravel-feeds --with-all-dependencies
+```
+
+Para uma instalação existente, copie somente `database/migrations/2026_10_14_000000_add_slug_to_feeds_table.php` do pacote para o diretório de migrations da aplicação. Escolha um timestamp no nome do arquivo imediatamente após a migration `create_feeds_table` efetivamente presente na aplicação e antes de todas as migrations de registro de feeds; mantenha o sufixo `add_slug_to_feeds_table`. Em seguida, execute `php artisan migrate`. A migration usa a conexão e a tabela configuradas e preenche os slugs a partir dos títulos existentes, incluindo registros excluídos logicamente. Não publique nem execute novamente a migration original que cria a tabela. Substitua os IDs numéricos dos feeds nos comandos e agendamentos manuais pelos slugs armazenados.
+
+```bash
 php artisan migrate
 ```
 

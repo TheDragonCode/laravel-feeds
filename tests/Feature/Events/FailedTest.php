@@ -95,7 +95,7 @@ test('failed', function () {
         'title' => 'Failed',
     ]);
 
-    artisan(FeedGenerateCommand::class, ['feed' => $feed->id])
+    artisan(FeedGenerateCommand::class, ['feed' => $feed->slug])
         ->assertSuccessful()
         ->run();
 })->throws(
@@ -112,7 +112,7 @@ test('feed class link', function () {
     ]);
 
     try {
-        artisan(FeedGenerateCommand::class, ['feed' => $feed->id])
+        artisan(FeedGenerateCommand::class, ['feed' => $feed->slug])
             ->assertSuccessful()
             ->run();
     } catch (FeedGenerationException $e) {

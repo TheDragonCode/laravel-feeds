@@ -75,7 +75,7 @@ test('does not resolve an ordinary feed before queueing', function () {
     $feed = findFeed(FullFeed::class);
 
     artisan(FeedGenerateCommand::class, [
-        'feed' => (string) $feed->id,
+        'feed' => $feed->slug,
     ])->assertSuccessful()->run();
 
     Queue::assertPushed(

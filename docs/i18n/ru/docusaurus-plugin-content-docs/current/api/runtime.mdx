@@ -58,6 +58,7 @@ $result = app(GeneratorService::class)->feed(
 | --- | --- |
 | `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Создаёт запись. |
 | `find(int $id): Feed` | Возвращает запись или выбрасывает `FeedNotFoundException`. |
+| `findBySlug(string $slug): Feed` | Возвращает одну запись; при отсутствии выбрасывает `FeedNotFoundException`, при неоднозначности — `MultipleRecordsFoundException`. |
 | `all(): Builder` | Возвращает все записи по идентификатору. |
 | `active(): Builder` | Возвращает активные записи по идентификатору. |
 | `setLastActivity(string $class): void` | Обновляет `last_activity` для класса фида. |

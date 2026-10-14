@@ -34,6 +34,7 @@ test('creates the configured model with extra attributes', function () {
         ->toBeInstanceOf(Feed::class)
         ->class->toBe(FullFeed::class)
         ->title->toBe('Other')
+        ->slug->toBe('other')
         ->expression->toBe('* * * * *')
         ->is_active->toBeFalse()
         ->is_foo->toBeTrue()
@@ -58,6 +59,7 @@ test('supports direct creation through the custom model', function () {
 
     expect($feed)
         ->toBeInstanceOf(Feed::class)
+        ->slug->toBe('some')
         ->is_foo->toBeTrue()
         ->is_bar->toBeTrue();
 });

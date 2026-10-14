@@ -31,32 +31,32 @@ No entanto, esses feeds não serão executados: eles serão marcados com o statu
 O feed informado **será executado** mesmo que esteja desativado na tabela `feeds` do banco de dados.
 :::
 
-Para gerar um feed específico, chame o comando `feed:generate` e passe como parâmetro o ID do feed na tabela `feeds`:
+Para gerar um feed específico, chame o comando `feed:generate` e passe como parâmetro o slug do feed na tabela `feeds`:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 ## Gerar arquivos de saída selecionados {/* #target_selection */}
 
-Em um feed configurado com [arquivos de saída separados](./feed-targets.mdx), o ID do registro seleciona a classe do feed e a chave do alvo seleciona um parceiro, uma loja, uma localidade ou outra saída.
+Em um feed configurado com [arquivos de saída separados](./feed-targets.mdx), o slug do registro seleciona a classe do feed e a chave do alvo seleciona um parceiro, uma loja, uma localidade ou outra saída.
 
 Executar o feed sem `--target` consome `targets()` sob demanda e gera todos os alvos:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 Passe a opção repetível `--target` para gerar apenas os alvos selecionados:
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
 ```
 
 As chaves explícitas usam `findTarget()` em vez de enumerar `targets()`. Chaves duplicadas são processadas uma única vez, na ordem em que aparecem pela primeira vez. Todas as chaves solicitadas são resolvidas antes do início da geração.
 
-`--target` exige um único ID de registro de feed. O comando rejeita chaves vazias ou desconhecidas e rejeita a seleção de alvos para um feed que não implementa `HasFeedTargets`.
+`--target` exige um único slug de registro de feed. O comando rejeita chaves vazias ou desconhecidas e rejeita a seleção de alvos para um feed que não implementa `HasFeedTargets`.
 
 A enumeração completa dos alvos é processada como fluxo, não como uma operação atômica. Se `targets()` falhar depois de retornar alguns valores, os alvos anteriores já poderão ter sido gerados ou enfileirados. Um iterável vazio não gera nada nem cria um alvo padrão implícito.
 
@@ -95,7 +95,7 @@ O comando emite um JSON compacto em uma única linha. O exemplo está formatado 
 | --- | --- | --- |
 | `generated` | Os arquivos do feed foram gerados diretamente. | `files`, com `path` e `records` para cada arquivo |
 | `queued` | O modo de fila está ativado e o job do feed foi executado de forma síncrona para o agente. | Nenhum |
-| `skipped` | O feed está inativo e o comando foi executado sem o ID de um feed. | Nenhum |
+| `skipped` | O feed está inativo e o comando foi executado sem o slug de um feed. | Nenhum |
 
 Cada entrada `generated` ou `queued` de um feed direcionado também contém um campo `target` com a chave selecionada.
 
@@ -176,12 +176,12 @@ Você também pode definir o agendamento diretamente segundo suas próprias regr
 use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command(FeedGenerateCommand::class, [111])
+Schedule::command(FeedGenerateCommand::class, ['products'])
     ->withoutOverlapping()
     ->runInBackground()
     ->daily();
 
-Schedule::command(FeedGenerateCommand::class, [222])
+Schedule::command(FeedGenerateCommand::class, ['sitemap'])
     ->withoutOverlapping()
     ->runInBackground()
     ->hourly();

@@ -11,6 +11,10 @@ keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
 
 # Eloquent
 
+Beim Speichern eines Modells wird `Str::slug(title)` automatisch über `SlugCast` in `slug` gespeichert. Dafür wird der endgültige Wert von `title` nach benutzerdefinierten Titel-Settern verwendet. Benutzerdefinierte Titel-Mutatoren und `saveQuietly()` werden unterstützt. Eine Änderung des Titels ändert den Slug. Beispielsweise wird `Products` zu `products`. Massenaktualisierungen und Einfügungen über den Query Builder umgehen das Speichern des Modells; verwenden Sie stattdessen `create()`, `update()` oder `save()` am Modell.
+
+Wählen Sie für einzeln ausgewählte und geplante Feeds Titel, die unterschiedliche, nicht leere Slugs ergeben. Ein Titel, dessen normalisierter Slug leer ist, kann nicht ausgewählt werden. Mehrere nicht gelöschte Registrierungen mit demselben Slug lösen bei der Suche `Illuminate\Database\MultipleRecordsFoundException` aus; ein Suffix wird nicht automatisch hinzugefügt.
+
 ## Benutzerdefiniertes Registrierungsmodell für Feeds {/* #custom_feed_model */}
 
 Setzen Sie `feeds.model` auf ein Anwendungsmodell, wenn die Registrierungsdatensätze für Feeds zusätzliche Spalten, Casts, Beziehungen oder Methoden benötigen. Das benutzerdefinierte Modell muss `DragonCode\LaravelFeed\Models\Feed` erweitern.

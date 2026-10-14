@@ -9,6 +9,7 @@ use DragonCode\LaravelFeed\Models\Feed;
 use DragonCode\LaravelFeed\Scheduling\Expression;
 use Illuminate\Container\Attributes\Config;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 use function now;
 
@@ -38,6 +39,15 @@ class FeedQuery
     public function find(int $id): Feed
     {
         return $this->model::findOr($id, callback: static fn () => throw new FeedNotFoundException($id));
+    }
+
+    public function findBySlug(string $slug): Feed
+    {
+        try {
+            return $this->model::query()->where('slug', $slug)->sole();
+        } catch (ModelNotFoundException) {
+            throw new FeedNotFoundException($slug);
+        }
     }
 
     public function all(): Builder

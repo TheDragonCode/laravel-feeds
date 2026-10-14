@@ -22,7 +22,7 @@ test('overwrites existing feed file and removes .draft during generation', funct
     $filesystem->put($draft, 'bar');
 
     artisan(FeedGenerateCommand::class, [
-        'feed' => $feed->id,
+        'feed' => $feed->slug,
     ])->assertSuccessful()->run();
 
     expect($feed)->toMatchGeneratedFeed();

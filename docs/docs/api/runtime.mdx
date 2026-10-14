@@ -58,6 +58,7 @@ $result = app(GeneratorService::class)->feed(
 | --- | --- |
 | `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Creates a registration. |
 | `find(int $id): Feed` | Returns a registration or throws `FeedNotFoundException`. |
+| `findBySlug(string $slug): Feed` | Returns one registration; throws `FeedNotFoundException` when missing or `MultipleRecordsFoundException` when ambiguous. |
 | `all(): Builder` | Returns all registrations ordered by ID. |
 | `active(): Builder` | Returns active registrations ordered by ID. |
 | `setLastActivity(string $class): void` | Updates `last_activity` for a feed class. |

@@ -58,6 +58,7 @@ $result = app(GeneratorService::class)->feed(
 | --- | --- |
 | `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Crée un enregistrement. |
 | `find(int $id): Feed` | Renvoie un enregistrement ou lève `FeedNotFoundException`. |
+| `findBySlug(string $slug): Feed` | Renvoie un seul enregistrement. Lève `FeedNotFoundException` si aucun enregistrement n’existe et `MultipleRecordsFoundException` si plusieurs correspondent. |
 | `all(): Builder` | Renvoie tous les enregistrements triés par identifiant. |
 | `active(): Builder` | Renvoie les enregistrements actifs triés par identifiant. |
 | `setLastActivity(string $class): void` | Met à jour `last_activity` pour une classe de flux. |

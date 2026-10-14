@@ -53,14 +53,14 @@ Feed 目标按应用定义的业务含义拆分数据。`perFile()` 则按记录
 生成 `targets()` 返回的全部目标：
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 生成一个或多个所选目标：
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
 ```
 
 显式键使用 `findTarget()`，不会枚举 `targets()`。重复键只处理一次，并保留第一次出现的顺序。生成开始前会先解析全部请求键。

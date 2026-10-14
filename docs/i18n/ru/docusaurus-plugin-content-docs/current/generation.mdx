@@ -31,32 +31,32 @@ php artisan feed:generate
 Указанный фид **будет выполнен**, даже если он отключён в таблице `feeds` базы данных.
 :::
 
-Чтобы сгенерировать определённый фид, вызовите консольную команду `feed:generate` и передайте ей идентификатор фида из таблицы `feeds`:
+Чтобы сгенерировать определённый фид, вызовите консольную команду `feed:generate` и передайте ей slug фида из таблицы `feeds`:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 ## Генерация выбранных выходных файлов {/* #target_selection */}
 
-Для фида с [отдельными выходными файлами](./feed-targets.mdx) идентификатор записи выбирает класс фида, а ключ цели — одного партнёра, магазин, локаль или другой вариант вывода.
+Для фида с [отдельными выходными файлами](./feed-targets.mdx) slug записи выбирает класс фида, а ключ цели — одного партнёра, магазин, локаль или другой вариант вывода.
 
 Запуск без `--target` лениво обрабатывает `targets()` и генерирует все цели:
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 Передайте повторяемый параметр `--target`, чтобы сгенерировать только выбранные цели:
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
 ```
 
 Явно заданные ключи используют `findTarget()` вместо перечисления `targets()`. Повторяющиеся ключи обрабатываются один раз в порядке первого появления. Все запрошенные ключи разрешаются до начала генерации.
 
-Для `--target` требуется один идентификатор записи фида. Команда отклоняет пустые и неизвестные ключи, а также выбор цели для фида, который не реализует `HasFeedTargets`.
+Для `--target` требуется один slug записи фида. Команда отклоняет пустые и неизвестные ключи, а также выбор цели для фида, который не реализует `HasFeedTargets`.
 
 Полное перечисление целей выполняется потоково, а не атомарно. Если `targets()` завершится ошибкой после возврата нескольких значений, предыдущие цели уже могут быть сгенерированы или поставлены в очередь. Пустой итерируемый объект ничего не генерирует и не создаёт неявную цель по умолчанию.
 
@@ -95,7 +95,7 @@ php artisan feed:generate 123 --target=42 --target=81
 | --- | --- | --- |
 | `generated` | Файлы фида созданы напрямую. | `files` с полями `path` и `records` для каждого файла |
 | `queued` | Режим очереди включён, и задание фида выполнено синхронно для агента. | Нет |
-| `skipped` | Фид неактивен, а команда выполнена без идентификатора фида. | Нет |
+| `skipped` | Фид неактивен, а команда выполнена без slug фида. | Нет |
 
 Каждая целевая запись `generated` или `queued` также содержит поле `target` с выбранным ключом.
 
@@ -176,12 +176,12 @@ Schedule::call(function () {
 use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command(FeedGenerateCommand::class, [111])
+Schedule::command(FeedGenerateCommand::class, ['products'])
     ->withoutOverlapping()
     ->runInBackground()
     ->daily();
 
-Schedule::command(FeedGenerateCommand::class, [222])
+Schedule::command(FeedGenerateCommand::class, ['sitemap'])
     ->withoutOverlapping()
     ->runInBackground()
     ->hourly();

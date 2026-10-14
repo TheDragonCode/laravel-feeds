@@ -31,32 +31,32 @@ php artisan feed:generate
 即使指定的 Feed 在数据库的 `feeds` 表中已禁用，它也**仍会运行**。
 :::
 
-要生成指定 Feed，请调用 `feed:generate` 控制台命令，并将 `feeds` 表中的 Feed ID 作为参数传入：
+要生成指定 Feed，请调用 `feed:generate` 控制台命令，并将 `feeds` 表中的 Feed slug 作为参数传入：
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 ## 生成所选输出文件 {/* #target_selection */}
 
-对于配置了[独立输出文件](./feed-targets.mdx)的 Feed，注册 ID 用于选择 Feed 类，目标键用于选择一个合作方、商店、语言区域或其他输出。
+对于配置了[独立输出文件](./feed-targets.mdx)的 Feed，注册 slug 用于选择 Feed 类，目标键用于选择一个合作方、商店、语言区域或其他输出。
 
 不传入 `--target` 运行该 Feed 时，会惰性消费 `targets()` 并生成全部目标：
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate products
 ```
 
 重复传入 `--target` 选项可仅生成所选目标：
 
 ```bash
-php artisan feed:generate 123 --target=42
-php artisan feed:generate 123 --target=42 --target=81
+php artisan feed:generate products --target=42
+php artisan feed:generate products --target=42 --target=81
 ```
 
 显式键使用 `findTarget()`，不会枚举 `targets()`。重复键只处理一次，并保留第一次出现的顺序。生成开始前会先解析全部请求键。
 
-使用 `--target` 时必须提供一个 Feed 注册 ID。空键、未知键，以及对未实现 `HasFeedTargets` 的 Feed 选择目标都会被命令拒绝。
+使用 `--target` 时必须提供一个 Feed 注册 slug。空键、未知键，以及对未实现 `HasFeedTargets` 的 Feed 选择目标都会被命令拒绝。
 
 完整目标枚举采用流式处理，并非原子操作。如果 `targets()` 在生成若干值后失败，先前的目标可能已经生成或进入队列。空的可迭代对象不会生成任何内容，也不会创建隐式默认目标。
 
@@ -95,7 +95,7 @@ php artisan feed:generate 123 --target=42 --target=81
 | --- | --- | --- |
 | `generated` | 直接生成了 Feed 文件。 | `files`，其中包含每个文件的 `path` 和 `records` |
 | `queued` | 已启用队列模式，并为代理同步执行了 Feed 任务。 | 无 |
-| `skipped` | Feed 未启用，并且命令运行时未传入 Feed ID。 | 无 |
+| `skipped` | Feed 未启用，并且命令运行时未传入 Feed slug。 | 无 |
 
 每个目标 Feed 的 `generated` 或 `queued` 条目还包含 `target` 字段，其值为所选目标键。
 
@@ -176,12 +176,12 @@ Schedule::call(function () {
 use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command(FeedGenerateCommand::class, [111])
+Schedule::command(FeedGenerateCommand::class, ['products'])
     ->withoutOverlapping()
     ->runInBackground()
     ->daily();
 
-Schedule::command(FeedGenerateCommand::class, [222])
+Schedule::command(FeedGenerateCommand::class, ['sitemap'])
     ->withoutOverlapping()
     ->runInBackground()
     ->hourly();

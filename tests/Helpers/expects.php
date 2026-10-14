@@ -15,7 +15,7 @@ function expectFeedSnapshot(string $class, ?FeedFormatEnum $format = null, array
     $format ??= $instance->format();
 
     artisan(FeedGenerateCommand::class, [
-        'feed' => $feed->id,
+        'feed' => $feed->slug,
     ])->assertSuccessful()->run();
 
     foreach ($indexes as $index) {

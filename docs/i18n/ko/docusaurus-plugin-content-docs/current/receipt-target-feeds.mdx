@@ -110,10 +110,10 @@ php artisan migrate
 
 ## 파일 생성 {/* #generate-all */}
 
-피드 등록 ID를 전달하십시오. 명령은 `targets()`가 반환하는 각 대상의 파일을 생성합니다.
+피드 등록 slug를 전달하십시오. 명령은 `targets()`가 반환하는 각 대상의 파일을 생성합니다.
 
 ```bash
-php artisan feed:generate 123
+php artisan feed:generate product
 ```
 
 `available`과 `unavailable` 대상이 있다면 다음 경로에 파일이 생성됩니다.
@@ -128,8 +128,8 @@ storage/app/public/products/unavailable.xml
 선택한 대상의 파일만 새로 만들어야 할 때는 반복 가능한 `--target` 옵션을 사용하십시오.
 
 ```bash
-php artisan feed:generate 123 --target=available
-php artisan feed:generate 123 --target=available --target=unavailable
+php artisan feed:generate product --target=available
+php artisan feed:generate product --target=available --target=unavailable
 ```
 
 ## 레코드 수에 따라 파일 분할 {/* #split-each-output */}

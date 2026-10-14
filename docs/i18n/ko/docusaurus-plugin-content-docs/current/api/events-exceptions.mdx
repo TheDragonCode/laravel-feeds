@@ -26,13 +26,14 @@ keywords: ["events", "exceptions", "FeedStartingEvent", "FeedFinishedEvent", "ta
 
 | 예외 | 의미 |
 | --- | --- |
-| `InvalidFeedArgumentException` | 콘솔 피드 ID가 유효하지 않습니다. |
-| `FeedNotFoundException` | 요청한 피드 ID의 등록 정보가 없습니다. |
+| `InvalidFeedArgumentException` | 콘솔 피드 slug가 유효하지 않습니다. |
+| `FeedNotFoundException` | 요청한 피드 ID 또는 slug의 등록 정보가 없습니다. |
+| `Illuminate\Database\MultipleRecordsFoundException` | 삭제되지 않은 등록 정보 여러 개가 요청한 slug를 사용합니다. |
 | `InvalidExpressionException` | 스케줄 표현식이 유효하지 않습니다. |
 | `UnknownFeedClassException` | 구성된 피드 클래스를 해석할 수 없습니다. |
 | `UnexpectedClassException` | 해석된 클래스가 예상 계약을 충족하지 않습니다. |
 
-대상 선택에는 SPL 예외가 사용됩니다. `--target`을 전달했을 때 피드 등록 ID를 제공하지 않았거나, 대상 키가 비어 있거나, 선택한 피드가 `HasFeedTargets`를 구현하지 않으면 `feed:generate` 명령은 `InvalidArgumentException`을 발생시킵니다. `findTarget()`이 `null`을 반환하면 `UnexpectedValueException`이 발생합니다.
+대상 선택에는 SPL 예외가 사용됩니다. `--target`을 전달했을 때 피드 등록 slug를 제공하지 않았거나, 대상 키가 비어 있거나, 선택한 피드가 `HasFeedTargets`를 구현하지 않으면 `feed:generate` 명령은 `InvalidArgumentException`을 발생시킵니다. `findTarget()`이 `null`을 반환하면 `UnexpectedValueException`이 발생합니다.
 
 ## 직렬화 및 저장소 오류 {/* #serialization-and-storage-failures */}
 

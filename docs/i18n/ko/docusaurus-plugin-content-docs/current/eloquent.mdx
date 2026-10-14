@@ -11,6 +11,10 @@ keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
 
 # Eloquent
 
+모델을 저장하면 사용자 정의 제목 세터가 적용된 최종 `title` 값을 사용하여 `SlugCast`를 통해 `Str::slug(title)`을 `slug`에 자동으로 저장합니다. 사용자 정의 제목 뮤테이터와 `saveQuietly()`를 지원합니다. 제목을 변경하면 slug도 변경됩니다. 예를 들어 `Products`는 `products`가 됩니다. 쿼리 빌더의 대량 업데이트와 삽입은 모델 저장을 거치지 않습니다. 대신 모델의 `create()`, `update()` 또는 `save()`를 사용하십시오.
+
+선택하거나 스케줄에 등록할 피드에는 서로 다르고 비어 있지 않은 slug가 생성되는 제목을 사용하십시오. 정규화 결과 slug가 비어 있는 제목은 선택할 수 없습니다. 삭제되지 않은 등록 정보 여러 개가 같은 slug를 사용하면 조회 시 `Illuminate\Database\MultipleRecordsFoundException`이 발생하며 접미사는 자동으로 추가되지 않습니다.
+
 ## 사용자 지정 피드 등록 모델 {/* #custom_feed_model */}
 
 피드 등록 레코드에 추가 열, 캐스트, 관계 또는 메서드가 필요하면 `feeds.model`을 애플리케이션 모델로 설정하십시오. 사용자 지정 모델은 `DragonCode\LaravelFeed\Models\Feed`를 확장해야 합니다.

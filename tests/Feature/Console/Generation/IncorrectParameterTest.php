@@ -7,28 +7,26 @@ use DragonCode\LaravelFeed\Exceptions\InvalidFeedArgumentException;
 
 use function Pest\Laravel\artisan;
 
-test('incorrect', function (mixed $id) {
+test('rejects empty or non-normalized feed slugs', function (string $slug) {
     artisan(FeedGenerateCommand::class, [
-        'feed' => $id,
+        'feed' => $slug,
     ])->run();
 })
-    ->throws(InvalidFeedArgumentException::class, 'Feed ID must be of type integer, [string] given.')
+    ->throws(InvalidFeedArgumentException::class, 'Feed slug must be a non-empty normalized string, [string] given.')
     ->with('generation invalid');
 
-test('rejects ambiguous numeric feed IDs', function () {
+test('rejects non-string feed slugs', function () {
     foreach ([
         0,
+        1,
         1.0,
-        '0',
-        '-1',
-        '1.9',
-        '1e2',
-        '+1',
-        ' 1 ',
-        '9999999999999999999999999999999999999999',
-    ] as $id) {
+        true,
+        false,
+        [],
+        new stdClass,
+    ] as $slug) {
         expect(fn () => artisan(FeedGenerateCommand::class, [
-            'feed' => $id,
+            'feed' => $slug,
         ])->run())->toThrow(InvalidFeedArgumentException::class);
     }
 });
