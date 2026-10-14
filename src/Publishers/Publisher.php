@@ -67,6 +67,8 @@ abstract class Publisher
     protected function title(): string
     {
         return Str::of($this->title)
+            ->beforeLast('Feed')
+            ->trim()
             ->replace(['\\', '/'], ': ')
             ->snake(' ')
             ->title()
