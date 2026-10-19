@@ -46,7 +46,7 @@
         "react-dom": "^19.3.0"
     },
     "devDependencies": {
-        "@axe-core/playwright": "^4.13.0",
+        "@axe-core/playwright": "^4.14.0",
         "@docusaurus/module-type-aliases": "3.10.2",
         "@docusaurus/types": "3.10.2",
         "@lhci/cli": "^0.15.1",
