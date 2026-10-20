@@ -4,10 +4,10 @@ description: "生成 Feed 文件以供后续分发的说明"
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate", "feed:list"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← 上一页](./create-feeds.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./feed-targets.mdx)
+[← 上一页](./list-feeds.mdx) · [返回 README](https://github.com/TheDragonCode/laravel-feeds#readme) · [下一页 →](./feed-targets.mdx)
 
 # 生成与调度
 
@@ -25,59 +25,7 @@ php artisan feed:generate
 但这些 Feed 不会运行，而会被标记为 `SKIP` 状态。
 :::
 
-## 列出已注册的 Feed {/* #list_feeds */}
-
-从 2.1.0 版本开始，可以列出 Feed 注册记录，而不生成文件或更改其状态：
-
-```bash
-php artisan feed:list
-```
-
-此命令没有自定义参数或选项。它会以表格形式显示所有注册记录，包括未启用和已软删除的 Feed。
-
-| 列 | 含义 |
-| --- | --- |
-| `id` | 注册记录 ID。 |
-| `slug` | `feed:generate` 使用的注册 slug。 |
-| `title` | 注册记录标题。 |
-| `expression` | 已保存的 cron 表达式。 |
-| `is_active` | 注册记录是否已启用。 |
-| `is_deleted` | 注册记录是否已软删除。 |
-| `last_activity` | 以 ISO 8601 格式记录的最后生成时间；未设置时在 JSON 中为 `null`。 |
-
-未删除的注册记录排在前面，已软删除的注册记录排在后面。在每组中，已启用的 Feed 排在前面，再按标题和 ID 排序。布尔值在控制台中显示为 `true` 或 `false`。
-
-使用未删除注册记录的 slug 来生成该 Feed：
-
-```bash
-php artisan feed:generate products
-```
-
-如果没有注册记录，控制台会显示 `No feeds available`。
-
-### AI 代理列表输出 {/* #list_feeds_agent */}
-
-在识别到的 AI 编码代理中，`feed:list` 会自动在单行中返回一个紧凑的 JSON 对象。无需额外选项。布尔字段保留为 JSON 布尔值：
-
-```json
-{
-  "tool": "feed:list",
-  "result": "success",
-  "feeds": [
-    {
-      "id": 1,
-      "slug": "products",
-      "title": "Products",
-      "expression": "0 * * * *",
-      "is_active": true,
-      "is_deleted": false,
-      "last_activity": null
-    }
-  ]
-}
-```
-
-此示例为便于阅读而进行了格式化。列表为空时会返回相同的封装，其中 `"feeds": []`。
+[<span id="list_feeds" />列出已注册的 Feed](./list-feeds.mdx) · [<span id="list_feeds_agent" />AI 代理列表输出](./list-feeds.mdx#list_feeds_agent)
 
 ## 单个 Feed {/* #single_feed */}
 

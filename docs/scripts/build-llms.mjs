@@ -7,6 +7,7 @@ const documentIds = [
     "installation",
     "create-feeds",
     "performance",
+    "list-feeds",
     "generation",
     "feed-targets",
     "supported-formats",

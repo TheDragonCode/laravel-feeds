@@ -69,7 +69,8 @@ test('builds and deploys Docusaurus through GitHub Pages', function () {
     $commands      = array_column($buildSteps, 'run');
 
     expect($workflow['on'])->toBe([
-        'release' => ['types' => ['published']],
+        'workflow_dispatch' => null,
+        'release'           => ['types' => ['published']],
     ])
         ->and($workflow['permissions'])->toBe([])
         ->and($workflow['concurrency'])->toBe([

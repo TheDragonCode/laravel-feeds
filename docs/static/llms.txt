@@ -373,23 +373,7 @@ Measure database time, model hydration, transformation, serialization, and stora
 
 ---
 
-# Generation & schedule
-
-To generate all active feeds, use the console command:
-
-```bash
-php artisan feed:generate
-```
-
-As a result, all active feeds (`is_active = true`) will be executed from the `feeds` table (or the one you specified in the `config/feeds.php` file).
-
-:::tip
-Please note that when you call the command without a parameter, the console will display links to all feeds, even those with the `is_active` property set to `false`.
-
-However, instead of being executed, such feeds will be marked with the `SKIP` status.
-:::
-
-## List registered feeds
+# List registered feeds
 
 Starting with version 2.1.0, list feed registrations without generating files or changing their state:
 
@@ -419,7 +403,7 @@ php artisan feed:generate products
 
 If no registrations exist, the console displays `No feeds available`.
 
-### AI agent listing
+## AI agent listing
 
 Inside a recognized AI coding agent, `feed:list` automatically returns one compact JSON object on a single line. No extra option is required. Boolean fields remain JSON booleans:
 
@@ -442,6 +426,26 @@ Inside a recognized AI coding agent, `feed:list` automatically returns one compa
 ```
 
 The example is formatted for readability. An empty listing returns the same envelope with `"feeds": []`.
+
+---
+
+# Generation & schedule
+
+To generate all active feeds, use the console command:
+
+```bash
+php artisan feed:generate
+```
+
+As a result, all active feeds (`is_active = true`) will be executed from the `feeds` table (or the one you specified in the `config/feeds.php` file).
+
+:::tip
+Please note that when you call the command without a parameter, the console will display links to all feeds, even those with the `is_active` property set to `false`.
+
+However, instead of being executed, such feeds will be marked with the `SKIP` status.
+:::
+
+[<span id="list_feeds" />List registered feeds](https://feeds.dragon-code.pro/list-feeds/) · [<span id="list_feeds_agent" />AI agent listing](https://feeds.dragon-code.pro/list-feeds/#list_feeds_agent)
 
 ## Single feed
 

@@ -4,10 +4,10 @@ description: "Informations sur la génération de fichiers de flux destinés à 
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate", "feed:list"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← Précédent](./create-feeds.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./feed-targets.mdx)
+[← Précédent](./list-feeds.mdx) · [Retour au README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Suivant →](./feed-targets.mdx)
 
 # Génération et planification
 
@@ -25,59 +25,7 @@ Lorsque vous appelez la commande sans paramètre, la console affiche des liens v
 Ces flux ne sont toutefois pas exécutés : ils sont marqués avec le statut `SKIP`.
 :::
 
-## Lister les flux enregistrés {/* #list_feeds */}
-
-À partir de la version 2.1.0, listez les enregistrements de flux sans générer de fichiers ni modifier leur état :
-
-```bash
-php artisan feed:list
-```
-
-La commande ne possède aucun argument ni aucune option spécifique. Elle affiche un tableau de tous les enregistrements, y compris les flux inactifs et supprimés de manière réversible.
-
-| Colonne | Signification |
-| --- | --- |
-| `id` | Identifiant de l’enregistrement. |
-| `slug` | Slug de l’enregistrement utilisé par `feed:generate`. |
-| `title` | Titre de l’enregistrement. |
-| `expression` | Expression cron enregistrée. |
-| `is_active` | Indique si l’enregistrement est actif. |
-| `is_deleted` | Indique si l’enregistrement est supprimé de manière réversible. |
-| `last_activity` | Date et heure de la dernière génération enregistrée au format ISO 8601 ; `null` en JSON si aucune valeur n’est définie. |
-
-Les enregistrements non supprimés apparaissent en premier, suivis des enregistrements supprimés de manière réversible. Dans chaque groupe, les flux actifs apparaissent en premier, puis les lignes sont triées par titre et identifiant. Les valeurs booléennes sont affichées sous la forme `true` ou `false` dans la console.
-
-Utilisez le slug d’un enregistrement non supprimé pour générer ce flux :
-
-```bash
-php artisan feed:generate products
-```
-
-Si aucun enregistrement n’existe, la console affiche `No feeds available`.
-
-### Liste pour les agents d’IA {/* #list_feeds_agent */}
-
-Dans un agent de codage IA reconnu, `feed:list` renvoie automatiquement un objet JSON compact sur une seule ligne. Aucune option supplémentaire n’est requise. Les champs booléens restent des booléens JSON :
-
-```json
-{
-  "tool": "feed:list",
-  "result": "success",
-  "feeds": [
-    {
-      "id": 1,
-      "slug": "products",
-      "title": "Products",
-      "expression": "0 * * * *",
-      "is_active": true,
-      "is_deleted": false,
-      "last_activity": null
-    }
-  ]
-}
-```
-
-L’exemple est mis en forme pour faciliter la lecture. Une liste vide renvoie la même enveloppe avec `"feeds": []`.
+[<span id="list_feeds" />Lister les flux enregistrés](./list-feeds.mdx) · [<span id="list_feeds_agent" />Liste pour les agents d’IA](./list-feeds.mdx#list_feeds_agent)
 
 ## Flux unique {/* #single_feed */}
 

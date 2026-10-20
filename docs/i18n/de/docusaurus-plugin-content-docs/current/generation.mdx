@@ -4,10 +4,10 @@ description: "Informationen zum Erzeugen von Feed-Dateien für die spätere Vert
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate", "feed:list"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← Zurück](./create-feeds.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./feed-targets.mdx)
+[← Zurück](./list-feeds.mdx) · [Zurück zur README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Weiter →](./feed-targets.mdx)
 
 # Generierung und Zeitplanung
 
@@ -25,59 +25,7 @@ Beachten Sie, dass die Konsole beim Aufruf des Befehls ohne Parameter Links zu a
 Solche Feeds werden jedoch nicht ausgeführt, sondern mit dem Status `SKIP` gekennzeichnet.
 :::
 
-## Registrierte Feeds auflisten {/* #list_feeds */}
-
-Ab Version 2.1.0 können Sie Feed-Registrierungen auflisten, ohne Dateien zu erzeugen oder ihren Zustand zu ändern:
-
-```bash
-php artisan feed:list
-```
-
-Der Befehl hat keine eigenen Argumente oder Optionen. Er zeigt eine Tabelle aller Registrierungen an, einschließlich inaktiver und vorläufig gelöschter Feeds.
-
-| Spalte | Bedeutung |
-| --- | --- |
-| `id` | ID der Registrierung. |
-| `slug` | Registrierungs-Slug, der von `feed:generate` verwendet wird. |
-| `title` | Titel der Registrierung. |
-| `expression` | Gespeicherter Cron-Ausdruck. |
-| `is_active` | Ob die Registrierung aktiviert ist. |
-| `is_deleted` | Ob die Registrierung vorläufig gelöscht ist. |
-| `last_activity` | Zuletzt gespeicherter Generierungszeitpunkt im Format ISO 8601; `null` in JSON, wenn nicht gesetzt. |
-
-Zuerst erscheinen nicht gelöschte Registrierungen, danach vorläufig gelöschte. Innerhalb jeder Gruppe stehen aktive Feeds zuerst; anschließend werden die Zeilen nach Titel und ID sortiert. Boolesche Werte werden in der Konsole als `true` oder `false` angezeigt.
-
-Verwenden Sie den Slug einer nicht gelöschten Registrierung, um diesen Feed zu erzeugen:
-
-```bash
-php artisan feed:generate products
-```
-
-Wenn keine Registrierungen vorhanden sind, zeigt die Konsole `No feeds available` an.
-
-### Auflistung für KI-Agenten {/* #list_feeds_agent */}
-
-Innerhalb eines erkannten KI-Coding-Agenten gibt `feed:list` automatisch ein kompaktes JSON-Objekt in einer einzigen Zeile zurück. Es ist keine zusätzliche Option erforderlich. Boolesche Felder bleiben boolesche JSON-Werte:
-
-```json
-{
-  "tool": "feed:list",
-  "result": "success",
-  "feeds": [
-    {
-      "id": 1,
-      "slug": "products",
-      "title": "Products",
-      "expression": "0 * * * *",
-      "is_active": true,
-      "is_deleted": false,
-      "last_activity": null
-    }
-  ]
-}
-```
-
-Das Beispiel ist zur besseren Lesbarkeit formatiert. Eine leere Auflistung liefert dieselbe Hülle mit `"feeds": []`.
+[<span id="list_feeds" />Registrierte Feeds auflisten](./list-feeds.mdx) · [<span id="list_feeds_agent" />Auflistung für KI-Agenten](./list-feeds.mdx#list_feeds_agent)
 
 ## Einzelner Feed {/* #single_feed */}
 

@@ -19,6 +19,7 @@ const sidebars: SidebarsConfig = {
             type: "category",
             label: "Guides",
             items: [
+                "list-feeds",
                 "generation",
                 "feed-targets",
                 "eloquent",

@@ -4,10 +4,10 @@ description: "Відомості про генерування файлів фі
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate", "feed:list"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← Попередня](./create-feeds.mdx) · [Назад до README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступна →](./feed-targets.mdx)
+[← Попередня](./list-feeds.mdx) · [Назад до README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Наступна →](./feed-targets.mdx)
 
 # Генерування й розклад
 
@@ -25,59 +25,7 @@ php artisan feed:generate
 Проте такі фіди не виконуватимуться, а будуть позначені статусом `SKIP`.
 :::
 
-## Список зареєстрованих фідів {/* #list_feeds */}
-
-Починаючи з версії 2.1.0 можна переглядати реєстрації фідів без генерування файлів або зміни їхнього стану:
-
-```bash
-php artisan feed:list
-```
-
-Команда не має власних аргументів або параметрів. Вона показує таблицю всіх реєстрацій, зокрема неактивних і м’яко видалених фідів.
-
-| Стовпець | Значення |
-| --- | --- |
-| `id` | Ідентифікатор реєстрації. |
-| `slug` | Slug реєстрації, який використовує `feed:generate`. |
-| `title` | Назва реєстрації. |
-| `expression` | Збережений cron-вираз. |
-| `is_active` | Чи ввімкнено реєстрацію. |
-| `is_deleted` | Чи м’яко видалено реєстрацію. |
-| `last_activity` | Останній записаний час генерування у форматі ISO 8601; `null` у JSON, якщо не задано. |
-
-Спочатку виводяться невидалені реєстрації, потім — м’яко видалені. У кожній групі активні фіди йдуть першими, далі рядки сортуються за назвою та ідентифікатором. Логічні значення в консолі виводяться як `true` або `false`.
-
-Щоб згенерувати фід, використовуйте slug невидаленої реєстрації:
-
-```bash
-php artisan feed:generate products
-```
-
-Якщо реєстрацій немає, консоль виводить `No feeds available`.
-
-### Список для ШІ-агента {/* #list_feeds_agent */}
-
-Усередині розпізнаного ШІ-агента для роботи з кодом `feed:list` автоматично повертає один компактний об’єкт JSON в одному рядку. Додатковий параметр не потрібен. Логічні поля залишаються логічними значеннями JSON:
-
-```json
-{
-  "tool": "feed:list",
-  "result": "success",
-  "feeds": [
-    {
-      "id": 1,
-      "slug": "products",
-      "title": "Products",
-      "expression": "0 * * * *",
-      "is_active": true,
-      "is_deleted": false,
-      "last_activity": null
-    }
-  ]
-}
-```
-
-Приклад відформатовано для зручності читання. Порожній список повертається в тій самій оболонці з `"feeds": []`.
+[<span id="list_feeds" />Список зареєстрованих фідів](./list-feeds.mdx) · [<span id="list_feeds_agent" />Список для ШІ-агента](./list-feeds.mdx#list_feeds_agent)
 
 ## Окремий фід {/* #single_feed */}
 

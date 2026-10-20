@@ -364,13 +364,10 @@
             "queue",
             "FeedTarget",
             "separate files",
-            "feed:generate",
-            "feed:list"
+            "feed:generate"
         ],
         "headings": [
             "生成与调度",
-            "列出已注册的 Feed",
-            "AI 代理列表输出",
             "单个 Feed",
             "生成所选输出文件",
             "AI 代理输出",
@@ -381,7 +378,7 @@
             "手动调度",
             "另请参阅"
         ],
-        "content": "← 上一页 · 返回 README · 下一页 → 生成与调度 要生成所有已启用的 Feed，请使用控制台命令： 执行后， feeds 表中所有已启用的 Feed（ is_active = true ）都会运行。也可以使用 config/feeds.php 文件中指定的表。 不带参数调用命令时，控制台会显示所有 Feed 的链接，包括 is_active 属性设为 false 的 Feed。 但这些 Feed 不会运行，而会被标记为 SKIP 状态。 列出已注册的 Feed 从 2.1.0 版本开始，可以列出 Feed 注册记录，而不生成文件或更改其状态： 此命令没有自定义参数或选项。它会以表格形式显示所有注册记录，包括未启用和已软删除的 Feed。 列 含义 --- --- id 注册记录 ID。 slug feed:generate 使用的注册 slug。 title 注册记录标题。 expression 已保存的 cron 表达式。 is_active 注册记录是否已启用。 is_deleted 注册记录是否已软删除。 last_activity 以 ISO 8601 格式记录的最后生成时间；未设置时在 JSON 中为 null 。 未删除的注册记录排在前面，已软删除的注册记录排在后面。在每组中，已启用的 Feed 排在前面，再按标题和 ID 排序。布尔值在控制台中显示为 true 或 false 。 使用未删除注册记录的 slug 来生成该 Feed： 如果没有注册记录，控制台会显示 No feeds available 。 AI 代理列表输出 在识别到的 AI 编码代理中， feed:list 会自动在单行中返回一个紧凑的 JSON 对象。无需额外选项。布尔字段保留为 JSON 布尔值： 此示例为便于阅读而进行了格式化。列表为空时会返回相同的封装，其中 \"feeds\": [] 。 单个 Feed 即使指定的 Feed 在数据库的 feeds 表中已禁用，它也 仍会运行 。 要生成指定 Feed，请调用 feed:generate 控制台命令，并将 feeds 表中的 Feed slug 作为参数传入： 生成所选输出文件 对于配置了独立输出文件的 Feed，注册 slug 用于选择 Feed 类，目标键用于选择一个合作方、商店、语言区域或其他输出。 不传入 --target 运行该 Feed 时，会惰性消费 targets() 并生成全部目标： 重复传入 --target 选项可仅生成所选目标： 显式键使用 findTarget() ，不会枚举 targets() 。重复键只处理一次，并保留第一次出现的顺序。生成开始前会先解析全部请求键。 使用 --target 时必须提供一个 Feed 注册 slug。空键、未知键，以及对未实现 HasFeedTargets 的 Feed 选择目标都会被命令拒绝。 完整目标枚举采用流式处理，并非原子操作。如果 targets() 在生成若干值后失败，先前的目标可能已经生成或进入队列。空的可迭代对象不会生成任何内容，也不会创建隐式默认目标。 AI 代理输出 当 feed:generate 在 Laravel Agent Detector 识别到的 AI 编码代理中运行时，命令会自动输出单个 JSON 对象，而不是进度条和格式化状态行。不需要额外的命令选项。在未识别为代理的环境中，常规控制台输出保持不变。 直接生成时，每个已生成的 Feed 都会包含所有已发布文件及其记录数： 命令实际会在一行中输出紧凑的 JSON。上面的示例仅为便于阅读而进行了格式化。 状态 含义 附加字段 --- --- --- generated 直接生成了 Feed 文件。 files ，其中包含每个文件的 path 和 records queued 已启用队列模式，并为代理同步执行了 Feed 任务。 无 skipped Feed 未启用，并且命令运行时未传入 Feed slug。 无 每个目标 Feed 的 generated 或 queued 条目还包含 target 字段，其值为所选目标键。 在队列模式下，代理专用执行路径会先同步运行每个已启用的任务，再返回 JSON 结果。面向人工阅读的常规执行路径仍会通过配置的队列连接分派任务。 此 JSON 封装仅用于成功执行。如果生成过程抛出异常，Laravel 会照常处理命令错误，并且不会输出 JSON 错误封装。 队列 默认情况下，Feed 生成任务在控制台进程中运行。对于耗时较长或占用大量内存的 Feed，请在环境中启用 Laravel Queue 模式： 启用队列模式后， feed:generate 会为每个已启用的普通 Feed 分派一个任务，并为目标 Feed 的每个所选目标分派一个任务。使用异步连接时，任务分派完成后命令便会返回。请为所选连接和队列启动队列工作进程来处理这些任务。 - FEED_QUEUE_CONNECTION 选择队列连接。未设置时依次回退到 QUEUE_CONNECTION 和 database 。 - FEED_QUEUE_NAME 选择该连接上的队列。留空时使用连接的默认队列。 - FEED_QUEUE_UNIQUE_TTL 设置唯一性锁的最长有效时间，单位为秒。普通任务按 Feed 类保持唯一；目标任务按 Feed 类和目标键保持唯一，目标参数不会改变该标识。 sync 连接会在控制台进程中立即执行每个任务。选择异步连接可将生成任务交给工作进程。设置 FEED_QUEUE_ENABLED=false 可直接生成 Feed，而不分派任务。 调度 注册表达式 创建 Feed 注册记录时，可以直接传入原始 cron 表达式字符串，也可以传入以链式方式构建的 DragonCode\\LaravelFeed\\Scheduling\\Expression 。 链式调用示例会保存 0 13 1 。仍然支持原始字符串，包括 dragonmantank/cron-expression 支持的 @daily 等别名。 可用的链式方法取决于已安装 Laravel 版本提供的调度频率选项。当前列表请参阅 Laravel 13 频率参考。只有结果能保存为稳定五字段 cron 表达式的方法才会公开。此值对象不支持少于一分钟的间隔、时区、时间窗口约束以及 lastDayOfMonth() 。 自动调度 要自动生成 Feed，请使用任务调度。在 routes/console.php 文件中调用辅助类即可；除非已更改配置，否则这是默认路径： 这会根据数据库 expression 列中的计划注册所有已启用的 Feed。已调度的目标 Feed 会生成 targets() 返回的每个值。 手动调度 也可以按自定义规则直接指定计划。此时只会运行指定的 Feed。 另请参阅 - 创建 Feed - 独立输出文件 - 事件 - 存储位置"
+        "content": "← 上一页 · 返回 README · 下一页 → 生成与调度 要生成所有已启用的 Feed，请使用控制台命令： 执行后， feeds 表中所有已启用的 Feed（ is_active = true ）都会运行。也可以使用 config/feeds.php 文件中指定的表。 不带参数调用命令时，控制台会显示所有 Feed 的链接，包括 is_active 属性设为 false 的 Feed。 但这些 Feed 不会运行，而会被标记为 SKIP 状态。 列出已注册的 Feed · AI 代理列表输出 单个 Feed 即使指定的 Feed 在数据库的 feeds 表中已禁用，它也 仍会运行 。 要生成指定 Feed，请调用 feed:generate 控制台命令，并将 feeds 表中的 Feed slug 作为参数传入： 生成所选输出文件 对于配置了独立输出文件的 Feed，注册 slug 用于选择 Feed 类，目标键用于选择一个合作方、商店、语言区域或其他输出。 不传入 --target 运行该 Feed 时，会惰性消费 targets() 并生成全部目标： 重复传入 --target 选项可仅生成所选目标： 显式键使用 findTarget() ，不会枚举 targets() 。重复键只处理一次，并保留第一次出现的顺序。生成开始前会先解析全部请求键。 使用 --target 时必须提供一个 Feed 注册 slug。空键、未知键，以及对未实现 HasFeedTargets 的 Feed 选择目标都会被命令拒绝。 完整目标枚举采用流式处理，并非原子操作。如果 targets() 在生成若干值后失败，先前的目标可能已经生成或进入队列。空的可迭代对象不会生成任何内容，也不会创建隐式默认目标。 AI 代理输出 当 feed:generate 在 Laravel Agent Detector 识别到的 AI 编码代理中运行时，命令会自动输出单个 JSON 对象，而不是进度条和格式化状态行。不需要额外的命令选项。在未识别为代理的环境中，常规控制台输出保持不变。 直接生成时，每个已生成的 Feed 都会包含所有已发布文件及其记录数： 命令实际会在一行中输出紧凑的 JSON。上面的示例仅为便于阅读而进行了格式化。 状态 含义 附加字段 --- --- --- generated 直接生成了 Feed 文件。 files ，其中包含每个文件的 path 和 records queued 已启用队列模式，并为代理同步执行了 Feed 任务。 无 skipped Feed 未启用，并且命令运行时未传入 Feed slug。 无 每个目标 Feed 的 generated 或 queued 条目还包含 target 字段，其值为所选目标键。 在队列模式下，代理专用执行路径会先同步运行每个已启用的任务，再返回 JSON 结果。面向人工阅读的常规执行路径仍会通过配置的队列连接分派任务。 此 JSON 封装仅用于成功执行。如果生成过程抛出异常，Laravel 会照常处理命令错误，并且不会输出 JSON 错误封装。 队列 默认情况下，Feed 生成任务在控制台进程中运行。对于耗时较长或占用大量内存的 Feed，请在环境中启用 Laravel Queue 模式： 启用队列模式后， feed:generate 会为每个已启用的普通 Feed 分派一个任务，并为目标 Feed 的每个所选目标分派一个任务。使用异步连接时，任务分派完成后命令便会返回。请为所选连接和队列启动队列工作进程来处理这些任务。 - FEED_QUEUE_CONNECTION 选择队列连接。未设置时依次回退到 QUEUE_CONNECTION 和 database 。 - FEED_QUEUE_NAME 选择该连接上的队列。留空时使用连接的默认队列。 - FEED_QUEUE_UNIQUE_TTL 设置唯一性锁的最长有效时间，单位为秒。普通任务按 Feed 类保持唯一；目标任务按 Feed 类和目标键保持唯一，目标参数不会改变该标识。 sync 连接会在控制台进程中立即执行每个任务。选择异步连接可将生成任务交给工作进程。设置 FEED_QUEUE_ENABLED=false 可直接生成 Feed，而不分派任务。 调度 注册表达式 创建 Feed 注册记录时，可以直接传入原始 cron 表达式字符串，也可以传入以链式方式构建的 DragonCode\\LaravelFeed\\Scheduling\\Expression 。 链式调用示例会保存 0 13 1 。仍然支持原始字符串，包括 dragonmantank/cron-expression 支持的 @daily 等别名。 可用的链式方法取决于已安装 Laravel 版本提供的调度频率选项。当前列表请参阅 Laravel 13 频率参考。只有结果能保存为稳定五字段 cron 表达式的方法才会公开。此值对象不支持少于一分钟的间隔、时区、时间窗口约束以及 lastDayOfMonth() 。 自动调度 要自动生成 Feed，请使用任务调度。在 routes/console.php 文件中调用辅助类即可；除非已更改配置，否则这是默认路径： 这会根据数据库 expression 列中的计划注册所有已启用的 Feed。已调度的目标 Feed 会生成 targets() 返回的每个值。 手动调度 也可以按自定义规则直接指定计划。此时只会运行指定的 Feed。 另请参阅 - 创建 Feed - 独立输出文件 - 事件 - 存储位置"
     },
     {
         "route": "/zh-CN/installation/",
@@ -434,6 +431,22 @@
             "另请参阅"
         ],
         "content": "← 上一页 · 返回 README MIT 许可证 版权所有 (c) 2025-2026 Andrey Helldar 特此免费授予任何获得本软件及相关文档文件（以下简称“软件”）副本的人不受限制地处理本软件的权利，包括但不限于使用、复制、修改、合并、发布、分发、再许可和/或出售软件副本的权利，并允许向其提供软件的人这样做，但须符合以下条件： 上述版权声明和本许可声明应包含在软件的所有副本或主要部分中。 本软件按“原样”提供，不作任何明示或暗示的担保，包括但不限于对适销性、特定用途适用性和非侵权性的担保。在任何情况下，无论因合同、侵权或其他原因产生，作者或版权所有者均不对因软件或软件的使用或其他交易而产生、引起或与之相关的任何索赔、损害或其他责任承担责任。 另请参阅 - 贡献指南 - 入门 - AI 智能体"
+    },
+    {
+        "route": "/zh-CN/list-feeds/",
+        "title": "列出已注册的 Feed",
+        "description": "列出已注册的 Feed 并查看其状态，而不生成文件",
+        "keywords": [
+            "feed:list",
+            "registered feeds",
+            "registrations",
+            "AI agents"
+        ],
+        "headings": [
+            "列出已注册的 Feed",
+            "AI 代理列表输出"
+        ],
+        "content": "← 上一页 · 返回 README · 下一页 → 列出已注册的 Feed 从 2.1.0 版本开始，可以列出 Feed 注册记录，而不生成文件或更改其状态： 此命令没有自定义参数或选项。它会以表格形式显示所有注册记录，包括未启用和已软删除的 Feed。 列 含义 --- --- id 注册记录 ID。 slug feed:generate 使用的注册 slug。 title 注册记录标题。 expression 已保存的 cron 表达式。 is_active 注册记录是否已启用。 is_deleted 注册记录是否已软删除。 last_activity 以 ISO 8601 格式记录的最后生成时间；未设置时在 JSON 中为 null 。 未删除的注册记录排在前面，已软删除的注册记录排在后面。在每组中，已启用的 Feed 排在前面，再按标题和 ID 排序。布尔值在控制台中显示为 true 或 false 。 使用未删除注册记录的 slug 来生成该 Feed： 如果没有注册记录，控制台会显示 No feeds available 。 AI 代理列表输出 在识别到的 AI 编码代理中， feed:list 会自动在单行中返回一个紧凑的 JSON 对象。无需额外选项。布尔字段保留为 JSON 布尔值： 此示例为便于阅读而进行了格式化。列表为空时会返回相同的封装，其中 \"feeds\": [] 。"
     },
     {
         "route": "/zh-CN/location/",

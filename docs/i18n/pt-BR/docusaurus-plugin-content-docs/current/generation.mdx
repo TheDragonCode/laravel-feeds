@@ -4,10 +4,10 @@ description: "Informações sobre a geração de arquivos de feed para distribui
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate", "feed:list"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
 ---
 
-[← Anterior](./create-feeds.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./feed-targets.mdx)
+[← Anterior](./list-feeds.mdx) · [Voltar ao README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Próximo →](./feed-targets.mdx)
 
 # Geração e agendamento
 
@@ -25,59 +25,7 @@ Ao chamar o comando sem parâmetro, o console exibirá links para todos os feeds
 No entanto, esses feeds não serão executados: eles serão marcados com o status `SKIP`.
 :::
 
-## Listar feeds registrados {/* #list_feeds */}
-
-A partir da versão 2.1.0, liste os registros de feeds sem gerar arquivos nem alterar seu estado:
-
-```bash
-php artisan feed:list
-```
-
-O comando não possui argumentos ou opções específicos. Ele exibe uma tabela com todos os registros, incluindo feeds inativos e excluídos de forma reversível.
-
-| Coluna | Significado |
-| --- | --- |
-| `id` | ID do registro. |
-| `slug` | Slug do registro usado por `feed:generate`. |
-| `title` | Título do registro. |
-| `expression` | Expressão cron armazenada. |
-| `is_active` | Indica se o registro está ativo. |
-| `is_deleted` | Indica se o registro foi excluído de forma reversível. |
-| `last_activity` | Data e hora da última geração registrada no formato ISO 8601; `null` no JSON quando não há valor definido. |
-
-Os registros não excluídos aparecem primeiro, seguidos dos registros excluídos de forma reversível. Em cada grupo, os feeds ativos aparecem primeiro, e as linhas são ordenadas por título e ID. Os valores booleanos aparecem como `true` ou `false` no console.
-
-Use o slug de um registro não excluído para gerar esse feed:
-
-```bash
-php artisan feed:generate products
-```
-
-Se não houver registros, o console exibirá `No feeds available`.
-
-### Listagem para agentes de IA {/* #list_feeds_agent */}
-
-Dentro de um agente de codificação com IA reconhecido, `feed:list` retorna automaticamente um objeto JSON compacto em uma única linha. Nenhuma opção adicional é necessária. Os campos booleanos continuam sendo booleanos no JSON:
-
-```json
-{
-  "tool": "feed:list",
-  "result": "success",
-  "feeds": [
-    {
-      "id": 1,
-      "slug": "products",
-      "title": "Products",
-      "expression": "0 * * * *",
-      "is_active": true,
-      "is_deleted": false,
-      "last_activity": null
-    }
-  ]
-}
-```
-
-O exemplo está formatado para facilitar a leitura. Uma listagem vazia retorna o mesmo envelope com `"feeds": []`.
+[<span id="list_feeds" />Listar feeds registrados](./list-feeds.mdx) · [<span id="list_feeds_agent" />Listagem para agentes de IA](./list-feeds.mdx#list_feeds_agent)
 
 ## Feed individual {/* #single_feed */}
 
