@@ -59,7 +59,7 @@ final class FeedListCommand extends Command
     {
         return $query->all(true)
             ->reorder()
-            ->orderByRaw('deleted_at IS NOT NULL')
+            ->orderByRaw('CASE WHEN deleted_at IS NULL THEN 0 ELSE 1 END')
             ->orderByDesc('is_active')
             ->orderBy('title')
             ->orderBy('id')
