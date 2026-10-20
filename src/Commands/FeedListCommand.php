@@ -11,6 +11,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Output\OutputInterface;
 
 use function array_keys;
 use function Laravel\Prompts\info;
@@ -49,7 +50,7 @@ final class FeedListCommand extends Command
             'tool'   => 'feed:list',
             'result' => 'success',
             'feeds'  => $items->toArray(),
-        ]));
+        ]), options: OutputInterface::OUTPUT_RAW);
     }
 
     protected function getItems(FeedQuery $query): Collection
