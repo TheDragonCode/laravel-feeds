@@ -271,7 +271,7 @@ final class FeedGenerateCommand extends Command
         $execution = $target === null
             ? $feed
             : $feed->forTarget($target);
-        $name      = $this->executionName(get_class($feed), $target);
+        $name = $this->executionName(get_class($feed), $target);
 
         if ($usesProgressBar) {
             $this->components->info($name);
@@ -379,7 +379,7 @@ final class FeedGenerateCommand extends Command
                     sprintf(
                         'Feed registration [%s] target key [%s] cannot be empty.',
                         $feedSlug ?? 'unspecified',
-                        $key ?? '',
+                        $key      ?? '',
                     )
                 );
             }
