@@ -37,7 +37,15 @@ test('lists feed details in a table', function (bool $isActive, bool $isDeleted,
     artisan('feed:list')
         ->expectsPromptsTable(
             ['id', 'slug', 'title', 'expression', 'is_active', 'is_deleted', 'last_activity'],
-            [[$feed->id, 'product-catalog', 'Product Catalog', '*/15 * * * *', $isActive, $isDeleted, $lastActivity]]
+            [[
+                $feed->id,
+                'product-catalog',
+                'Product Catalog',
+                '*/15 * * * *',
+                $isActive ? 'true' : 'false',
+                $isDeleted ? 'true' : 'false',
+                $lastActivity === null ? null : '2025-09-03T12:30:00+00:00',
+            ]]
         )
         ->doesntExpectOutputToContain('"tool":"feed:list"')
         ->assertSuccessful()
@@ -71,9 +79,9 @@ test('returns feed details as JSON to an AI agent', function (bool $isActive, bo
             'slug'          => 'product-catalog',
             'title'         => 'Product Catalog',
             'expression'    => '*/15 * * * *',
-            'is_active'     => $isActive,
-            'is_deleted'    => $isDeleted,
-            'last_activity' => $lastActivity === null ? null : '2025-09-03T12:30:00.000000Z',
+            'is_active'     => $isActive ? 'true' : 'false',
+            'is_deleted'    => $isDeleted ? 'true' : 'false',
+            'last_activity' => $lastActivity === null ? null : '2025-09-03T12:30:00+00:00',
         ]],
     ];
 
@@ -110,7 +118,7 @@ test('sorts active, inactive and deleted feeds by title within each group', func
         return $feed;
     });
 
-    $sorted = collect([5, 7, 1, 2, 6, 3, 8, 4, 0])
+    $sorted = collect([8, 4, 3, 0, 5, 7, 1, 2, 6])
         ->map(fn (int $index): Feed => $feeds[$index]);
 
     if ($isAgent) {
@@ -131,8 +139,8 @@ test('sorts active, inactive and deleted feeds by title within each group', func
                 $feed->slug,
                 $feed->title,
                 '0 * * * *',
-                $feed->is_active,
-                $feed->trashed(),
+                $feed->is_active ? 'true' : 'false',
+                $feed->trashed() ? 'true' : 'false',
                 null,
             ])
         )
