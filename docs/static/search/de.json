@@ -27,9 +27,12 @@
         ],
         "headings": [
             "KI-Agenten",
+            "Skills installieren",
+            "Mit npx",
+            "Mit Composer",
             "Siehe auch"
         ],
-        "content": "← Zurück · Zurück zur README · Weiter → KI-Agenten Sie können Ihrem LLM helfen, die Struktur und Konventionen dieses Projekts wesentlich besser zu verstehen. Importieren Sie dazu die Anleitung aus der folgenden Datei: llms.txt . Diese Datei ist ein einzelnes, konsolidiertes Markdown-Dokument mit der zusammengestellten Dokumentation dieses Projekts. Sie dient als Wissensbasis für LLMs, beispielsweise als Anhang zu einem System-Prompt, als Retrieval-Korpus oder als benutzerdefinierte Wissensdatei. Speichern Sie die URL und importieren Sie die Datei regelmäßig erneut, um Aktualisierungen des Projekts zu übernehmen. Siehe auch - Erste Schritte - Beitragsleitfaden - MIT-Lizenz"
+        "content": "← Zurück · Zurück zur README · Weiter → KI-Agenten Sie können Ihrem LLM helfen, die Struktur und Konventionen dieses Projekts wesentlich besser zu verstehen. Importieren Sie dazu die Anleitung aus der folgenden Datei: llms.txt . Diese Datei ist ein einzelnes, konsolidiertes Markdown-Dokument mit der zusammengestellten Dokumentation dieses Projekts. Sie dient als Wissensbasis für LLMs, beispielsweise als Anhang zu einem System-Prompt, als Retrieval-Korpus oder als benutzerdefinierte Wissensdatei. Speichern Sie die URL und importieren Sie die Datei regelmäßig erneut, um Aktualisierungen des Projekts zu übernehmen. Skills installieren Sie können die Laravel Feeds-Skills in Ihrem Projekt installieren. Führen Sie einen der folgenden Befehle im Stammverzeichnis Ihres Projekts aus. Mit npx Mit Composer Wenn Sie Composer mit dem installierten Plugin llm/skills verwenden, führen Sie Folgendes aus: Siehe auch - Erste Schritte - Beitragsleitfaden - MIT-Lizenz"
     },
     {
         "route": "/de/api/",

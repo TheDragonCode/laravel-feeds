@@ -27,9 +27,12 @@
         ],
         "headings": [
             "Agentes de IA",
+            "Instalar skills",
+            "Com npx",
+            "Com Composer",
             "Veja também"
         ],
-        "content": "← Anterior · Voltar ao README · Próximo → Agentes de IA Você pode ajudar seu LLM a entender muito melhor a estrutura e as convenções deste projeto. Para isso, importe as orientações do arquivo a seguir: llms.txt . Esse arquivo é um único documento Markdown consolidado com toda a documentação compilada do projeto. Ele foi criado para servir como base de conhecimento para LLMs, por exemplo, como anexo de um prompt de sistema, corpus de recuperação ou arquivo de conhecimento personalizado. Salve a URL e importe o arquivo novamente de tempos em tempos para acompanhar as atualizações do projeto. Veja também - Primeiros passos - Guia de contribuição - Licença MIT"
+        "content": "← Anterior · Voltar ao README · Próximo → Agentes de IA Você pode ajudar seu LLM a entender muito melhor a estrutura e as convenções deste projeto. Para isso, importe as orientações do arquivo a seguir: llms.txt . Esse arquivo é um único documento Markdown consolidado com toda a documentação compilada do projeto. Ele foi criado para servir como base de conhecimento para LLMs, por exemplo, como anexo de um prompt de sistema, corpus de recuperação ou arquivo de conhecimento personalizado. Salve a URL e importe o arquivo novamente de tempos em tempos para acompanhar as atualizações do projeto. Instalar skills Você pode instalar as skills do Laravel Feeds no seu projeto. Execute um dos comandos a seguir na raiz do projeto. Com npx Com Composer Se você usa o Composer com o plugin llm/skills instalado, execute: Veja também - Primeiros passos - Guia de contribuição - Licença MIT"
     },
     {
         "route": "/pt-BR/api/",
