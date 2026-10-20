@@ -34,35 +34,25 @@ use function config;
 use function get_class;
 use function is_string;
 use function is_subclass_of;
-use function json_encode;
 use function sprintf;
 use function trim;
 
 #[AsCommand('feed:generate', 'Generate XML feeds')]
 final class FeedGenerateCommand extends Command
 {
-    private const AGENT_JSON_FLAGS = JSON_THROW_ON_ERROR
-        | JSON_UNESCAPED_SLASHES
-        | JSON_INVALID_UTF8_SUBSTITUTE;
-
-    public function handle(GeneratorService $generator, FeedQuery $query, AgentDetectorService $agentDetector): int
+    public function handle(GeneratorService $generator, FeedQuery $query, AgentDetectorService $detector): int
     {
-        $feedSlug        = $this->feedSlug();
-        $targetKeys      = $this->targetKeys($feedSlug);
-        $feeds           = $this->selectedFeeds($query, $feedSlug);
-        $isSpecifiedFeed = $feedSlug !== null;
-        $usesQueue       = $this->usesQueue();
+        $feedSlug = $this->feedSlug();
 
-        $agentDetector->isAgent()
-            ? $this->runForAgent($generator, $feeds, $isSpecifiedFeed, $usesQueue, $targetKeys)
-            : $this->runForConsole(
-                $generator,
-                $feeds,
-                $isSpecifiedFeed,
-                $usesQueue,
-                $this->usesProgressBar(),
-                $targetKeys,
-            );
+        $this->runFor(
+            $generator,
+            $detector,
+            $this->selectedFeeds($query, $feedSlug),
+            $feedSlug !== null,
+            $this->usesQueue(),
+            $this->targetKeys($feedSlug),
+            $this->usesProgressBar()
+        );
 
         return self::SUCCESS;
     }
@@ -84,6 +74,20 @@ final class FeedGenerateCommand extends Command
                 'Generate only the selected feed targets',
             ],
         ];
+    }
+
+    protected function runFor(
+        GeneratorService $generator,
+        AgentDetectorService $detector,
+        Collection $feeds,
+        bool $isSpecifiedFeed,
+        bool $usesQueue,
+        array $targetKeys,
+        bool $usesProgressBar,
+    ): void {
+        $detector->isAgent()
+            ? $this->runForAgent($generator, $feeds, $isSpecifiedFeed, $usesQueue, $targetKeys, $detector)
+            : $this->runForConsole($generator, $feeds, $isSpecifiedFeed, $usesQueue, $usesProgressBar, $targetKeys);
     }
 
     protected function runForConsole(
@@ -124,12 +128,13 @@ final class FeedGenerateCommand extends Command
         bool $isSpecifiedFeed,
         bool $usesQueue,
         array $targetKeys,
+        AgentDetectorService $detector,
     ): void {
         $results = new SplTempFileObject;
 
         foreach ($feeds as $feed) {
             foreach ($this->runFeedForAgent($generator, $feed, $isSpecifiedFeed, $usesQueue, $targetKeys) as $result) {
-                $encoded = json_encode($result, self::AGENT_JSON_FLAGS) . PHP_EOL;
+                $encoded = $detector->encode($result);
 
                 if ($results->fwrite($encoded) === false) {
                     throw new RuntimeException('Unable to buffer agent output.');
@@ -266,7 +271,7 @@ final class FeedGenerateCommand extends Command
         $execution = $target === null
             ? $feed
             : $feed->forTarget($target);
-        $name = $this->executionName(get_class($feed), $target);
+        $name      = $this->executionName(get_class($feed), $target);
 
         if ($usesProgressBar) {
             $this->components->info($name);
@@ -285,11 +290,13 @@ final class FeedGenerateCommand extends Command
         if (is_string($feed)) {
             if (! is_subclass_of($feed, HasFeedTargets::class)) {
                 if ($targetKeys !== []) {
-                    throw new InvalidArgumentException(sprintf(
-                        'Feed [%s] does not support target [%s].',
-                        $feed,
-                        $targetKeys[0],
-                    ));
+                    throw new InvalidArgumentException(
+                        sprintf(
+                            'Feed [%s] does not support target [%s].',
+                            $feed,
+                            $targetKeys[0],
+                        )
+                    );
                 }
 
                 yield null;
@@ -302,11 +309,13 @@ final class FeedGenerateCommand extends Command
 
         if (! $feed instanceof HasFeedTargets) {
             if ($targetKeys !== []) {
-                throw new InvalidArgumentException(sprintf(
-                    'Feed [%s] does not support target [%s].',
-                    get_class($feed),
-                    $targetKeys[0],
-                ));
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Feed [%s] does not support target [%s].',
+                        get_class($feed),
+                        $targetKeys[0],
+                    )
+                );
             }
 
             yield null;
@@ -326,11 +335,13 @@ final class FeedGenerateCommand extends Command
             $target = $feed->findTarget($key);
 
             if ($target === null) {
-                throw new UnexpectedValueException(sprintf(
-                    'Feed [%s] target [%s] not found.',
-                    get_class($feed),
-                    $key,
-                ));
+                throw new UnexpectedValueException(
+                    sprintf(
+                        'Feed [%s] target [%s] not found.',
+                        get_class($feed),
+                        $key,
+                    )
+                );
             }
 
             $targets[] = $target;
@@ -364,11 +375,13 @@ final class FeedGenerateCommand extends Command
 
         foreach ($values as $key) {
             if ($key === null || trim($key) === '') {
-                throw new InvalidArgumentException(sprintf(
-                    'Feed registration [%s] target key [%s] cannot be empty.',
-                    $feedSlug ?? 'unspecified',
-                    $key      ?? '',
-                ));
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Feed registration [%s] target key [%s] cannot be empty.',
+                        $feedSlug ?? 'unspecified',
+                        $key ?? '',
+                    )
+                );
             }
 
             $keys[] = $key;
@@ -377,10 +390,12 @@ final class FeedGenerateCommand extends Command
         $keys = array_values(array_unique($keys, SORT_STRING));
 
         if ($keys !== [] && $feedSlug === null) {
-            throw new InvalidArgumentException(sprintf(
-                'Feed target [%s] requires one feed registration slug; none was provided.',
-                $keys[0],
-            ));
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Feed target [%s] requires one feed registration slug; none was provided.',
+                    $keys[0],
+                )
+            );
         }
 
         return $keys;

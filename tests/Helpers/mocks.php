@@ -10,7 +10,7 @@ function mockAgent(bool $detected = false): void
 {
     app()->forgetInstance(AgentDetectorService::class);
 
-    app()->singleton(AgentDetectorService::class, function () use ($detected) {
+    app()->singleton(function () use ($detected): AgentDetectorService {
         $mock = mock(AgentDetectorService::class);
         $mock->shouldReceive('isAgent')->andReturn($detected);
 
@@ -22,7 +22,7 @@ function mockOperations(bool $installed = true): void
 {
     app()->forgetInstance(ClassExistsHelper::class);
 
-    app()->singleton(ClassExistsHelper::class, function () use ($installed) {
+    app()->singleton(function () use ($installed): ClassExistsHelper {
         $mock = mock(ClassExistsHelper::class);
         $mock->shouldReceive('exists')->andReturn($installed);
 
