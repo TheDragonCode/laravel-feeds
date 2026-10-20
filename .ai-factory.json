@@ -13,6 +13,7 @@
         "aif-ci",
         "aif-commit",
         "aif-distillation",
+        "aif-dockerize",
         "aif-docs",
         "aif-evolve",
         "aif-explore",
@@ -31,11 +32,17 @@
         "aif-rules-check",
         "aif-security-checklist",
         "aif-skill-generator",
-        "aif-verify",
-        "aif-dockerize",
         "aif-transfer",
+        "aif-verify",
         "aif-warmup"
       ],
+      "mcp": {
+        "github": false,
+        "filesystem": false,
+        "postgres": false,
+        "chromeDevtools": false,
+        "playwright": false
+      },
       "managedSkills": {
         "aif": {
           "sourceHash": "afad68e3c5547b5d91031d928aeb6aeeb944d3bcaf74ed44e661d5b5bb984e68",
@@ -68,6 +75,10 @@
         "aif-distillation": {
           "sourceHash": "79b3d98ea7cdfa91cbe3ddfd70348999ebe04284f07e0224f4450badef6ec43d",
           "installedHash": "0e23662f4f5ab587c6b5465a20a33010a52bc54883b31acd65bcf9e16fb7e11d"
+        },
+        "aif-dockerize": {
+          "sourceHash": "8e24073d2388601114e8bba95a402bc43c9bcd9896c238aff785ff930f5e35db",
+          "installedHash": "5554b014b5ae075ff704a48a3dc771cffd857e5a8ddeac7c67e0f5903daab439"
         },
         "aif-docs": {
           "sourceHash": "489958faf586f83a96048366e766851b81d909222d082dedb5e8b7de8966fbc8",
@@ -141,36 +152,20 @@
           "sourceHash": "d2df9f33ccdd800e2c7eb13ab07182ea18c08100fd018bf30c3cb530e8ee5a24",
           "installedHash": "1bf65065db12d13c5e5823b3ecda288ba34268064f15474ccd45d8aa86ee2dc8"
         },
-        "aif-verify": {
-          "sourceHash": "ed8411364834b693c2a4c40025bd6fc7ec7938077dbcc2b362f1ce771d3cfb9b",
-          "installedHash": "d8697044f419564388e7d5f9e1680de99a1e7a47535e7de779c068ae0bec81af"
-        },
-        "aif-dockerize": {
-          "sourceHash": "8e24073d2388601114e8bba95a402bc43c9bcd9896c238aff785ff930f5e35db",
-          "installedHash": "5554b014b5ae075ff704a48a3dc771cffd857e5a8ddeac7c67e0f5903daab439"
-        },
         "aif-transfer": {
           "sourceHash": "fcb57fef72d2874e37a1ef31f772c5b685ce47af8dea1e2919677f40f5b1a4b3",
           "installedHash": "72c9f217551ff249a531f202c42b26a228a13850e4df27aa24dde6513a6b7320"
+        },
+        "aif-verify": {
+          "sourceHash": "ed8411364834b693c2a4c40025bd6fc7ec7938077dbcc2b362f1ce771d3cfb9b",
+          "installedHash": "d8697044f419564388e7d5f9e1680de99a1e7a47535e7de779c068ae0bec81af"
         },
         "aif-warmup": {
           "sourceHash": "3dbdcd24aed3dff6350cbc6693eaf0efb3a979b3cf894e1f05cd297dbf1ef15e",
           "installedHash": "dd31dae2b1d4caf4c4a7f52184d6ffd1e5df26be3da7d45758967539da51a98c"
         }
       },
-      "installedAgentFiles": [],
-      "agentFileSources": {},
-      "managedAgentFiles": {},
-      "configFiles": [],
-      "installedConfigFiles": [],
-      "managedConfigFiles": {},
-      "mcp": {
-        "github": false,
-        "filesystem": false,
-        "postgres": false,
-        "chromeDevtools": false,
-        "playwright": false
-      }
+      "agentFileSources": {}
     }
   ],
   "extensions": []
