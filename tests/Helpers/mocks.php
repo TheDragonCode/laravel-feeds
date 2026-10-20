@@ -11,7 +11,7 @@ function mockAgent(bool $detected = false): void
     app()->forgetInstance(AgentDetectorService::class);
 
     app()->singleton(function () use ($detected): AgentDetectorService {
-        $mock = mock(AgentDetectorService::class);
+        $mock = mock(AgentDetectorService::class)->makePartial();
         $mock->shouldReceive('isAgent')->andReturn($detected);
 
         return $mock;
