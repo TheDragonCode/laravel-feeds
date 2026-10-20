@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 use DragonCode\LaravelFeed\Helpers\ClassExistsHelper;
-use DragonCode\LaravelFeed\Services\AgentDetectorService;
+use DragonCode\LaravelFeed\Services\AgentService;
 use Illuminate\Support\Facades\ParallelTesting;
 
 function mockAgent(bool $detected = false): void
 {
-    app()->forgetInstance(AgentDetectorService::class);
+    app()->forgetInstance(AgentService::class);
 
-    app()->singleton(function () use ($detected): AgentDetectorService {
-        $mock = mock(AgentDetectorService::class)->makePartial();
+    app()->singleton(function () use ($detected): AgentService {
+        $mock = mock(AgentService::class)->makePartial();
         $mock->shouldReceive('isAgent')->andReturn($detected);
 
         return $mock;

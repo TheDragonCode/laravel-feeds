@@ -7,6 +7,7 @@ namespace DragonCode\LaravelFeed;
 use DragonCode\LaravelFeed\Commands\FeedGenerateCommand;
 use DragonCode\LaravelFeed\Commands\FeedInfoMakeCommand;
 use DragonCode\LaravelFeed\Commands\FeedItemMakeCommand;
+use DragonCode\LaravelFeed\Commands\FeedListCommand;
 use DragonCode\LaravelFeed\Commands\FeedMakeCommand;
 use Illuminate\Support\ServiceProvider;
 
@@ -50,6 +51,7 @@ class LaravelFeedServiceProvider extends ServiceProvider
             FeedGenerateCommand::class,
             FeedInfoMakeCommand::class,
             FeedItemMakeCommand::class,
+            FeedListCommand::class,
             FeedMakeCommand::class,
         ]);
     }

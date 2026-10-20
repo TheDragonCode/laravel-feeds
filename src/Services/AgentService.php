@@ -8,7 +8,7 @@ use Laravel\AgentDetector\AgentDetector;
 
 use function json_encode;
 
-class AgentDetectorService
+class AgentService
 {
     private const int AGENT_JSON_FLAGS = JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE;
 

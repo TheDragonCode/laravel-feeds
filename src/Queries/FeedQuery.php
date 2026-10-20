@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 use function now;
 
+/** @property Feed|string $model */
 class FeedQuery
 {
     public function __construct(
@@ -50,9 +51,11 @@ class FeedQuery
         }
     }
 
-    public function all(): Builder
+    public function all(bool $withTrashed = false): Builder
     {
-        return $this->model::query()->orderBy('id');
+        return $this->model::query()
+            ->withTrashed($withTrashed)
+            ->orderBy('id');
     }
 
     public function active(): Builder
