@@ -59,7 +59,7 @@ $result = app(GeneratorService::class)->feed(
 | `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Стварае рэгістрацыю. |
 | `find(int $id): Feed` | Вяртае рэгістрацыю або кідае `FeedNotFoundException`. |
 | `findBySlug(string $slug): Feed` | Вяртае адзін запіс; пры адсутнасці кідае `FeedNotFoundException`, пры неадназначнасці — `MultipleRecordsFoundException`. |
-| `all(): Builder` | Вяртае ўсе рэгістрацыі, упарадкаваныя па ідэнтыфікатары. |
+| `all(bool $withTrashed = false): Builder` | Вяртае нявыдаленыя рэгістрацыі, упарадкаваныя па ідэнтыфікатары. Перадайце `true`, каб уключыць мякка выдаленыя рэгістрацыі (з версіі 2.1.0). |
 | `active(): Builder` | Вяртае актыўныя рэгістрацыі, упарадкаваныя па ідэнтыфікатары. |
 | `setLastActivity(string $class): void` | Абнаўляе `last_activity` для класа стужкі. |
 | `delete(int $id): void` | Мякка выдаляе рэгістрацыю па ідэнтыфікатары. |

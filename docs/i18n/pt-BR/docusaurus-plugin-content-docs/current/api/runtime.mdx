@@ -59,7 +59,7 @@ $result = app(GeneratorService::class)->feed(
 | `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Cria um registro. |
 | `find(int $id): Feed` | Retorna um registro ou lança `FeedNotFoundException`. |
 | `findBySlug(string $slug): Feed` | Retorna um único registro. Lança `FeedNotFoundException` quando não há registros e `MultipleRecordsFoundException` quando há mais de um. |
-| `all(): Builder` | Retorna todos os registros ordenados por ID. |
+| `all(bool $withTrashed = false): Builder` | Retorna os registros não excluídos ordenados por ID. Passe `true` para incluir os registros excluídos de forma reversível (desde a versão 2.1.0). |
 | `active(): Builder` | Retorna registros ativos ordenados por ID. |
 | `setLastActivity(string $class): void` | Atualiza `last_activity` de uma classe de feed. |
 | `delete(int $id): void` | Exclui logicamente um registro pelo ID. |

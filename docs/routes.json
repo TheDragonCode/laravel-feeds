@@ -820,13 +820,24 @@
                 "queue",
                 "FeedTarget",
                 "separate files",
-                "feed:generate"
+                "feed:generate",
+                "feed:list"
             ],
             "headings": [
                 {
                     "level": 1,
                     "id": "generation-schedule",
                     "text": "Generation & schedule"
+                },
+                {
+                    "level": 2,
+                    "id": "list_feeds",
+                    "text": "List registered feeds"
+                },
+                {
+                    "level": 3,
+                    "id": "list_feeds_agent",
+                    "text": "AI agent listing"
                 },
                 {
                     "level": 2,

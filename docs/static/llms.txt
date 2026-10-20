@@ -389,6 +389,60 @@ Please note that when you call the command without a parameter, the console will
 However, instead of being executed, such feeds will be marked with the `SKIP` status.
 :::
 
+## List registered feeds
+
+Starting with version 2.1.0, list feed registrations without generating files or changing their state:
+
+```bash
+php artisan feed:list
+```
+
+The command has no custom arguments or options. It displays a table with all registrations, including inactive and soft-deleted feeds.
+
+| Column | Meaning |
+| --- | --- |
+| `id` | Registration ID. |
+| `slug` | Registration slug used by `feed:generate`. |
+| `title` | Registration title. |
+| `expression` | Stored cron expression. |
+| `is_active` | Whether the registration is enabled. |
+| `is_deleted` | Whether the registration is soft-deleted. |
+| `last_activity` | Last recorded generation time in ISO 8601; `null` in JSON when unset. |
+
+Non-deleted registrations appear first, followed by soft-deleted registrations. Within each group, active feeds appear first, then rows are sorted by title and ID. Boolean values appear as `true` or `false` in the console.
+
+Use a non-deleted registration's slug to generate that feed:
+
+```bash
+php artisan feed:generate products
+```
+
+If no registrations exist, the console displays `No feeds available`.
+
+### AI agent listing
+
+Inside a recognized AI coding agent, `feed:list` automatically returns one compact JSON object on a single line. No extra option is required. Boolean fields remain JSON booleans:
+
+```json
+{
+  "tool": "feed:list",
+  "result": "success",
+  "feeds": [
+    {
+      "id": 1,
+      "slug": "products",
+      "title": "Products",
+      "expression": "0 * * * *",
+      "is_active": true,
+      "is_deleted": false,
+      "last_activity": null
+    }
+  ]
+}
+```
+
+The example is formatted for readability. An empty listing returns the same envelope with `"feeds": []`.
+
 ## Single feed
 
 :::warning
@@ -3570,7 +3624,7 @@ $result = app(GeneratorService::class)->feed(
 | `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Creates a registration. |
 | `find(int $id): Feed` | Returns a registration or throws `FeedNotFoundException`. |
 | `findBySlug(string $slug): Feed` | Returns one registration; throws `FeedNotFoundException` when missing or `MultipleRecordsFoundException` when ambiguous. |
-| `all(): Builder` | Returns all registrations ordered by ID. |
+| `all(bool $withTrashed = false): Builder` | Returns non-deleted registrations ordered by ID. Pass `true` to include soft-deleted registrations (since 2.1.0). |
 | `active(): Builder` | Returns active registrations ordered by ID. |
 | `setLastActivity(string $class): void` | Updates `last_activity` for a feed class. |
 | `delete(int $id): void` | Soft-deletes a registration by ID. |
