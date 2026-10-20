@@ -13,7 +13,7 @@ try {
     }
 
     Set-Location -LiteralPath $repositoryRoot
-    codex '$aif-distillation docs/static/llms.txt --split --path skills --redact-source-map --name laravel-feeds'
+    codex '$aif-distillation docs/static/llms.txt --split --path skills --redact-source-map --name laravel-feeds' --no-daemon
     if ($LASTEXITCODE -ne 0) {
         throw "codex failed with exit code $LASTEXITCODE."
     }
