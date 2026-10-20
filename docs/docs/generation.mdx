@@ -4,7 +4,7 @@ description: "Information on generating feed files for later distribution"
 type: guide
 status: stable
 since: "1.0"
-keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate"]
+keywords: ["generation", "schedule", "queue", "FeedTarget", "separate files", "feed:generate", "feed:list"]
 ---
 
 [← Previous](./create-feeds.mdx) · [Back to README](https://github.com/TheDragonCode/laravel-feeds#readme) · [Next →](./feed-targets.mdx)
@@ -24,6 +24,60 @@ Please note that when you call the command without a parameter, the console will
 
 However, instead of being executed, such feeds will be marked with the `SKIP` status.
 :::
+
+## List registered feeds {/* #list_feeds */}
+
+Starting with version 2.1.0, list feed registrations without generating files or changing their state:
+
+```bash
+php artisan feed:list
+```
+
+The command has no custom arguments or options. It displays a table with all registrations, including inactive and soft-deleted feeds.
+
+| Column | Meaning |
+| --- | --- |
+| `id` | Registration ID. |
+| `slug` | Registration slug used by `feed:generate`. |
+| `title` | Registration title. |
+| `expression` | Stored cron expression. |
+| `is_active` | Whether the registration is enabled. |
+| `is_deleted` | Whether the registration is soft-deleted. |
+| `last_activity` | Last recorded generation time in ISO 8601; `null` in JSON when unset. |
+
+Non-deleted registrations appear first, followed by soft-deleted registrations. Within each group, active feeds appear first, then rows are sorted by title and ID. Boolean values appear as `true` or `false` in the console.
+
+Use a non-deleted registration's slug to generate that feed:
+
+```bash
+php artisan feed:generate products
+```
+
+If no registrations exist, the console displays `No feeds available`.
+
+### AI agent listing {/* #list_feeds_agent */}
+
+Inside a recognized AI coding agent, `feed:list` automatically returns one compact JSON object on a single line. No extra option is required. Boolean fields remain JSON booleans:
+
+```json
+{
+  "tool": "feed:list",
+  "result": "success",
+  "feeds": [
+    {
+      "id": 1,
+      "slug": "products",
+      "title": "Products",
+      "expression": "0 * * * *",
+      "is_active": true,
+      "is_deleted": false,
+      "last_activity": null
+    }
+  ]
+}
+```
+
+The example is formatted for readability. An empty listing returns the same envelope with `"feeds": []`.
 
 ## Single feed {/* #single_feed */}
 

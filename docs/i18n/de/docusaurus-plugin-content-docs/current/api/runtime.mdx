@@ -59,7 +59,7 @@ $result = app(GeneratorService::class)->feed(
 | `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | Erstellt eine Registrierung. |
 | `find(int $id): Feed` | Gibt eine Registrierung zurück oder löst `FeedNotFoundException` aus. |
 | `findBySlug(string $slug): Feed` | Gibt eine einzelne Registrierung zurück. Löst bei fehlender Registrierung `FeedNotFoundException` und bei mehreren Treffern `MultipleRecordsFoundException` aus. |
-| `all(): Builder` | Gibt alle Registrierungen nach ID sortiert zurück. |
+| `all(bool $withTrashed = false): Builder` | Gibt nicht gelöschte Registrierungen nach ID sortiert zurück. Übergeben Sie `true`, um vorläufig gelöschte Registrierungen einzuschließen (seit 2.1.0). |
 | `active(): Builder` | Gibt aktive Registrierungen nach ID sortiert zurück. |
 | `setLastActivity(string $class): void` | Aktualisiert `last_activity` für eine Feed-Klasse. |
 | `delete(int $id): void` | Löscht eine Registrierung anhand der ID vorläufig. |

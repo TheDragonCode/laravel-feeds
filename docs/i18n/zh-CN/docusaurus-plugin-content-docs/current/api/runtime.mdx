@@ -59,7 +59,7 @@ $result = app(GeneratorService::class)->feed(
 | `create(string $class, string $title, Expression|string $expression = '0 * * * *', bool $isActive = true, array $extra = []): Feed` | 创建注册记录。 |
 | `find(int $id): Feed` | 返回注册记录，找不到时抛出 `FeedNotFoundException`。 |
 | `findBySlug(string $slug): Feed` | 返回唯一的注册记录。没有记录时抛出 `FeedNotFoundException`，多条记录匹配时抛出 `MultipleRecordsFoundException`。 |
-| `all(): Builder` | 返回按 ID 排序的所有注册记录。 |
+| `all(bool $withTrashed = false): Builder` | 返回按 ID 排序的未删除注册记录。传入 `true` 可包含已软删除的注册记录（自 2.1.0 起）。 |
 | `active(): Builder` | 返回按 ID 排序的已启用注册记录。 |
 | `setLastActivity(string $class): void` | 更新 Feed 类的 `last_activity`。 |
 | `delete(int $id): void` | 按 ID 软删除注册记录。 |
