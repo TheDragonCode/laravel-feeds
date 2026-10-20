@@ -118,7 +118,7 @@ test('sorts active, inactive and deleted feeds by title within each group', func
         return $feed;
     });
 
-    $sorted = collect([8, 4, 3, 0, 5, 7, 1, 2, 6])
+    $sorted = collect([5, 7, 1, 2, 6, 8, 4, 3, 0])
         ->map(fn (int $index): Feed => $feeds[$index]);
 
     if ($isAgent) {

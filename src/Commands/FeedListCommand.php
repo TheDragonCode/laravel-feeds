@@ -56,7 +56,7 @@ final class FeedListCommand extends Command
     {
         return $query->all(true)
             ->reorder()
-            ->orderByRaw('deleted_at IS NULL')
+            ->orderByRaw('deleted_at IS NOT NULL')
             ->orderByDesc('is_active')
             ->orderBy('title')
             ->orderBy('id')
@@ -75,7 +75,7 @@ final class FeedListCommand extends Command
             'expression' => $feed->expression,
 
             'is_active'  => $feed->is_active ? 'true' : 'false',
-            'is_deleted' => $feed->deleted_at !== null ? 'true' : 'false',
+            'is_deleted' => $feed->trashed() ? 'true' : 'false',
 
             'last_activity' => $feed->last_activity?->toIso8601String(),
         ];
