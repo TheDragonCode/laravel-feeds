@@ -27,6 +27,25 @@ test("legacy introduction URL redirects to getting started", async ({ page }) =>
     ).toBeVisible();
 });
 
+for (const locale of ["", "be/", "de/", "fr/", "ko/", "pt-BR/", "ru/", "uk/", "zh-CN/"]) {
+    for (const [anchor, destination, heading] of [
+        ["list_feeds", "list-feeds/", "h1"],
+        ["list_feeds_agent", "list-feeds/#list_feeds_agent", "#list_feeds_agent"],
+    ]) {
+        test(`legacy listing link ${locale}generation/#${anchor} opens the moved guide`, async ({ page }) => {
+            await page.goto(`/${locale}generation/#${anchor}`);
+
+            const link = page.getByRole("link").filter({ has: page.locator(`#${anchor}`) });
+            const target = `/${locale}${destination}`;
+
+            await expect(link).toHaveAttribute("href", target);
+            await link.click();
+            await expect(page).toHaveURL(new URL(target, page.url()).href);
+            await expect(page.locator(heading)).toBeVisible();
+        });
+    }
+}
+
 test("search opens from the keyboard and navigates", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator('[data-search-ready="true"]')).toBeVisible();

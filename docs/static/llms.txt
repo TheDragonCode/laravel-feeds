@@ -445,6 +445,8 @@ Please note that when you call the command without a parameter, the console will
 However, instead of being executed, such feeds will be marked with the `SKIP` status.
 :::
 
+[<span id="list_feeds" />List registered feeds](https://feeds.dragon-code.pro/list-feeds/) · [<span id="list_feeds_agent" />AI agent listing](https://feeds.dragon-code.pro/list-feeds/#list_feeds_agent)
+
 ## Single feed
 
 :::warning
