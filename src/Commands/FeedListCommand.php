@@ -22,9 +22,11 @@ final class FeedListCommand extends Command
 {
     public function handle(FeedQuery $query, AgentService $detector): int
     {
-        $items = $this->getItems($query);
+        $isAgent = $detector->isAgent();
 
-        $detector->isAgent()
+        $items = $this->getItems($query, $isAgent);
+
+        $isAgent
             ? $this->runForAgent($items, $detector)
             : $this->runForConsole($items);
 
@@ -53,7 +55,7 @@ final class FeedListCommand extends Command
         ]), options: OutputInterface::OUTPUT_RAW);
     }
 
-    protected function getItems(FeedQuery $query): Collection
+    protected function getItems(FeedQuery $query, bool $isAgent): Collection
     {
         return $query->all(true)
             ->reorder()
@@ -62,10 +64,10 @@ final class FeedListCommand extends Command
             ->orderBy('title')
             ->orderBy('id')
             ->get()
-            ->map(fn (Feed $feed) => $this->map($feed));
+            ->map(fn (Feed $feed) => $this->map($feed, $isAgent));
     }
 
-    protected function map(Model $feed): array
+    protected function map(Model $feed, bool $isAgent): array
     {
         return [
             'id' => $feed->getKey(),
@@ -75,10 +77,19 @@ final class FeedListCommand extends Command
 
             'expression' => $feed->expression,
 
-            'is_active'  => $feed->is_active ? 'true' : 'false',
-            'is_deleted' => $feed->trashed() ? 'true' : 'false',
+            'is_active'  => $this->transformBool($feed->is_active, ! $isAgent),
+            'is_deleted' => $this->transformBool($feed->trashed(), ! $isAgent),
 
             'last_activity' => $feed->last_activity?->toIso8601String(),
         ];
+    }
+
+    protected function transformBool(bool $value, bool $transform): bool|string
+    {
+        if (! $transform) {
+            return $value;
+        }
+
+        return $value ? 'true' : 'false';
     }
 }

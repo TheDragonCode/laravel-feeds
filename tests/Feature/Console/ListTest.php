@@ -37,15 +37,17 @@ test('lists feed details in a table', function (bool $isActive, bool $isDeleted,
     artisan('feed:list')
         ->expectsPromptsTable(
             ['id', 'slug', 'title', 'expression', 'is_active', 'is_deleted', 'last_activity'],
-            [[
-                $feed->id,
-                'product-catalog',
-                'Product Catalog',
-                '*/15 * * * *',
-                $isActive ? 'true' : 'false',
-                $isDeleted ? 'true' : 'false',
-                $lastActivity === null ? null : '2025-09-03T12:30:00+00:00',
-            ]]
+            [
+                [
+                    $feed->id,
+                    'product-catalog',
+                    'Product Catalog',
+                    '*/15 * * * *',
+                    $isActive ? 'true' : 'false',
+                    $isDeleted ? 'true' : 'false',
+                    $lastActivity === null ? null : '2025-09-03T12:30:00+00:00',
+                ],
+            ]
         )
         ->doesntExpectOutputToContain('"tool":"feed:list"')
         ->assertSuccessful()
@@ -74,15 +76,17 @@ test('returns feed details as JSON to an AI agent', function (bool $isActive, bo
     $expected = [
         'tool'   => 'feed:list',
         'result' => 'success',
-        'feeds'  => [[
-            'id'            => $feed->id,
-            'slug'          => 'product-catalog',
-            'title'         => 'Product Catalog',
-            'expression'    => '*/15 * * * *',
-            'is_active'     => $isActive ? 'true' : 'false',
-            'is_deleted'    => $isDeleted ? 'true' : 'false',
-            'last_activity' => $lastActivity === null ? null : '2025-09-03T12:30:00+00:00',
-        ]],
+        'feeds'  => [
+            [
+                'id'            => $feed->id,
+                'slug'          => 'product-catalog',
+                'title'         => 'Product Catalog',
+                'expression'    => '*/15 * * * *',
+                'is_active'     => $isActive,
+                'is_deleted'    => $isDeleted,
+                'last_activity' => $lastActivity === null ? null : '2025-09-03T12:30:00+00:00',
+            ],
+        ],
     ];
 
     expect($status)->toBe(Command::SUCCESS)
