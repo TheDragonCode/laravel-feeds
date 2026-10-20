@@ -820,24 +820,13 @@
                 "queue",
                 "FeedTarget",
                 "separate files",
-                "feed:generate",
-                "feed:list"
+                "feed:generate"
             ],
             "headings": [
                 {
                     "level": 1,
                     "id": "generation-schedule",
                     "text": "Generation & schedule"
-                },
-                {
-                    "level": 2,
-                    "id": "list_feeds",
-                    "text": "List registered feeds"
-                },
-                {
-                    "level": 3,
-                    "id": "list_feeds_agent",
-                    "text": "AI agent listing"
                 },
                 {
                     "level": 2,
@@ -997,6 +986,34 @@
                     "level": 2,
                     "id": "see-also",
                     "text": "See Also"
+                }
+            ]
+        },
+        {
+            "route": "/list-feeds/",
+            "source": "list-feeds.mdx",
+            "aliases": [],
+            "title": "List registered feeds",
+            "description": "List registered feeds and inspect their state without generating files",
+            "type": "guide",
+            "status": "stable",
+            "since": "2.1.0",
+            "keywords": [
+                "feed:list",
+                "registered feeds",
+                "registrations",
+                "AI agents"
+            ],
+            "headings": [
+                {
+                    "level": 1,
+                    "id": "list_feeds",
+                    "text": "List registered feeds"
+                },
+                {
+                    "level": 2,
+                    "id": "list_feeds_agent",
+                    "text": "AI agent listing"
                 }
             ]
         },

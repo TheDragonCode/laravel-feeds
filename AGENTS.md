@@ -123,7 +123,9 @@ Site: `https://feeds.dragon-code.pro`
 
 Source: `docs/docs/`
 
-Feed listing and generation guide: `docs/docs/generation.mdx`
+Feed listing guide: `docs/docs/list-feeds.mdx`
+
+Generation and schedule guide: `docs/docs/generation.mdx`
 
 Config attributes reference: `docs/docs/api/config-attributes.mdx`
 
