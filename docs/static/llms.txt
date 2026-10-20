@@ -4083,6 +4083,24 @@ This file is a single, consolidated Markdown document containing the compiled do
 Save the URL and re-import it periodically to pick up updates as the project evolves.
 :::
 
+## Installing skills
+
+You can install the Laravel Feeds skills in your project. Run one of the following commands from your project root.
+
+### Using npx
+
+```bash
+npx skills add TheDragonCode/laravel-feeds/skills
+```
+
+### Using Composer
+
+If you use Composer with the [llm/skills](https://github.com/roxblnfk/skills) plugin installed, run:
+
+```bash
+composer skills:add TheDragonCode/laravel-feeds
+```
+
 ## See Also
 
 - [Getting started](https://feeds.dragon-code.pro/introduction/)

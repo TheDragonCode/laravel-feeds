@@ -55,6 +55,21 @@
                 },
                 {
                     "level": 2,
+                    "id": "installing-skills",
+                    "text": "Installing skills"
+                },
+                {
+                    "level": 3,
+                    "id": "using-npx",
+                    "text": "Using npx"
+                },
+                {
+                    "level": 3,
+                    "id": "using-composer",
+                    "text": "Using Composer"
+                },
+                {
+                    "level": 2,
                     "id": "see-also",
                     "text": "See Also"
                 }
