@@ -38,7 +38,7 @@ final class FeedListCommand extends Command
             return;
         }
 
-        $headers = array_keys($items->first());
+        $headers = array_keys($items?->first() ?? []);
 
         table($headers, $items);
     }
