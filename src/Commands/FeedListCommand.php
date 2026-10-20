@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 use function array_keys;
+use function Laravel\Prompts\info;
 use function Laravel\Prompts\table;
 
 #[AsCommand('feed:list', 'List all feeds')]
@@ -31,6 +32,12 @@ final class FeedListCommand extends Command
 
     protected function runForConsole(Collection $items): void
     {
+        if ($items->isEmpty()) {
+            info('No feeds available');
+
+            return;
+        }
+
         $headers = array_keys($items->first());
 
         table($headers, $items);
@@ -49,7 +56,7 @@ final class FeedListCommand extends Command
     {
         return $query->all(true)
             ->reorder()
-            ->orderBy('deleted_at')
+            ->orderByRaw('deleted_at IS NULL')
             ->orderByDesc('is_active')
             ->orderBy('title')
             ->orderBy('id')
@@ -67,10 +74,10 @@ final class FeedListCommand extends Command
 
             'expression' => $feed->expression,
 
-            'is_active'  => $feed->is_active,
-            'is_deleted' => $feed->deleted_at !== null,
+            'is_active'  => $feed->is_active ? 'true' : 'false',
+            'is_deleted' => $feed->deleted_at !== null ? 'true' : 'false',
 
-            'last_activity' => $this->last_activity,
+            'last_activity' => $feed->last_activity?->toIso8601String(),
         ];
     }
 }
