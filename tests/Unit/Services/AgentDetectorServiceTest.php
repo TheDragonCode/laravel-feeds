@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use DragonCode\LaravelFeed\Services\AgentDetectorService;
+use DragonCode\LaravelFeed\Services\AgentService;
 
 test('detects an AI agent', function () {
     $previous = getenv('AI_AGENT');
@@ -10,7 +10,7 @@ test('detects an AI agent', function () {
     putenv('AI_AGENT=laravel-feeds-test');
 
     try {
-        expect((new AgentDetectorService)->isAgent())->toBeTrue();
+        expect((new AgentService)->isAgent())->toBeTrue();
     } finally {
         $previous === false
             ? putenv('AI_AGENT')

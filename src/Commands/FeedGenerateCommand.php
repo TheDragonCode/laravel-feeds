@@ -12,7 +12,7 @@ use DragonCode\LaravelFeed\Feeds\FeedTarget;
 use DragonCode\LaravelFeed\Jobs\FeedJob;
 use DragonCode\LaravelFeed\Models\Feed;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
-use DragonCode\LaravelFeed\Services\AgentDetectorService;
+use DragonCode\LaravelFeed\Services\AgentService;
 use DragonCode\LaravelFeed\Services\GeneratorService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
@@ -40,7 +40,7 @@ use function trim;
 #[AsCommand('feed:generate', 'Generate XML feeds')]
 final class FeedGenerateCommand extends Command
 {
-    public function handle(GeneratorService $generator, FeedQuery $query, AgentDetectorService $detector): int
+    public function handle(GeneratorService $generator, FeedQuery $query, AgentService $detector): int
     {
         $feedSlug = $this->feedSlug();
 
@@ -78,7 +78,7 @@ final class FeedGenerateCommand extends Command
 
     protected function runFor(
         GeneratorService $generator,
-        AgentDetectorService $detector,
+        AgentService $detector,
         Collection $feeds,
         bool $isSpecifiedFeed,
         bool $usesQueue,
@@ -128,7 +128,7 @@ final class FeedGenerateCommand extends Command
         bool $isSpecifiedFeed,
         bool $usesQueue,
         array $targetKeys,
-        AgentDetectorService $detector,
+        AgentService $detector,
     ): void {
         $results = new SplTempFileObject;
 
