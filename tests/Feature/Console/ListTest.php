@@ -20,7 +20,7 @@ use function Pest\Laravel\artisan;
 beforeEach(function () {
     Feed::withTrashed()->forceDelete();
 
-    $this->nextRun    = new DateTimeImmutable('tomorrow noon');
+    $this->nextRun    = getDefaultDateTime()->addDay()->setTime(12, 0);
     $this->expression = $this->nextRun->format('i H d m *');
 });
 
@@ -46,7 +46,7 @@ test('lists feed details in a table', function (bool $isActive, bool $isDeleted,
                     'product-catalog',
                     'Product Catalog',
                     $this->expression,
-                    $this->nextRun->format('Y-m-d H:i:s'),
+                    $this->nextRun->toIso8601String(),
                     $isActive ? 'true' : 'false',
                     $isDeleted ? 'true' : 'false',
                     $lastActivity === null ? null : '2025-09-03T12:30:00+00:00',
@@ -86,7 +86,7 @@ test('returns feed details as JSON to an AI agent', function (bool $isActive, bo
                 'slug'          => 'product-catalog',
                 'title'         => 'Product Catalog',
                 'expression'    => $this->expression,
-                'next_run'      => $this->nextRun->format('Y-m-d H:i:s'),
+                'next_run'      => $this->nextRun->toIso8601String(),
                 'is_active'     => $isActive,
                 'is_deleted'    => $isDeleted,
                 'last_activity' => $lastActivity === null ? null : '2025-09-03T12:30:00+00:00',
@@ -149,11 +149,97 @@ test('sorts active, inactive and deleted feeds by title within each group', func
                 $feed->slug,
                 $feed->title,
                 $this->expression,
-                $this->nextRun->format('Y-m-d H:i:s'),
+                $this->nextRun->toIso8601String(),
                 $feed->is_active ? 'true' : 'false',
                 $feed->trashed() ? 'true' : 'false',
                 null,
             ])
+        )
+        ->assertSuccessful()
+        ->run();
+})->with([
+    'console' => false,
+    'agent'   => true,
+]);
+
+test('calculates the next run in the scheduler timezone', function (array $configuration, string $now, string $expression, string $expected) {
+    config()->set($configuration);
+
+    $this->travelTo(new DateTimeImmutable($now));
+
+    mockAgent(true);
+
+    Feed::create([
+        'class'      => EmptyFeed::class,
+        'title'      => 'Scheduled Feed',
+        'expression' => $expression,
+    ]);
+
+    $status = Artisan::call('feed:list');
+    $output = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
+
+    expect($status)->toBe(Command::SUCCESS)
+        ->and($output['feeds'][0]['next_run'])->toBe($expected);
+})->with([
+    'UTC interval'       => [[], '2025-09-04T04:08:12+00:00', '*/15 * * * *', '2025-09-04T04:15:00+00:00'],
+    'scheduler timezone' => [
+        ['app.schedule_timezone' => 'America/New_York'],
+        '2025-09-04T04:08:12+00:00', '0 9 * * *', '2025-09-04T09:00:00-04:00',
+    ],
+    'application timezone fallback' => [
+        ['app.timezone' => 'Asia/Tokyo'],
+        '2025-09-04T04:08:12+00:00', '0 9 * * *', '2025-09-05T09:00:00+09:00',
+    ],
+    'daylight saving starts' => [
+        ['app.schedule_timezone' => 'America/New_York'],
+        '2025-03-08T15:00:00+00:00', '0 9 * * *', '2025-03-09T09:00:00-04:00',
+    ],
+    'daylight saving ends' => [
+        ['app.schedule_timezone' => 'America/New_York'],
+        '2025-11-01T14:00:00+00:00', '0 9 * * *', '2025-11-02T09:00:00-05:00',
+    ],
+    'current occurrence is excluded' => [
+        ['app.schedule_timezone' => 'America/New_York'],
+        '2025-09-04T13:00:00+00:00', '0 9 * * *', '2025-09-05T09:00:00-04:00',
+    ],
+    'hourly alias' => [[], '2025-09-04T04:08:12+00:00', '@hourly', '2025-09-04T05:00:00+00:00'],
+]);
+
+test('lists feeds with impossible cron expressions alongside runnable feeds', function (bool $isAgent) {
+    mockAgent($isAgent);
+
+    $impossible = Feed::create([
+        'class'      => EmptyFeed::class,
+        'title'      => 'Impossible Feed',
+        'expression' => '0 0 31 2 *',
+    ]);
+
+    $scheduled = Feed::create([
+        'class'      => FullFeed::class,
+        'title'      => 'Scheduled Feed',
+        'expression' => $this->expression,
+    ]);
+
+    if ($isAgent) {
+        $status = Artisan::call('feed:list');
+        $output = json_decode(Artisan::output(), true, flags: JSON_THROW_ON_ERROR);
+
+        expect($status)->toBe(Command::SUCCESS)
+            ->and(array_column($output['feeds'], 'next_run', 'id'))->toBe([
+                $impossible->id => null,
+                $scheduled->id  => $this->nextRun->toIso8601String(),
+            ]);
+
+        return;
+    }
+
+    artisan('feed:list')
+        ->expectsPromptsTable(
+            ['id', 'slug', 'title', 'expression', 'next_run', 'is_active', 'is_deleted', 'last_activity'],
+            [
+                [$impossible->id, 'impossible-feed', 'Impossible Feed', '0 0 31 2 *', null, 'true', 'false', null],
+                [$scheduled->id, 'scheduled-feed', 'Scheduled Feed', $this->expression, $this->nextRun->toIso8601String(), 'true', 'false', null],
+            ]
         )
         ->assertSuccessful()
         ->run();

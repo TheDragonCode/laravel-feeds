@@ -5,18 +5,22 @@ declare(strict_types=1);
 namespace DragonCode\LaravelFeed\Commands;
 
 use Cron\CronExpression;
+use DateTimeInterface;
 use DragonCode\LaravelFeed\Models\Feed;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use DragonCode\LaravelFeed\Services\AgentService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function array_keys;
+use function config;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\table;
+use function now;
 
 #[AsCommand('feed:list', 'List all feeds')]
 final class FeedListCommand extends Command
@@ -95,8 +99,14 @@ final class FeedListCommand extends Command
         return $value ? 'true' : 'false';
     }
 
-    protected function nextRunDate(string $expression): string
+    protected function nextRunDate(string $expression): ?string
     {
-        return new CronExpression($expression)->getNextRunDate()->format('Y-m-d H:i:s');
+        try {
+            return new CronExpression($expression)
+                ->getNextRunDate(now(), timeZone: config('app.schedule_timezone', config('app.timezone')))
+                ->format(DateTimeInterface::ATOM);
+        } catch (RuntimeException) {
+            return null;
+        }
     }
 }

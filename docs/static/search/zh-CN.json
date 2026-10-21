@@ -449,7 +449,7 @@
             "列出已注册的 Feed",
             "AI 代理列表输出"
         ],
-        "content": "← 上一页 · 返回 README · 下一页 → 列出已注册的 Feed 从 2.1.0 版本开始，可以列出 Feed 注册记录，而不生成文件或更改其状态： 此命令没有自定义参数或选项。它会以表格形式显示所有注册记录，包括未启用和已软删除的 Feed。 列 含义 --- --- id 注册记录 ID。 slug feed:generate 使用的注册 slug。 title 注册记录标题。 expression 已保存的 cron 表达式。 is_active 注册记录是否已启用。 is_deleted 注册记录是否已软删除。 last_activity 以 ISO 8601 格式记录的最后生成时间；未设置时在 JSON 中为 null 。 未删除的注册记录排在前面，已软删除的注册记录排在后面。在每组中，已启用的 Feed 排在前面，再按标题和 ID 排序。布尔值在控制台中显示为 true 或 false 。 使用未删除注册记录的 slug 来生成该 Feed： 如果没有注册记录，控制台会显示 No feeds available 。 AI 代理列表输出 在识别到的 AI 编码代理中， feed:list 会自动在单行中返回一个紧凑的 JSON 对象。无需额外选项。布尔字段保留为 JSON 布尔值： 此示例为便于阅读而进行了格式化。列表为空时会返回相同的封装，其中 \"feeds\": [] 。"
+        "content": "← 上一页 · 返回 README · 下一页 → 列出已注册的 Feed 从 2.1.0 版本开始，可以列出 Feed 注册记录，而不生成文件或更改其状态： 此命令没有自定义参数或选项。它会以表格形式显示所有注册记录，包括未启用和已软删除的 Feed。 列 含义 --- --- id 注册记录 ID。 slug feed:generate 使用的注册 slug。 title 注册记录标题。 expression 已保存的 cron 表达式。 next_run 带 UTC 偏移量的 ISO 8601 格式的下一次 cron 触发时间；无可用日期时在 JSON 中为 null 。 is_active 注册记录是否已启用。 is_deleted 注册记录是否已软删除。 last_activity 以 ISO 8601 格式记录的最后生成时间；未设置时在 JSON 中为 null 。 未删除的注册记录排在前面，已软删除的注册记录排在后面。在每组中，已启用的 Feed 排在前面，再按标题和 ID 排序。布尔值在控制台中显示为 true 或 false 。 next_run 使用 app.schedule_timezone ，未设置时使用 app.timezone 。格式为 YYYY-MM-DDTHH:mm:ss±HH:mm ，例如 2025-09-04T09:00:00-04:00 。即使注册记录未启用或已软删除，此值仍表示已保存的 cron 表达式的下一次触发时间，并不保证 Feed 会执行。如果表达式不存在可能的执行日期，例如 0 0 31 2 ，则在 JSON 中返回 null ，在控制台中显示为空单元格。 使用未删除注册记录的 slug 来生成该 Feed： 如果没有注册记录，控制台会显示 No feeds available 。 AI 代理列表输出 在识别到的 AI 编码代理中， feed:list 会自动在单行中返回一个紧凑的 JSON 对象。无需额外选项。布尔字段保留为 JSON 布尔值： 此示例为便于阅读而进行了格式化。列表为空时会返回相同的封装，其中 \"feeds\": [] 。"
     },
     {
         "route": "/zh-CN/location/",
