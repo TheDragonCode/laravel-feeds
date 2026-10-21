@@ -20,7 +20,7 @@ use function Pest\Laravel\artisan;
 beforeEach(function () {
     Feed::withTrashed()->forceDelete();
 
-    $this->nextRun    = getDefaultDateTime()->addDay()->setTime(12, 0);
+    $this->nextRun    = getDefaultDateTime()->setTimezone(config()->string('app.timezone'))->addDay()->setTime(12, 0);
     $this->expression = $this->nextRun->format('i H d m *');
 });
 
@@ -181,13 +181,17 @@ test('calculates the next run in the scheduler timezone', function (array $confi
     expect($status)->toBe(Command::SUCCESS)
         ->and($output['feeds'][0]['next_run'])->toBe($expected);
 })->with([
-    'UTC interval'       => [[], '2025-09-04T04:08:12+00:00', '*/15 * * * *', '2025-09-04T04:15:00+00:00'],
+    'UTC interval'       => [['app.timezone' => 'UTC'], '2025-09-04T04:08:12+00:00', '*/15 * * * *', '2025-09-04T04:15:00+00:00'],
     'scheduler timezone' => [
         ['app.schedule_timezone' => 'America/New_York'],
         '2025-09-04T04:08:12+00:00', '0 9 * * *', '2025-09-04T09:00:00-04:00',
     ],
     'application timezone fallback' => [
         ['app.timezone' => 'Asia/Tokyo'],
+        '2025-09-04T04:08:12+00:00', '0 9 * * *', '2025-09-05T09:00:00+09:00',
+    ],
+    'null scheduler timezone' => [
+        ['app.schedule_timezone' => null, 'app.timezone' => 'Asia/Tokyo'],
         '2025-09-04T04:08:12+00:00', '0 9 * * *', '2025-09-05T09:00:00+09:00',
     ],
     'daylight saving starts' => [
@@ -202,7 +206,7 @@ test('calculates the next run in the scheduler timezone', function (array $confi
         ['app.schedule_timezone' => 'America/New_York'],
         '2025-09-04T13:00:00+00:00', '0 9 * * *', '2025-09-05T09:00:00-04:00',
     ],
-    'hourly alias' => [[], '2025-09-04T04:08:12+00:00', '@hourly', '2025-09-04T05:00:00+00:00'],
+    'hourly alias' => [['app.timezone' => 'UTC'], '2025-09-04T04:08:12+00:00', '@hourly', '2025-09-04T05:00:00+00:00'],
 ]);
 
 test('lists feeds with impossible cron expressions alongside runnable feeds', function (bool $isAgent) {
