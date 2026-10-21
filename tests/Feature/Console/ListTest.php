@@ -19,13 +19,16 @@ use function Pest\Laravel\artisan;
 
 beforeEach(function () {
     Feed::withTrashed()->forceDelete();
+
+    $this->nextRun    = new DateTimeImmutable('tomorrow noon');
+    $this->expression = $this->nextRun->format('i H d m *');
 });
 
 test('lists feed details in a table', function (bool $isActive, bool $isDeleted, ?string $lastActivity) {
     $feed = Feed::create([
         'class'         => EmptyFeed::class,
         'title'         => 'Product Catalog',
-        'expression'    => '*/15 * * * *',
+        'expression'    => $this->expression,
         'is_active'     => $isActive,
         'last_activity' => $lastActivity,
     ]);
@@ -36,13 +39,14 @@ test('lists feed details in a table', function (bool $isActive, bool $isDeleted,
 
     artisan('feed:list')
         ->expectsPromptsTable(
-            ['id', 'slug', 'title', 'expression', 'is_active', 'is_deleted', 'last_activity'],
+            ['id', 'slug', 'title', 'expression', 'next_run', 'is_active', 'is_deleted', 'last_activity'],
             [
                 [
                     $feed->id,
                     'product-catalog',
                     'Product Catalog',
-                    '*/15 * * * *',
+                    $this->expression,
+                    $this->nextRun->format('Y-m-d H:i:s'),
                     $isActive ? 'true' : 'false',
                     $isDeleted ? 'true' : 'false',
                     $lastActivity === null ? null : '2025-09-03T12:30:00+00:00',
@@ -60,7 +64,7 @@ test('returns feed details as JSON to an AI agent', function (bool $isActive, bo
     $feed = Feed::create([
         'class'         => EmptyFeed::class,
         'title'         => 'Product Catalog',
-        'expression'    => '*/15 * * * *',
+        'expression'    => $this->expression,
         'is_active'     => $isActive,
         'last_activity' => $lastActivity,
     ]);
@@ -81,7 +85,8 @@ test('returns feed details as JSON to an AI agent', function (bool $isActive, bo
                 'id'            => $feed->id,
                 'slug'          => 'product-catalog',
                 'title'         => 'Product Catalog',
-                'expression'    => '*/15 * * * *',
+                'expression'    => $this->expression,
+                'next_run'      => $this->nextRun->format('Y-m-d H:i:s'),
                 'is_active'     => $isActive,
                 'is_deleted'    => $isDeleted,
                 'last_activity' => $lastActivity === null ? null : '2025-09-03T12:30:00+00:00',
@@ -111,9 +116,10 @@ test('sorts active, inactive and deleted feeds by title within each group', func
         [$class, $title, $isActive, $deletedAt] = $attributes;
 
         $feed = Feed::create([
-            'class'     => $class,
-            'title'     => $title,
-            'is_active' => $isActive,
+            'class'      => $class,
+            'title'      => $title,
+            'expression' => $this->expression,
+            'is_active'  => $isActive,
         ]);
 
         $feed->deleted_at = $deletedAt;
@@ -137,12 +143,13 @@ test('sorts active, inactive and deleted feeds by title within each group', func
 
     artisan('feed:list')
         ->expectsPromptsTable(
-            ['id', 'slug', 'title', 'expression', 'is_active', 'is_deleted', 'last_activity'],
+            ['id', 'slug', 'title', 'expression', 'next_run', 'is_active', 'is_deleted', 'last_activity'],
             $sorted->map(fn (Feed $feed): array => [
                 $feed->id,
                 $feed->slug,
                 $feed->title,
-                '0 * * * *',
+                $this->expression,
+                $this->nextRun->format('Y-m-d H:i:s'),
                 $feed->is_active ? 'true' : 'false',
                 $feed->trashed() ? 'true' : 'false',
                 null,
