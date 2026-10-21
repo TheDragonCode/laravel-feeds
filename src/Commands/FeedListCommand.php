@@ -103,10 +103,15 @@ final class FeedListCommand extends Command
     {
         try {
             return new CronExpression($expression)
-                ->getNextRunDate(now(), timeZone: config('app.schedule_timezone', config('app.timezone')))
+                ->getNextRunDate(now(), timeZone: $this->getTimeZone())
                 ->format(DateTimeInterface::ATOM);
         } catch (RuntimeException) {
             return null;
         }
+    }
+
+    protected function getTimeZone(): string
+    {
+        return config()->string('app.timezone');
     }
 }
