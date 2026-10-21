@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Commands;
 
+use Cron\CronExpression;
 use DragonCode\LaravelFeed\Models\Feed;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use DragonCode\LaravelFeed\Services\AgentService;
@@ -76,6 +77,7 @@ final class FeedListCommand extends Command
             'title' => $feed->title,
 
             'expression' => $feed->expression,
+            'next_run'   => $this->nextRunDate($feed->expression),
 
             'is_active'  => $this->transformBool($feed->is_active, ! $isAgent),
             'is_deleted' => $this->transformBool($feed->trashed(), ! $isAgent),
@@ -91,5 +93,10 @@ final class FeedListCommand extends Command
         }
 
         return $value ? 'true' : 'false';
+    }
+
+    protected function nextRunDate(string $expression): string
+    {
+        return new CronExpression($expression)->getNextRunDate()->format('Y-m-d H:i:s');
     }
 }
