@@ -24,7 +24,7 @@
         "php": "^8.4",
         "ext-dom": "*",
         "ext-libxml": "*",
-        "dragonmantank/cron-expression": "^3.4",
+        "dragonmantank/cron-expression": "^3.5",
         "illuminate/console": "^13.0",
         "illuminate/database": "^13.0",
         "illuminate/filesystem": "^13.0",
