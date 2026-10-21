@@ -110,8 +110,9 @@ final class FeedListCommand extends Command
         }
     }
 
-    protected function getTimeZone(): string
+    protected function getTimeZone(): ?string
     {
-        return config('app.schedule_timezone') ?? config()->string('app.timezone');
+        return config('app.schedule_timezone')
+            ?? config('app.timezone');
     }
 }
