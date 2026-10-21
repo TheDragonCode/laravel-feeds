@@ -25,11 +25,14 @@ O comando não possui argumentos ou opções específicos. Ele exibe uma tabela 
 | `slug` | Slug do registro usado por `feed:generate`. |
 | `title` | Título do registro. |
 | `expression` | Expressão cron armazenada. |
+| `next_run` | Próxima ocorrência do cron no formato ISO 8601 com deslocamento UTC; `null` no JSON quando indisponível. |
 | `is_active` | Indica se o registro está ativo. |
 | `is_deleted` | Indica se o registro foi excluído de forma reversível. |
 | `last_activity` | Data e hora da última geração registrada no formato ISO 8601; `null` no JSON quando não há valor definido. |
 
 Os registros não excluídos aparecem primeiro, seguidos dos registros excluídos de forma reversível. Em cada grupo, os feeds ativos aparecem primeiro, e as linhas são ordenadas por título e ID. Os valores booleanos aparecem como `true` ou `false` no console.
+
+`next_run` usa `app.schedule_timezone` ou, na ausência dele, `app.timezone`. Seu formato é `YYYY-MM-DDTHH:mm:ss±HH:mm`, por exemplo `2025-09-04T09:00:00-04:00`. O valor mostra a próxima ocorrência da expressão cron armazenada mesmo para registros inativos ou excluídos de forma reversível; ele não garante a execução do feed. Se a expressão não tiver uma data de execução possível, como `0 0 31 2 *`, o valor será `null` no JSON e vazio no console.
 
 Use o slug de um registro não excluído para gerar esse feed:
 
@@ -53,6 +56,7 @@ Dentro de um agente de codificação com IA reconhecido, `feed:list` retorna aut
       "slug": "products",
       "title": "Products",
       "expression": "0 * * * *",
+      "next_run": "2025-09-04T05:00:00+00:00",
       "is_active": true,
       "is_deleted": false,
       "last_activity": null

@@ -25,11 +25,14 @@ php artisan feed:list
 | `slug` | `feed:generate`에서 사용하는 등록 slug. |
 | `title` | 등록 제목. |
 | `expression` | 저장된 cron 표현식. |
+| `next_run` | UTC 오프셋이 포함된 ISO 8601 형식의 다음 cron 실행 시각. 가능한 시각이 없으면 JSON에서는 `null`. |
 | `is_active` | 등록 정보의 활성화 여부. |
 | `is_deleted` | 등록 정보의 소프트 삭제 여부. |
 | `last_activity` | ISO 8601 형식으로 기록된 마지막 생성 시각. 설정되지 않은 경우 JSON에서는 `null`. |
 
 삭제되지 않은 등록 정보가 먼저 표시되고 소프트 삭제된 등록 정보가 뒤에 표시됩니다. 각 그룹에서는 활성 피드가 먼저 표시되며, 이어서 제목과 ID순으로 정렬됩니다. 콘솔에서 불리언 값은 `true` 또는 `false`로 표시됩니다.
+
+`next_run`은 `app.schedule_timezone`을 사용하며, 설정되지 않은 경우 `app.timezone`을 사용합니다. 형식은 `YYYY-MM-DDTHH:mm:ss±HH:mm`이며, 예시는 `2025-09-04T09:00:00-04:00`입니다. 비활성 또는 소프트 삭제된 등록 정보에도 저장된 cron 표현식의 다음 실행 시각을 표시하지만 피드 실행을 보장하지는 않습니다. `0 0 31 2 *`처럼 가능한 실행 날짜가 없는 표현식은 JSON에서 `null`로, 콘솔에서는 빈 셀로 표시됩니다.
 
 삭제되지 않은 등록 정보의 slug를 사용하여 해당 피드를 생성하십시오.
 
@@ -53,6 +56,7 @@ php artisan feed:generate products
       "slug": "products",
       "title": "Products",
       "expression": "0 * * * *",
+      "next_run": "2025-09-04T05:00:00+00:00",
       "is_active": true,
       "is_deleted": false,
       "last_activity": null

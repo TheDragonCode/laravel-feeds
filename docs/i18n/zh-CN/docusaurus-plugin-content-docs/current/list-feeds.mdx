@@ -25,11 +25,14 @@ php artisan feed:list
 | `slug` | `feed:generate` 使用的注册 slug。 |
 | `title` | 注册记录标题。 |
 | `expression` | 已保存的 cron 表达式。 |
+| `next_run` | 带 UTC 偏移量的 ISO 8601 格式的下一次 cron 触发时间；无可用日期时在 JSON 中为 `null`。 |
 | `is_active` | 注册记录是否已启用。 |
 | `is_deleted` | 注册记录是否已软删除。 |
 | `last_activity` | 以 ISO 8601 格式记录的最后生成时间；未设置时在 JSON 中为 `null`。 |
 
 未删除的注册记录排在前面，已软删除的注册记录排在后面。在每组中，已启用的 Feed 排在前面，再按标题和 ID 排序。布尔值在控制台中显示为 `true` 或 `false`。
+
+`next_run` 使用 `app.schedule_timezone`，未设置时使用 `app.timezone`。格式为 `YYYY-MM-DDTHH:mm:ss±HH:mm`，例如 `2025-09-04T09:00:00-04:00`。即使注册记录未启用或已软删除，此值仍表示已保存的 cron 表达式的下一次触发时间，并不保证 Feed 会执行。如果表达式不存在可能的执行日期，例如 `0 0 31 2 *`，则在 JSON 中返回 `null`，在控制台中显示为空单元格。
 
 使用未删除注册记录的 slug 来生成该 Feed：
 
@@ -53,6 +56,7 @@ php artisan feed:generate products
       "slug": "products",
       "title": "Products",
       "expression": "0 * * * *",
+      "next_run": "2025-09-04T05:00:00+00:00",
       "is_active": true,
       "is_deleted": false,
       "last_activity": null

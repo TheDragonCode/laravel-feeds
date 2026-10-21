@@ -4,18 +4,23 @@ declare(strict_types=1);
 
 namespace DragonCode\LaravelFeed\Commands;
 
+use Cron\CronExpression;
+use DateTimeInterface;
 use DragonCode\LaravelFeed\Models\Feed;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use DragonCode\LaravelFeed\Services\AgentService;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function array_keys;
+use function config;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\table;
+use function now;
 
 #[AsCommand('feed:list', 'List all feeds')]
 final class FeedListCommand extends Command
@@ -76,6 +81,7 @@ final class FeedListCommand extends Command
             'title' => $feed->title,
 
             'expression' => $feed->expression,
+            'next_run'   => $this->nextRunDate($feed->expression),
 
             'is_active'  => $this->transformBool($feed->is_active, ! $isAgent),
             'is_deleted' => $this->transformBool($feed->trashed(), ! $isAgent),
@@ -91,5 +97,22 @@ final class FeedListCommand extends Command
         }
 
         return $value ? 'true' : 'false';
+    }
+
+    protected function nextRunDate(string $expression): ?string
+    {
+        try {
+            return new CronExpression($expression)
+                ->getNextRunDate(now(), timeZone: $this->getTimeZone())
+                ->format(DateTimeInterface::ATOM);
+        } catch (RuntimeException) {
+            return null;
+        }
+    }
+
+    protected function getTimeZone(): ?string
+    {
+        return config('app.schedule_timezone')
+            ?? config('app.timezone');
     }
 }

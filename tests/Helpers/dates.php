@@ -11,5 +11,7 @@ function getDefaultDateTime(): Carbon
 
 function setDefaultDateTime(): void
 {
+    config()->set('app.timezone', '+01:00');
+
     Carbon::setTestNow('2025-09-04 04:08:12');
 }
