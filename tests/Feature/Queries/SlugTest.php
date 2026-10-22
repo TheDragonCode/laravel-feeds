@@ -65,7 +65,7 @@ test('updates the persisted slug when the title changes', function () {
         ->toThrow(FeedNotFoundException::class, 'Feed [old-title] not found.');
 });
 
-test('derives the slug for custom models and quiet saves', function () {
+test('derives the slug for custom models and skips quiet saves', function () {
     config()->set('feeds.model', CustomFeed::class);
 
     $feed = app(FeedQuery::class)->create(EmptyFeed::class, 'Original', extra: ['title' => 'Overridden']);
@@ -76,58 +76,63 @@ test('derives the slug for custom models and quiet saves', function () {
     $feed->title = 'Quiet Update';
     $feed->saveQuietly();
 
-    expect($feed->fresh()->slug)->toBe('quiet-update');
+    expect($feed->fresh()->title)->toBe('Quiet Update')
+        ->and($feed->fresh()->slug)->toBe('overridden');
 });
 
-test('derives the slug from the stored custom title', function (string $model) {
+test('derives the slug from the custom title accessor', function (string $model) {
     config()->set('feeds.model', $model);
 
     $feed = app(FeedQuery::class)->create(EmptyFeed::class, '  Product Catalog  ');
 
     expect($feed->fresh()->getRawOriginal('title'))->toBe('Stored: Product Catalog')
         ->and($feed->fresh()->title)->toBe('Display: Stored: Product Catalog')
-        ->and($feed->fresh()->slug)->toBe('stored-product-catalog');
+        ->and($feed->fresh()->slug)->toBe('display-stored-product-catalog');
 
     $feed->update(['title' => '  Updated Catalog  ']);
 
     expect($feed->fresh()->getRawOriginal('title'))->toBe('Stored: Updated Catalog')
-        ->and($feed->fresh()->slug)->toBe('stored-updated-catalog');
+        ->and($feed->fresh()->slug)->toBe('display-stored-updated-catalog');
 
     $feed->title = '  Quiet Catalog  ';
     $feed->saveQuietly();
 
     expect($feed->fresh()->getRawOriginal('title'))->toBe('Stored: Quiet Catalog')
-        ->and($feed->fresh()->slug)->toBe('stored-quiet-catalog');
+        ->and($feed->fresh()->slug)->toBe('display-stored-updated-catalog');
 })->with([
     'modern' => SlugModernTitleFeed::class,
     'legacy' => SlugLegacyTitleFeed::class,
 ]);
 
-test('derives the slug after title changes in model listeners', function (string $event) {
+test('derives the slug before later model listeners run', function (string $event) {
     $feed = $event === 'updating'
         ? app(FeedQuery::class)->create(EmptyFeed::class, 'Original Catalog')
         : new Feed(['class' => EmptyFeed::class, 'title' => 'Original Catalog']);
 
     $feed->title = 'Input Catalog';
 
-    Feed::$event(static function (Feed $feed): void {
-        $feed->setRawAttributes([...$feed->getAttributes(), 'title' => 'Listener Catalog']);
-    });
+    $dispatcher = Feed::getEventDispatcher();
+
+    Feed::setEventDispatcher(clone $dispatcher);
 
     try {
+        Feed::$event(static function (Feed $feed): void {
+            $feed->setRawAttributes([...$feed->getAttributes(), 'title' => 'Listener Catalog']);
+        });
+
         $feed->save();
 
         expect($feed->fresh()->getRawOriginal('title'))->toBe('Listener Catalog')
-            ->and($feed->fresh()->slug)->toBe('listener-catalog');
+            ->and($feed->fresh()->slug)->toBe('input-catalog');
     } finally {
-        Feed::getEventDispatcher()->forget('eloquent.' . $event . ': ' . Feed::class);
+        Feed::setEventDispatcher($dispatcher);
     }
 })->with(['saving', 'creating', 'updating']);
 
-test('preserves the stored slug when saving a model without its title selected', function () {
+test('preserves the slug when saving a partial model with its title selected', function () {
     $feed = app(FeedQuery::class)->create(EmptyFeed::class, 'Product Catalog');
 
-    Feed::query()->select(['id', 'is_active'])->findOrFail($feed->id)->update(['is_active' => false]);
+    Feed::query()->select(['id', 'title', 'is_active'])->findOrFail($feed->id)->update(['is_active' => false]);
 
     expect($feed->fresh()->slug)->toBe('product-catalog');
 });

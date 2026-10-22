@@ -88,12 +88,12 @@ final class FailedTargetedFeed extends BaseFeed implements HasFeedTargets
 }
 
 test('failed', function () {
-    Event::fake();
-
     $feed = Feed::create([
         'class' => FailedFeed::class,
         'title' => 'Failed',
     ]);
+
+    Event::fake();
 
     artisan(FeedGenerateCommand::class, ['feed' => $feed->slug])
         ->assertSuccessful()
@@ -104,12 +104,12 @@ test('failed', function () {
 );
 
 test('feed class link', function () {
-    Event::fake();
-
     $feed = Feed::create([
         'class' => FailedFeed::class,
         'title' => 'Failed',
     ]);
+
+    Event::fake();
 
     try {
         artisan(FeedGenerateCommand::class, ['feed' => $feed->slug])
