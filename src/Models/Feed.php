@@ -7,17 +7,20 @@ namespace DragonCode\LaravelFeed\Models;
 use DragonCode\LaravelFeed\Casts\ClassCast;
 use DragonCode\LaravelFeed\Casts\ExpressionCast;
 use DragonCode\LaravelFeed\Casts\SlugCast;
+use DragonCode\LaravelFeed\Observers\FeedObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 use function config;
-use function in_array;
 
+#[ObservedBy([FeedObserver::class])]
 class Feed extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
+        'slug',
         'class',
         'title',
 
@@ -42,21 +45,6 @@ class Feed extends Model
     public function getTable(): ?string
     {
         return config('feeds.table.table') ?? parent::getTable();
-    }
-
-    protected function fireModelEvent($event, $halt = true)
-    {
-        $result = parent::fireModelEvent($event, $halt);
-
-        if ($result !== false && in_array($event, ['saving', 'creating', 'updating'], true)) {
-            $attributes = $this->getAttributes();
-
-            if (isset($attributes['title'])) {
-                $this->slug = $attributes['title'];
-            }
-        }
-
-        return $result;
     }
 
     protected function casts(): array
