@@ -73,7 +73,9 @@ app(\DragonCode\LaravelFeed\Queries\FeedQuery::class)
 
 선택에 사용하는 slug는 비어 있지 않아야 하며, 비활성 등록을 포함하여 삭제되지 않은 등록 간에 서로 달라야 합니다. 서로 다른 제목도 같은 slug로 정규화될 수 있습니다. 여러 등록이 일치하는 조회는 `MultipleRecordsFoundException`을, 알 수 없는 slug는 `FeedNotFoundException`을 발생시킵니다. 피드 모델을 통해 제목을 수정하여 slug 충돌이나 빈 값을 해결하십시오.
 
-피드 모델을 저장하면 저장된 제목에서 slug를 다시 계산합니다. Query Builder의 일괄 삽입 및 업데이트는 이 동작을 거치지 않습니다. 이러한 쓰기 작업과 캐스트 또는 모델 이벤트를 재정의하는 사용자 지정 피드 모델을 검토하십시오.
+`2.3.0`의 [PR #334](https://github.com/TheDragonCode/laravel-feeds/pull/334)는 `fireModelEvent()` 재정의를 `FeedObserver::saving()`으로 대체합니다. 이전에는 조용한 저장을 포함하여 `saving`, `creating`, `updating` 이후 원시 속성으로 slug를 계산했습니다. 이제 saving 옵저버 실행 시 accessor를 거친 제목을 사용하며, 조용한 저장은 건너뛰고 이후 리스너도 재계산을 유발하지 않습니다.
+
+이전 `2.x`를 포함하여 `2.3.0`으로 업데이트하기 전에 조용한 저장, 제목 accessor, 이벤트 리스너, 부분 선택, 사용자 정의 casts, 대량 쓰기를 점검하십시오. 저장된 제목과 slug, slug 조회, 예약 생성을 테스트하십시오. 설치만으로 기존 행이 바뀌지는 않지만 다음 일반 저장에서는 제목 변경 없이도 accessor 때문에 slug가 달라질 수 있습니다. 필요하면 명령과 일정에 고정한 slug를 수정하십시오. 조용한 저장과 리스너의 명시적 대입 예제는 [Eloquent](./eloquent.mdx)를 참조하십시오.
 
 ## 생성 호출의 ID 교체 {/* #generation-calls */}
 
