@@ -73,7 +73,9 @@ app(\DragonCode\LaravelFeed\Queries\FeedQuery::class)
 
 Slugs used for selection must be non-empty and distinct among non-deleted registrations, including inactive ones. Different titles can normalize to the same slug. Ambiguous lookups throw `MultipleRecordsFoundException`; unknown slugs throw `FeedNotFoundException`. Resolve collisions or empty slugs by updating titles through the feed model.
 
-Saving a feed model recalculates its slug from the stored title. Query Builder bulk inserts and updates bypass this behavior. Review such writes and custom feed models that override casts or model events.
+In `2.3.0`, [PR #334](https://github.com/TheDragonCode/laravel-feeds/pull/334) replaces the `fireModelEvent()` override with `FeedObserver::saving()`. Previously, slug derivation used raw attributes after `saving`, `creating`, and `updating`, including quiet saves. It now uses the accessor-visible title when the saving observer runs; quiet saves skip it and later listeners do not trigger another calculation.
+
+Before upgrading to `2.3.0` (including from an earlier `2.x` release), audit quiet saves, title accessors, event listeners, partial selects, custom casts, and bulk writes. Test the resulting stored title and slug, lookup by slug, and scheduled generation. Existing rows are not rewritten merely by installing this release, but the next ordinary save can change an accessor-derived slug even without a title change. Update hardcoded command and schedule slugs if needed. See [Eloquent](./eloquent.mdx) for explicit quiet-save and listener handling.
 
 ## Replace IDs in generation calls {/* #generation-calls */}
 

@@ -73,7 +73,9 @@ app(\DragonCode\LaravelFeed\Queries\FeedQuery::class)
 
 Für die Auswahl verwendete Slugs müssen unter allen nicht gelöschten Registrierungen, einschließlich inaktiver Registrierungen, unterschiedlich und nicht leer sein. Unterschiedliche Titel können denselben normalisierten Slug ergeben. Mehrdeutige Suchen lösen `MultipleRecordsFoundException` aus; unbekannte Slugs lösen `FeedNotFoundException` aus. Beheben Sie Kollisionen oder leere Slugs, indem Sie Titel über das Feed-Modell aktualisieren.
 
-Beim Speichern eines Feed-Modells wird sein Slug aus dem gespeicherten Titel neu berechnet. Massenweise Einfügungen und Aktualisierungen über den Query Builder umgehen dieses Verhalten. Prüfen Sie solche Schreibvorgänge und benutzerdefinierte Feed-Modelle, die Casts oder Modellereignisse überschreiben.
+In `2.3.0` ersetzt [PR #334](https://github.com/TheDragonCode/laravel-feeds/pull/334) die Überschreibung von `fireModelEvent()` durch `FeedObserver::saving()`. Zuvor wurde der Slug nach `saving`, `creating` und `updating` aus rohen Attributen abgeleitet, auch bei stillem Speichern. Jetzt zählt der Titel einschließlich Accessor zum Zeitpunkt des Saving-Observers; stilles Speichern überspringt ihn, spätere Listener lösen keine Neuberechnung aus.
+
+Prüfen Sie vor dem Upgrade auf `2.3.0`, auch von einer früheren `2.x`, stille Speichervorgänge, Titel-Accessors, Ereignis-Listener, Teilabfragen, eigene Casts und Massenschreibvorgänge. Testen Sie gespeicherte Titel und Slugs, Slug-Suche und geplante Generierung. Die Installation allein ändert keine Datensätze; der nächste normale Speichervorgang kann jedoch durch einen Accessor den Slug ohne Titeländerung ändern. Passen Sie bei Bedarf fest eingetragene Slugs in Befehlen und Zeitplänen an. Beispiele für stilles Speichern und Listener stehen unter [Eloquent](./eloquent.mdx).
 
 ## IDs in Generierungsaufrufen ersetzen {/* #generation-calls */}
 

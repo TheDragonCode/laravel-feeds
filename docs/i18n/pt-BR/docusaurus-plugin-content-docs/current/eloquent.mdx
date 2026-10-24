@@ -11,7 +11,24 @@ keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
 
 # Eloquent
 
-Ao salvar um modelo, `Str::slug(title)` é armazenado automaticamente em `slug` por meio de `SlugCast`, usando o valor final de `title` após os setters personalizados do título. Mutators personalizados do título e `saveQuietly()` são suportados. Alterar o título altera o slug. Por exemplo, `Products` se torna `products`. Atualizações e inserções em massa pelo construtor de consultas ignoram o salvamento do modelo; use os métodos `create()`, `update()` ou `save()` do modelo.
+Em `2.3.0`, `FeedObserver::saving()` atribui `$feed->slug = $feed->title`; depois, `SlugCast` aplica `Str::slug()`. Isso ocorre em cada chamada aos métodos do modelo `create()`, `update()` ou `save()` com eventos habilitados, mesmo sem alteração de `title`, e sobrescreve um slug definido manualmente. Por exemplo, `Products` se torna `products`.
+
+O observer lê a propriedade `title` atual, incluindo accessors modernos e clássicos e setters já aplicados. Ele não lê o título bruto armazenado nem garante o valor final gravado no banco. Um accessor que retorna `Display: Stored: Product Catalog` produz `display-stored-product-catalog`. Mantenha a formatação de exibição em um accessor separado se ela não deve afetar o slug.
+
+`saveQuietly()` e salvamentos dentro de `withoutEvents()` ignoram o observer. Alterar `title` dessa forma mantém o slug anterior, a menos que a aplicação o atribua explicitamente. Use um salvamento normal quando precisar dos eventos. Para salvar silenciosamente com a mesma derivação do observer:
+
+```php
+use DragonCode\LaravelFeed\Models\Feed;
+
+$feed = Feed::query()->findOrFail(42);
+$feed->title = 'New Title';
+$feed->slug = $feed->title;
+$feed->saveQuietly();
+```
+
+Se um listener posterior de `saving`, ou um listener de `creating` ou `updating`, alterar `title`, o pacote não recalcula o slug depois. Defina o título antes de salvar ou por um mutator. Se um listener posterior precisar alterá-lo, atribua `$feed->slug = $feed->title` logo após a alteração no mesmo listener; não chame `save()` recursivamente. Teste a ordem dos listeners na aplicação.
+
+Ao salvar um modelo selecionado parcialmente, carregue `title` e todos os atributos exigidos pelo accessor. Não há proteção que preserve o slug quando `title` estiver ausente. Inserções e atualizações em massa pelo construtor de consultas não executam esse observer; mantenha os dois valores explicitamente. Preserve o observer e os casts herdados em modelos personalizados.
 
 Escolha títulos que produzam slugs distintos e não vazios para feeds selecionados e agendados. Um título cuja normalização resulte em um slug vazio não pode ser selecionado. Vários registros não excluídos com o mesmo slug causam `Illuminate\Database\MultipleRecordsFoundException` na busca; nenhum sufixo é adicionado automaticamente.
 
@@ -27,6 +44,7 @@ use DragonCode\LaravelFeed\Models\Feed as BaseFeed;
 class Feed extends BaseFeed
 {
     protected $fillable = [
+        'slug',
         'class',
         'title',
         'expression',

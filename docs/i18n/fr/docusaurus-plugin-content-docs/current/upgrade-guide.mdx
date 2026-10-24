@@ -73,7 +73,9 @@ app(\DragonCode\LaravelFeed\Queries\FeedQuery::class)
 
 Les slugs utilisés pour la sélection doivent être non vides et distincts parmi les enregistrements non supprimés, y compris les inactifs. Des titres différents peuvent produire le même slug après normalisation. Les recherches ambiguës lèvent `MultipleRecordsFoundException` ; les slugs inconnus lèvent `FeedNotFoundException`. Résolvez les collisions ou les slugs vides en modifiant les titres via le modèle de flux.
 
-L’enregistrement d’un modèle de flux recalcule son slug à partir du titre stocké. Les insertions et mises à jour en masse via le constructeur de requêtes contournent ce comportement. Examinez ces écritures et les modèles de flux personnalisés qui redéfinissent les casts ou les événements du modèle.
+Dans `2.3.0`, la [PR #334](https://github.com/TheDragonCode/laravel-feeds/pull/334) remplace la redéfinition de `fireModelEvent()` par `FeedObserver::saving()`. Auparavant, le slug utilisait les attributs bruts après `saving`, `creating` et `updating`, y compris lors des enregistrements silencieux. Il utilise maintenant le titre exposé par l’accesseur au moment de l’observateur saving ; les enregistrements silencieux l’ignorent et les écouteurs tardifs ne déclenchent aucun nouveau calcul.
+
+Avant de passer à `2.3.0`, y compris depuis une version `2.x` antérieure, vérifiez les enregistrements silencieux, accesseurs de titre, écouteurs, sélections partielles, casts personnalisés et écritures en masse. Testez le titre et le slug stockés, la recherche par slug et la génération planifiée. L’installation seule ne modifie pas les lignes ; le prochain enregistrement normal peut toutefois changer le slug via un accesseur sans changement de titre. Adaptez les slugs des commandes et planifications si nécessaire. Consultez [Eloquent](./eloquent.mdx) pour les exemples d’affectation explicite lors des enregistrements silencieux et dans les écouteurs.
 
 ## Remplacer les identifiants dans les appels de génération {/* #generation-calls */}
 
