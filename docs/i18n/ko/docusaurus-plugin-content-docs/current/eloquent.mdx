@@ -11,7 +11,9 @@ keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
 
 # Eloquent
 
-`2.3.0`에서는 `FeedObserver::saving()`이 `$feed->slug = $feed->title`을 대입하고 `SlugCast`가 `Str::slug()`을 적용합니다. 이벤트가 활성화된 모델의 `create()`, `update()`, `save()` 호출마다 실행되며, `title`이 바뀌지 않아도 수동으로 지정한 slug를 덮어씁니다. 예를 들어 `Products`는 `products`가 됩니다.
+`FeedObserver::saving()`은 이벤트가 활성화된 모델의 `create()`, `update()`, `save()` 호출마다 실행됩니다. [PR #335](https://github.com/TheDragonCode/laravel-feeds/pull/335) 이후에는 `$feed->isDirty('slug')`가 false일 때만 `$feed->slug = $feed->title`을 대입합니다. `SlugCast`는 자동 생성된 slug와 수동으로 지정한 slug 모두에 `Str::slug()`을 적용합니다. 예를 들어 `Products`는 `products`가 됩니다.
+
+명시적으로 변경한 slug는 `title`을 함께 변경해도 해당 저장에서 유지됩니다. 사용자 지정 slug가 영구적으로 고정되는 것은 아닙니다. 이후 일반 저장에서는 제목이 바뀌지 않아도 변경되지 않은 slug를 `title`에서 다시 계산합니다. 같은 slug나 정규화 결과가 현재 slug와 같은 값을 대입하면 변경으로 간주되지 않습니다.
 
 옵저버는 이미 적용된 setter와 현대식 및 레거시 accessor를 포함한 현재 `title` 속성을 읽습니다. 저장된 원시 제목을 읽는 것이 아니며 최종 데이터베이스 값도 보장하지 않습니다. `Display: Stored: Product Catalog`를 반환하는 accessor는 `display-stored-product-catalog`를 만듭니다. 표시용 서식이 slug에 영향을 주면 안 되는 경우 별도 accessor를 사용하십시오.
 
@@ -28,9 +30,9 @@ $feed->saveQuietly();
 
 나중에 실행되는 `saving` 리스너나 `creating`, `updating` 리스너가 `title`을 변경해도 패키지는 slug를 다시 계산하지 않습니다. 저장 전에 제목을 설정하거나 mutator를 사용하십시오. 이후 리스너에서 변경해야 한다면 같은 리스너에서 변경 직후 `$feed->slug = $feed->title`을 대입하고 `save()`를 재귀 호출하지 마십시오. 애플리케이션 테스트로 리스너 순서를 확인하십시오.
 
-일부 열만 선택한 모델을 저장할 때는 `title`과 accessor가 요구하는 모든 속성을 포함하십시오. `title`이 없을 때 slug를 보존하는 보호 장치는 없습니다. 쿼리 빌더의 대량 삽입과 업데이트는 이 옵저버를 실행하지 않으므로 두 값을 명시적으로 관리하십시오. 사용자 정의 모델에서는 상속된 옵저버와 casts를 유지하십시오.
+일부 열만 선택한 모델에서 slug를 명시적으로 변경하지 않고 저장할 때는 `title`과 accessor가 요구하는 모든 속성을 포함하십시오. `title`이 없다고 slug 생성이 비활성화되지는 않습니다. 쿼리 빌더의 대량 삽입과 업데이트는 이 옵저버를 실행하지 않으므로 두 값을 명시적으로 관리하십시오. 사용자 정의 모델에서는 상속된 옵저버와 casts를 유지하십시오.
 
-선택하거나 스케줄에 등록할 피드에는 서로 다르고 비어 있지 않은 slug가 생성되는 제목을 사용하십시오. 정규화 결과 slug가 비어 있는 제목은 선택할 수 없습니다. 삭제되지 않은 등록 정보 여러 개가 같은 slug를 사용하면 조회 시 `Illuminate\Database\MultipleRecordsFoundException`이 발생하며 접미사는 자동으로 추가되지 않습니다.
+선택하거나 스케줄에 등록할 피드에는 서로 다르고 비어 있지 않은 slug를 저장하십시오. 제목에서 slug를 만들 때는 정규화 결과가 서로 다르고 비어 있지 않은 제목을 선택하십시오. 저장된 slug가 비어 있으면 선택할 수 없습니다. 삭제되지 않은 등록 정보 여러 개가 같은 slug를 사용하면 조회 시 `Illuminate\Database\MultipleRecordsFoundException`이 발생하며 접미사는 자동으로 추가되지 않습니다.
 
 ## 사용자 지정 피드 등록 모델 {/* #custom_feed_model */}
 
@@ -81,11 +83,14 @@ $feed = app(FeedQuery::class)->create(
     title: 'Some',
     expression: '0 */12 * * *',
     extra: [
+        'slug' => 'Custom Some',
         'is_foo' => true,
         'is_bar' => true,
     ]
 );
 ```
+
+이 예제는 slug가 `custom-some`인 등록을 생성합니다. 모델의 `create()`와 `update()`에도 명시적인 slug를 전달할 수 있습니다. `title`과 `slug`를 함께 변경하면 해당 저장에서는 변경한 slug가 유지됩니다.
 
 애플리케이션 모델에서 일반 Eloquent API를 사용할 수도 있습니다.
 

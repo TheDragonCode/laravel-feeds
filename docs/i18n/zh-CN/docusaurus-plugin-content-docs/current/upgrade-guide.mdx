@@ -75,7 +75,9 @@ app(\DragonCode\LaravelFeed\Queries\FeedQuery::class)
 
 在 `2.3.0` 中，[PR #334](https://github.com/TheDragonCode/laravel-feeds/pull/334) 将 `fireModelEvent()` 重写替换为 `FeedObserver::saving()`。之前会在 `saving`、`creating` 和 `updating` 之后从原始属性生成 slug，包括静默保存。现在使用 saving 观察者执行时经过访问器的标题；静默保存跳过观察者，后续监听器也不会触发重新计算。
 
-升级到 `2.3.0` 前（包括从较早的 `2.x` 升级），请检查静默保存、标题访问器、事件监听器、部分字段查询、自定义类型转换和批量写入。测试存储的标题和 slug、按 slug 查询及计划生成。仅安装此版本不会重写现有行，但下一次普通保存可能因访问器而改变 slug，即使标题未变。必要时更新命令和计划中写死的 slug。静默保存和监听器中的显式赋值示例见 [Eloquent](./eloquent.mdx)。
+[PR #335](https://github.com/TheDragonCode/laravel-feeds/pull/335) 增加了 `$feed->isDirty('slug')` 检查：显式修改的 slug 会通过 `Str::slug()` 规范化，并在本次保存中保留，即使同时修改了 `title`。`FeedQuery::create()` 可以通过 `extra: ['slug' => 'Custom Catalog']` 接受该值。未修改的 slug 仍根据 `title` 生成，因此后续普通保存可能会替换之前指定的自定义 slug。赋予规范化结果与当前 slug 相同的值不会阻止重新计算。
+
+从较早的 `1.x` 或 `2.x` 版本升级时，请检查显式 slug 赋值、静默保存、标题访问器、事件监听器、部分字段查询、自定义类型转换和批量写入。测试存储的标题和 slug、后续普通保存、按 slug 查询及计划生成。仅安装更新不会重写现有行，但下一次普通保存可能改变自定义 slug 或通过访问器生成的 slug，即使标题未变。必要时更新命令和计划中写死的 slug。显式 slug、静默保存和监听器的处理方式见 [Eloquent](./eloquent.mdx)。
 
 ## 替换生成调用中的 ID {/* #generation-calls */}
 

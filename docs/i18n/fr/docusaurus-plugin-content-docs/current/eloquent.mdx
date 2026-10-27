@@ -11,7 +11,9 @@ keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
 
 # Eloquent
 
-Dans `2.3.0`, `FeedObserver::saving()` affecte `$feed->slug = $feed->title`, puis `SlugCast` applique `Str::slug()`. Cela se produit à chaque appel des méthodes du modèle `create()`, `update()` ou `save()` avec les événements activés, même sans modification de `title`, et remplace tout slug fourni manuellement. Par exemple, `Products` devient `products`.
+`FeedObserver::saving()` s’exécute à chaque appel des méthodes du modèle `create()`, `update()` ou `save()` avec les événements activés. Depuis la [PR #335](https://github.com/TheDragonCode/laravel-feeds/pull/335), il affecte `$feed->slug = $feed->title` uniquement lorsque `$feed->isDirty('slug')` est faux. `SlugCast` applique `Str::slug()` aux slugs générés comme à ceux fournis manuellement. Par exemple, `Products` devient `products`.
+
+Un slug explicitement modifié est conservé pour cet enregistrement, même si `title` change en même temps. Cela ne rend pas le slug personnalisé permanent : lors d’un enregistrement normal ultérieur, un slug inchangé est recalculé à partir de `title`, même si le titre est inchangé. Affecter le même slug, ou une valeur dont la normalisation donne le slug actuel, ne compte pas comme une modification.
 
 L’observateur lit la propriété `title` actuelle, avec les accesseurs modernes ou classiques et les setters déjà appliqués. Il ne lit pas le titre brut stocké et ne garantit pas la valeur finale écrite en base. Un accesseur renvoyant `Display: Stored: Product Catalog` produit `display-stored-product-catalog`. Placez la mise en forme destinée à l’affichage dans un accesseur séparé.
 
@@ -28,9 +30,9 @@ $feed->saveQuietly();
 
 Si un écouteur `saving` exécuté plus tard, ou un écouteur `creating` ou `updating`, modifie `title`, le paquet ne recalcule pas le slug ensuite. Définissez le titre avant l’enregistrement ou via un mutateur. Si un écouteur tardif doit le modifier, affectez `$feed->slug = $feed->title` juste après dans ce même écouteur ; n’appelez pas `save()` récursivement. Testez l’ordre des écouteurs dans l’application.
 
-Pour enregistrer un modèle partiellement sélectionné, chargez `title` et tous les attributs nécessaires à son accesseur. Aucune protection ne préserve le slug si `title` manque. Les insertions et mises à jour en masse via le constructeur de requêtes n’exécutent pas cet observateur ; gérez explicitement les deux valeurs. Conservez l’observateur et les casts hérités dans les modèles personnalisés.
+Pour enregistrer un modèle partiellement sélectionné sans slug explicitement modifié, chargez `title` et tous les attributs nécessaires à son accesseur. L’absence de `title` ne désactive pas la génération du slug. Les insertions et mises à jour en masse via le constructeur de requêtes n’exécutent pas cet observateur ; gérez explicitement les deux valeurs. Conservez l’observateur et les casts hérités dans les modèles personnalisés.
 
-Choisissez des titres produisant des slugs distincts et non vides pour les flux sélectionnés et planifiés. Un titre dont la normalisation produit un slug vide ne peut pas être sélectionné. Plusieurs enregistrements non supprimés ayant le même slug provoquent une `Illuminate\Database\MultipleRecordsFoundException` lors de la recherche ; aucun suffixe n’est ajouté automatiquement.
+Conservez des slugs stockés distincts et non vides pour les flux sélectionnés et planifiés. Si les slugs sont dérivés des titres, choisissez des titres qui se normalisent en valeurs distinctes et non vides. Un slug stocké vide ne peut pas être sélectionné. Plusieurs enregistrements non supprimés ayant le même slug provoquent une `Illuminate\Database\MultipleRecordsFoundException` lors de la recherche ; aucun suffixe n’est ajouté automatiquement.
 
 ## Modèle d’enregistrement de flux personnalisé {/* #custom_feed_model */}
 
@@ -81,11 +83,14 @@ $feed = app(FeedQuery::class)->create(
     title: 'Some',
     expression: '0 */12 * * *',
     extra: [
+        'slug' => 'Custom Some',
         'is_foo' => true,
         'is_bar' => true,
     ]
 );
 ```
+
+Cet exemple crée l’enregistrement avec le slug `custom-some`. Les méthodes du modèle `create()` et `update()` acceptent aussi un slug explicite ; modifier `title` et `slug` ensemble conserve le slug modifié pour cet enregistrement.
 
 Le modèle de l’application peut également utiliser l’API Eloquent habituelle :
 

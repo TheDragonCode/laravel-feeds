@@ -11,7 +11,9 @@ keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
 
 # Eloquent
 
-Em `2.3.0`, `FeedObserver::saving()` atribui `$feed->slug = $feed->title`; depois, `SlugCast` aplica `Str::slug()`. Isso ocorre em cada chamada aos métodos do modelo `create()`, `update()` ou `save()` com eventos habilitados, mesmo sem alteração de `title`, e sobrescreve um slug definido manualmente. Por exemplo, `Products` se torna `products`.
+`FeedObserver::saving()` é executado em cada chamada aos métodos do modelo `create()`, `update()` ou `save()` com eventos habilitados. Após o [PR #335](https://github.com/TheDragonCode/laravel-feeds/pull/335), ele atribui `$feed->slug = $feed->title` somente quando `$feed->isDirty('slug')` é falso. `SlugCast` aplica `Str::slug()` tanto aos slugs gerados quanto aos fornecidos manualmente. Por exemplo, `Products` se torna `products`.
+
+Um slug alterado explicitamente é preservado naquele salvamento, mesmo quando `title` muda ao mesmo tempo. Isso não torna o slug personalizado permanente: em um salvamento normal posterior, um slug não alterado é recalculado a partir de `title`, mesmo que o título não tenha mudado. Atribuir o mesmo slug, ou um valor cuja normalização resulte no slug atual, não conta como alteração.
 
 O observer lê a propriedade `title` atual, incluindo accessors modernos e clássicos e setters já aplicados. Ele não lê o título bruto armazenado nem garante o valor final gravado no banco. Um accessor que retorna `Display: Stored: Product Catalog` produz `display-stored-product-catalog`. Mantenha a formatação de exibição em um accessor separado se ela não deve afetar o slug.
 
@@ -28,9 +30,9 @@ $feed->saveQuietly();
 
 Se um listener posterior de `saving`, ou um listener de `creating` ou `updating`, alterar `title`, o pacote não recalcula o slug depois. Defina o título antes de salvar ou por um mutator. Se um listener posterior precisar alterá-lo, atribua `$feed->slug = $feed->title` logo após a alteração no mesmo listener; não chame `save()` recursivamente. Teste a ordem dos listeners na aplicação.
 
-Ao salvar um modelo selecionado parcialmente, carregue `title` e todos os atributos exigidos pelo accessor. Não há proteção que preserve o slug quando `title` estiver ausente. Inserções e atualizações em massa pelo construtor de consultas não executam esse observer; mantenha os dois valores explicitamente. Preserve o observer e os casts herdados em modelos personalizados.
+Ao salvar um modelo selecionado parcialmente sem um slug alterado explicitamente, carregue `title` e todos os atributos exigidos pelo accessor. A ausência de `title` não desativa a geração do slug. Inserções e atualizações em massa pelo construtor de consultas não executam esse observer; mantenha os dois valores explicitamente. Preserve o observer e os casts herdados em modelos personalizados.
 
-Escolha títulos que produzam slugs distintos e não vazios para feeds selecionados e agendados. Um título cuja normalização resulte em um slug vazio não pode ser selecionado. Vários registros não excluídos com o mesmo slug causam `Illuminate\Database\MultipleRecordsFoundException` na busca; nenhum sufixo é adicionado automaticamente.
+Mantenha os slugs armazenados distintos e não vazios para feeds selecionados e agendados. Ao derivar slugs dos títulos, escolha títulos cuja normalização produza valores distintos e não vazios. Um slug armazenado vazio não pode ser selecionado. Vários registros não excluídos com o mesmo slug causam `Illuminate\Database\MultipleRecordsFoundException` na busca; nenhum sufixo é adicionado automaticamente.
 
 ## Modelo personalizado de registro de feeds {/* #custom_feed_model */}
 
@@ -81,11 +83,14 @@ $feed = app(FeedQuery::class)->create(
     title: 'Some',
     expression: '0 */12 * * *',
     extra: [
+        'slug' => 'Custom Some',
         'is_foo' => true,
         'is_bar' => true,
     ]
 );
 ```
+
+Isso cria o registro com o slug `custom-some`. Os métodos do modelo `create()` e `update()` também aceitam um slug explícito; atualizar `title` e `slug` juntos preserva o slug alterado naquele salvamento.
 
 O modelo da aplicação também pode usar a API normal do Eloquent:
 
