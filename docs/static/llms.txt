@@ -1456,9 +1456,28 @@ This code will result in:
 
 # Eloquent
 
-Model saves automatically store `Str::slug(title)` in `slug` through `SlugCast`, using the final stored `title` after custom title setters. Custom title mutators and `saveQuietly()` are supported. Renaming the title changes the slug. For example, `Products` becomes `products`. Query Builder bulk updates and inserts bypass model saving; use model `create()`, `update()`, or `save()` instead.
+`FeedObserver::saving()` runs on every event-enabled model `create()`, `update()`, or `save()`. After [PR #335](https://github.com/TheDragonCode/laravel-feeds/pull/335), it assigns `$feed->slug = $feed->title` only when `$feed->isDirty('slug')` is false. `SlugCast` applies `Str::slug()` to both generated and manually supplied slugs. For example, `Products` becomes `products`.
 
-Choose titles that produce distinct, non-empty slugs for selected and scheduled feeds. A title that normalizes to an empty slug cannot be selected. Multiple non-deleted registrations with the same slug cause `Illuminate\Database\MultipleRecordsFoundException` on lookup; no suffix is added automatically.
+An explicitly changed slug is preserved for that save, including when `title` changes at the same time. This does not make a custom slug permanent: on a later ordinary save, an unchanged slug is recalculated from `title`, even when the title is unchanged. Assigning the same slug, or a value that normalizes to the current slug, does not count as a change.
+
+The observer reads the current `title` property, including modern and legacy accessors, after any setters already applied. It does not read the raw stored title or guarantee the final value written to the database. An accessor returning `Display: Stored: Product Catalog` produces `display-stored-product-catalog`. Keep display-only formatting in a separate accessor if it should not affect slugs.
+
+`saveQuietly()` and saves inside `withoutEvents()` skip the observer. Changing `title` this way leaves the previous slug unchanged unless the application assigns it explicitly. Use a normal save when events are wanted. For a quiet save with the same derivation as the observer:
+
+```php
+use DragonCode\LaravelFeed\Models\Feed;
+
+$feed = Feed::query()->findOrFail(42);
+$feed->title = 'New Title';
+$feed->slug = $feed->title;
+$feed->saveQuietly();
+```
+
+If a later `saving` listener, or a `creating` or `updating` listener, changes `title`, the package does not recalculate the slug afterward. Prefer setting the title before saving or using a title mutator. If a listener must change it later, assign `$feed->slug = $feed->title` immediately after that change in the same listener; do not call `save()` recursively. Check the listener order in application tests.
+
+When saving a partially selected model without an explicitly changed slug, include `title` and every attribute required by its accessor. A missing `title` does not disable slug generation. Query Builder bulk inserts and updates do not run this observer; maintain both values explicitly for those writes. Preserve the inherited observer and casts in custom models.
+
+Keep stored slugs distinct and non-empty for selected and scheduled feeds. When deriving slugs from titles, choose titles that normalize to distinct, non-empty values. An empty stored slug cannot be selected. Multiple non-deleted registrations with the same slug cause `Illuminate\Database\MultipleRecordsFoundException` on lookup; no suffix is added automatically.
 
 ## Custom feed registration model
 
@@ -1472,6 +1491,7 @@ use DragonCode\LaravelFeed\Models\Feed as BaseFeed;
 class Feed extends BaseFeed
 {
     protected $fillable = [
+        'slug',
         'class',
         'title',
         'expression',
@@ -1508,11 +1528,14 @@ $feed = app(FeedQuery::class)->create(
     title: 'Some',
     expression: '0 */12 * * *',
     extra: [
+        'slug' => 'Custom Some',
         'is_foo' => true,
         'is_bar' => true,
     ]
 );
 ```
+
+This creates the registration with slug `custom-some`. Model `create()` and `update()` also accept an explicit slug; updating `title` and `slug` together preserves the changed slug for that save.
 
 The application model can also use the regular Eloquent API:
 
@@ -3911,7 +3934,11 @@ app(\DragonCode\LaravelFeed\Queries\FeedQuery::class)
 
 Slugs used for selection must be non-empty and distinct among non-deleted registrations, including inactive ones. Different titles can normalize to the same slug. Ambiguous lookups throw `MultipleRecordsFoundException`; unknown slugs throw `FeedNotFoundException`. Resolve collisions or empty slugs by updating titles through the feed model.
 
-Saving a feed model recalculates its slug from the stored title. Query Builder bulk inserts and updates bypass this behavior. Review such writes and custom feed models that override casts or model events.
+In `2.3.0`, [PR #334](https://github.com/TheDragonCode/laravel-feeds/pull/334) replaces the `fireModelEvent()` override with `FeedObserver::saving()`. Previously, slug derivation used raw attributes after `saving`, `creating`, and `updating`, including quiet saves. It now uses the accessor-visible title when the saving observer runs; quiet saves skip it and later listeners do not trigger another calculation.
+
+[PR #335](https://github.com/TheDragonCode/laravel-feeds/pull/335) adds an `$feed->isDirty('slug')` check: an explicitly changed slug is normalized with `Str::slug()` and preserved for the current save, even when `title` changes too. `FeedQuery::create()` accepts it through `extra: ['slug' => 'Custom Catalog']`. An unchanged slug is still derived from `title`; a later ordinary save can therefore replace a previously supplied custom slug. Assigning a value that normalizes to the current slug does not prevent recalculation.
+
+When upgrading from an earlier `1.x` or `2.x` release, audit explicit slug assignments, quiet saves, title accessors, event listeners, partial selects, custom casts, and bulk writes. Test the resulting stored title and slug, a later ordinary save, lookup by slug, and scheduled generation. Existing rows are not rewritten merely by installing the update, but the next ordinary save can change a custom or accessor-derived slug even without a title change. Update hardcoded command and schedule slugs if needed. See [Eloquent](https://feeds.dragon-code.pro/eloquent/) for explicit slug, quiet-save, and listener handling.
 
 ## Replace IDs in generation calls
 

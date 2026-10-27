@@ -54,6 +54,38 @@ test('persists a slug derived from the title', function (string $title, string $
     [str_repeat('ß', 255), str_repeat('ss', 255)],
 ]);
 
+test('preserves an explicit slug when creating a feed', function (bool $throughQuery) {
+    $attributes = [
+        'class' => EmptyFeed::class,
+        'title' => 'Product Catalog',
+        'slug'  => '  Custom Catalog!  ',
+    ];
+
+    $feed = $throughQuery
+        ? app(FeedQuery::class)->create(EmptyFeed::class, 'Product Catalog', extra: $attributes)
+        : Feed::create($attributes);
+
+    expect($feed->fresh()->slug)->toBe('custom-catalog')
+        ->and(app(FeedQuery::class)->findBySlug('custom-catalog')->id)->toBe($feed->id);
+})->with([
+    'model' => false,
+    'query' => true,
+]);
+
+test('preserves an explicit slug when updating a feed', function (array $attributes) {
+    $feed = app(FeedQuery::class)->create(EmptyFeed::class, 'Product Catalog');
+
+    $feed->update($attributes);
+
+    expect($feed->fresh()->slug)->toBe('custom-catalog')
+        ->and(app(FeedQuery::class)->findBySlug('custom-catalog')->id)->toBe($feed->id)
+        ->and(fn () => app(FeedQuery::class)->findBySlug('product-catalog'))
+        ->toThrow(FeedNotFoundException::class, 'Feed [product-catalog] not found.');
+})->with([
+    'slug only'      => [['slug' => '  Custom Catalog!  ']],
+    'slug and title' => [['slug' => '  Custom Catalog!  ', 'title' => 'Updated Catalog']],
+]);
+
 test('updates the persisted slug when the title changes', function () {
     $feed = app(FeedQuery::class)->create(EmptyFeed::class, 'Old Title');
 
@@ -63,6 +95,10 @@ test('updates the persisted slug when the title changes', function () {
         ->and(app(FeedQuery::class)->findBySlug('new-title')->id)->toBe($feed->id)
         ->and(fn () => app(FeedQuery::class)->findBySlug('old-title'))
         ->toThrow(FeedNotFoundException::class, 'Feed [old-title] not found.');
+
+    $feed->update(['title' => 'Latest Title']);
+
+    expect($feed->fresh()->slug)->toBe('latest-title');
 });
 
 test('derives the slug for custom models and skips quiet saves', function () {

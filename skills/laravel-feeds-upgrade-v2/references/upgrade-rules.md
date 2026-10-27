@@ -28,7 +28,7 @@ Do not write a second migration that silently repeats the backfill or drops an e
 
 - Every selectable slug must be non-empty and unique among non-deleted registrations, including inactive ones. Distinct titles can normalize to the same slug; the schema does not guarantee a collision-free result.
 - Unknown slugs throw `FeedNotFoundException`; ambiguous slugs throw `MultipleRecordsFoundException`.
-- Saving a feed model recalculates the slug from its stored title. Resolve collisions by editing titles through the configured feed model and update dependent callers. Bulk Query Builder writes bypass model events and must be reviewed separately.
+- On event-enabled saves, `FeedObserver::saving()` derives the slug from the accessor-visible title only when `slug` is not dirty. `SlugCast` normalizes explicit slugs too; a dirty explicit slug is preserved for that save, but a later ordinary save can derive it from the title again even if the title did not change. `saveQuietly()` and `withoutEvents()` skip the observer; review bulk Query Builder writes separately because they bypass it. Resolve collisions through the configured feed model and update dependent callers.
 - Custom feed models must retain compatible slug casts/events. Inspect overridden casts and lifecycle methods.
 - In 2.x, the optional `feed:generate` registration argument is always a slug. A numeric string is a numeric slug, never a database-ID lookup. With no argument, generation still processes active registrations.
 - `--target` keys keep their original meaning, including numeric keys. Replace the registration argument only.

@@ -11,9 +11,28 @@ keywords: ["Eloquent", "model", "FeedQuery", "chunk size"]
 
 # Eloquent
 
-Beim Speichern eines Modells wird `Str::slug(title)` automatisch über `SlugCast` in `slug` gespeichert. Dafür wird der endgültige Wert von `title` nach benutzerdefinierten Titel-Settern verwendet. Benutzerdefinierte Titel-Mutatoren und `saveQuietly()` werden unterstützt. Eine Änderung des Titels ändert den Slug. Beispielsweise wird `Products` zu `products`. Massenaktualisierungen und Einfügungen über den Query Builder umgehen das Speichern des Modells; verwenden Sie stattdessen `create()`, `update()` oder `save()` am Modell.
+`FeedObserver::saving()` wird bei jedem Modellaufruf von `create()`, `update()` oder `save()` mit aktivierten Ereignissen ausgeführt. Seit [PR #335](https://github.com/TheDragonCode/laravel-feeds/pull/335) weist er `$feed->slug = $feed->title` nur zu, wenn `$feed->isDirty('slug')` false zurückgibt. `SlugCast` wendet `Str::slug()` sowohl auf erzeugte als auch auf manuell gesetzte Slugs an. Beispielsweise wird `Products` zu `products`.
 
-Wählen Sie für einzeln ausgewählte und geplante Feeds Titel, die unterschiedliche, nicht leere Slugs ergeben. Ein Titel, dessen normalisierter Slug leer ist, kann nicht ausgewählt werden. Mehrere nicht gelöschte Registrierungen mit demselben Slug lösen bei der Suche `Illuminate\Database\MultipleRecordsFoundException` aus; ein Suffix wird nicht automatisch hinzugefügt.
+Ein explizit geänderter Slug bleibt bei diesem Speichervorgang erhalten, auch wenn `title` gleichzeitig geändert wird. Ein eigener Slug wird dadurch nicht dauerhaft festgeschrieben: Beim nächsten normalen Speichern wird ein unveränderter Slug erneut aus `title` abgeleitet, auch ohne Titeländerung. Die Zuweisung desselben Slugs oder eines Werts, der zum aktuellen Slug normalisiert wird, zählt nicht als Änderung.
+
+Der Observer liest die aktuelle Eigenschaft `title`, einschließlich moderner und klassischer Accessors und bereits angewandter Setter. Er liest nicht den rohen gespeicherten Titel und garantiert nicht den endgültigen Datenbankwert. Ein Accessor mit dem Ergebnis `Display: Stored: Product Catalog` erzeugt `display-stored-product-catalog`. Verwenden Sie für reine Anzeigeformatierung einen separaten Accessor.
+
+`saveQuietly()` und Speichervorgänge innerhalb von `withoutEvents()` überspringen den Observer. Bei einer solchen Änderung von `title` bleibt der bisherige Slug erhalten, sofern die Anwendung ihn nicht ausdrücklich setzt. Verwenden Sie normales Speichern, wenn Ereignisse erwünscht sind. Für stilles Speichern mit derselben Ableitung wie im Observer:
+
+```php
+use DragonCode\LaravelFeed\Models\Feed;
+
+$feed = Feed::query()->findOrFail(42);
+$feed->title = 'New Title';
+$feed->slug = $feed->title;
+$feed->saveQuietly();
+```
+
+Ändert ein späterer `saving`-Listener oder ein `creating`- oder `updating`-Listener den Titel, berechnet das Paket den Slug nicht erneut. Setzen Sie den Titel vor dem Speichern oder über einen Mutator. Muss ein später Listener ihn ändern, weisen Sie direkt danach im selben Listener `$feed->slug = $feed->title` zu; rufen Sie `save()` nicht rekursiv auf. Prüfen Sie die Listener-Reihenfolge in Anwendungstests.
+
+Laden Sie beim Speichern teilweise ausgewählter Modelle ohne explizit geänderten Slug `title` und alle vom Accessor benötigten Attribute. Ein fehlender `title` deaktiviert die Slug-Erzeugung nicht. Massenweise Einfügungen und Aktualisierungen über den Query Builder führen den Observer nicht aus; pflegen Sie dabei beide Werte ausdrücklich. Behalten Sie geerbte Observer und Casts in eigenen Modellen bei.
+
+Speichern Sie für einzeln ausgewählte und geplante Feeds unterschiedliche, nicht leere Slugs. Wenn Sie Slugs aus Titeln ableiten, wählen Sie Titel, die zu unterschiedlichen, nicht leeren Werten normalisiert werden. Ein leerer gespeicherter Slug kann nicht ausgewählt werden. Mehrere nicht gelöschte Registrierungen mit demselben Slug lösen bei der Suche `Illuminate\Database\MultipleRecordsFoundException` aus; ein Suffix wird nicht automatisch hinzugefügt.
 
 ## Benutzerdefiniertes Registrierungsmodell für Feeds {/* #custom_feed_model */}
 
@@ -27,6 +46,7 @@ use DragonCode\LaravelFeed\Models\Feed as BaseFeed;
 class Feed extends BaseFeed
 {
     protected $fillable = [
+        'slug',
         'class',
         'title',
         'expression',
@@ -63,11 +83,14 @@ $feed = app(FeedQuery::class)->create(
     title: 'Some',
     expression: '0 */12 * * *',
     extra: [
+        'slug' => 'Custom Some',
         'is_foo' => true,
         'is_bar' => true,
     ]
 );
 ```
+
+Dies erstellt die Registrierung mit dem Slug `custom-some`. Die Modellmethoden `create()` und `update()` akzeptieren ebenfalls einen expliziten Slug; beim gleichzeitigen Aktualisieren von `title` und `slug` bleibt der geänderte Slug für diesen Speichervorgang erhalten.
 
 Das Anwendungsmodell kann auch die reguläre Eloquent-API verwenden:
 

@@ -52,7 +52,7 @@
 - `FeedQuery` uses the configured model for create/find/list/update/delete/restore. Its `create()` accepts `class`, `title`, `expression`, `isActive`, and `extra`.
 - `extra` is applied last and can override even standard arguments. Pass controlled application attributes; do not forward unvalidated request data.
 - Static analysis sees `FeedQuery::create()` as the package base model. Use the application model API when static access to custom properties is required.
-- Model saves derive `slug` from the final stored title, including custom title setters and `saveQuietly()`. Renaming a title changes the slug. Bulk query-builder updates/inserts bypass this behavior.
+- On event-enabled saves, `FeedObserver::saving()` derives `slug` from the accessor-visible `title` only when `slug` is not dirty. `SlugCast` normalizes explicit slugs too; a dirty explicit slug is preserved for that save, but a later ordinary save can derive it from `title` again even if the title did not change. `saveQuietly()` and `withoutEvents()` skip the observer; bulk query-builder updates/inserts bypass it.
 - Slugs must be distinct and non-empty for selected or scheduled feeds. Normalization does not add numeric suffixes. Duplicate non-deleted registrations with one slug cause `MultipleRecordsFoundException` during lookup; an empty normalized slug cannot be selected.
 
 ## Completion Checks

@@ -10,6 +10,8 @@ class FeedObserver
 {
     public function saving(Feed $feed): void
     {
-        $feed->slug = $feed->title;
+        if (! $feed->isDirty('slug')) {
+            $feed->slug = $feed->title;
+        }
     }
 }
