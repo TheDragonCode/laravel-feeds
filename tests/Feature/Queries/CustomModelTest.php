@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use DragonCode\LaravelFeed\Exceptions\FeedNotFoundException;
 use DragonCode\LaravelFeed\Queries\FeedQuery;
 use Workbench\App\Feeds\EmptyFeed;
 use Workbench\App\Feeds\FullFeed;
@@ -105,5 +106,31 @@ test('uses the configured model for every query operation', function () {
 
     $query->deleteByClass(EmptyFeed::class);
 
-    expect(Feed::withTrashed()->find($active->id))->toBeNull();
+    expect(Feed::withTrashed()->pluck('id')->all())->toBe([$inactive->id]);
+});
+
+test('rejects missing and soft-deleted registration IDs', function () {
+    $query = app(FeedQuery::class);
+    $feed  = $query->create(EmptyFeed::class, 'Deleted');
+
+    $query->delete($feed->id);
+
+    expect(fn () => $query->find($feed->id))
+        ->toThrow(FeedNotFoundException::class, 'Feed [' . $feed->id . '] not found.')
+        ->and(fn () => $query->find($feed->id + 1))
+        ->toThrow(FeedNotFoundException::class, 'Feed [' . ($feed->id + 1) . '] not found.');
+});
+
+test('permanently deletes only the matching soft-deleted registration', function () {
+    $query = app(FeedQuery::class);
+
+    $deleted = $query->create(EmptyFeed::class, 'Deleted');
+    $other   = $query->create(FullFeed::class, 'Other');
+
+    $query->delete($deleted->id);
+    $query->delete($other->id);
+
+    $query->deleteByClass(EmptyFeed::class);
+
+    expect(Feed::withTrashed()->pluck('id')->all())->toBe([$other->id]);
 });
