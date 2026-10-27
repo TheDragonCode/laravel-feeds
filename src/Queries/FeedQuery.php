@@ -13,12 +13,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 use function now;
 
-/** @property Feed|string $model */
+/** @property class-string<Feed> $model */
 class FeedQuery
 {
     public function __construct(
         #[Config('feeds.model', Feed::class)]
-        protected string $model,
+        protected readonly string $model,
     ) {}
 
     public function create(
@@ -28,7 +28,7 @@ class FeedQuery
         bool $isActive = true,
         array $extra = [],
     ): Feed {
-        return $this->model::create([
+        return $this->model::query()->create([
             'class'      => $class,
             'title'      => $title,
             'expression' => $expression,
@@ -39,7 +39,7 @@ class FeedQuery
 
     public function find(int $id): Feed
     {
-        return $this->model::findOr($id, callback: static fn () => throw new FeedNotFoundException($id));
+        return $this->model::query()->findOr($id, callback: static fn () => throw new FeedNotFoundException($id));
     }
 
     public function findBySlug(string $slug): Feed
@@ -79,7 +79,8 @@ class FeedQuery
 
     public function deleteByClass(string $class): void
     {
-        $this->model::withTrashed()
+        $this->model::query()
+            ->withTrashed()
             ->whereClass($class)
             ->forceDelete();
     }
