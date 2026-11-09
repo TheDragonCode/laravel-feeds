@@ -50,7 +50,7 @@
         "@docusaurus/module-type-aliases": "3.10.2",
         "@docusaurus/types": "3.10.2",
         "@lhci/cli": "^0.15.1",
-        "@playwright/test": "^1.64.1",
+        "@playwright/test": "^1.65.0",
         "@types/react": "^19.3.0",
         "typescript": "~7.0.2"
     },
